@@ -570,3 +570,12 @@ transform:translateX(0);
 transform:translateX(-100%);
 }
 }
+/* ===============================
+ULTRA HERO ALIGN FIX
+ดึง hero ติด marquee
+================================ */
+
+.marquee-wrap + .hero-master{
+margin-top:0 !important;
+padding-top:0 !important;
+}
