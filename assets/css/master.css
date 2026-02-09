@@ -470,3 +470,51 @@ right:0;
     0 0 6px rgba(255,255,255,0.6),
     0 0 16px rgba(0,200,255,0.5);
 }
+/* ===============================
+ULTRA MARQUEE WELCOME STRIP
+ADD ONLY
+================================ */
+
+.ultra-marquee{
+
+  width:100%;
+  overflow:hidden;
+  background:#050505;
+  border-bottom:1px solid #111;
+
+}
+
+.marquee-track{
+
+  display:flex;
+  white-space:nowrap;
+  animation:marqueeMove 25s linear infinite;
+
+}
+
+.marquee-track span{
+
+  font-size:14px;
+  padding:12px 0;
+  margin-right:60px;
+
+  color:#fff;
+
+  text-shadow:
+    0 0 4px rgba(255,255,255,0.3),
+    0 0 12px rgba(0,200,255,0.25),
+    0 0 20px rgba(255,50,80,0.15);
+
+}
+
+@keyframes marqueeMove{
+
+  from{
+    transform:translateX(100%);
+  }
+
+  to{
+    transform:translateX(-100%);
+  }
+
+}
