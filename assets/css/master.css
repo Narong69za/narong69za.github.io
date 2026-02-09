@@ -518,3 +518,35 @@ ADD ONLY
   }
 
 }
+/* =================================
+ULTRA MARQUEE FIX (ADD ONLY)
+แก้ข้อความซ้อน + ไม่วิ่ง
+================================ */
+
+/* wrapper */
+.marquee-wrap{
+width:100%;
+overflow:hidden;
+background:#000;
+border-bottom:1px solid #111;
+
+/* กัน nav fixed ทับ */
+margin-top:var(--nav-height);
+}
+
+/* text animation */
+.marquee-text{
+display:inline-block;
+white-space:nowrap;
+padding:10px 0;
+font-size:14px;
+color:#fff;
+
+animation:marqueeMove 20s linear infinite;
+}
+
+/* keyframe */
+@keyframes marqueeMove{
+0%{ transform:translateX(100%); }
+100%{ transform:translateX(-100%); }
+}
