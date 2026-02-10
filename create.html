@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Dance Motion Clone — SN Design Studio</title>
+<title>AI Creator Platform — SN Design Studio</title>
 
 <link rel="stylesheet" href="assets/css/master.css">
 
@@ -14,131 +14,90 @@
 
 <body class="create-page">
 
-<!-- ======================
-GLOBAL NAV
-====================== -->
-
 <div id="nav"></div>
 
-<!-- ======================
-HERO
-====================== -->
-
+<!-- HERO -->
 <section class="hero-master">
 
-<img 
-src="assets/images/create-hero.png"
-alt="Build Viral AI Templates"
->
+<img src="assets/images/create-hero.png">
 
-<div class="hero-content-bottom fade-up">
+<div class="hero-content-bottom">
 
-<h1>DANCE MOTION CLONE — AI SYSTEM</h1>
-
-<p>
-Upload dance reference and generate AI motion clone.
-</p>
+<h1>SN DESIGN STUDIO — AI TOOL CORE</h1>
+<p>Select AI tool and start creation.</p>
 
 </div>
 
 </section>
 
-<!-- ======================
-ULTRA AI CONTROL STRIP (ADD ONLY)
-====================== -->
-
-<section class="ultra-ai-strip">
-
-<div class="ai-strip-wrap">
-
-<span class="ai-status active">SYSTEM ONLINE</span>
-<span class="ai-status">Motion Engine Ready</span>
-<span class="ai-status">GPU Acceleration</span>
-<span class="ai-status">Live Scan Mode</span>
-
-</div>
-
-</section>
 
 <!-- ======================
-UPLOAD PANEL
+AI TOOL SELECTOR
 ====================== -->
 
 <section class="section">
 
 <div class="container">
 
-<h2>Reference Dance Video</h2>
-<input type="file" id="videoInput">
+<div class="ai-tool-selector">
 
-<h2>Character Image</h2>
-<input type="file" id="imageInput">
+<button data-tool="dance" class="tool-btn active">
+Dance Motion
+</button>
+
+<button data-tool="lipsy" class="tool-btn">
+AI Lipsync
+</button>
+
+<button data-tool="face" class="tool-btn">
+Face Swap
+</button>
+
+</div>
 
 </div>
 
 </section>
 
+
 <!-- ======================
-LIVE PREVIEW AREA
+DANCE PANEL
 ====================== -->
 
-<section class="section">
+<section id="panel-dance" class="ai-panel">
 
 <div class="container">
 
-<div id="videoPreview"></div>
+<h2>DANCE MOTION CLONE</h2>
 
-<div id="imagePreview"></div>
+<input type="file" id="danceVideo">
+
+<div id="dancePreview"></div>
 
 </div>
 
 </section>
 
+
 <!-- ======================
-AI MOTION ENGINE STATUS
+LIPSYNC PANEL
 ====================== -->
 
-<section class="section">
+<section id="panel-lipsy" class="ai-panel" style="display:none;">
 
 <div class="container">
 
-<h2>LIVE AI MOTION SCAN</h2>
+<h2>AI LIPSYNC</h2>
 
-<ul>
+<input type="file" id="lipVideo">
+<input type="file" id="lipAudio">
 
-<li>✔ motion reference detected</li>
-<li>✔ pose mapping ready</li>
-<li>⏳ animation generation</li>
-
-</ul>
+<div id="lipPreview"></div>
 
 </div>
 
 </section>
 
-<!-- ======================
-WORKFLOW INFO
-====================== -->
-
-<section class="section">
-
-<div class="container">
-
-<div class="card">
-
-<h3>AI Motion Workflow</h3>
-
-<p>
-
-reference video → pose detection → skeleton mapping → motion transfer → render output
-
-</p>
-
-</div>
-
-</div>
-
-</section>
 
 <footer>
 
@@ -146,9 +105,9 @@ reference video → pose detection → skeleton mapping → motion transfer → 
 
 </footer>
 
+
 <script src="assets/js/nav.js"></script>
-<script src="assets/js/ultra-dance-motion.js"></script>
+<script src="assets/js/ai-tool-core.js"></script>
 
 </body>
-
 </html>
