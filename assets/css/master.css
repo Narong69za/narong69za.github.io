@@ -896,3 +896,33 @@ transform:translateX(20%);
 }
 
   }
+/* =================================
+ULTRA HERO DEPTH SYSTEM
+ADD ONLY — SAFE
+================================ */
+
+/* ทำให้ hero image ดู cinematic มากขึ้น */
+
+.hero-master img{
+
+position:relative;
+z-index:0;
+
+filter:
+
+contrast(1.05)
+brightness(1.02)
+saturate(1.05);
+
+}
+
+/* glow edge subtle */
+
+.hero-master{
+
+box-shadow:
+
+inset 0 0 120px rgba(0,0,0,0.6),
+inset 0 0 40px rgba(0,150,255,0.15);
+
+}
