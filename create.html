@@ -17,17 +17,20 @@
 <div id="nav"></div>
 
 
-<!-- HERO -->
+<!-- =================================
+CREATE HERO (LOCK)
+================================= -->
+
 <section class="hero-master">
 
-<img src="assets/images/create-hero.png" alt="Create System">
+<img src="assets/images/create-hero.png">
 
-<div class="hero-content-bottom">
+<div class="hero-content-bottom fade-up">
 
-<h1>Create Viral AI Content System</h1>
+<h1 id="modeTitle">AI Creator Control Panel</h1>
 
-<p>
-Lip Sync • Motion • Face Swap • Creator Automation Pipeline
+<p id="modeDesc">
+Upload assets and start AI generation workflow.
 </p>
 
 </div>
@@ -35,116 +38,123 @@ Lip Sync • Motion • Face Swap • Creator Automation Pipeline
 </section>
 
 
-<!-- CONTROL PANEL -->
+
+<!-- =================================
+ULTRA CREATE DASHBOARD
+================================= -->
 
 <section class="section">
 
 <div class="container">
 
-<h2>Select Template</h2>
+<div id="createPanel">
 
-<div id="selectedTemplate"></div>
+<!-- DEFAULT MODE (ระบบเดิม) -->
 
+<h2 class="section-title">Create System</h2>
 
-<!-- IMAGE UPLOAD -->
-
-<input type="file" id="imageInput" accept="image/*">
-
-<img id="imagePreview" style="max-width:300px;margin-top:10px;">
-
-
-<!-- VIDEO UPLOAD -->
-
-<input type="file" id="videoInput" accept="video/*">
-
-<video id="videoPreview" controls style="max-width:300px;margin-top:10px;"></video>
-
-
-<!-- CREATE BUTTON -->
-
-<div class="cta-center">
-
-<button id="createBtn" class="btn-primary">
-CREATE NOW
-</button>
+<p style="text-align:center">
+Select template to activate AI workflow mode.
+</p>
 
 </div>
-
-<div id="processStatus"></div>
 
 </div>
 
 </section>
 
 
+
 <footer>
 © SN Design Studio, 2026 · All rights reserved.
 </footer>
 
-
 <script src="assets/js/nav.js"></script>
-<script src="assets/js/api/template-sync.js"></script>
 
+
+<!-- =================================
+ULTRA MODE SWITCH ENGINE
+ADD ONLY
+================================= -->
 
 <script>
 
-/* TEMPLATE AUTO SELECT */
+function getTemplateMode(){
 
-const params = new URLSearchParams(window.location.search);
-const template = params.get("template");
+const urlParams = new URLSearchParams(window.location.search);
+return urlParams.get("template");
 
-if(template){
+}
 
-document.getElementById("selectedTemplate").innerText =
-"Selected: " + template;
+function buildDanceMotionPanel(){
+
+document.getElementById("modeTitle").innerText =
+"DANCE MOTION CLONE — AI SYSTEM";
+
+document.getElementById("modeDesc").innerText =
+"Upload dance reference and generate AI motion clone.";
+
+
+const panel = document.getElementById("createPanel");
+
+panel.innerHTML = `
+
+<div class="ultra-dance-panel">
+
+<div class="dance-left">
+
+<h3>Reference Dance Video</h3>
+<input type="file" accept="video/*">
+
+<h3>Character Image</h3>
+<input type="file" accept="image/*">
+
+</div>
+
+
+<div class="dance-center">
+
+<div class="ai-preview-frame">
+
+<div class="scan-line"></div>
+
+<p>LIVE AI SCAN PREVIEW</p>
+
+</div>
+
+</div>
+
+
+<div class="dance-right">
+
+<h3>AI MOTION ENGINE</h3>
+
+<ul>
+<li>✔ motion reference detected</li>
+<li>✔ pose mapping ready</li>
+<li>⏳ animation generation</li>
+</ul>
+
+</div>
+
+</div>
+
+`;
 
 }
 
 
-/* IMAGE PREVIEW */
+document.addEventListener("DOMContentLoaded", () => {
 
-imageInput.onchange = e=>{
-imagePreview.src = URL.createObjectURL(e.target.files[0]);
-};
+const mode = getTemplateMode();
 
+if(mode === "dance-motion"){
 
-/* VIDEO PREVIEW */
+buildDanceMotionPanel();
 
-videoInput.onchange = e=>{
-videoPreview.src = URL.createObjectURL(e.target.files[0]);
-};
+}
 
-
-/* CREATE API */
-
-createBtn.onclick = async ()=>{
-
-processStatus.innerText = "Processing...";
-
-const formData = new FormData();
-
-formData.append("template", template);
-formData.append("image", imageInput.files[0]);
-formData.append("video", videoInput.files[0]);
-
-try{
-
-const res = await fetch("api/process.php",{
-method:"POST",
-body:formData
 });
-
-const data = await res.json();
-
-processStatus.innerText = "DONE";
-
-}catch(e){
-
-processStatus.innerText = "ERROR";
-
-}
-
-};
 
 </script>
 
