@@ -97,6 +97,16 @@ min-height:100vh;
 padding-top:var(--nav-height);
 overflow:hidden;
 }
+/* =================================
+ULTRA HERO HEIGHT FIX
+ADD ONLY
+================================ */
+
+.index-page .hero-master{
+
+min-height:auto !important;
+
+}
 
 .hero-master img{
 width:100%;
