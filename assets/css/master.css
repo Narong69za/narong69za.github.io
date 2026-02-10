@@ -1501,3 +1501,67 @@ animation:aiPulse 6s ease-in-out infinite;
 0%,100%{ filter:brightness(1) contrast(1); }
 50%{ filter:brightness(1.08) contrast(1.05); }
 }
+/* ===============================
+ULTRA AI CONTROL STRIP
+ADD ONLY
+================================ */
+
+.ultra-ai-strip{
+
+display:flex;
+justify-content:center;
+
+padding:20px 10px;
+
+background:linear-gradient(
+90deg,
+rgba(0,200,255,0.06),
+rgba(255,40,80,0.06)
+);
+
+border-top:1px solid rgba(255,255,255,0.08);
+border-bottom:1px solid rgba(255,255,255,0.08);
+
+}
+
+.ai-strip-wrap{
+
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+justify-content:center;
+
+}
+
+.ai-status{
+
+padding:8px 14px;
+
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.2);
+
+font-size:12px;
+letter-spacing:1px;
+
+opacity:.85;
+
+}
+
+.ai-status.active{
+
+border-color:#00ffcc;
+
+box-shadow:
+0 0 12px rgba(0,255,200,.4);
+
+animation:pulseGlow 2s infinite;
+
+}
+
+@keyframes pulseGlow{
+
+0%{opacity:.7;}
+50%{opacity:1;}
+100%{opacity:.7;}
+
+  }
