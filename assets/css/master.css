@@ -820,3 +820,79 @@ box-shadow:
 0 0 24px rgba(255,40,80,.15);
 
 }
+/* =================================
+ULTRA CINEMATIC OVERLAY SYSTEM
+ADD ONLY — SAFE LAYER
+================================ */
+
+.hero-master{
+position:relative;
+overflow:hidden;
+}
+
+/* cinematic light beam overlay */
+
+.hero-master::before{
+
+content:"";
+
+position:absolute;
+top:0;
+left:-50%;
+
+width:200%;
+height:100%;
+
+background:
+linear-gradient(
+120deg,
+transparent 0%,
+rgba(255,255,255,0.03) 30%,
+rgba(0,150,255,0.08) 50%,
+rgba(255,40,80,0.05) 70%,
+transparent 100%
+);
+
+animation: ultraBeam 18s linear infinite;
+
+pointer-events:none;
+z-index:2;
+
+}
+
+/* cinematic vignette */
+
+.hero-master::after{
+
+content:"";
+
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+
+background:
+radial-gradient(circle at center,
+transparent 40%,
+rgba(0,0,0,0.45) 100%
+);
+
+pointer-events:none;
+z-index:1;
+
+}
+
+/* animation */
+
+@keyframes ultraBeam{
+
+0%{
+transform:translateX(-20%);
+}
+
+100%{
+transform:translateX(20%);
+}
+
+  }
