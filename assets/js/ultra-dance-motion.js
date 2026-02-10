@@ -4,6 +4,21 @@ CINEMATIC AI SCAN LEVEL MAX
 SN DESIGN STUDIO
 ====================================== */
 
+
+/* ==========================
+ULTRA AI CONFIG (EDIT ONLY API KEY)
+========================== */
+
+const ULTRA_AI_CONFIG = {
+
+API_KEY: "AIzaSyD3TJY4cypM9nHUA7NShCFXBtaUHUZqHHQ",
+
+PROJECT_STORAGE: "https://storage.googleapis.com"
+
+};
+
+
+
 document.addEventListener("DOMContentLoaded", function(){
 
 const videoInput = document.getElementById("videoInput");
@@ -16,6 +31,7 @@ let scanLayer;
 let radarLayer;
 let progressBar;
 let statusList;
+
 
 /* =========================
 CREATE CINEMATIC LAYERS
@@ -50,6 +66,7 @@ function buildCinematicLayer(target){
 
 }
 
+
 /* =========================
 ADD STYLE ONCE
 ========================= */
@@ -78,6 +95,7 @@ document.head.appendChild(style);
 
 }
 
+
 /* =========================
 VIDEO PREVIEW
 ========================= */
@@ -100,6 +118,7 @@ startAI();
 
 });
 
+
 /* =========================
 IMAGE PREVIEW
 ========================= */
@@ -120,6 +139,7 @@ buildCinematicLayer(imagePreview);
 startAI();
 
 });
+
 
 /* =========================
 ULTRA AI PROCESS
