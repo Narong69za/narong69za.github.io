@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI Creator Platform — SN Design Studio</title>
+<title>AI Create System — SN Design Studio</title>
 
 <link rel="stylesheet" href="assets/css/master.css">
 
@@ -16,88 +16,56 @@
 
 <div id="nav"></div>
 
-<!-- HERO -->
 <section class="hero-master">
 
 <img src="assets/images/create-hero.png">
 
-<div class="hero-content-bottom">
+<div class="hero-content-bottom fade-up">
 
-<h1>SN DESIGN STUDIO — AI TOOL CORE</h1>
-<p>Select AI tool and start creation.</p>
+<h1>AI CREATE SYSTEM</h1>
+
+<p>Ultra Modular AI Operating System</p>
 
 </div>
 
 </section>
 
+<section class="ultra-ai-strip">
 
-<!-- ======================
-AI TOOL SELECTOR
-====================== -->
+<div class="ai-strip-wrap">
+
+<span class="ai-status active">SYSTEM ONLINE</span>
+<span class="ai-status">Module Engine Ready</span>
+<span class="ai-status">GPU Enabled</span>
+
+</div>
+
+</section>
 
 <section class="section">
 
 <div class="container">
 
-<div class="ai-tool-selector">
+<h2>Reference Video</h2>
+<input type="file" id="videoInput">
 
-<button data-tool="dance" class="tool-btn active">
-Dance Motion
-</button>
-
-<button data-tool="lipsy" class="tool-btn">
-AI Lipsync
-</button>
-
-<button data-tool="face" class="tool-btn">
-Face Swap
-</button>
-
-</div>
+<h2>Character Image</h2>
+<input type="file" id="imageInput">
 
 </div>
 
 </section>
 
-
-<!-- ======================
-DANCE PANEL
-====================== -->
-
-<section id="panel-dance" class="ai-panel">
+<section class="section">
 
 <div class="container">
 
-<h2>DANCE MOTION CLONE</h2>
-
-<input type="file" id="danceVideo">
-
-<div id="dancePreview"></div>
+<div id="videoPreview"></div>
+<div id="imagePreview"></div>
 
 </div>
 
 </section>
-
-
-<!-- ======================
-LIPSYNC PANEL
-====================== -->
-
-<section id="panel-lipsy" class="ai-panel" style="display:none;">
-
-<div class="container">
-
-<h2>AI LIPSYNC</h2>
-
-<input type="file" id="lipVideo">
-<input type="file" id="lipAudio">
-
-<div id="lipPreview"></div>
-
-</div>
-
-</section>
-
 
 <footer>
 
@@ -105,9 +73,10 @@ LIPSYNC PANEL
 
 </footer>
 
-
 <script src="assets/js/nav.js"></script>
-<script src="assets/js/ai-tool-core.js"></script>
+<script src="assets/js/template-sync.js"></script>
+<script src="assets/js/ultra-module-core.js"></script>
 
 </body>
+
 </html>
