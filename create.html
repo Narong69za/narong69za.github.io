@@ -1,11 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Create System | SN Design Studio</title>
+<title>Dance Motion Clone — SN Design Studio</title>
 
 <link rel="stylesheet" href="assets/css/master.css">
 
@@ -13,24 +14,31 @@
 
 <body class="create-page">
 
-<!-- NAV GLOBAL -->
+<!-- ======================
+GLOBAL NAV
+====================== -->
+
 <div id="nav"></div>
 
 
-<!-- =================================
-CREATE HERO (LOCK)
-================================= -->
+<!-- ======================
+HERO HEADER
+====================== -->
 
 <section class="hero-master">
 
-<img src="assets/images/create-hero.png">
+<img 
+src="assets/images/create-hero.png"
+alt="Build Viral AI Templates"
+loading="eager"
+>
 
 <div class="hero-content-bottom fade-up">
 
-<h1 id="modeTitle">AI Creator Control Panel</h1>
+<h1>DANCE MOTION CLONE — AI SYSTEM</h1>
 
-<p id="modeDesc">
-Upload assets and start AI generation workflow.
+<p>
+Upload dance reference and generate AI motion clone.
 </p>
 
 </div>
@@ -38,23 +46,39 @@ Upload assets and start AI generation workflow.
 </section>
 
 
-
-<!-- =================================
-ULTRA CREATE DASHBOARD
-================================= -->
+<!-- ======================
+ULTRA DANCE MOTION PANEL
+(NEW AI DASHBOARD)
+====================== -->
 
 <section class="section">
 
 <div class="container">
 
-<div id="createPanel">
+<div class="dance-motion-container"></div>
 
-<!-- DEFAULT MODE (ระบบเดิม) -->
+</div>
 
-<h2 class="section-title">Create System</h2>
+</section>
 
-<p style="text-align:center">
-Select template to activate AI workflow mode.
+
+<!-- ======================
+DETAIL REVIEW BLOCK
+(PROFESSIONAL INFO ZONE)
+====================== -->
+
+<section class="section">
+
+<div class="container">
+
+<div class="card">
+
+<h2>AI Motion Workflow</h2>
+
+<p>
+
+Reference video → Pose detection → Skeleton mapping → Motion transfer → Render output
+
 </p>
 
 </div>
@@ -66,97 +90,18 @@ Select template to activate AI workflow mode.
 
 
 <footer>
+
 © SN Design Studio, 2026 · All rights reserved.
+
 </footer>
 
+
+<!-- GLOBAL NAV JS -->
 <script src="assets/js/nav.js"></script>
 
-
-<!-- =================================
-ULTRA MODE SWITCH ENGINE
-ADD ONLY
-================================= -->
-
-<script>
-
-function getTemplateMode(){
-
-const urlParams = new URLSearchParams(window.location.search);
-return urlParams.get("template");
-
-}
-
-function buildDanceMotionPanel(){
-
-document.getElementById("modeTitle").innerText =
-"DANCE MOTION CLONE — AI SYSTEM";
-
-document.getElementById("modeDesc").innerText =
-"Upload dance reference and generate AI motion clone.";
-
-
-const panel = document.getElementById("createPanel");
-
-panel.innerHTML = `
-
-<div class="ultra-dance-panel">
-
-<div class="dance-left">
-
-<h3>Reference Dance Video</h3>
-<input type="file" accept="video/*">
-
-<h3>Character Image</h3>
-<input type="file" accept="image/*">
-
-</div>
-
-
-<div class="dance-center">
-
-<div class="ai-preview-frame">
-
-<div class="scan-line"></div>
-
-<p>LIVE AI SCAN PREVIEW</p>
-
-</div>
-
-</div>
-
-
-<div class="dance-right">
-
-<h3>AI MOTION ENGINE</h3>
-
-<ul>
-<li>✔ motion reference detected</li>
-<li>✔ pose mapping ready</li>
-<li>⏳ animation generation</li>
-</ul>
-
-</div>
-
-</div>
-
-`;
-
-}
-
-
-document.addEventListener("DOMContentLoaded", () => {
-
-const mode = getTemplateMode();
-
-if(mode === "dance-motion"){
-
-buildDanceMotionPanel();
-
-}
-
-});
-
-</script>
+<!-- ULTRA DANCE MOTION ENGINE -->
+<script src="assets/js/ultra-dance-motion.js"></script>
 
 </body>
+
 </html>
