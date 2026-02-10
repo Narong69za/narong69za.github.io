@@ -1,110 +1,81 @@
-/* ===============================
-ULTRA DANCE MOTION PANEL
-FULL BUILD
-=============================== */
+/* =================================
+ULTRA DANCE MOTION ENGINE
+SN DESIGN STUDIO
+ADD ONLY SAFE
+================================= */
 
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-const container = document.querySelector(".dance-motion-container");
+const videoInput = document.getElementById("videoInput");
+const imageInput = document.getElementById("imageInput");
 
-if(!container) return;
-
-container.innerHTML = `
-
-<section class="ultra-dance-panel">
-
-<div class="dance-left">
-
-<h3>Reference Dance Video</h3>
-<input id="videoInput" type="file" accept="video/*">
-
-<h3>Character Image</h3>
-<input id="imageInput" type="file" accept="image/*">
-
-</div>
+const videoPreview = document.getElementById("videoPreview");
+const imagePreview = document.getElementById("imagePreview");
 
 
-<div class="dance-center">
+/* =========================
+VIDEO PREVIEW
+========================= */
 
-<div class="ai-preview-frame">
+if(videoInput){
 
-<video id="videoPreview" autoplay muted loop></video>
+videoInput.addEventListener("change", function(){
 
-<img id="imagePreview"/>
+const file = this.files[0];
 
-<div class="scan-grid"></div>
-<div class="scan-line"></div>
+if(!file) return;
 
-<p class="preview-label">LIVE AI MOTION SCAN</p>
+const url = URL.createObjectURL(file);
 
-</div>
-
-</div>
-
-
-<div class="dance-right">
-
-<h3>AI MOTION ENGINE</h3>
-
-<ul class="ai-status">
-
-<li>✔ motion reference detected</li>
-<li>✔ pose mapping ready</li>
-<li>✔ skeleton tracking</li>
-<li>⏳ animation generation</li>
-
-</ul>
-
-<div class="ai-metrics">
-
-<p>Tracking Accuracy</p>
-
-<div class="progress-bar">
-<span id="progressBar"></span>
-</div>
-
-</div>
-
-</div>
-
-</section>
-
+videoPreview.innerHTML = `
+<video controls autoplay muted loop>
+<source src="${url}" type="${file.type}">
+</video>
 `;
-
-
-/* ========= LIVE PREVIEW ========= */
-
-document.addEventListener("change", e=>{
-
-if(e.target.id==="videoInput"){
-
-const url = URL.createObjectURL(e.target.files[0]);
-document.getElementById("videoPreview").src=url;
-
-}
-
-if(e.target.id==="imageInput"){
-
-const url = URL.createObjectURL(e.target.files[0]);
-document.getElementById("imagePreview").src=url;
-
-}
 
 });
 
+}
 
-/* ========= LIVE SCAN ANIMATION ========= */
 
-let percent=0;
+/* =========================
+IMAGE PREVIEW
+========================= */
+
+if(imageInput){
+
+imageInput.addEventListener("change", function(){
+
+const file = this.files[0];
+
+if(!file) return;
+
+const url = URL.createObjectURL(file);
+
+imagePreview.innerHTML = `
+<img src="${url}" alt="Character Preview">
+`;
+
+});
+
+}
+
+
+/* =========================
+ULTRA FAKE LIVE SCAN EFFECT
+========================= */
 
 setInterval(()=>{
 
-percent++;
+const status = document.querySelectorAll(".ai-status");
 
-if(percent>87) percent=20;
+status.forEach(el=>{
 
-document.getElementById("progressBar").style.width = percent+"%";
+el.classList.toggle("nav-active");
 
-},120);
+});
+
+},2000);
+
 
 });
