@@ -731,3 +731,31 @@ transform:translateX(0);
 transform:translateX(-100%);
 }
 }
+/* =================================
+ULTRA MARQUEE FINAL FIX
+================================= */
+
+.marquee-wrap{
+width:100%;
+overflow:hidden;
+white-space:nowrap;
+background:#000;
+border-bottom:1px solid rgba(255,255,255,0.08);
+position:relative;
+z-index:1;
+}
+
+.marquee-text{
+display:inline-block;
+padding-left:100%;
+animation: ultraMarqueeMove 18s linear infinite;
+}
+
+@keyframes ultraMarqueeMove{
+0%{
+transform:translateX(0);
+}
+100%{
+transform:translateX(-100%);
+}
+}
