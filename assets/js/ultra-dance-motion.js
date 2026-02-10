@@ -1,9 +1,10 @@
-// ===============================
-// ULTRA DANCE MOTION ENGINE
-// SN DESIGN STUDIO
-// ===============================
+/* ======================================
+ULTRA LIVE MOTION UI
+SN DESIGN STUDIO
+FULL REPLACE VERSION
+====================================== */
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function(){
 
 const videoInput = document.getElementById("videoInput");
 const imageInput = document.getElementById("imageInput");
@@ -11,42 +12,171 @@ const imageInput = document.getElementById("imageInput");
 const videoPreview = document.getElementById("videoPreview");
 const imagePreview = document.getElementById("imagePreview");
 
-// ===============================
-// VIDEO PREVIEW
-// ===============================
+let scanLine;
+let progressBar;
+let statusList;
 
-videoInput.addEventListener("change", function(e){
+/* =========================
+CREATE SCAN UI
+========================= */
 
-const file = e.target.files[0];
+function createScanUI(){
 
-if(!file) return;
+    // scan line
+    scanLine = document.createElement("div");
+    scanLine.style.position = "absolute";
+    scanLine.style.left = "0";
+    scanLine.style.width = "100%";
+    scanLine.style.height = "2px";
+    scanLine.style.background = "linear-gradient(90deg,#00ffff,#ff0044)";
+    scanLine.style.boxShadow = "0 0 10px #00ffff";
+    scanLine.style.top = "0";
+    scanLine.style.animation = "scanMove 2.5s linear infinite";
 
-const url = URL.createObjectURL(file);
+    // progress bar
+    progressBar = document.createElement("div");
+    progressBar.style.marginTop = "20px";
+    progressBar.style.fontSize = "14px";
+    progressBar.style.opacity = "0.9";
+    progressBar.innerText = "AI PROCESSING — 0%";
 
-videoPreview.innerHTML = `
-<video controls autoplay muted loop>
-<source src="${url}" type="${file.type}">
-</video>
-`;
+    // status list
+    statusList = document.querySelector("ul");
+
+    if(!document.getElementById("ultra-scan-style")){
+        const style = document.createElement("style");
+        style.id="ultra-scan-style";
+        style.innerHTML = `
+        @keyframes scanMove{
+            0%{top:0}
+            100%{top:100%}
+        }
+        `;
+        document.head.appendChild(style);
+    }
+
+}
+
+/* =========================
+VIDEO PREVIEW
+========================= */
+
+videoInput.addEventListener("change", function(){
+
+    const file = this.files[0];
+    if(!file) return;
+
+    videoPreview.innerHTML = "";
+
+    const video = document.createElement("video");
+    video.src = URL.createObjectURL(file);
+    video.controls = true;
+
+    videoPreview.appendChild(video);
+
+    startUltraScan();
 
 });
 
-// ===============================
-// IMAGE PREVIEW
-// ===============================
 
-imageInput.addEventListener("change", function(e){
+/* =========================
+IMAGE PREVIEW
+========================= */
 
-const file = e.target.files[0];
+imageInput.addEventListener("change", function(){
 
-if(!file) return;
+    const file = this.files[0];
+    if(!file) return;
 
-const url = URL.createObjectURL(file);
+    imagePreview.innerHTML = "";
 
-imagePreview.innerHTML = `
-<img src="${url}" alt="preview">
-`;
+    const img = document.createElement("img");
+    img.src = URL.createObjectURL(file);
+
+    imagePreview.appendChild(img);
+
+    startUltraScan();
 
 });
+
+
+/* =========================
+ULTRA AI SCAN ENGINE
+========================= */
+
+function startUltraScan(){
+
+    if(!scanLine){
+        createScanUI();
+    }
+
+    // attach scan line to previews
+    videoPreview.style.position="relative";
+    imagePreview.style.position="relative";
+
+    if(videoPreview.children.length){
+        videoPreview.appendChild(scanLine);
+    }
+    if(imagePreview.children.length){
+        imagePreview.appendChild(scanLine);
+    }
+
+    document.querySelector(".container").appendChild(progressBar);
+
+    simulateAI();
+}
+
+
+/* =========================
+SIMULATE AI PROCESS
+========================= */
+
+function simulateAI(){
+
+    let progress = 0;
+
+    const steps = [
+        "Detecting motion...",
+        "Mapping skeleton...",
+        "Tracking pose...",
+        "Generating animation...",
+        "READY"
+    ];
+
+    let stepIndex = 0;
+
+    const interval = setInterval(()=>{
+
+        progress += 2;
+        progressBar.innerText = "AI PROCESSING — " + progress + "%";
+
+        if(progress % 20 === 0 && statusList){
+
+            if(stepIndex < steps.length){
+
+                const li = document.createElement("li");
+                li.innerText = "✔ " + steps[stepIndex];
+                statusList.appendChild(li);
+
+                stepIndex++;
+
+            }
+        }
+
+        if(progress >= 100){
+
+            clearInterval(interval);
+
+            progressBar.innerText = "AI PROCESSING — COMPLETE";
+
+            if(scanLine){
+                scanLine.style.animation = "none";
+                scanLine.style.opacity = "0";
+            }
+        }
+
+    },80);
+
+}
 
 });
