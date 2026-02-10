@@ -8,77 +8,46 @@
 
 <title>SN Design Studio | AI Creator Ecosystem</title>
 
-<meta name="description"
-content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
-
-<meta name="keywords"
-content="AI creator, AI video, AI content creation, AI template system, CapCut AI, AI marketing system, AI SEO, viral AI video, SN Design Studio AI creator ecosystem">
-
-<meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
-<meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
-<meta property="og:image" content="assets/images/hero.png">
-<meta property="og:type" content="website">
-
-<link rel="preload" as="image" href="assets/images/hero.png">
-
 <link rel="stylesheet" href="assets/css/master.css">
 
 </head>
 
 <body class="index-page">
 
-<!-- ======================
-GLOBAL NAV (LOCKED)
-====================== -->
+<!-- GLOBAL NAV -->
 <div id="nav"></div>
 
 
-<!-- ======================
-ULTRA MARQUEE (FINAL LOCK)
-====================== -->
+<!-- MARQUEE -->
 <section class="marquee-wrap">
-
 <div class="marquee-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
 </div>
-
 </section>
 
 
-<!-- ======================
-ULTRA HERO DOMINANCE (LOCKED)
-====================== -->
-
+<!-- HERO (LOCKED) -->
 <section class="hero-master">
 
-<img 
-src="assets/images/hero.png" 
-alt="SN Design Studio AI creator ecosystem cinematic power red branding"
-loading="eager"
->
+<img src="assets/images/hero.png">
 
-<div class="hero-content-bottom fade-up">
-
+<div class="hero-content-bottom">
 <h1>Build Viral AI Content Faster</h1>
-
-<p>
-Dark Creator Ecosystem for AI Video.
-</p>
-
+<p>Dark Creator Ecosystem for AI Video.</p>
 </div>
 
 </section>
 
 
-<!-- ======================
-ULTRA GUI DASHBOARD (ADD ONLY)
-====================== -->
 
+<!-- ✅ GUI DASHBOARD (ย้ายขึ้นติด HERO แล้ว) -->
 <section class="ultra-gui-preview">
 
 <div class="gui-container">
 
-<div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
+<div class="gui-mode">
+AI PREVIEW MODE — SN DESIGN STUDIO
+</div>
 
 <div class="gui-screen">
 
@@ -88,19 +57,14 @@ ULTRA GUI DASHBOARD (ADD ONLY)
 
 </div>
 
-
 <div class="gui-status">
 
 <div class="status-item active">✔ System Ready</div>
-
 <div class="status-item">AI Analyze</div>
-
 <div class="status-item">Motion Sync</div>
-
 <div class="status-item">Render Output</div>
 
 </div>
-
 
 <div class="performance-number">0%</div>
 
@@ -111,10 +75,8 @@ ULTRA GUI DASHBOARD (ADD ONLY)
 </section>
 
 
-<!-- ======================
-ULTRA INTRO ZONE (LOCKED)
-====================== -->
 
+<!-- INTRO ZONE (YouTube LOCKED) -->
 <section class="ultra-intro-zone">
 
 <div class="container">
@@ -131,12 +93,10 @@ SN Design Studio — AI Creator Power System
 
 </div>
 
-
 <div class="intro-video">
 
 <iframe 
 src="https://www.youtube.com/embed/NI7WALIXStU"
-title="YouTube Shorts"
 frameborder="0"
 allowfullscreen>
 </iframe>
@@ -149,109 +109,53 @@ allowfullscreen>
 
 
 
-<!-- ======================
-IDEA BUILD SCALE FLOW (LOCKED)
-====================== -->
-
+<!-- FLOW -->
 <section class="section cinematic-flow">
 
 <div class="container">
 
 <h2 class="section-title">From Idea to Profit</h2>
 
-<img 
-src="assets/images/create-hero.png"
-alt="AI creator workflow cinematic build system"
->
+<img src="assets/images/create-hero.png">
 
 </div>
 
 </section>
 
-
-
-<!-- ======================
-PACKAGES PREVIEW (LOCKED)
-====================== -->
-
-<section class="section">
-
-<div class="container">
-
-<h2 class="section-title">Creator Growth Packages</h2>
-
-<img 
-src="assets/images/packages-master.png"
-alt="SN Design Studio AI creator growth packages marketing seo system"
->
-
-</div>
-
-</section>
-
-
-
-<!-- ======================
-FINAL CTA (LOCKED)
-====================== -->
-
-<section class="section">
-
-<div class="container">
-
-<h2 class="section-title">
-Ready To Build Viral Content?
-</h2>
-
-</div>
-
-</section>
 
 
 <footer>
-
 © SN Design Studio, 2026 · All rights reserved.
-
 </footer>
 
 
 <script src="assets/js/nav.js"></script>
 
-
-<!-- ======================
-ULTRA PERFORMANCE COUNTER
-ADD ONLY
-====================== -->
-
 <script>
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
-  const target = 87;
-  let current = 0;
+let target = 87;
+let current = 0;
+const el = document.querySelector(".performance-number");
 
-  const el = document.querySelector(".performance-number");
+function run(){
 
-  function animate(){
+if(current < target){
 
-    if(current < target){
+current++;
+el.textContent = current + "%";
+requestAnimationFrame(run);
 
-      current++;
-      el.textContent = current + "%";
+}
 
-      requestAnimationFrame(animate);
+}
 
-    }
-
-  }
-
-  animate();
+run();
 
 });
 
 </script>
 
-
 </body>
-
 </html>
