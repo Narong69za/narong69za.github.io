@@ -1,6 +1,9 @@
-document.addEventListener("DOMContentLoaded", () => {
+// ===============================
+// ULTRA DANCE MOTION ENGINE
+// SN DESIGN STUDIO
+// ===============================
 
-console.log("ULTRA MOTION JS LOADED");
+document.addEventListener("DOMContentLoaded", function () {
 
 const videoInput = document.getElementById("videoInput");
 const imageInput = document.getElementById("imageInput");
@@ -8,16 +11,11 @@ const imageInput = document.getElementById("imageInput");
 const videoPreview = document.getElementById("videoPreview");
 const imagePreview = document.getElementById("imagePreview");
 
-console.log(videoInput,imageInput,videoPreview,imagePreview);
+// ===============================
+// VIDEO PREVIEW
+// ===============================
 
-
-/* VIDEO */
-
-if(videoInput){
-
-videoInput.addEventListener("change",(e)=>{
-
-console.log("VIDEO CHANGE");
+videoInput.addEventListener("change", function(e){
 
 const file = e.target.files[0];
 
@@ -26,23 +24,18 @@ if(!file) return;
 const url = URL.createObjectURL(file);
 
 videoPreview.innerHTML = `
-<video controls autoplay muted loop style="width:100%">
-<source src="${url}">
+<video controls autoplay muted loop>
+<source src="${url}" type="${file.type}">
 </video>
 `;
 
 });
 
-}
+// ===============================
+// IMAGE PREVIEW
+// ===============================
 
-
-/* IMAGE */
-
-if(imageInput){
-
-imageInput.addEventListener("change",(e)=>{
-
-console.log("IMAGE CHANGE");
+imageInput.addEventListener("change", function(e){
 
 const file = e.target.files[0];
 
@@ -51,11 +44,9 @@ if(!file) return;
 const url = URL.createObjectURL(file);
 
 imagePreview.innerHTML = `
-<img src="${url}" style="width:100%">
+<img src="${url}" alt="preview">
 `;
 
 });
-
-}
 
 });
