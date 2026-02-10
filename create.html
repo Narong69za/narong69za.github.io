@@ -20,9 +20,8 @@ GLOBAL NAV
 
 <div id="nav"></div>
 
-
 <!-- ======================
-HERO HEADER
+HERO
 ====================== -->
 
 <section class="hero-master">
@@ -30,7 +29,6 @@ HERO HEADER
 <img 
 src="assets/images/create-hero.png"
 alt="Build Viral AI Templates"
-loading="eager"
 >
 
 <div class="hero-content-bottom fade-up">
@@ -45,26 +43,81 @@ Upload dance reference and generate AI motion clone.
 
 </section>
 
+<!-- ======================
+ULTRA AI CONTROL STRIP (ADD ONLY)
+====================== -->
+
+<section class="ultra-ai-strip">
+
+<div class="ai-strip-wrap">
+
+<span class="ai-status active">SYSTEM ONLINE</span>
+<span class="ai-status">Motion Engine Ready</span>
+<span class="ai-status">GPU Acceleration</span>
+<span class="ai-status">Live Scan Mode</span>
+
+</div>
+
+</section>
 
 <!-- ======================
-ULTRA DANCE MOTION PANEL
-(NEW AI DASHBOARD)
+UPLOAD PANEL
 ====================== -->
 
 <section class="section">
 
 <div class="container">
 
-<div class="dance-motion-container"></div>
+<h2>Reference Dance Video</h2>
+<input type="file" id="videoInput">
+
+<h2>Character Image</h2>
+<input type="file" id="imageInput">
 
 </div>
 
 </section>
 
+<!-- ======================
+LIVE PREVIEW AREA
+====================== -->
+
+<section class="section">
+
+<div class="container">
+
+<div id="videoPreview"></div>
+
+<div id="imagePreview"></div>
+
+</div>
+
+</section>
 
 <!-- ======================
-DETAIL REVIEW BLOCK
-(PROFESSIONAL INFO ZONE)
+AI MOTION ENGINE STATUS
+====================== -->
+
+<section class="section">
+
+<div class="container">
+
+<h2>LIVE AI MOTION SCAN</h2>
+
+<ul>
+
+<li>✔ motion reference detected</li>
+<li>✔ pose mapping ready</li>
+<li>⏳ animation generation</li>
+
+</ul>
+
+</div>
+
+</section>
+
+<!-- ======================
+WORKFLOW INFO
 ====================== -->
 
 <section class="section">
@@ -73,11 +126,11 @@ DETAIL REVIEW BLOCK
 
 <div class="card">
 
-<h2>AI Motion Workflow</h2>
+<h3>AI Motion Workflow</h3>
 
 <p>
 
-Reference video → Pose detection → Skeleton mapping → Motion transfer → Render output
+reference video → pose detection → skeleton mapping → motion transfer → render output
 
 </p>
 
@@ -87,19 +140,13 @@ Reference video → Pose detection → Skeleton mapping → Motion transfer → 
 
 </section>
 
-
-
 <footer>
 
 © SN Design Studio, 2026 · All rights reserved.
 
 </footer>
 
-
-<!-- GLOBAL NAV JS -->
 <script src="assets/js/nav.js"></script>
-
-<!-- ULTRA DANCE MOTION ENGINE -->
 <script src="assets/js/ultra-dance-motion.js"></script>
 
 </body>
