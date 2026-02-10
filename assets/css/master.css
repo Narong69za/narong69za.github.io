@@ -1396,3 +1396,108 @@ filter:brightness(1.03);
 }
 
 }
+/* =================================
+ULTRA HOLOGRAPHIC SCAN MODE
+ADD ONLY — FINAL
+================================ */
+
+/* holographic container */
+
+.ultra-dashboard{
+position:relative;
+overflow:hidden;
+}
+
+/* hologram grid */
+
+.ultra-dashboard::before{
+
+content:"";
+
+position:absolute;
+inset:0;
+
+background:
+linear-gradient(rgba(0,255,255,0.05) 1px, transparent 1px),
+linear-gradient(90deg, rgba(0,255,255,0.05) 1px, transparent 1px);
+
+background-size:40px 40px;
+
+mix-blend-mode:screen;
+
+opacity:.25;
+pointer-events:none;
+
+}
+
+/* holographic beam */
+
+.ultra-dashboard::after{
+
+content:"";
+
+position:absolute;
+top:0;
+left:-40%;
+
+width:180%;
+height:100%;
+
+background:linear-gradient(
+120deg,
+transparent,
+rgba(0,255,255,.25),
+rgba(255,50,100,.18),
+transparent
+);
+
+filter:blur(12px);
+
+animation:holoSweep 12s linear infinite;
+
+pointer-events:none;
+
+}
+
+@keyframes holoSweep{
+0%{ transform:translateX(-20%); }
+100%{ transform:translateX(20%); }
+}
+
+/* scan beam upgrade */
+
+.scan-line{
+
+height:3px;
+background:linear-gradient(
+90deg,
+transparent,
+#00ffff,
+#ff3355,
+transparent
+);
+
+box-shadow:
+0 0 10px #00ffff,
+0 0 30px rgba(0,255,255,.5);
+
+animation: holographicScan 4s linear infinite;
+}
+
+@keyframes holographicScan{
+0%{ top:0; opacity:.8; }
+50%{ opacity:1; }
+100%{ top:100%; opacity:.8; }
+}
+
+/* AI alive pulse */
+
+.ultra-dashboard img{
+
+animation:aiPulse 6s ease-in-out infinite;
+}
+
+@keyframes aiPulse{
+0%,100%{ filter:brightness(1) contrast(1); }
+50%{ filter:brightness(1.08) contrast(1.05); }
+}
