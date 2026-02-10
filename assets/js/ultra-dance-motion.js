@@ -1,10 +1,6 @@
-/* =================================
-ULTRA DANCE MOTION ENGINE
-SN DESIGN STUDIO
-ADD ONLY SAFE
-================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
+
+console.log("ULTRA MOTION JS LOADED");
 
 const videoInput = document.getElementById("videoInput");
 const imageInput = document.getElementById("imageInput");
@@ -12,24 +8,26 @@ const imageInput = document.getElementById("imageInput");
 const videoPreview = document.getElementById("videoPreview");
 const imagePreview = document.getElementById("imagePreview");
 
+console.log(videoInput,imageInput,videoPreview,imagePreview);
 
-/* =========================
-VIDEO PREVIEW
-========================= */
+
+/* VIDEO */
 
 if(videoInput){
 
-videoInput.addEventListener("change", function(){
+videoInput.addEventListener("change",(e)=>{
 
-const file = this.files[0];
+console.log("VIDEO CHANGE");
+
+const file = e.target.files[0];
 
 if(!file) return;
 
 const url = URL.createObjectURL(file);
 
 videoPreview.innerHTML = `
-<video controls autoplay muted loop>
-<source src="${url}" type="${file.type}">
+<video controls autoplay muted loop style="width:100%">
+<source src="${url}">
 </video>
 `;
 
@@ -38,44 +36,26 @@ videoPreview.innerHTML = `
 }
 
 
-/* =========================
-IMAGE PREVIEW
-========================= */
+/* IMAGE */
 
 if(imageInput){
 
-imageInput.addEventListener("change", function(){
+imageInput.addEventListener("change",(e)=>{
 
-const file = this.files[0];
+console.log("IMAGE CHANGE");
+
+const file = e.target.files[0];
 
 if(!file) return;
 
 const url = URL.createObjectURL(file);
 
 imagePreview.innerHTML = `
-<img src="${url}" alt="Character Preview">
+<img src="${url}" style="width:100%">
 `;
 
 });
 
 }
-
-
-/* =========================
-ULTRA FAKE LIVE SCAN EFFECT
-========================= */
-
-setInterval(()=>{
-
-const status = document.querySelectorAll(".ai-status");
-
-status.forEach(el=>{
-
-el.classList.toggle("nav-active");
-
-});
-
-},2000);
-
 
 });
