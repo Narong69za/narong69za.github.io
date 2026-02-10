@@ -1,7 +1,7 @@
 /* ======================================
 ULTRA LIVE MOTION UI
+CINEMATIC AI SCAN LEVEL MAX
 SN DESIGN STUDIO
-FULL REPLACE VERSION
 ====================================== */
 
 document.addEventListener("DOMContentLoaded", function(){
@@ -12,48 +12,69 @@ const imageInput = document.getElementById("imageInput");
 const videoPreview = document.getElementById("videoPreview");
 const imagePreview = document.getElementById("imagePreview");
 
-let scanLine;
+let scanLayer;
+let radarLayer;
 let progressBar;
 let statusList;
 
 /* =========================
-CREATE SCAN UI
+CREATE CINEMATIC LAYERS
 ========================= */
 
-function createScanUI(){
+function buildCinematicLayer(target){
 
-    // scan line
-    scanLine = document.createElement("div");
-    scanLine.style.position = "absolute";
-    scanLine.style.left = "0";
-    scanLine.style.width = "100%";
-    scanLine.style.height = "2px";
-    scanLine.style.background = "linear-gradient(90deg,#00ffff,#ff0044)";
-    scanLine.style.boxShadow = "0 0 10px #00ffff";
-    scanLine.style.top = "0";
-    scanLine.style.animation = "scanMove 2.5s linear infinite";
+    target.style.position="relative";
+    target.style.overflow="hidden";
 
-    // progress bar
-    progressBar = document.createElement("div");
-    progressBar.style.marginTop = "20px";
-    progressBar.style.fontSize = "14px";
-    progressBar.style.opacity = "0.9";
-    progressBar.innerText = "AI PROCESSING — 0%";
+    scanLayer = document.createElement("div");
+    scanLayer.style.position="absolute";
+    scanLayer.style.width="100%";
+    scanLayer.style.height="3px";
+    scanLayer.style.background="linear-gradient(90deg,#00ffff,#ff0044)";
+    scanLayer.style.boxShadow="0 0 18px #00ffff";
+    scanLayer.style.top="0";
+    scanLayer.style.animation="scanBeam 2s linear infinite";
 
-    // status list
-    statusList = document.querySelector("ul");
+    radarLayer = document.createElement("div");
+    radarLayer.style.position="absolute";
+    radarLayer.style.width="200%";
+    radarLayer.style.height="200%";
+    radarLayer.style.top="-50%";
+    radarLayer.style.left="-50%";
+    radarLayer.style.pointerEvents="none";
+    radarLayer.style.background="radial-gradient(circle, rgba(0,255,255,0.12) 0%, transparent 60%)";
+    radarLayer.style.animation="radarPulse 3s ease-in-out infinite";
 
-    if(!document.getElementById("ultra-scan-style")){
-        const style = document.createElement("style");
-        style.id="ultra-scan-style";
-        style.innerHTML = `
-        @keyframes scanMove{
-            0%{top:0}
-            100%{top:100%}
-        }
-        `;
-        document.head.appendChild(style);
-    }
+    target.appendChild(scanLayer);
+    target.appendChild(radarLayer);
+
+}
+
+/* =========================
+ADD STYLE ONCE
+========================= */
+
+if(!document.getElementById("ultra-cinematic-style")){
+
+const style = document.createElement("style");
+style.id="ultra-cinematic-style";
+
+style.innerHTML = `
+
+@keyframes scanBeam{
+0%{top:0}
+100%{top:100%}
+}
+
+@keyframes radarPulse{
+0%{transform:scale(0.6);opacity:0.2}
+50%{transform:scale(1);opacity:0.6}
+100%{transform:scale(1.4);opacity:0}
+}
+
+`;
+
+document.head.appendChild(style);
 
 }
 
@@ -63,21 +84,21 @@ VIDEO PREVIEW
 
 videoInput.addEventListener("change", function(){
 
-    const file = this.files[0];
-    if(!file) return;
+const file = this.files[0];
+if(!file) return;
 
-    videoPreview.innerHTML = "";
+videoPreview.innerHTML="";
 
-    const video = document.createElement("video");
-    video.src = URL.createObjectURL(file);
-    video.controls = true;
+const video=document.createElement("video");
+video.src=URL.createObjectURL(file);
+video.controls=true;
 
-    videoPreview.appendChild(video);
+videoPreview.appendChild(video);
 
-    startUltraScan();
+buildCinematicLayer(videoPreview);
+startAI();
 
 });
-
 
 /* =========================
 IMAGE PREVIEW
@@ -85,97 +106,77 @@ IMAGE PREVIEW
 
 imageInput.addEventListener("change", function(){
 
-    const file = this.files[0];
-    if(!file) return;
+const file=this.files[0];
+if(!file) return;
 
-    imagePreview.innerHTML = "";
+imagePreview.innerHTML="";
 
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
+const img=document.createElement("img");
+img.src=URL.createObjectURL(file);
 
-    imagePreview.appendChild(img);
+imagePreview.appendChild(img);
 
-    startUltraScan();
+buildCinematicLayer(imagePreview);
+startAI();
 
 });
 
-
 /* =========================
-ULTRA AI SCAN ENGINE
+ULTRA AI PROCESS
 ========================= */
 
-function startUltraScan(){
+function startAI(){
 
-    if(!scanLine){
-        createScanUI();
-    }
+if(!progressBar){
 
-    // attach scan line to previews
-    videoPreview.style.position="relative";
-    imagePreview.style.position="relative";
+progressBar=document.createElement("div");
+progressBar.style.marginTop="20px";
+progressBar.style.fontSize="14px";
+progressBar.innerText="AI LIVE SCAN — 0%";
 
-    if(videoPreview.children.length){
-        videoPreview.appendChild(scanLine);
-    }
-    if(imagePreview.children.length){
-        imagePreview.appendChild(scanLine);
-    }
+document.querySelector(".container").appendChild(progressBar);
 
-    document.querySelector(".container").appendChild(progressBar);
-
-    simulateAI();
 }
 
+statusList=document.querySelector("ul");
 
-/* =========================
-SIMULATE AI PROCESS
-========================= */
+let progress=0;
 
-function simulateAI(){
+const steps=[
+"motion reference detected",
+"pose tracking active",
+"skeleton mapping",
+"neural motion transfer",
+"rendering output"
+];
 
-    let progress = 0;
+let index=0;
 
-    const steps = [
-        "Detecting motion...",
-        "Mapping skeleton...",
-        "Tracking pose...",
-        "Generating animation...",
-        "READY"
-    ];
+const loop=setInterval(()=>{
 
-    let stepIndex = 0;
+progress+=2;
+progressBar.innerText="AI LIVE SCAN — "+progress+"%";
 
-    const interval = setInterval(()=>{
+if(progress%20===0 && index<steps.length){
 
-        progress += 2;
-        progressBar.innerText = "AI PROCESSING — " + progress + "%";
+const li=document.createElement("li");
+li.innerText="✔ "+steps[index];
+statusList.appendChild(li);
+index++;
 
-        if(progress % 20 === 0 && statusList){
+}
 
-            if(stepIndex < steps.length){
+if(progress>=100){
 
-                const li = document.createElement("li");
-                li.innerText = "✔ " + steps[stepIndex];
-                statusList.appendChild(li);
+clearInterval(loop);
+progressBar.innerText="AI LIVE SCAN — COMPLETE";
 
-                stepIndex++;
+if(scanLayer) scanLayer.style.animation="none";
+if(radarLayer) radarLayer.style.animation="none";
 
-            }
-        }
+}
 
-        if(progress >= 100){
-
-            clearInterval(interval);
-
-            progressBar.innerText = "AI PROCESSING — COMPLETE";
-
-            if(scanLine){
-                scanLine.style.animation = "none";
-                scanLine.style.opacity = "0";
-            }
-        }
-
-    },80);
+},80);
 
 }
 
