@@ -926,3 +926,81 @@ inset 0 0 120px rgba(0,0,0,0.6),
 inset 0 0 40px rgba(0,150,255,0.15);
 
 }
+/* ===============================
+ULTRA GUI PREVIEW BLOCK
+ADD ONLY
+================================ */
+
+.ultra-gui-preview{
+padding:60px 20px;
+display:flex;
+justify-content:center;
+}
+
+.gui-container{
+max-width:700px;
+width:100%;
+text-align:center;
+}
+
+.gui-mode{
+font-size:14px;
+letter-spacing:2px;
+opacity:.8;
+margin-bottom:20px;
+}
+
+.gui-screen{
+position:relative;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 0 40px rgba(0,200,255,.15);
+}
+
+.gui-screen img{
+width:100%;
+display:block;
+}
+
+.scan-line{
+position:absolute;
+width:100%;
+height:2px;
+background:rgba(0,255,255,.6);
+animation:scan 3s linear infinite;
+}
+
+@keyframes scan{
+0%{top:0}
+100%{top:100%}
+}
+
+.gui-status{
+margin-top:20px;
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.status-item{
+padding:6px 12px;
+border:1px solid rgba(255,255,255,.2);
+border-radius:8px;
+font-size:12px;
+}
+
+.status-item.active{
+border-color:#00ffcc;
+box-shadow:0 0 12px rgba(0,255,200,.3);
+}
+
+.gui-btn{
+margin-top:25px;
+padding:14px 30px;
+border:none;
+border-radius:12px;
+background:#00cc66;
+color:#000;
+font-weight:bold;
+  }
