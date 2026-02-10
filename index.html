@@ -8,67 +8,75 @@
 
 <title>SN Design Studio | AI Creator Ecosystem</title>
 
+<meta name="description"
+content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
+
 <link rel="stylesheet" href="assets/css/master.css">
 
 </head>
 
 <body class="index-page">
 
-<!-- GLOBAL NAV -->
+<!-- ======================
+GLOBAL NAV (LOAD FROM JS)
+====================== -->
 <div id="nav"></div>
 
 
-<!-- MARQUEE -->
-<section class="marquee-wrap">
+<!-- ======================
+MARQUEE RUNNING TEXT (LOCKED)
+====================== -->
+<div class="marquee-wrap">
+
 <div class="marquee-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
 </div>
-</section>
 
+</div>
 
-<!-- HERO (LOCKED) -->
+<!-- ======================
+ULTRA HERO MASTER (LOCKED)
+====================== -->
+
 <section class="hero-master">
 
-<img src="assets/images/hero.png">
+<img 
+src="assets/images/hero.png"
+alt="SN Design Studio AI creator ecosystem"
+>
 
 <div class="hero-content-bottom">
+
 <h1>Build Viral AI Content Faster</h1>
+
 <p>Dark Creator Ecosystem for AI Video.</p>
+
 </div>
 
 </section>
 
+<!-- ======================
+ULTRA LIVE AI DASHBOARD SCAN
+ADD ONLY (NEW)
+====================== -->
 
+<section class="ultra-live-dashboard">
 
-<!-- ✅ GUI DASHBOARD (ย้ายขึ้นติด HERO แล้ว) -->
-<section class="ultra-gui-preview">
+<div class="dashboard-container">
 
-<div class="gui-container">
-
-<div class="gui-mode">
+<div class="dashboard-title">
 AI PREVIEW MODE — SN DESIGN STUDIO
 </div>
 
-<div class="gui-screen">
+<div class="dashboard-screen">
 
-<img src="assets/images/hero.png">
+<img 
+src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png"
+alt="Ultra AI Dashboard Preview">
 
-<div class="scan-line"></div>
-
-</div>
-
-<div class="gui-status">
-
-<div class="status-item active">✔ System Ready</div>
-<div class="status-item">AI Analyze</div>
-<div class="status-item">Motion Sync</div>
-<div class="status-item">Render Output</div>
+<div class="scan-line-live"></div>
 
 </div>
-
-<div class="performance-number">0%</div>
-
-<button class="gui-btn">Start Preview</button>
 
 </div>
 
@@ -76,7 +84,10 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 
 
-<!-- INTRO ZONE (YouTube LOCKED) -->
+<!-- ======================
+ULTRA INTRO ZONE (LOCKED)
+====================== -->
+
 <section class="ultra-intro-zone">
 
 <div class="container">
@@ -93,10 +104,12 @@ SN Design Studio — AI Creator Power System
 
 </div>
 
+
 <div class="intro-video">
 
 <iframe 
 src="https://www.youtube.com/embed/NI7WALIXStU"
+title="YouTube Shorts"
 frameborder="0"
 allowfullscreen>
 </iframe>
@@ -109,7 +122,10 @@ allowfullscreen>
 
 
 
-<!-- FLOW -->
+<!-- ======================
+IDEA FLOW (LOCKED)
+====================== -->
+
 <section class="section cinematic-flow">
 
 <div class="container">
@@ -124,38 +140,29 @@ allowfullscreen>
 
 
 
+<!-- ======================
+PACKAGES (LOCKED)
+====================== -->
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="section-title">Creator Growth Packages</h2>
+
+<img src="assets/images/packages-master.png">
+
+</div>
+
+</section>
+
 <footer>
+
 © SN Design Studio, 2026 · All rights reserved.
+
 </footer>
 
-
 <script src="assets/js/nav.js"></script>
-
-<script>
-
-document.addEventListener("DOMContentLoaded", ()=>{
-
-let target = 87;
-let current = 0;
-const el = document.querySelector(".performance-number");
-
-function run(){
-
-if(current < target){
-
-current++;
-el.textContent = current + "%";
-requestAnimationFrame(run);
-
-}
-
-}
-
-run();
-
-});
-
-</script>
 
 </body>
 </html>
