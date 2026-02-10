@@ -759,3 +759,29 @@ transform:translateX(0);
 transform:translateX(-100%);
 }
 }
+/* ===============================
+ULTRA PRE INTRO LAYER
+ADD ONLY
+================================ */
+
+.ultra-pre-intro{
+padding:80px 20px;
+text-align:center;
+background:linear-gradient(
+to bottom,
+rgba(0,0,0,0),
+rgba(0,0,0,0.4)
+);
+}
+
+.pre-intro-title{
+font-size:28px;
+margin-bottom:14px;
+}
+
+.pre-intro-text{
+opacity:.85;
+font-size:16px;
+max-width:720px;
+margin:auto;
+}
