@@ -785,3 +785,38 @@ font-size:16px;
 max-width:720px;
 margin:auto;
 }
+/* =================================
+ULTRA HERO CINEMATIC LAYER
+ADD ONLY SAFE
+================================ */
+
+.hero-cinematic-layer{
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+margin-top:18px;
+
+font-size:13px;
+letter-spacing:2px;
+text-transform:uppercase;
+
+opacity:.85;
+
+background:linear-gradient(
+90deg,
+rgba(0,180,255,0.15),
+rgba(255,40,80,0.15)
+);
+
+padding:10px 18px;
+border-radius:12px;
+
+backdrop-filter:blur(6px);
+
+box-shadow:
+0 0 12px rgba(0,200,255,.2),
+0 0 24px rgba(255,40,80,.15);
+
+}
