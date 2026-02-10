@@ -28,27 +28,25 @@ content="AI creator, AI video, AI content creation, AI template system, CapCut A
 <body class="index-page">
 
 <!-- ======================
-GLOBAL NAV
+GLOBAL NAV (LOCKED)
 ====================== -->
-
 <div id="nav"></div>
 
-<!-- ======================
-ULTRA MARQUEE WELCOME
-====================== -->
 
+<!-- ======================
+ULTRA MARQUEE (FINAL LOCK)
+====================== -->
 <section class="marquee-wrap">
 
 <div class="marquee-text">
-
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
-
 </div>
 
 </section>
 
+
 <!-- ======================
-ULTRA HERO DOMINANCE
+ULTRA HERO DOMINANCE (LOCKED)
 ====================== -->
 
 <section class="hero-master">
@@ -71,77 +69,50 @@ Dark Creator Ecosystem for AI Video.
 
 </section>
 
+
 <!-- ======================
-ULTRA DASHBOARD GUI (ADD ONLY)
+ULTRA GUI DASHBOARD (ADD ONLY)
 ====================== -->
 
-<section class="ultra-dashboard-gui">
+<section class="ultra-gui-preview">
 
-<div class="gui-wrap">
+<div class="gui-container">
 
-<div class="gui-header">
-TRENDING CAPCUT TEMPLATES
-</div>
+<div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
 
-<div class="gui-main">
+<div class="gui-screen">
 
-<div class="gui-sidebar">
-<ul>
-<li>Dashboard</li>
-<li>AI Studio</li>
-<li>Templates</li>
-<li>Analytics</li>
-<li>Creator Tools</li>
-<li>Face Copy</li>
-<li>Motion Sync</li>
-</ul>
-</div>
-
-<div class="gui-content">
-
-<div class="template-card">
 <img src="assets/images/hero.png">
-<span>Cool Dance Edit</span>
-</div>
 
-<div class="template-card">
-<img src="assets/images/create-hero.png">
-<span>Fashion Reels</span>
-</div>
-
-<div class="template-card">
-<img src="assets/images/packages-master.png">
-<span>Future Vibes</span>
-</div>
+<div class="scan-line"></div>
 
 </div>
 
-<div class="gui-analytics">
 
-<div class="circle">
-87%
-</div>
+<div class="gui-status">
 
-<p>Performance Analytics</p>
+<div class="status-item active">✔ System Ready</div>
 
-</div>
+<div class="status-item">AI Analyze</div>
 
-</div>
+<div class="status-item">Motion Sync</div>
 
-<div class="gui-actions">
-
-<button>UPLOAD</button>
-<button>EDIT TEMPLATE</button>
-<button>GENERATE AI</button>
+<div class="status-item">Render Output</div>
 
 </div>
+
+
+<div class="performance-number">0%</div>
+
+<button class="gui-btn">Start Preview</button>
 
 </div>
 
 </section>
 
+
 <!-- ======================
-ULTRA INTRO ZONE
+ULTRA INTRO ZONE (LOCKED)
 ====================== -->
 
 <section class="ultra-intro-zone">
@@ -160,6 +131,7 @@ SN Design Studio — AI Creator Power System
 
 </div>
 
+
 <div class="intro-video">
 
 <iframe 
@@ -175,8 +147,10 @@ allowfullscreen>
 
 </section>
 
+
+
 <!-- ======================
-IDEA BUILD SCALE FLOW
+IDEA BUILD SCALE FLOW (LOCKED)
 ====================== -->
 
 <section class="section cinematic-flow">
@@ -194,8 +168,10 @@ alt="AI creator workflow cinematic build system"
 
 </section>
 
+
+
 <!-- ======================
-PACKAGES PREVIEW
+PACKAGES PREVIEW (LOCKED)
 ====================== -->
 
 <section class="section">
@@ -213,8 +189,10 @@ alt="SN Design Studio AI creator growth packages marketing seo system"
 
 </section>
 
+
+
 <!-- ======================
-FINAL CTA
+FINAL CTA (LOCKED)
 ====================== -->
 
 <section class="section">
@@ -229,13 +207,50 @@ Ready To Build Viral Content?
 
 </section>
 
+
 <footer>
 
 © SN Design Studio, 2026 · All rights reserved.
 
 </footer>
 
+
 <script src="assets/js/nav.js"></script>
+
+
+<!-- ======================
+ULTRA PERFORMANCE COUNTER
+ADD ONLY
+====================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+  const target = 87;
+  let current = 0;
+
+  const el = document.querySelector(".performance-number");
+
+  function animate(){
+
+    if(current < target){
+
+      current++;
+      el.textContent = current + "%";
+
+      requestAnimationFrame(animate);
+
+    }
+
+  }
+
+  animate();
+
+});
+
+</script>
+
 
 </body>
 
