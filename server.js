@@ -1,15 +1,20 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+require("dotenv").config();
 
 const app = express();
-app.use(cors());
+
 app.use(express.json());
 
-app.use('/api', require('./routes/api.route'));
-app.use('/api/payment', require('./routes/payment.route'));
-app.use('/api/webhook', require('./routes/webhook.route'));
+app.use("/api", require("./routes/api.route"));
+app.use("/payment", require("./routes/payment.route"));
+app.use("/webhook", require("./routes/webhook.route"));
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log('SN DESIGN BACKEND RUNNING');
+app.get("/", (req,res)=>{
+   res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
+});
+
+const PORT = process.env.PORT || 8080;
+
+app.listen(PORT, () => {
+   console.log("Server running on port " + PORT);
 });
