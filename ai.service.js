@@ -1,24 +1,51 @@
+// =============================
+// SN DESIGN AI SERVICE
+// ULTRA LOCK VERSION
+// =============================
+
 const Replicate = require("replicate");
 
 const replicate = new Replicate({
   auth: process.env.REPLICATE_API_TOKEN,
 });
 
-// AI test connection
+
+// =============================
+// TEST CONNECTION
+// =============================
+
 async function generate() {
   return "AI CONNECT READY";
 }
 
-// run AI model
+
+// =============================
+// RUN AI MODEL
+// =============================
+
 async function runAI(model, input) {
 
-  const output = await replicate.run(
-    model,
-    { input }
-  );
+  try {
 
-  return output;
+    const output = await replicate.run(
+      model,
+      {
+        input: input
+      }
+    );
+
+    return output;
+
+  } catch (err) {
+
+    console.error("AI ERROR:", err);
+
+    throw new Error("AI PROCESS FAILED");
+
+  }
+
 }
+
 
 module.exports = {
   generate,
