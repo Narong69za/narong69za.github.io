@@ -1,8 +1,8 @@
 /*
 =====================================
 SN DESIGN STUDIO — ULTRA SERVER CORE
-FINAL LOCK BUILD
-ADD ONLY VERSION
+CRASH FIX VERSION
+ADD ONLY SAFE BUILD
 =====================================
 */
 
@@ -23,12 +23,26 @@ const PORT = process.env.PORT || 8080;
 
 
 // =============================
-// AI PROVIDER (REPLICATE)
+// AI PROVIDER
 // =============================
 
-const replicate = new Replicate({
-  auth: process.env.REPLICATE_API_TOKEN,
-});
+let replicate = null;
+
+try {
+
+  if(process.env.REPLICATE_API_TOKEN){
+
+    replicate = new Replicate({
+      auth: process.env.REPLICATE_API_TOKEN,
+    });
+
+  }
+
+}catch(e){
+
+  console.log("AI INIT ERROR");
+
+}
 
 
 // =============================
@@ -40,44 +54,28 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // =============================
-// STATIC WEBSITE
+// STATIC
 // =============================
 
 app.use(express.static(path.join(__dirname)));
 
 
 // =============================
-// ULTRA LIVE STATUS API
-// REAL SERVER + REAL AI CHECK
+// STATUS API (SAFE)
 // =============================
 
-app.get("/api/status", async (req,res)=>{
-
-let aiStatus=false;
-
-try{
-
-  // test replicate connection
-  await replicate.models.list();
-
-  aiStatus=true;
-
-}catch(e){
-
-  aiStatus=false;
-
-}
+app.get("/api/status",(req,res)=>{
 
 res.json({
   server:true,
-  ai:aiStatus
+  ai: !!replicate
 });
 
 });
 
 
 // =============================
-// ROUTES (LOCKED)
+// ROUTES
 // =============================
 
 app.use("/api", require("./api.route"));
@@ -86,9 +84,11 @@ app.use("/webhook", require("./webhook.route"));
 
 
 // =============================
-// START SERVER
+// START
 // =============================
 
 app.listen(PORT, () => {
-  console.log("🔥 SN DESIGN SERVER ONLINE — PORT:", PORT);
+
+console.log("🔥 SERVER ONLINE:", PORT);
+
 });
