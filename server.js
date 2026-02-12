@@ -1,16 +1,14 @@
-// =============================
-// SN DESIGN SERVER CORE
-// FINAL SAFE VERSION
-// =============================
-
 require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
 
+const { generate } = require("./ai.service"); // ใช้ test AI
+
 const app = express();
 
 const PORT = process.env.PORT || 8080;
+
 
 // =============================
 // MIDDLEWARE
@@ -19,26 +17,40 @@ const PORT = process.env.PORT || 8080;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// static html
 app.use(express.static(path.join(__dirname)));
 
 
 // =============================
-// API STATUS (SERVER + AI CHECK)
+// LIVE STATUS CHECK (REAL)
 // =============================
 
-app.get("/api/status",(req,res)=>{
+app.get("/api/status", async (req,res)=>{
+
+let aiStatus = false;
+
+try{
+
+// test call
+await generate();
+
+aiStatus = true;
+
+}catch(e){
+
+aiStatus = false;
+
+}
 
 res.json({
 server:true,
-ai:true
+ai:aiStatus
 });
 
 });
 
 
 // =============================
-// ROUTES SAFE LOAD
+// ROUTES
 // =============================
 
 try {
@@ -49,18 +61,8 @@ try {
 }
 
 try {
-
-  if(process.env.OMISE_PUBLIC && process.env.OMISE_SECRET){
-
-    console.log("LOAD PAYMENT ROUTE");
-    app.use("/payment", require("./payment.route"));
-
-  }else{
-
-    console.log("PAYMENT DISABLED (NO OMISE KEY)");
-
-  }
-
+  console.log("LOAD PAYMENT ROUTE");
+  app.use("/payment", require("./payment.route"));
 } catch(e){
   console.error("PAYMENT ROUTE ERROR", e);
 }
@@ -78,7 +80,5 @@ try {
 // =============================
 
 app.listen(PORT, () => {
-
   console.log("SERVER RUNNING:", PORT);
-
 });
