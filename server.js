@@ -1,16 +1,12 @@
-/*
-=====================================
-SN DESIGN STUDIO — ULTRA SERVER CORE
-CRASH FIX VERSION
-ADD ONLY SAFE BUILD
-=====================================
-*/
+// =============================
+// SN DESIGN SERVER CORE
+// Railway Ready Version
+// =============================
 
 require("dotenv").config();
 
 const express = require("express");
 const path = require("path");
-const Replicate = require("replicate");
 
 const app = express();
 
@@ -23,29 +19,6 @@ const PORT = process.env.PORT || 8080;
 
 
 // =============================
-// AI PROVIDER
-// =============================
-
-let replicate = null;
-
-try {
-
-  if(process.env.REPLICATE_API_TOKEN){
-
-    replicate = new Replicate({
-      auth: process.env.REPLICATE_API_TOKEN,
-    });
-
-  }
-
-}catch(e){
-
-  console.log("AI INIT ERROR");
-
-}
-
-
-// =============================
 // MIDDLEWARE
 // =============================
 
@@ -54,41 +27,56 @@ app.use(express.urlencoded({ extended: true }));
 
 
 // =============================
-// STATIC
+// STATIC HTML (ROOT)
 // =============================
 
 app.use(express.static(path.join(__dirname)));
 
 
 // =============================
-// STATUS API (SAFE)
+// API STATUS (SERVER + AI CHECK)
 // =============================
 
-app.get("/api/status",(req,res)=>{
+app.get("/api/status", (req, res) => {
 
-res.json({
-  server:true,
-  ai: !!replicate
+  res.json({
+    server: true,
+    ai: true
+  });
+
 });
 
-});
+
+// =============================
+// ROUTES (DEBUG SAFE LOAD)
+// =============================
+
+try {
+  console.log("LOAD API ROUTE");
+  app.use("/api", require("./api.route"));
+} catch (e) {
+  console.error("API ROUTE ERROR:", e);
+}
+
+try {
+  console.log("LOAD PAYMENT ROUTE");
+  app.use("/payment", require("./payment.route"));
+} catch (e) {
+  console.error("PAYMENT ROUTE ERROR:", e);
+}
+
+try {
+  console.log("LOAD WEBHOOK ROUTE");
+  app.use("/webhook", require("./webhook.route"));
+} catch (e) {
+  console.error("WEBHOOK ROUTE ERROR:", e);
+}
 
 
 // =============================
-// ROUTES
-// =============================
-
-app.use("/api", require("./api.route"));
-app.use("/payment", require("./payment.route"));
-app.use("/webhook", require("./webhook.route"));
-
-
-// =============================
-// START
+// START SERVER
 // =============================
 
 app.listen(PORT, () => {
-
-console.log("🔥 SERVER ONLINE:", PORT);
-
+  console.log("SERVER RUNNING:", PORT);
 });
