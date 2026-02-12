@@ -79,7 +79,7 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 
 <!-- ======================
-ULTRA LIVE STATUS (ADD ONLY)
+ULTRA LIVE STATUS
 ====================== -->
 
 <div class="ultra-live-status">
@@ -172,16 +172,18 @@ Ready To Build Viral Content?
 <script src="assets/js/nav.js"></script>
 
 <!-- ======================
-LIVE STATUS SCRIPT (ADD ONLY)
+LIVE STATUS SCRIPT
 ====================== -->
 
 <script>
+
+const API_URL = "https://narong69zagithubio-ai-sn-design.up.railway.app";
 
 async function checkStatus(){
 
 try{
 
-const res = await fetch("/api/status");
+const res = await fetch(API_URL + "/api/status");
 const data = await res.json();
 
 document.getElementById("server-status").innerText =
@@ -204,4 +206,4 @@ checkStatus();
 </script>
 
 </body>
-  </html>
+</html>
