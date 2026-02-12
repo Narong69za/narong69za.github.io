@@ -1565,3 +1565,18 @@ animation:pulseGlow 2s infinite;
 100%{opacity:.7;}
 
   }
+.ultra-live-status{
+display:flex;
+justify-content:space-between;
+margin-top:20px;
+max-width:420px;
+margin-left:auto;
+margin-right:auto;
+font-size:14px;
+letter-spacing:1px;
+}
+
+.status-left,
+.status-right{
+opacity:0.9;
+}
