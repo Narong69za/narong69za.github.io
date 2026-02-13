@@ -15,6 +15,23 @@ app.use(express.static(path.join(__dirname)));
 
 
 // =========================
+// INTERNAL STATE ENGINE (ADD ONLY)
+// =========================
+
+let AI_ONLINE = false;
+let NETWORK_TRAFFIC = 0;
+
+
+// simulate heartbeat (replace later with real AI check)
+setInterval(()=>{
+
+AI_ONLINE = true;
+NETWORK_TRAFFIC = Math.floor(Math.random()*100);
+
+},3000);
+
+
+// =========================
 // STATUS ENGINE
 // =========================
 
@@ -22,7 +39,7 @@ app.get("/api/status",(req,res)=>{
 
 res.json({
 server:true,
-ai:true,
+ai:AI_ONLINE,
 payment:false
 });
 
@@ -30,16 +47,25 @@ payment:false
 
 
 // =========================
-// NETWORK TRAFFIC MOCK
+// NETWORK TRAFFIC LIVE
 // =========================
 
 app.get("/api/network",(req,res)=>{
 
 res.json({
-traffic: Math.floor(Math.random()*100),
-status:"ACTIVE"
+traffic: NETWORK_TRAFFIC,
+status: AI_ONLINE ? "ACTIVE" : "IDLE"
 });
 
+});
+
+
+// =========================
+// HEALTHCHECK (ADD ONLY)
+// =========================
+
+app.get("/health",(req,res)=>{
+res.send("OK");
 });
 
 
