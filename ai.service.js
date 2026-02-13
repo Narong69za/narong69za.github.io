@@ -11,11 +11,35 @@ const replicate = new Replicate({
 
 
 // =============================
+// AI HEARTBEAT STATUS (ADD ONLY)
+// =============================
+
+let AI_STATUS = false;
+
+
+// =============================
 // TEST CONNECTION
 // =============================
 
 async function generate() {
-  return "AI CONNECT READY";
+
+  try{
+
+    if(!process.env.REPLICATE_API_TOKEN){
+      AI_STATUS = false;
+      return "AI TOKEN MISSING";
+    }
+
+    AI_STATUS = true;
+    return "AI CONNECT READY";
+
+  }catch(e){
+
+    AI_STATUS = false;
+    return "AI ERROR";
+
+  }
+
 }
 
 
@@ -34,9 +58,13 @@ async function runAI(model, input) {
       }
     );
 
+    AI_STATUS = true;
+
     return output;
 
   } catch (err) {
+
+    AI_STATUS = false;
 
     console.error("AI ERROR:", err);
 
@@ -47,7 +75,17 @@ async function runAI(model, input) {
 }
 
 
+// =============================
+// STATUS EXPORT (ADD ONLY)
+// =============================
+
+function getAIStatus(){
+  return AI_STATUS;
+}
+
+
 module.exports = {
   generate,
-  runAI
+  runAI,
+  getAIStatus
 };
