@@ -3,6 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 
+const { generate, getAIStatus } = require("./ai.service");
+
 const app = express();
 
 const PORT = process.env.PORT || 8080;
@@ -15,37 +17,39 @@ app.use(express.static(path.join(__dirname)));
 
 
 // =========================
-// ULTRA STATUS ENGINE LOCK
-// ADD ONLY - DO NOT DELETE
+// AI HEARTBEAT INIT (ADD ONLY)
 // =========================
 
-const aiService = require("./ai.service");
+async function initAI(){
 
+  try{
 
-// =========================
-// STATUS ENGINE (REAL CHECK)
-// =========================
+    console.log("AI INIT CHECK");
 
-app.get("/api/status", async (req,res)=>{
+    const result = await generate();
 
-let aiStatus = false;
+    console.log("AI STATUS:", result);
 
-try{
+  }catch(e){
 
-// test AI connection (replicate)
-await aiService.generate();
-aiStatus = true;
+    console.error("AI INIT ERROR");
 
-}catch(e){
-
-console.error("AI STATUS ERROR:", e);
-aiStatus = false;
+  }
 
 }
 
+initAI();
+
+
+// =========================
+// STATUS ENGINE (UPDATED)
+// =========================
+
+app.get("/api/status",(req,res)=>{
+
 res.json({
 server:true,
-ai: aiStatus,
+ai:getAIStatus(),
 payment:false
 });
 
