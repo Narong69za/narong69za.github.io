@@ -1,105 +1,91 @@
-require("dotenv").config();
+// =============================
+// SN DESIGN AI SERVICE
+// ULTRA LOCK VERSION
+// =============================
 
-const express = require("express");
-const path = require("path");
+const Replicate = require("replicate");
 
-const { generate, getAIStatus } = require("./ai.service");
-
-const app = express();
-
-const PORT = process.env.PORT || 8080;
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
-// static
-app.use(express.static(path.join(__dirname)));
+const replicate = new Replicate({
+  auth: process.env.REPLICATE_API_TOKEN,
+});
 
 
-// =========================
-// AI HEARTBEAT INIT (ADD ONLY)
-// =========================
+// =============================
+// AI HEARTBEAT STATUS (ADD ONLY)
+// =============================
 
-async function initAI(){
+let AI_STATUS = false;
+
+
+// =============================
+// TEST CONNECTION
+// =============================
+
+async function generate() {
 
   try{
 
-    console.log("AI INIT CHECK");
+    if(!process.env.REPLICATE_API_TOKEN){
+      AI_STATUS = false;
+      return "AI TOKEN MISSING";
+    }
 
-    const result = await generate();
-
-    console.log("AI STATUS:", result);
+    AI_STATUS = true;
+    return "AI CONNECT READY";
 
   }catch(e){
 
-    console.error("AI INIT ERROR");
+    AI_STATUS = false;
+    return "AI ERROR";
 
   }
 
 }
 
-initAI();
 
+// =============================
+// RUN AI MODEL
+// =============================
 
-// =========================
-// STATUS ENGINE (UPDATED)
-// =========================
+async function runAI(model, input) {
 
-app.get("/api/status",(req,res)=>{
+  try {
 
-res.json({
-server:true,
-ai:getAIStatus(),
-payment:false
-});
+    const output = await replicate.run(
+      model,
+      {
+        input: input
+      }
+    );
 
-});
+    AI_STATUS = true;
 
+    return output;
 
-// =========================
-// NETWORK TRAFFIC MOCK
-// =========================
+  } catch (err) {
 
-app.get("/api/network",(req,res)=>{
+    AI_STATUS = false;
 
-res.json({
-traffic: Math.floor(Math.random()*100),
-status:"ACTIVE"
-});
+    console.error("AI ERROR:", err);
 
-});
+    throw new Error("AI PROCESS FAILED");
 
+  }
 
-// =========================
-// ROUTES SAFE LOAD
-// =========================
-
-try{
-console.log("LOAD API ROUTE");
-app.use("/api", require("./api.route"));
-}catch(e){
-console.error("API ROUTE ERROR", e);
-}
-
-try{
-console.log("LOAD PAYMENT ROUTE");
-app.use("/payment", require("./payment.route"));
-}catch(e){
-console.error("PAYMENT ROUTE ERROR", e);
-}
-
-try{
-console.log("LOAD WEBHOOK ROUTE");
-app.use("/webhook", require("./webhook.route"));
-}catch(e){
-console.error("WEBHOOK ROUTE ERROR", e);
 }
 
 
-// =========================
-// START SERVER
-// =========================
+// =============================
+// STATUS EXPORT (ADD ONLY)
+// =============================
 
-app.listen(PORT, () => {
-console.log("SERVER RUNNING:", PORT);
-});
+function getAIStatus(){
+  return AI_STATUS;
+}
+
+
+module.exports = {
+  generate,
+  runAI,
+  getAIStatus
+};
