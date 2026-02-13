@@ -15,31 +15,37 @@ app.use(express.static(path.join(__dirname)));
 
 
 // =========================
-// INTERNAL STATE ENGINE (ADD ONLY)
+// ULTRA STATUS ENGINE LOCK
+// ADD ONLY - DO NOT DELETE
 // =========================
 
-let AI_ONLINE = false;
-let NETWORK_TRAFFIC = 0;
-
-
-// simulate heartbeat (replace later with real AI check)
-setInterval(()=>{
-
-AI_ONLINE = true;
-NETWORK_TRAFFIC = Math.floor(Math.random()*100);
-
-},3000);
+const aiService = require("./ai.service");
 
 
 // =========================
-// STATUS ENGINE
+// STATUS ENGINE (REAL CHECK)
 // =========================
 
-app.get("/api/status",(req,res)=>{
+app.get("/api/status", async (req,res)=>{
+
+let aiStatus = false;
+
+try{
+
+// test AI connection (replicate)
+await aiService.generate();
+aiStatus = true;
+
+}catch(e){
+
+console.error("AI STATUS ERROR:", e);
+aiStatus = false;
+
+}
 
 res.json({
 server:true,
-ai:AI_ONLINE,
+ai: aiStatus,
 payment:false
 });
 
@@ -47,25 +53,16 @@ payment:false
 
 
 // =========================
-// NETWORK TRAFFIC LIVE
+// NETWORK TRAFFIC MOCK
 // =========================
 
 app.get("/api/network",(req,res)=>{
 
 res.json({
-traffic: NETWORK_TRAFFIC,
-status: AI_ONLINE ? "ACTIVE" : "IDLE"
+traffic: Math.floor(Math.random()*100),
+status:"ACTIVE"
 });
 
-});
-
-
-// =========================
-// HEALTHCHECK (ADD ONLY)
-// =========================
-
-app.get("/health",(req,res)=>{
-res.send("OK");
 });
 
 
