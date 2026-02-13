@@ -77,18 +77,38 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 <button class="gui-btn">Start Preview</button>
 
+
 <!-- ======================
-ULTRA LIVE STATUS (LOCKED)
+ULTRA STATUS CTA BAR (ADD ONLY)
 ====================== -->
 
-<div class="ultra-live-status">
+<div class="ultra-cta-status">
 
-<div class="status-left">
-SERVER : <span id="server-status">Checking...</span>
+<div class="cta-box server-online">
+SERVER<br><span id="server-status">Checking...</span>
 </div>
 
-<div class="status-right">
-AI CONNECT : <span id="ai-status">Checking...</span>
+<div class="cta-box payment-off">
+PAYMENT<br><span>OFFLINE</span>
+</div>
+
+<div class="cta-box ai-connected">
+AI CONNECT<br><span id="ai-status">Checking...</span>
+</div>
+
+</div>
+
+
+<!-- ======================
+NETWORK TRAFFIC PANEL (ADD ONLY)
+====================== -->
+
+<div class="ultra-network-panel">
+
+<div class="network-title">NETWORK TRAFFIC</div>
+
+<div class="network-screen">
+LIVE DATA STREAM ACTIVE
 </div>
 
 </div>
@@ -171,8 +191,7 @@ Ready To Build Viral Content?
 <script src="assets/js/nav.js"></script>
 
 <!-- ======================
-LIVE STATUS ENGINE (PRODUCTION SAFE)
-ADD ONLY
+LIVE STATUS SCRIPT
 ====================== -->
 
 <script>
@@ -181,32 +200,27 @@ const API_URL = "https://narong69zagithubio-ai-sn-design.up.railway.app";
 
 async function checkStatus(){
 
-const serverEl = document.getElementById("server-status");
-const aiEl = document.getElementById("ai-status");
-
-if(!serverEl || !aiEl) return;
-
 try{
 
-const res = await fetch(API_URL + "/api/status",{cache:"no-store"});
+const res = await fetch(API_URL + "/api/status");
 const data = await res.json();
 
-serverEl.innerText = data.server ? "ONLINE" : "OFFLINE";
-aiEl.innerText = data.ai ? "CONNECTED" : "NOT READY";
+document.getElementById("server-status").innerText =
+data.server ? "ONLINE" : "OFFLINE";
+
+document.getElementById("ai-status").innerText =
+data.ai ? "CONNECTED" : "NOT READY";
 
 }catch(e){
 
-serverEl.innerText="ERROR";
-aiEl.innerText="ERROR";
+document.getElementById("server-status").innerText="ERROR";
+document.getElementById("ai-status").innerText="ERROR";
 
 }
 
 }
 
 checkStatus();
-
-/* ===== HEARTBEAT (AUTO REFRESH STATUS) ===== */
-setInterval(checkStatus,5000);
 
 </script>
 
