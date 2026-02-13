@@ -1452,3 +1452,70 @@ transparent
 );
 
 }
+
+/* ===============================
+ULTRA STATUS CTA BAR
+ADD ONLY
+=============================== */
+
+.ultra-cta-status{
+display:flex;
+gap:10px;
+justify-content:space-between;
+margin-top:20px;
+}
+
+.cta-box{
+flex:1;
+padding:14px;
+border-radius:10px;
+text-align:center;
+font-size:13px;
+border:1px solid rgba(255,255,255,.15);
+}
+
+.server-online{
+color:#00ffaa;
+box-shadow:0 0 12px rgba(0,255,180,.3);
+}
+
+.ai-connected{
+color:#00ccff;
+box-shadow:0 0 12px rgba(0,200,255,.3);
+}
+
+.payment-off{
+color:#aaa;
+opacity:.6;
+}
+
+
+/* ===============================
+ULTRA NETWORK TRAFFIC PANEL
+ADD ONLY
+=============================== */
+
+.ultra-network-panel{
+margin-top:30px;
+border-radius:14px;
+padding:20px;
+background:#050505;
+border:1px solid rgba(255,255,255,.1);
+box-shadow:0 0 40px rgba(0,200,255,.1);
+}
+
+.network-title{
+letter-spacing:2px;
+font-size:14px;
+margin-bottom:15px;
+opacity:.8;
+}
+
+.network-screen{
+height:120px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:#000;
+border-radius:10px;
+}
