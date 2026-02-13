@@ -79,7 +79,7 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 
 <!-- ======================
-ULTRA LIVE STATUS (LOCKED - DO NOT REMOVE)
+ULTRA LIVE STATUS
 ====================== -->
 
 <div class="ultra-live-status">
@@ -172,18 +172,18 @@ Ready To Build Viral Content?
 <script src="assets/js/nav.js"></script>
 
 <!-- ======================
-LIVE STATUS SCRIPT FINAL (LOCKED)
+LIVE STATUS SCRIPT
 ====================== -->
 
 <script>
 
-const API_URL = "https://narong69zagithubio-ai-sn-design.up.railway.app/";
+const API_URL = "https://narong69zagithubio-ai-sn-design.up.railway.app";
 
 async function checkStatus(){
 
 try{
 
-const res = await fetch(API_URL + "api/status",{cache:"no-store"});
+const res = await fetch(API_URL + "/api/status");
 const data = await res.json();
 
 document.getElementById("server-status").innerText =
@@ -193,8 +193,6 @@ document.getElementById("ai-status").innerText =
 data.ai ? "CONNECTED" : "NOT READY";
 
 }catch(e){
-
-console.error(e);
 
 document.getElementById("server-status").innerText="ERROR";
 document.getElementById("ai-status").innerText="ERROR";
