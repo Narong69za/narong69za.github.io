@@ -77,9 +77,8 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 <button class="gui-btn">Start Preview</button>
 
-
 <!-- ======================
-ULTRA LIVE STATUS
+ULTRA LIVE STATUS (LOCKED)
 ====================== -->
 
 <div class="ultra-live-status">
@@ -172,7 +171,8 @@ Ready To Build Viral Content?
 <script src="assets/js/nav.js"></script>
 
 <!-- ======================
-LIVE STATUS SCRIPT
+LIVE STATUS ENGINE (PRODUCTION SAFE)
+ADD ONLY
 ====================== -->
 
 <script>
@@ -181,27 +181,32 @@ const API_URL = "https://narong69zagithubio-ai-sn-design.up.railway.app";
 
 async function checkStatus(){
 
+const serverEl = document.getElementById("server-status");
+const aiEl = document.getElementById("ai-status");
+
+if(!serverEl || !aiEl) return;
+
 try{
 
-const res = await fetch(API_URL + "/api/status");
+const res = await fetch(API_URL + "/api/status",{cache:"no-store"});
 const data = await res.json();
 
-document.getElementById("server-status").innerText =
-data.server ? "ONLINE" : "OFFLINE";
-
-document.getElementById("ai-status").innerText =
-data.ai ? "CONNECTED" : "NOT READY";
+serverEl.innerText = data.server ? "ONLINE" : "OFFLINE";
+aiEl.innerText = data.ai ? "CONNECTED" : "NOT READY";
 
 }catch(e){
 
-document.getElementById("server-status").innerText="ERROR";
-document.getElementById("ai-status").innerText="ERROR";
+serverEl.innerText="ERROR";
+aiEl.innerText="ERROR";
 
 }
 
 }
 
 checkStatus();
+
+/* ===== HEARTBEAT (AUTO REFRESH STATUS) ===== */
+setInterval(checkStatus,5000);
 
 </script>
 
