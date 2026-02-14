@@ -2335,3 +2335,107 @@ inset 0 0 120px rgba(0,0,0,.7),
 inset 0 0 60px rgba(0,200,255,.1);
 
 }
+/* =====================================
+ULTRA LEGEND MODE FINAL
+ADD ONLY
+===================================== */
+
+
+/* LEGEND CTA STATUS */
+
+.ultra-cta-status{
+
+display:flex;
+gap:14px;
+justify-content:center;
+margin-top:30px;
+
+}
+
+.cta-box{
+
+padding:14px 22px;
+border-radius:12px;
+
+backdrop-filter:blur(10px);
+
+border:1px solid rgba(255,255,255,.15);
+
+box-shadow:
+0 0 20px rgba(0,255,255,.12);
+
+font-size:13px;
+letter-spacing:1px;
+
+}
+
+.server-online{
+
+background:rgba(0,255,120,.08);
+box-shadow:0 0 18px rgba(0,255,120,.35);
+
+}
+
+.payment-off{
+
+background:rgba(255,140,0,.08);
+box-shadow:0 0 18px rgba(255,140,0,.35);
+
+}
+
+.ai-connected{
+
+background:rgba(0,200,255,.08);
+box-shadow:0 0 18px rgba(0,200,255,.35);
+
+}
+
+
+/* LEGEND NETWORK GRAPH */
+
+.network-screen{
+
+position:relative;
+height:120px;
+border-radius:12px;
+overflow:hidden;
+
+background:
+
+linear-gradient(180deg,
+rgba(0,0,0,.9),
+rgba(0,20,40,.9)
+);
+
+}
+
+.network-screen::after{
+
+content:"";
+
+position:absolute;
+bottom:0;
+
+width:200%;
+height:100%;
+
+background:
+
+repeating-linear-gradient(
+90deg,
+rgba(0,255,255,.8) 0px,
+rgba(0,255,255,.8) 2px,
+transparent 2px,
+transparent 16px
+);
+
+animation:legendGraph 1.8s linear infinite;
+
+}
+
+@keyframes legendGraph{
+
+0%{ transform:translateX(0); }
+100%{ transform:translateX(-50%); }
+
+}
