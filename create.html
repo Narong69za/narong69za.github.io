@@ -18,11 +18,11 @@
 
 <section class="hero-master">
 
-<img src="assets/images/create-hero.png">
+<img id="heroImage" src="assets/images/create-hero.png">
 
 <div class="hero-content-bottom fade-up">
 
-<h1>AI CREATE SYSTEM</h1>
+<h1 id="templateTitle">AI CREATE SYSTEM</h1>
 
 <p>Ultra Modular AI Operating System</p>
 
@@ -47,10 +47,10 @@
 <div class="container">
 
 <h2>Reference Video</h2>
-<input type="file" id="videoInput">
+<input type="file" id="videoInput" accept="video/*">
 
 <h2>Character Image</h2>
-<input type="file" id="imageInput">
+<input type="file" id="imageInput" accept="image/*">
 
 </div>
 
@@ -76,6 +76,66 @@
 <script src="assets/js/nav.js"></script>
 <script src="assets/js/template-sync.js"></script>
 <script src="assets/js/ultra-module-core.js"></script>
+
+<!-- 🔥 ULTRA MODULE ENGINE ADD ONLY -->
+<script>
+
+//// ==============================
+//// TEMPLATE PARAM SYNC ENGINE
+//// ==============================
+
+const urlParams = new URLSearchParams(window.location.search);
+const template = urlParams.get("template");
+
+if(template){
+
+    document.getElementById("templateTitle").innerText =
+        template.replace("-", " ").toUpperCase();
+
+    //// optional dynamic hero change
+    const hero = document.getElementById("heroImage");
+    hero.src = `assets/images/templates/${template}.png`;
+}
+
+//// ==============================
+//// VIDEO PREVIEW ENGINE
+//// ==============================
+
+const videoInput = document.getElementById("videoInput");
+const videoPreview = document.getElementById("videoPreview");
+
+videoInput.addEventListener("change", function(){
+
+    const file = this.files[0];
+    if(!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    videoPreview.innerHTML =
+    `<video controls width="100%">
+        <source src="${url}">
+    </video>`;
+});
+
+//// ==============================
+//// IMAGE PREVIEW ENGINE
+//// ==============================
+
+const imageInput = document.getElementById("imageInput");
+const imagePreview = document.getElementById("imagePreview");
+
+imageInput.addEventListener("change", function(){
+
+    const file = this.files[0];
+    if(!file) return;
+
+    const url = URL.createObjectURL(file);
+
+    imagePreview.innerHTML =
+    `<img src="${url}" style="width:100%;border-radius:12px;">`;
+});
+
+</script>
 
 </body>
 
