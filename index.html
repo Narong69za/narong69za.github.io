@@ -11,7 +11,13 @@
 <meta name="description"
 content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
 
+<meta name="keywords"
+content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
+
+<meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
+<meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
 <meta property="og:image" content="assets/images/hero.png">
+<meta property="og:type" content="website">
 
 <link rel="stylesheet" href="assets/css/master.css">
 
@@ -21,20 +27,23 @@ content="Create viral AI content, CapCut templates and creator growth systems wi
 
 <div id="nav"></div>
 
+<!-- HERO (FINAL ORIGINAL - NO EDIT) -->
+
 <section class="hero-master">
 
-<img src="assets/images/hero.png">
+<img 
+src="assets/images/hero.png" 
+alt="SN Design Studio AI creator ecosystem cinematic power red branding"
+>
 
-<div class="hero-content-bottom fade-up">
+<div class="hero-content-bottom">
 <h1>Build Viral AI Content Faster</h1>
+<p>Dark Creator Ecosystem for AI Video.</p>
 </div>
 
 </section>
 
-
-<!-- ======================
-ULTRA STATUS CTA BAR (FINAL EXISTING)
-====================== -->
+<!-- ===== ADD ONLY : STATUS BAR ===== -->
 
 <div class="ultra-cta-status">
 
@@ -52,11 +61,7 @@ AI CONNECT<br><span id="ai-status">Checking...</span>
 
 </div>
 
-
-
-<!-- ======================
-NETWORK TRAFFIC PANEL (FINAL EXISTING)
-====================== -->
+<!-- ===== ADD ONLY : NETWORK PANEL ===== -->
 
 <div class="ultra-network-panel">
 
@@ -68,7 +73,37 @@ LIVE DATA STREAM ACTIVE
 
 </div>
 
+<!-- ===== ORIGINAL CONTENT CONTINUE (NO DELETE) ===== -->
 
+<section class="ultra-intro-zone">
+
+<div class="container">
+
+<div class="intro-cinematic">
+
+<h2 class="intro-title">
+SN Design Studio — AI Creator Power System
+</h2>
+
+<p class="intro-text">
+แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
+</p>
+
+</div>
+
+<div class="intro-video">
+
+<iframe 
+src="https://www.youtube.com/embed/NI7WALIXStU"
+frameborder="0"
+allowfullscreen>
+</iframe>
+
+</div>
+
+</div>
+
+</section>
 
 <footer>
 © SN Design Studio, 2026 · All rights reserved.
@@ -76,72 +111,63 @@ LIVE DATA STREAM ACTIVE
 
 <script src="assets/js/nav.js"></script>
 
-
-
-<!-- ====================================================
-ULTRA REAL STATUS ENGINE (ADD ONLY - NEW LAYER)
-==================================================== -->
+<!-- ======================
+REAL STATUS ENGINE (ADD ONLY)
+====================== -->
 
 <script>
 
-const API_URL = "https://narong69zagithubio-production.up.railway.app";
+const API_URL="https://narong69zagithubio-production.up.railway.app";
 
-let heartbeatInterval = null;
+async function updateStatus(){
 
-async function fetchStatus(){
+try{
 
- try{
+const res=await fetch(API_URL+"/api/status");
+const data=await res.json();
 
-   const res = await fetch(API_URL + "/api/status",{cache:"no-store"});
-   const data = await res.json();
+document.getElementById("server-status").innerText=
+data.server ? "ONLINE":"OFFLINE";
 
-   document.getElementById("server-status").innerText =
-   data.server ? "ONLINE" : "OFFLINE";
+document.getElementById("ai-status").innerText=
+data.ai ? "CONNECTED":"ERROR";
 
-   document.getElementById("ai-status").innerText =
-   data.ai ? "CONNECTED" : "NOT READY";
+document.getElementById("payment-status").innerText=
+data.payment ? "ONLINE":"OFFLINE";
 
-   document.getElementById("payment-status").innerText =
-   data.payment ? "ONLINE" : "OFFLINE";
+}catch(e){
 
-   networkPulse("LIVE STREAM OK");
-
- }catch(e){
-
-   document.getElementById("server-status").innerText="ERROR";
-   document.getElementById("ai-status").innerText="ERROR";
-
-   networkPulse("NETWORK LOST");
-
- }
+document.getElementById("server-status").innerText="ERROR";
+document.getElementById("ai-status").innerText="ERROR";
 
 }
 
+}
 
-function networkPulse(msg){
+async function updateNetwork(){
 
- const box = document.getElementById("network-screen");
+try{
 
- if(!box) return;
+const res=await fetch(API_URL+"/api/network");
+const data=await res.json();
 
- box.innerText = msg + " | " + new Date().toLocaleTimeString();
+document.getElementById("network-screen").innerText=
+"TRAFFIC: "+data.traffic+"% | "+data.status;
+
+}catch(e){
+
+document.getElementById("network-screen").innerText=
+"NETWORK LOST | "+new Date().toLocaleTimeString();
 
 }
 
-
-// HEARTBEAT LOOP (ADD ONLY)
-
-function startHeartbeat(){
-
- if(heartbeatInterval) return;
-
- fetchStatus();
-
- heartbeatInterval = setInterval(fetchStatus,5000);
-
 }
 
-startHeartbeat();
+updateStatus();
+updateNetwork();
+
+setInterval(updateStatus,5000);
+setInterval(updateNetwork,3000);
 
 </script>
 
