@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI Create System — SN Design Studio</title>
+<title>Official Website — SN DESIGN STUDIO</title>
 
 <link rel="stylesheet" href="assets/css/master.css">
 
@@ -23,8 +23,7 @@
 <div class="hero-content-bottom fade-up">
 
 <h1 id="templateTitle">AI CREATE SYSTEM</h1>
-
-<p>Ultra Modular AI Operating System</p>
+<p id="templateSub">Ultra Modular AI Operating System</p>
 
 </div>
 
@@ -68,75 +67,130 @@
 </section>
 
 <footer>
-
 © SN Design Studio, 2026 · All rights reserved.
-
 </footer>
 
+
+<!-- EXISTING ENGINE -->
 <script src="assets/js/nav.js"></script>
 <script src="assets/js/template-sync.js"></script>
 <script src="assets/js/ultra-module-core.js"></script>
 
-<!-- 🔥 ULTRA MODULE ENGINE ADD ONLY -->
+
+<!-- ========================= -->
+<!-- ULTRA AUTO LOAD ENGINE (ADD ONLY) -->
+<!-- ========================= -->
+
 <script>
 
-//// ==============================
-//// TEMPLATE PARAM SYNC ENGINE
-//// ==============================
+(function(){
 
-const urlParams = new URLSearchParams(window.location.search);
-const template = urlParams.get("template");
+/* =========================
+   TEMPLATE DATA ENGINE
+========================= */
 
-if(template){
+const TEMPLATE_DATA = {
 
-    document.getElementById("templateTitle").innerText =
-        template.replace("-", " ").toUpperCase();
+"dance-motion": {
 
-    //// optional dynamic hero change
-    const hero = document.getElementById("heroImage");
-    hero.src = `assets/images/templates/${template}.png`;
+title:"DANCE MOTION",
+sub:"Ultra Modular AI Operating System",
+hero:"assets/images/templates/dance-motion.jpg"
+
+},
+
+"dark-viral":{
+
+title:"DARK VIRAL",
+sub:"Ultra Modular AI Operating System"
+
+},
+
+"ai-lipsync":{
+
+title:"AI LIP SYNC",
+sub:"Ultra Modular AI Operating System"
+
 }
 
-//// ==============================
-//// VIDEO PREVIEW ENGINE
-//// ==============================
+};
+
+/* =========================
+   READ URL PARAM
+========================= */
+
+const params = new URLSearchParams(window.location.search);
+const templateKey = params.get("template");
+
+if(templateKey && TEMPLATE_DATA[templateKey]){
+
+const data = TEMPLATE_DATA[templateKey];
+
+if(document.getElementById("templateTitle"))
+document.getElementById("templateTitle").innerText = data.title;
+
+if(document.getElementById("templateSub"))
+document.getElementById("templateSub").innerText = data.sub;
+
+if(data.hero && document.getElementById("heroImage"))
+document.getElementById("heroImage").src = data.hero;
+
+}
+
+
+/* =========================
+   VIDEO PREVIEW ENGINE
+========================= */
 
 const videoInput = document.getElementById("videoInput");
-const videoPreview = document.getElementById("videoPreview");
 
-videoInput.addEventListener("change", function(){
+if(videoInput){
 
-    const file = this.files[0];
-    if(!file) return;
+videoInput.addEventListener("change",function(){
 
-    const url = URL.createObjectURL(file);
+const file = this.files[0];
 
-    videoPreview.innerHTML =
-    `<video controls width="100%">
-        <source src="${url}">
-    </video>`;
+if(!file) return;
+
+const url = URL.createObjectURL(file);
+
+document.getElementById("videoPreview").innerHTML =
+
+`<video controls style="width:100%;border-radius:12px;">
+<source src="${url}">
+</video>`;
+
 });
 
-//// ==============================
-//// IMAGE PREVIEW ENGINE
-//// ==============================
+}
+
+
+/* =========================
+   IMAGE PREVIEW ENGINE
+========================= */
 
 const imageInput = document.getElementById("imageInput");
-const imagePreview = document.getElementById("imagePreview");
 
-imageInput.addEventListener("change", function(){
+if(imageInput){
 
-    const file = this.files[0];
-    if(!file) return;
+imageInput.addEventListener("change",function(){
 
-    const url = URL.createObjectURL(file);
+const file = this.files[0];
 
-    imagePreview.innerHTML =
-    `<img src="${url}" style="width:100%;border-radius:12px;">`;
+if(!file) return;
+
+const url = URL.createObjectURL(file);
+
+document.getElementById("imagePreview").innerHTML =
+
+`<img src="${url}" style="width:100%;border-radius:12px;">`;
+
 });
 
+}
+
+})();
 </script>
 
 </body>
-
-</html>
+    </html>
