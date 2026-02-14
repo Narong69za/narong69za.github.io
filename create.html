@@ -1,196 +1,163 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
 
+<!-- ========================= -->
+<!-- CORE META (ADD ONLY) -->
+<!-- ========================= -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Official Website — SN DESIGN STUDIO</title>
+<title>AI Create System — SN DESIGN STUDIO</title>
 
-<link rel="stylesheet" href="assets/css/master.css">
+<meta name="description" content="AI Create System by SN Design Studio. Build viral CapCut templates with modular AI engine.">
+<meta name="keywords" content="SN Design Studio, AI Create, CapCut Template, Dance Motion, AI Video">
+<meta name="author" content="SN Design Studio">
+
+<link rel="canonical" href="https://sn-designstudio.dev/create.html">
+
+<!-- OpenGraph -->
+<meta property="og:title" content="AI Create System — SN DESIGN STUDIO">
+<meta property="og:description" content="Ultra Modular AI Operating System for Viral Videos">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sn-designstudio.dev/create.html">
+
+<!-- ========================= -->
+<!-- ADS SAFE SLOT (EMPTY) -->
+<!-- ========================= -->
+<!-- Google Ads / Meta Ads can inject here without touching core -->
 
 </head>
 
-<body class="create-page">
+<body>
 
-<div id="nav"></div>
+<!-- ========================= -->
+<!-- TEMPLATE HEADER -->
+<!-- ========================= -->
+<section class="template-hero">
+    <h1 id="sn-template-title">DANCE MOTION</h1>
+    <p id="sn-template-sub">Ultra Modular AI Operating System</p>
+</section>
 
-<section class="hero-master">
+<!-- ========================= -->
+<!-- SYSTEM STATUS -->
+<!-- ========================= -->
+<section class="system-status">
+    <small id="sn-system-status">
+        SYSTEM ONLINE · Module Engine Ready · GPU Enabled
+    </small>
+</section>
 
-<img id="heroImage" src="assets/images/create-hero.png">
+<!-- ========================= -->
+<!-- INPUT MODULE -->
+<!-- ========================= -->
+<section class="input-module">
 
-<div class="hero-content-bottom fade-up">
+    <div class="input-box">
+        <label>Reference Video</label>
+        <input type="file" id="sn-reference-video" accept="video/*">
+        <video id="sn-video-preview" controls style="max-width:100%; display:none;"></video>
+    </div>
 
-<h1 id="templateTitle">AI CREATE SYSTEM</h1>
-<p id="templateSub">Ultra Modular AI Operating System</p>
-
-</div>
+    <div class="input-box">
+        <label>Character Image</label>
+        <input type="file" id="sn-character-image" accept="image/*">
+        <img id="sn-image-preview" style="max-width:100%; display:none;">
+    </div>
 
 </section>
 
-<section class="ultra-ai-strip">
-
-<div class="ai-strip-wrap">
-
-<span class="ai-status active">SYSTEM ONLINE</span>
-<span class="ai-status">Module Engine Ready</span>
-<span class="ai-status">GPU Enabled</span>
-
-</div>
-
+<!-- ========================= -->
+<!-- ACTION -->
+<!-- ========================= -->
+<section class="action-module">
+    <button id="sn-create-btn" disabled>
+        CREATE VIDEO (ENGINE READY)
+    </button>
 </section>
 
-<section class="section">
-
-<div class="container">
-
-<h2>Reference Video</h2>
-<input type="file" id="videoInput" accept="video/*">
-
-<h2>Character Image</h2>
-<input type="file" id="imageInput" accept="image/*">
-
-</div>
-
-</section>
-
-<section class="section">
-
-<div class="container">
-
-<div id="videoPreview"></div>
-<div id="imagePreview"></div>
-
-</div>
-
-</section>
-
+<!-- ========================= -->
+<!-- FOOTER -->
+<!-- ========================= -->
 <footer>
-© SN Design Studio, 2026 · All rights reserved.
+    © SN Design Studio, 2026 · All rights reserved.
 </footer>
 
-
-<!-- EXISTING ENGINE -->
-<script src="assets/js/nav.js"></script>
-<script src="assets/js/template-sync.js"></script>
-<script src="assets/js/ultra-module-core.js"></script>
-
-
-<!-- ========================= -->
-<!-- ULTRA AUTO LOAD ENGINE (ADD ONLY) -->
-<!-- ========================= -->
-
+<!-- ================================================= -->
+<!-- ULTRA MODULE ENGINE (ADD ONLY / SAFE NAMESPACE) -->
+<!-- ================================================= -->
 <script>
-
 (function(){
 
-/* =========================
-   TEMPLATE DATA ENGINE
-========================= */
+    // ===== NAMESPACE LOCK =====
+    if(window.SN_ENGINE_LOADED) return;
+    window.SN_ENGINE_LOADED = true;
 
-const TEMPLATE_DATA = {
+    const SN = {};
 
-"dance-motion": {
+    // ===== TEMPLATE DATA MAP =====
+    SN.templates = {
+        "dance-motion": {
+            title: "DANCE MOTION",
+            sub: "Ultra Modular AI Operating System"
+        },
+        "dark-viral": {
+            title: "DARK VIRAL",
+            sub: "Raw · Dark · Viral AI Engine"
+        },
+        "ai-lipsync": {
+            title: "AI LIP SYNC",
+            sub: "Voice · Face · Motion Sync"
+        }
+    };
 
-title:"DANCE MOTION",
-sub:"Ultra Modular AI Operating System",
-hero:"assets/images/templates/dance-motion.jpg"
+    // ===== URL PARAM READ =====
+    const params = new URLSearchParams(window.location.search);
+    const templateKey = params.get("template");
 
-},
+    if(templateKey && SN.templates[templateKey]){
+        document.getElementById("sn-template-title").textContent =
+            SN.templates[templateKey].title;
 
-"dark-viral":{
+        document.getElementById("sn-template-sub").textContent =
+            SN.templates[templateKey].sub;
+    }
 
-title:"DARK VIRAL",
-sub:"Ultra Modular AI Operating System"
+    // ===== VIDEO PREVIEW =====
+    const videoInput = document.getElementById("sn-reference-video");
+    const videoPreview = document.getElementById("sn-video-preview");
 
-},
+    videoInput?.addEventListener("change", function(e){
+        const file = e.target.files[0];
+        if(file){
+            videoPreview.src = URL.createObjectURL(file);
+            videoPreview.style.display = "block";
+            checkReady();
+        }
+    });
 
-"ai-lipsync":{
+    // ===== IMAGE PREVIEW =====
+    const imageInput = document.getElementById("sn-character-image");
+    const imagePreview = document.getElementById("sn-image-preview");
 
-title:"AI LIP SYNC",
-sub:"Ultra Modular AI Operating System"
+    imageInput?.addEventListener("change", function(e){
+        const file = e.target.files[0];
+        if(file){
+            imagePreview.src = URL.createObjectURL(file);
+            imagePreview.style.display = "block";
+            checkReady();
+        }
+    });
 
-}
-
-};
-
-/* =========================
-   READ URL PARAM
-========================= */
-
-const params = new URLSearchParams(window.location.search);
-const templateKey = params.get("template");
-
-if(templateKey && TEMPLATE_DATA[templateKey]){
-
-const data = TEMPLATE_DATA[templateKey];
-
-if(document.getElementById("templateTitle"))
-document.getElementById("templateTitle").innerText = data.title;
-
-if(document.getElementById("templateSub"))
-document.getElementById("templateSub").innerText = data.sub;
-
-if(data.hero && document.getElementById("heroImage"))
-document.getElementById("heroImage").src = data.hero;
-
-}
-
-
-/* =========================
-   VIDEO PREVIEW ENGINE
-========================= */
-
-const videoInput = document.getElementById("videoInput");
-
-if(videoInput){
-
-videoInput.addEventListener("change",function(){
-
-const file = this.files[0];
-
-if(!file) return;
-
-const url = URL.createObjectURL(file);
-
-document.getElementById("videoPreview").innerHTML =
-
-`<video controls style="width:100%;border-radius:12px;">
-<source src="${url}">
-</video>`;
-
-});
-
-}
-
-
-/* =========================
-   IMAGE PREVIEW ENGINE
-========================= */
-
-const imageInput = document.getElementById("imageInput");
-
-if(imageInput){
-
-imageInput.addEventListener("change",function(){
-
-const file = this.files[0];
-
-if(!file) return;
-
-const url = URL.createObjectURL(file);
-
-document.getElementById("imagePreview").innerHTML =
-
-`<img src="${url}" style="width:100%;border-radius:12px;">`;
-
-});
-
-}
+    // ===== READY CHECK =====
+    function checkReady(){
+        if(videoInput.files.length && imageInput.files.length){
+            document.getElementById("sn-create-btn").disabled = false;
+        }
+    }
 
 })();
 </script>
 
 </body>
-    </html>
+</html>
