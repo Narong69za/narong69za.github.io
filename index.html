@@ -11,15 +11,7 @@
 <meta name="description"
 content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
 
-<meta name="keywords"
-content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
-
-<meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
-<meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
 <meta property="og:image" content="assets/images/hero.png">
-<meta property="og:type" content="website">
-
-<link rel="preload" as="image" href="assets/images/hero.png">
 
 <link rel="stylesheet" href="assets/css/master.css">
 
@@ -29,57 +21,19 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 
 <div id="nav"></div>
 
-<section class="marquee-wrap">
-<div class="marquee-text">
-แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
-</div>
-</section>
-
 <section class="hero-master">
 
-<img 
-src="assets/images/hero.png" 
-alt="SN Design Studio AI creator ecosystem cinematic power red branding"
-loading="eager"
->
+<img src="assets/images/hero.png">
 
 <div class="hero-content-bottom fade-up">
 <h1>Build Viral AI Content Faster</h1>
-<p>Dark Creator Ecosystem for AI Video.</p>
 </div>
 
 </section>
 
-<section class="ultra-gui-preview ultra-dashboard">
-
-<div class="gui-container">
-
-<div class="gui-mode">
-AI PREVIEW MODE — SN DESIGN STUDIO
-</div>
-
-<div class="gui-screen">
-
-<img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
-
-<div class="scan-line"></div>
-
-</div>
-
-<div class="gui-status">
-
-<div class="status-item active">System Ready</div>
-<div class="status-item">AI Analyze</div>
-<div class="status-item">Motion Sync</div>
-<div class="status-item">Render Output</div>
-
-</div>
-
-<button class="gui-btn">Start Preview</button>
-
 
 <!-- ======================
-ULTRA STATUS CTA BAR (ADD ONLY)
+ULTRA STATUS CTA BAR (FINAL EXISTING)
 ====================== -->
 
 <div class="ultra-cta-status">
@@ -89,7 +43,7 @@ SERVER<br><span id="server-status">Checking...</span>
 </div>
 
 <div class="cta-box payment-off">
-PAYMENT<br><span>OFFLINE</span>
+PAYMENT<br><span id="payment-status">Checking...</span>
 </div>
 
 <div class="cta-box ai-connected">
@@ -99,90 +53,22 @@ AI CONNECT<br><span id="ai-status">Checking...</span>
 </div>
 
 
+
 <!-- ======================
-NETWORK TRAFFIC PANEL (ADD ONLY)
+NETWORK TRAFFIC PANEL (FINAL EXISTING)
 ====================== -->
 
 <div class="ultra-network-panel">
 
 <div class="network-title">NETWORK TRAFFIC</div>
 
-<div class="network-screen">
+<div class="network-screen" id="network-screen">
 LIVE DATA STREAM ACTIVE
 </div>
 
 </div>
 
-</div>
 
-</section>
-
-<section class="ultra-intro-zone">
-
-<div class="container">
-
-<div class="intro-cinematic">
-
-<h2 class="intro-title">
-SN Design Studio — AI Creator Power System
-</h2>
-
-<p class="intro-text">
-แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
-</p>
-
-</div>
-
-<div class="intro-video">
-
-<iframe 
-src="https://www.youtube.com/embed/NI7WALIXStU"
-title="YouTube Shorts"
-frameborder="0"
-allowfullscreen>
-</iframe>
-
-</div>
-
-</div>
-
-</section>
-
-<section class="section cinematic-flow">
-
-<div class="container">
-
-<h2 class="section-title">From Idea to Profit</h2>
-
-<img src="assets/images/create-hero.png">
-
-</div>
-
-</section>
-
-<section class="section">
-
-<div class="container">
-
-<h2 class="section-title">Creator Growth Packages</h2>
-
-<img src="assets/images/packages-master.png">
-
-</div>
-
-</section>
-
-<section class="section">
-
-<div class="container">
-
-<h2 class="section-title">
-Ready To Build Viral Content?
-</h2>
-
-</div>
-
-</section>
 
 <footer>
 © SN Design Studio, 2026 · All rights reserved.
@@ -190,37 +76,72 @@ Ready To Build Viral Content?
 
 <script src="assets/js/nav.js"></script>
 
-<!-- ======================
-LIVE STATUS SCRIPT
-====================== -->
+
+
+<!-- ====================================================
+ULTRA REAL STATUS ENGINE (ADD ONLY - NEW LAYER)
+==================================================== -->
 
 <script>
 
 const API_URL = "https://narong69zagithubio-production.up.railway.app";
 
-async function checkStatus(){
+let heartbeatInterval = null;
 
-try{
+async function fetchStatus(){
 
-const res = await fetch(API_URL + "/api/status");
-const data = await res.json();
+ try{
 
-document.getElementById("server-status").innerText =
-data.server ? "ONLINE" : "OFFLINE";
+   const res = await fetch(API_URL + "/api/status",{cache:"no-store"});
+   const data = await res.json();
 
-document.getElementById("ai-status").innerText =
-data.ai ? "CONNECTED" : "NOT READY";
+   document.getElementById("server-status").innerText =
+   data.server ? "ONLINE" : "OFFLINE";
 
-}catch(e){
+   document.getElementById("ai-status").innerText =
+   data.ai ? "CONNECTED" : "NOT READY";
 
-document.getElementById("server-status").innerText="ERROR";
-document.getElementById("ai-status").innerText="ERROR";
+   document.getElementById("payment-status").innerText =
+   data.payment ? "ONLINE" : "OFFLINE";
+
+   networkPulse("LIVE STREAM OK");
+
+ }catch(e){
+
+   document.getElementById("server-status").innerText="ERROR";
+   document.getElementById("ai-status").innerText="ERROR";
+
+   networkPulse("NETWORK LOST");
+
+ }
 
 }
 
+
+function networkPulse(msg){
+
+ const box = document.getElementById("network-screen");
+
+ if(!box) return;
+
+ box.innerText = msg + " | " + new Date().toLocaleTimeString();
+
 }
 
-checkStatus();
+
+// HEARTBEAT LOOP (ADD ONLY)
+
+function startHeartbeat(){
+
+ if(heartbeatInterval) return;
+
+ fetchStatus();
+
+ heartbeatInterval = setInterval(fetchStatus,5000);
+
+}
+
+startHeartbeat();
 
 </script>
 
