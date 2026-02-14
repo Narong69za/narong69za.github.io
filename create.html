@@ -2,161 +2,206 @@
 <html lang="en">
 <head>
 
-<!-- ========================= -->
-<!-- CORE META (ADD ONLY) -->
-<!-- ========================= -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>AI Create System — SN DESIGN STUDIO</title>
+<title>Official Website — SN DESIGN STUDIO</title>
 
-<meta name="description" content="AI Create System by SN Design Studio. Build viral CapCut templates with modular AI engine.">
-<meta name="keywords" content="SN Design Studio, AI Create, CapCut Template, Dance Motion, AI Video">
-<meta name="author" content="SN Design Studio">
-
-<link rel="canonical" href="https://sn-designstudio.dev/create.html">
-
-<!-- OpenGraph -->
-<meta property="og:title" content="AI Create System — SN DESIGN STUDIO">
-<meta property="og:description" content="Ultra Modular AI Operating System for Viral Videos">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://sn-designstudio.dev/create.html">
-
-<!-- ========================= -->
-<!-- ADS SAFE SLOT (EMPTY) -->
-<!-- ========================= -->
-<!-- Google Ads / Meta Ads can inject here without touching core -->
+<link rel="stylesheet" href="assets/css/master.css">
 
 </head>
 
-<body>
+<body class="create-page">
+
+<div id="nav"></div>
 
 <!-- ========================= -->
-<!-- TEMPLATE HEADER -->
+<!-- ULTRA HERO ENGINE (ADD ONLY) -->
 <!-- ========================= -->
-<section class="template-hero">
-    <h1 id="sn-template-title">DANCE MOTION</h1>
-    <p id="sn-template-sub">Ultra Modular AI Operating System</p>
+
+<section class="hero-master">
+
+<img src="assets/images/create-hero.png">
+
+<div class="hero-content-bottom fade-up">
+
+<h1 id="sn-template-title">DANCE MOTION</h1>
+<p id="sn-template-sub">Ultra Modular AI Operating System</p>
+
+</div>
+
 </section>
+
 
 <!-- ========================= -->
 <!-- SYSTEM STATUS -->
 <!-- ========================= -->
+
 <section class="system-status">
-    <small id="sn-system-status">
-        SYSTEM ONLINE · Module Engine Ready · GPU Enabled
-    </small>
+
+<small id="sn-system-status">
+SYSTEM ONLINE · Module Engine Ready · GPU Enabled
+</small>
+
 </section>
+
+
+<!-- ========================= -->
+<!-- TEMPLATE PREVIEW IMAGE (ADD ONLY) -->
+<!-- ========================= -->
+
+<section class="template-preview">
+
+<img id="sn-template-preview"
+style="max-width:100%; display:none; margin:auto;">
+
+</section>
+
 
 <!-- ========================= -->
 <!-- INPUT MODULE -->
 <!-- ========================= -->
+
 <section class="input-module">
 
-    <div class="input-box">
-        <label>Reference Video</label>
-        <input type="file" id="sn-reference-video" accept="video/*">
-        <video id="sn-video-preview" controls style="max-width:100%; display:none;"></video>
-    </div>
+<div class="input-box">
+<label>Reference Video</label>
+<input type="file" id="sn-reference-video" accept="video/*">
+<video id="sn-video-preview" controls style="max-width:100%; display:none;"></video>
+</div>
 
-    <div class="input-box">
-        <label>Character Image</label>
-        <input type="file" id="sn-character-image" accept="image/*">
-        <img id="sn-image-preview" style="max-width:100%; display:none;">
-    </div>
+<div class="input-box">
+<label>Character Image</label>
+<input type="file" id="sn-character-image" accept="image/*">
+<img id="sn-image-preview" style="max-width:100%; display:none;">
+</div>
 
 </section>
+
 
 <!-- ========================= -->
 <!-- ACTION -->
 <!-- ========================= -->
+
 <section class="action-module">
-    <button id="sn-create-btn" disabled>
-        CREATE VIDEO (ENGINE READY)
-    </button>
+<button id="sn-create-btn" disabled>
+CREATE VIDEO (ENGINE READY)
+</button>
 </section>
 
-<!-- ========================= -->
-<!-- FOOTER -->
-<!-- ========================= -->
+
 <footer>
-    © SN Design Studio, 2026 · All rights reserved.
+© SN Design Studio, 2026 · All rights reserved.
 </footer>
 
+
+<script src="assets/js/nav.js"></script>
+
 <!-- ================================================= -->
-<!-- ULTRA MODULE ENGINE (ADD ONLY / SAFE NAMESPACE) -->
+<!-- ULTRA MODULE ENGINE -->
 <!-- ================================================= -->
+
 <script>
+
 (function(){
 
-    // ===== NAMESPACE LOCK =====
-    if(window.SN_ENGINE_LOADED) return;
-    window.SN_ENGINE_LOADED = true;
+if(window.SN_ENGINE_LOADED) return;
+window.SN_ENGINE_LOADED = true;
 
-    const SN = {};
+const SN = {};
 
-    // ===== TEMPLATE DATA MAP =====
-    SN.templates = {
-        "dance-motion": {
-            title: "DANCE MOTION",
-            sub: "Ultra Modular AI Operating System"
-        },
-        "dark-viral": {
-            title: "DARK VIRAL",
-            sub: "Raw · Dark · Viral AI Engine"
-        },
-        "ai-lipsync": {
-            title: "AI LIP SYNC",
-            sub: "Voice · Face · Motion Sync"
-        }
-    };
+SN.templates = {
 
-    // ===== URL PARAM READ =====
-    const params = new URLSearchParams(window.location.search);
-    const templateKey = params.get("template");
+"dance-motion":{
+title:"DANCE MOTION",
+sub:"Ultra Modular AI Operating System",
+img:"assets/images/template-dance-motion.jpg"
+},
 
-    if(templateKey && SN.templates[templateKey]){
-        document.getElementById("sn-template-title").textContent =
-            SN.templates[templateKey].title;
+"dark-viral":{
+title:"DARK VIRAL",
+sub:"Raw · Dark · Viral AI Engine",
+img:"assets/images/template-dark-viral.jpg"
+},
 
-        document.getElementById("sn-template-sub").textContent =
-            SN.templates[templateKey].sub;
-    }
+"ai-lipsync":{
+title:"AI LIP SYNC",
+sub:"Voice · Face · Motion Sync",
+img:"assets/images/template-ai-lipsync.jpg"
+},
 
-    // ===== VIDEO PREVIEW =====
-    const videoInput = document.getElementById("sn-reference-video");
-    const videoPreview = document.getElementById("sn-video-preview");
+"face-swap":{
+title:"FACE SWAP",
+sub:"AI Identity Transform Engine",
+img:"assets/images/template-face-swap.jpg"
+}
 
-    videoInput?.addEventListener("change", function(e){
-        const file = e.target.files[0];
-        if(file){
-            videoPreview.src = URL.createObjectURL(file);
-            videoPreview.style.display = "block";
-            checkReady();
-        }
-    });
+};
 
-    // ===== IMAGE PREVIEW =====
-    const imageInput = document.getElementById("sn-character-image");
-    const imagePreview = document.getElementById("sn-image-preview");
+const params = new URLSearchParams(window.location.search);
+const templateKey = params.get("template");
 
-    imageInput?.addEventListener("change", function(e){
-        const file = e.target.files[0];
-        if(file){
-            imagePreview.src = URL.createObjectURL(file);
-            imagePreview.style.display = "block";
-            checkReady();
-        }
-    });
+if(templateKey && SN.templates[templateKey]){
 
-    // ===== READY CHECK =====
-    function checkReady(){
-        if(videoInput.files.length && imageInput.files.length){
-            document.getElementById("sn-create-btn").disabled = false;
-        }
-    }
+document.getElementById("sn-template-title").textContent =
+SN.templates[templateKey].title;
+
+document.getElementById("sn-template-sub").textContent =
+SN.templates[templateKey].sub;
+
+const img = document.getElementById("sn-template-preview");
+img.src = SN.templates[templateKey].img;
+img.style.display = "block";
+
+}
+
+
+const videoInput = document.getElementById("sn-reference-video");
+const videoPreview = document.getElementById("sn-video-preview");
+
+videoInput.addEventListener("change",function(e){
+
+const file = e.target.files[0];
+if(file){
+
+videoPreview.src = URL.createObjectURL(file);
+videoPreview.style.display = "block";
+checkReady();
+
+}
+
+});
+
+
+const imageInput = document.getElementById("sn-character-image");
+const imagePreview = document.getElementById("sn-image-preview");
+
+imageInput.addEventListener("change",function(e){
+
+const file = e.target.files[0];
+if(file){
+
+imagePreview.src = URL.createObjectURL(file);
+imagePreview.style.display = "block";
+checkReady();
+
+}
+
+});
+
+
+function checkReady(){
+
+if(videoInput.files.length && imageInput.files.length){
+
+document.getElementById("sn-create-btn").disabled=false;
+
+}
+
+}
 
 })();
+
 </script>
 
 </body>
