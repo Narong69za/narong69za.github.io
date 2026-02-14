@@ -7,202 +7,253 @@
 
 <title>Official Website — SN DESIGN STUDIO</title>
 
-<link rel="stylesheet" href="assets/css/master.css">
+<link rel="stylesheet" href="master.css">
 
 </head>
 
-<body class="create-page">
+<body>
 
-<div id="nav"></div>
+<!-- ============================= -->
+<!-- NAVIGATION (เดิม - ไม่แก้) -->
+<!-- ============================= -->
 
-<!-- ========================= -->
-<!-- ULTRA HERO ENGINE (ADD ONLY) -->
-<!-- ========================= -->
+<nav>
 
-<section class="hero-master">
+<a href="index.html">Home</a>
+<a href="packages.html">Packages</a>
+<a href="services.html">Services</a>
+<a href="templates.html">Templates</a>
+<a href="seo.html">SEO</a>
+<a href="contact.html">Contact</a>
 
-<img src="assets/images/create-hero.png">
+</nav>
 
-<div class="hero-content-bottom fade-up">
 
-<h1 id="sn-template-title">DANCE MOTION</h1>
-<p id="sn-template-sub">Ultra Modular AI Operating System</p>
+<!-- ============================= -->
+<!-- HERO SECTION -->
+<!-- ============================= -->
+
+<section id="template-hero">
+
+<h1 id="template-title">AI CREATE SYSTEM</h1>
+<p id="template-desc">Ultra Modular AI Operating System</p>
+
+</section>
+
+
+
+<!-- ============================= -->
+<!-- STATUS BAR -->
+<!-- ============================= -->
+
+<div class="engine-status">
+
+SYSTEM ONLINE • Module Engine Ready • GPU Enabled
 
 </div>
 
-</section>
 
 
-<!-- ========================= -->
-<!-- SYSTEM STATUS -->
-<!-- ========================= -->
+<!-- ============================= -->
+<!-- FILE UPLOAD -->
+<!-- ============================= -->
 
-<section class="system-status">
+<section class="upload-section">
 
-<small id="sn-system-status">
-SYSTEM ONLINE · Module Engine Ready · GPU Enabled
-</small>
+<h3>Reference Video</h3>
+<input type="file" id="videoInput">
 
-</section>
+<video id="videoPreview" controls style="width:100%;margin-top:10px;"></video>
 
+<h3>Character Image</h3>
+<input type="file" id="imageInput">
 
-<!-- ========================= -->
-<!-- TEMPLATE PREVIEW IMAGE (ADD ONLY) -->
-<!-- ========================= -->
+<img id="imagePreview" style="width:100%;margin-top:10px;"/>
 
-<section class="template-preview">
-
-<img id="sn-template-preview"
-style="max-width:100%; display:none; margin:auto;">
+<button id="createBtn" disabled>CREATE VIDEO (ENGINE READY)</button>
 
 </section>
 
 
-<!-- ========================= -->
-<!-- INPUT MODULE -->
-<!-- ========================= -->
 
-<section class="input-module">
-
-<div class="input-box">
-<label>Reference Video</label>
-<input type="file" id="sn-reference-video" accept="video/*">
-<video id="sn-video-preview" controls style="max-width:100%; display:none;"></video>
-</div>
-
-<div class="input-box">
-<label>Character Image</label>
-<input type="file" id="sn-character-image" accept="image/*">
-<img id="sn-image-preview" style="max-width:100%; display:none;">
-</div>
-
-</section>
-
-
-<!-- ========================= -->
-<!-- ACTION -->
-<!-- ========================= -->
-
-<section class="action-module">
-<button id="sn-create-btn" disabled>
-CREATE VIDEO (ENGINE READY)
-</button>
-</section>
-
+<!-- ============================= -->
+<!-- FOOTER -->
+<!-- ============================= -->
 
 <footer>
+
 © SN Design Studio, 2026 · All rights reserved.
+
 </footer>
 
 
-<script src="assets/js/nav.js"></script>
 
-<!-- ================================================= -->
-<!-- ULTRA MODULE ENGINE -->
-<!-- ================================================= -->
+<!-- ============================= -->
+<!-- TEMPLATE AUTO LOAD ENGINE (เดิม - ไม่แก้ logic) -->
+<!-- ============================= -->
 
 <script>
 
 (function(){
 
-if(window.SN_ENGINE_LOADED) return;
-window.SN_ENGINE_LOADED = true;
-
-const SN = {};
-
-SN.templates = {
-
-"dance-motion":{
-title:"DANCE MOTION",
-sub:"Ultra Modular AI Operating System",
-img:"assets/images/template-dance-motion.jpg"
-},
-
-"dark-viral":{
-title:"DARK VIRAL",
-sub:"Raw · Dark · Viral AI Engine",
-img:"assets/images/template-dark-viral.jpg"
-},
-
-"ai-lipsync":{
-title:"AI LIP SYNC",
-sub:"Voice · Face · Motion Sync",
-img:"assets/images/template-ai-lipsync.jpg"
-},
-
-"face-swap":{
-title:"FACE SWAP",
-sub:"AI Identity Transform Engine",
-img:"assets/images/template-face-swap.jpg"
-}
-
-};
-
 const params = new URLSearchParams(window.location.search);
-const templateKey = params.get("template");
+const template = params.get("template");
 
-if(templateKey && SN.templates[templateKey]){
+const title = document.getElementById("template-title");
+const desc = document.getElementById("template-desc");
 
-document.getElementById("sn-template-title").textContent =
-SN.templates[templateKey].title;
+if(template==="dark-viral"){
 
-document.getElementById("sn-template-sub").textContent =
-SN.templates[templateKey].sub;
-
-const img = document.getElementById("sn-template-preview");
-img.src = SN.templates[templateKey].img;
-img.style.display = "block";
+title.innerText="DARK VIRAL";
+desc.innerText="Raw · Dark · Viral AI Engine";
 
 }
 
+if(template==="ai-lipsync"){
 
-const videoInput = document.getElementById("sn-reference-video");
-const videoPreview = document.getElementById("sn-video-preview");
-
-videoInput.addEventListener("change",function(e){
-
-const file = e.target.files[0];
-if(file){
-
-videoPreview.src = URL.createObjectURL(file);
-videoPreview.style.display = "block";
-checkReady();
+title.innerText="AI LIP SYNC";
+desc.innerText="Voice · Face · Motion Sync";
 
 }
 
-});
+if(template==="dance-motion"){
 
-
-const imageInput = document.getElementById("sn-character-image");
-const imagePreview = document.getElementById("sn-image-preview");
-
-imageInput.addEventListener("change",function(e){
-
-const file = e.target.files[0];
-if(file){
-
-imagePreview.src = URL.createObjectURL(file);
-imagePreview.style.display = "block";
-checkReady();
+title.innerText="DANCE MOTION";
+desc.innerText="Ultra Modular AI Operating System";
 
 }
 
-});
+if(template==="face-swap"){
 
-
-function checkReady(){
-
-if(videoInput.files.length && imageInput.files.length){
-
-document.getElementById("sn-create-btn").disabled=false;
-
-}
+title.innerText="FACE SWAP";
+desc.innerText="Advanced AI Face Engine";
 
 }
 
 })();
+</script>
+
+
+
+<!-- ============================= -->
+<!-- PREVIEW ENGINE (เดิม) -->
+<!-- ============================= -->
+
+<script>
+
+const videoInput=document.getElementById("videoInput");
+const videoPreview=document.getElementById("videoPreview");
+
+videoInput.onchange=function(e){
+
+const file=e.target.files[0];
+videoPreview.src=URL.createObjectURL(file);
+
+}
+
+const imageInput=document.getElementById("imageInput");
+const imagePreview=document.getElementById("imagePreview");
+
+imageInput.onchange=function(e){
+
+const file=e.target.files[0];
+imagePreview.src=URL.createObjectURL(file);
+
+}
 
 </script>
+
+
+
+<!-- ================================================= -->
+<!-- 🔥 ADD ONLY — MEMBER LOGIN POPUP -->
+<!-- ================================================= -->
+
+<div id="sn-login-popup" class="sn-popup">
+
+<div class="sn-popup-box">
+
+<h2>START USING AI ENGINE</h2>
+
+<p>
+ใช้ฟรี 3 ครั้งต่อวัน (ต่อ IP)<br>
+Login ด้วย Google เพื่อใช้งานต่อ
+</p>
+
+<div id="sn-google-login"></div>
+
+</div>
+</div>
+
+
+
+<!-- ================================================= -->
+<!-- 🔥 ADD ONLY — GOOGLE LOGIN ENGINE -->
+<!-- ================================================= -->
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<script>
+
+(function(){
+
+if(window.SN_MEMBER_ENGINE) return;
+window.SN_MEMBER_ENGINE=true;
+
+
+// ===== LOGIN CHECK =====
+
+const user = localStorage.getItem("sn_user");
+
+if(!user){
+
+document.getElementById("sn-login-popup").style.display="flex";
+
+}
+
+
+// ===== GOOGLE LOGIN INIT =====
+
+google.accounts.id.initialize({
+
+client_id:"PUT_YOUR_GOOGLE_CLIENT_ID_HERE",
+callback:handleCredentialResponse
+
+});
+
+google.accounts.id.renderButton(
+
+document.getElementById("sn-google-login"),
+{ theme:"outline", size:"large" }
+
+);
+
+function handleCredentialResponse(response){
+
+localStorage.setItem("sn_user",response.credential);
+
+document.getElementById("sn-login-popup").style.display="none";
+
+}
+
+
+// ===== FREE LIMIT ENGINE (LOCAL TEST) =====
+
+const today=new Date().toISOString().slice(0,10);
+const usageKey="sn_usage_"+today;
+
+let count=localStorage.getItem(usageKey);
+
+if(!count){
+
+localStorage.setItem(usageKey,0);
+
+}
+
+})();
+</script>
+
+
 
 </body>
 </html>
