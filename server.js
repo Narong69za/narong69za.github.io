@@ -3,11 +3,19 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 
-const { generate, getAIStatus } = require("./ai.service");
-
 const app = express();
 
 const PORT = process.env.PORT || 8080;
+
+// =========================
+// LOAD AI SERVICE
+// =========================
+
+const AI = require("./ai.service");
+
+// =========================
+// MIDDLEWARE
+// =========================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -17,39 +25,25 @@ app.use(express.static(path.join(__dirname)));
 
 
 // =========================
-// AI HEARTBEAT INIT (ADD ONLY)
+// STATUS ENGINE (REAL)
 // =========================
 
-async function initAI(){
+app.get("/api/status", async (req,res)=>{
 
-  try{
+let aiStatus = false;
 
-    console.log("AI INIT CHECK");
+try{
 
-    const result = await generate();
+await AI.generate(); // heartbeat test
+aiStatus = AI.getAIStatus();
 
-    console.log("AI STATUS:", result);
-
-  }catch(e){
-
-    console.error("AI INIT ERROR");
-
-  }
-
+}catch(e){
+aiStatus = false;
 }
-
-initAI();
-
-
-// =========================
-// STATUS ENGINE (UPDATED)
-// =========================
-
-app.get("/api/status",(req,res)=>{
 
 res.json({
 server:true,
-ai:getAIStatus(),
+ai:aiStatus,
 payment:false
 });
 
@@ -57,7 +51,7 @@ payment:false
 
 
 // =========================
-// NETWORK TRAFFIC MOCK
+// NETWORK TRAFFIC
 // =========================
 
 app.get("/api/network",(req,res)=>{
