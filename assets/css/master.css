@@ -2096,3 +2096,242 @@ pointer-events:none;
 100%{ transform:translateX(20%); }
 
 }
+/* ==================================================
+ULTRA LEGEND MODE UI
+FINAL ADD ONLY — SN DESIGN STUDIO
+================================================== */
+
+
+/* ===============================
+LEGEND GLASS HUD SYSTEM
+=============================== */
+
+.ultra-dashboard{
+
+backdrop-filter:blur(8px);
+
+background:
+
+linear-gradient(
+135deg,
+rgba(0,20,40,.35),
+rgba(0,0,0,.65)
+);
+
+border:1px solid rgba(0,255,255,.15);
+
+box-shadow:
+
+0 0 60px rgba(0,255,255,.08),
+inset 0 0 40px rgba(255,40,80,.05);
+
+}
+
+
+/* ===============================
+NEURAL ENERGY PULSE
+=============================== */
+
+.gui-container{
+
+animation:neuralPulse 6s ease-in-out infinite;
+
+}
+
+@keyframes neuralPulse{
+
+0%{ transform:scale(1); filter:brightness(1); }
+50%{ transform:scale(1.01); filter:brightness(1.08); }
+100%{ transform:scale(1); filter:brightness(1); }
+
+}
+
+
+/* ===============================
+LIVE DATA FLOW LINES
+=============================== */
+
+.ultra-dashboard::after{
+
+content:"";
+
+position:absolute;
+
+top:0;
+left:-50%;
+
+width:200%;
+height:100%;
+
+background:
+
+linear-gradient(
+120deg,
+transparent,
+rgba(0,255,200,.12),
+transparent
+);
+
+animation:dataFlow 5s linear infinite;
+
+pointer-events:none;
+
+}
+
+@keyframes dataFlow{
+
+0%{ transform:translateX(-20%); }
+100%{ transform:translateX(20%); }
+
+}
+
+
+/* ===============================
+ULTRA LEGEND STATUS GLOW
+=============================== */
+
+.cta-box{
+
+position:relative;
+
+box-shadow:
+
+0 0 12px rgba(0,255,200,.3),
+0 0 30px rgba(0,200,255,.2);
+
+}
+
+.server-online{
+
+background:linear-gradient(
+135deg,
+rgba(0,255,100,.15),
+rgba(0,120,60,.15)
+);
+
+}
+
+.payment-off{
+
+background:linear-gradient(
+135deg,
+rgba(255,150,0,.15),
+rgba(120,80,0,.15)
+);
+
+}
+
+.ai-connected{
+
+background:linear-gradient(
+135deg,
+rgba(0,200,255,.15),
+rgba(0,80,120,.15)
+);
+
+}
+
+
+/* ===============================
+AI RADAR SCAN ENHANCED
+=============================== */
+
+.gui-screen::before{
+
+content:"";
+
+position:absolute;
+
+inset:0;
+
+background:
+
+radial-gradient(circle at center,
+rgba(0,255,255,.08),
+transparent 60%);
+
+animation:aiRadarPulse 4s ease-in-out infinite;
+
+pointer-events:none;
+
+}
+
+@keyframes aiRadarPulse{
+
+0%{ opacity:.2; transform:scale(.9); }
+50%{ opacity:.5; transform:scale(1.05); }
+100%{ opacity:.2; transform:scale(.9); }
+
+}
+
+
+/* ===============================
+ULTRA LEGEND NETWORK GRAPH
+=============================== */
+
+.network-screen{
+
+position:relative;
+
+overflow:hidden;
+
+background:
+
+linear-gradient(
+180deg,
+rgba(0,10,20,.9),
+rgba(0,0,0,.95)
+);
+
+}
+
+.network-screen::after{
+
+content:"";
+
+position:absolute;
+
+bottom:0;
+left:0;
+
+width:200%;
+height:100%;
+
+background:
+
+linear-gradient(to top,
+rgba(0,255,255,.4),
+transparent 70%),
+
+repeating-linear-gradient(
+90deg,
+rgba(0,255,255,.8) 0px,
+rgba(0,255,255,.8) 2px,
+transparent 2px,
+transparent 20px
+);
+
+animation:legendTraffic 2.2s linear infinite;
+
+}
+
+@keyframes legendTraffic{
+
+0%{ transform:translateX(0); }
+100%{ transform:translateX(-50%); }
+
+}
+
+
+/* ===============================
+CINEMATIC DEPTH LAYER
+=============================== */
+
+.hero-master{
+
+box-shadow:
+
+inset 0 0 120px rgba(0,0,0,.7),
+inset 0 0 60px rgba(0,200,255,.1);
+
+}
