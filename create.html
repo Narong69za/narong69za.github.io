@@ -65,9 +65,7 @@ if(template && hero && title){
 // ==============================
 
 if(!template){
-
-   console.warn("SN DESIGN: TEMPLATE PARAM MISSING");
-
+   console.warn("SN DESIGN TEMPLATE MISSING");
 }
 
 
@@ -100,22 +98,41 @@ document.getElementById("imageInput").addEventListener("change",(e)=>{
 
 
 // ==============================
-// SN DESIGN ADD ONLY : RENDER LOCK (PREVENT EMPTY SEND)
+// SN DESIGN ADD ONLY : AUTO RESULT CHECK
 // ==============================
 
-function validateRender(){
+async function autoCheck(jobId){
 
-   if(!template){
-      alert("Template missing");
-      return false;
-   }
+   console.log("AUTO CHECK START:",jobId);
 
-   if(!videoFile && !imageFile){
-      alert("No input selected");
-      return false;
-   }
+   const timer = setInterval(async ()=>{
 
-   return true;
+      try{
+
+         const res = await fetch(`https://api.sn-designstudio.dev/api/result/${jobId}`);
+
+         const data = await res.json();
+
+         console.log("STATUS:",data);
+
+         if(data && data.ready){
+
+            clearInterval(timer);
+
+            alert("Render completed");
+
+            console.log("FINAL OUTPUT:",data.output);
+
+         }
+
+      }catch(e){
+
+         console.log("CHECK ERROR:",e);
+
+      }
+
+   },5000);
+
 }
 
 
@@ -124,14 +141,6 @@ function validateRender(){
 document.getElementById("createBtn").addEventListener("click", async ()=>{
 
    console.log("BUTTON CLICKED");
-
-   // ==============================
-   // SN DESIGN ADD ONLY : VALIDATE
-   // ==============================
-
-   if(!validateRender()){
-      return;
-   }
 
    const inputData={
 
@@ -156,6 +165,16 @@ document.getElementById("createBtn").addEventListener("click", async ()=>{
       const data = await res.json();
 
       console.log("RENDER RESULT:",data);
+
+      // ==============================
+      // SN DESIGN ADD ONLY : AUTO PIPELINE START
+      // ==============================
+
+      if(data.jobId){
+
+         autoCheck(data.jobId);
+
+      }
 
       alert("Render job sent");
 
