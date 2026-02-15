@@ -60,6 +60,17 @@ if(template && hero && title){
 }
 
 
+// ==============================
+// SN DESIGN ADD ONLY : TEMPLATE SAFETY CHECK
+// ==============================
+
+if(!template){
+
+   console.warn("SN DESIGN: TEMPLATE PARAM MISSING");
+
+}
+
+
 // PREVIEW
 
 let videoFile=null;
@@ -88,11 +99,39 @@ document.getElementById("imageInput").addEventListener("change",(e)=>{
 });
 
 
+// ==============================
+// SN DESIGN ADD ONLY : RENDER LOCK (PREVENT EMPTY SEND)
+// ==============================
+
+function validateRender(){
+
+   if(!template){
+      alert("Template missing");
+      return false;
+   }
+
+   if(!videoFile && !imageFile){
+      alert("No input selected");
+      return false;
+   }
+
+   return true;
+}
+
+
 // REAL RENDER ENGINE
 
 document.getElementById("createBtn").addEventListener("click", async ()=>{
 
    console.log("BUTTON CLICKED");
+
+   // ==============================
+   // SN DESIGN ADD ONLY : VALIDATE
+   // ==============================
+
+   if(!validateRender()){
+      return;
+   }
 
    const inputData={
 
