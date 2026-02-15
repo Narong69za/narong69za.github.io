@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<title>Official Website — SN DESIGN STUDIO</title>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link rel="stylesheet" href="assets/css/master.css">
+
+</head>
+
+<body class="create-page">
+
+<div id="nav"></div>
+
+<section class="hero-master">
+
+<h1 id="engineTitle">AI ENGINE</h1>
+<img id="heroImage" style="max-width:600px">
+
+</section>
+
+
+<section class="create-area">
+
+<input type="file" id="videoInput" accept="video/*">
+<video id="videoPreview" controls></video>
+
+<input type="file" id="imageInput" accept="image/*">
+<img id="imagePreview">
+
+<button id="createBtn">CREATE VIDEO</button>
+
+</section>
+
+
+<footer>
+© SN Design Studio, 2026 · All rights reserved.
+</footer>
+
+<script src="assets/js/nav.js"></script>
+
+<script>
+
+// TEMPLATE LOAD
+
+const params = new URLSearchParams(window.location.search);
+const template = params.get("template");
+
+const hero = document.getElementById("heroImage");
+const title = document.getElementById("engineTitle");
+
+if(template && hero && title){
+
+   title.innerText = template.replaceAll("-"," ").toUpperCase();
+   hero.src = `assets/images/template-${template}.jpg`;
+
+}
+
+
+// PREVIEW
+
+let videoFile=null;
+let imageFile=null;
+
+document.getElementById("videoInput").addEventListener("change",(e)=>{
+
+   videoFile=e.target.files[0];
+
+   if(videoFile){
+      document.getElementById("videoPreview").src=
+      URL.createObjectURL(videoFile);
+   }
+
+});
+
+document.getElementById("imageInput").addEventListener("change",(e)=>{
+
+   imageFile=e.target.files[0];
+
+   if(imageFile){
+      document.getElementById("imagePreview").src=
+      URL.createObjectURL(imageFile);
+   }
+
+});
+
+
+// REAL RENDER ENGINE
+
+document.getElementById("createBtn").addEventListener("click", async ()=>{
+
+   console.log("BUTTON CLICKED");
+
+   const inputData={
+
+      video: videoFile ? videoFile.name : null,
+      image: imageFile ? imageFile.name : null
+
+   };
+
+   try{
+
+      const res = await fetch("https://api.sn-designstudio.dev/api/render",{
+
+         method:"POST",
+         headers:{ "Content-Type":"application/json" },
+         body:JSON.stringify({
+            template:template,
+            input:inputData
+         })
+
+      });
+
+      const data = await res.json();
+
+      console.log("RENDER RESULT:",data);
+
+      alert("Render job sent");
+
+   }catch(e){
+
+      console.log("ERROR:",e);
+
+   }
+
+});
+
+</script>
+
+</body>
+</html>
