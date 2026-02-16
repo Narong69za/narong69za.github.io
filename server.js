@@ -1,13 +1,18 @@
 const express = require('express');
+const path = require('path');
+
 const app = express();
 
-app.use(express.static('public'));
 app.use(express.json());
 
-app.use('/api', require('./routes/api.route'));
+// serve root static files
+app.use(express.static(__dirname));
+
+// API Gateway
+app.use('/api', require('./api/api.route'));
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, ()=>{
-    console.log('Server running on port', PORT);
+app.listen(PORT, () => {
+  console.log('Server running on port', PORT);
 });
