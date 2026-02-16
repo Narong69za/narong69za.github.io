@@ -187,3 +187,42 @@ module.exports.runAI_DEBUG = async function(model,input){
    return originalRunAI_DEBUG(resolvedModel,input);
 
 };
+// ======================================================
+// SN DESIGN ASYNC RUN ENGINE
+// ======================================================
+
+async function runAsyncRender(model,input){
+
+   const jobId = global.SN_CREATE_JOB(input);
+
+   console.log("JOB CREATED:",jobId);
+
+   setTimeout(async()=>{
+
+      try{
+
+         const output = await replicate.run(model,{input});
+
+         global.SN_UPDATE_JOB(jobId,{
+            status:"done",
+            output
+         });
+
+         console.log("JOB DONE:",jobId);
+
+      }catch(err){
+
+         global.SN_UPDATE_JOB(jobId,{
+            status:"error",
+            error:err.message
+         });
+
+      }
+
+   },10);
+
+   return jobId;
+
+}
+
+module.exports.runAsyncRender = runAsyncRender;
