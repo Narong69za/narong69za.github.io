@@ -1,25 +1,50 @@
+require("dotenv").config();
+
 const express = require("express");
+const path = require("path");
 
 const app = express();
 
-app.get("/", (req, res) => {
-  res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
+/* ======================================================
+CORE MIDDLEWARE
+====================================================== */
+
+app.use(express.json());
+
+/* ======================================================
+STATIC WEBSITE SERVE
+====================================================== */
+
+app.use(express.static(__dirname));
+
+/* ======================================================
+API ROUTER (MAIN BACKEND)
+====================================================== */
+
+try{
+   app.use('/api', require('./api/api.route'));
+   console.log("API ROUTER LOADED");
+}catch(e){
+   console.log("API ROUTER LOAD ERROR:", e.message);
+}
+
+/* ======================================================
+ROOT STATUS CHECK
+====================================================== */
+
+app.get("/", (req,res)=>{
+   res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
 });
 
-const PORT = process.env.PORT || 3000;
-
-app.listen(PORT, () => {
-  console.log("Server running on port " + PORT);
-});
-// ======================================================
-// SN DESIGN AUTO QUEUE ENGINE
-// ======================================================
+/* ======================================================
+SN DESIGN AUTO QUEUE ENGINE
+====================================================== */
 
 const jobQueue = new Map();
 
 global.SN_QUEUE = jobQueue;
 
-function createJob(data){
+global.SN_CREATE_JOB = function(data){
 
    const id = "job_" + Date.now();
 
@@ -32,7 +57,7 @@ function createJob(data){
    return id;
 }
 
-function updateJob(id,data){
+global.SN_UPDATE_JOB = function(id,data){
 
    if(!jobQueue.has(id)) return;
 
@@ -40,8 +65,14 @@ function updateJob(id,data){
       ...jobQueue.get(id),
       ...data
    });
-
 }
 
-global.SN_CREATE_JOB = createJob;
-global.SN_UPDATE_JOB = updateJob;
+/* ======================================================
+SERVER START
+====================================================== */
+
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, ()=>{
+   console.log("🔥 SN DESIGN SERVER RUNNING:",PORT);
+});
