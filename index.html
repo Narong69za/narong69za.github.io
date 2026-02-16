@@ -19,7 +19,6 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 <meta property="og:type" content="website">
 
 <link rel="preload" as="image" href="assets/images/hero.png">
-
 <link rel="stylesheet" href="assets/css/master.css">
 
 <!-- ======================================================
@@ -51,12 +50,56 @@ box-shadow:0 0 20px rgba(0,180,255,0.35);
 color:#00c3ff;
 }
 
+/* ===== PREMIUM TEXT GLOW ===== */
+
 h1,h2,.section-title{
 text-shadow:
 0 0 8px rgba(255,255,255,0.3),
 0 0 18px rgba(255,0,80,0.35),
 0 0 30px rgba(0,150,255,0.2);
 }
+
+/* ======================================================
+ULTRA NAV CENTER FIX (ADD ONLY FINAL)
+แก้ nav.js inject menu ให้ center จริง
+====================================================== */
+
+#nav{
+width:100%;
+display:block;
+}
+
+/* force container center */
+#nav > *{
+display:flex !important;
+justify-content:center !important;
+align-items:center;
+width:100%;
+margin:0 auto;
+}
+
+/* force menu center */
+#nav nav,
+#nav .navbar,
+#nav ul{
+display:flex !important;
+justify-content:center !important;
+align-items:center;
+gap:30px;
+margin:auto;
+width:100%;
+}
+
+/* menu link */
+#nav a{
+display:inline-flex;
+justify-content:center;
+align-items:center;
+}
+
+/* ======================================================
+ULTRA ANIME NETWORK GRAPH
+====================================================== */
 
 .network-screen{
 position:relative;
@@ -72,11 +115,7 @@ bottom:0;
 width:300%;
 height:100%;
 background:
-linear-gradient(
-180deg,
-transparent 60%,
-rgba(0,255,180,0.4)
-),
+linear-gradient(180deg,transparent 60%,rgba(0,255,180,0.4)),
 repeating-linear-gradient(
 90deg,
 rgba(0,255,255,0.2) 0px,
@@ -92,11 +131,7 @@ position:absolute;
 bottom:0;
 width:300%;
 height:100%;
-background:linear-gradient(
-to top,
-rgba(0,255,255,0.35),
-transparent
-);
+background:linear-gradient(to top,rgba(0,255,255,0.35),transparent);
 animation:animeGraphMove 5s linear infinite;
 mix-blend-mode:screen;
 }
@@ -232,9 +267,6 @@ allowfullscreen>
 
 <script src="assets/js/nav.js"></script>
 
-<!-- ====================================================== -->
-<!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
-<!-- ====================================================== -->
 <script>
 document.querySelectorAll("[data-template]").forEach(el=>{
    el.addEventListener("click",()=>{
@@ -246,36 +278,5 @@ document.querySelectorAll("[data-template]").forEach(el=>{
 });
 </script>
 
-<!-- ====================================================== -->
-<!-- SN DESIGN ADD ONLY : API CONNECT SYSTEM -->
-<!-- ====================================================== -->
-<script>
-
-document.querySelector(".gui-btn").addEventListener("click", async ()=>{
-
-   try{
-
-      const res = await fetch("/api/generate",{
-         method:"POST",
-         headers:{
-            "Content-Type":"application/json"
-         },
-         body: JSON.stringify({})
-      });
-
-      const data = await res.json();
-
-      document.getElementById("ai-status").innerText = data.status;
-
-   }catch(err){
-
-      document.getElementById("ai-status").innerText = "ERROR";
-
-   }
-
-});
-
-</script>
-
 </body>
-</html>
+   </html>
