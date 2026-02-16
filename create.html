@@ -9,6 +9,31 @@
 
 <link rel="stylesheet" href="assets/css/master.css">
 
+<style>
+
+/* ======================================================
+ULTRA BLOCK UI (ADD ONLY)
+====================================================== */
+
+.ultra-block{
+
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:#0b0b0b;
+border:1px solid rgba(255,0,80,0.4);
+padding:30px;
+border-radius:14px;
+z-index:9999;
+color:#fff;
+text-align:center;
+box-shadow:0 0 40px rgba(255,0,80,0.4);
+
+}
+
+</style>
+
 </head>
 
 <body class="create-page">
@@ -42,175 +67,208 @@
 
 <script>
 
-/* ======================
-API BASE AUTO
-====================== */
+/* ======================================================
+ULTRA FINAL PLATFORM CORE
+====================================================== */
 
-const API_BASE = window.location.origin;
+const USER = {
+
+   dev:true,          // DEV MODE
+   freeDaily:3,
+   usedToday:0,
+   points:11000
+
+};
 
 
-/* ======================
-TEMPLATE LOAD
-====================== */
+// ==============================
+// TEMPLATE LOAD
+// ==============================
 
-const params=new URLSearchParams(window.location.search);
-const template=params.get("template");
+const params = new URLSearchParams(window.location.search);
+const template = params.get("template");
 
-const hero=document.getElementById("heroImage");
-const title=document.getElementById("engineTitle");
+const hero = document.getElementById("heroImage");
+const title = document.getElementById("engineTitle");
 
 if(template && hero && title){
 
-title.innerText=template.replaceAll("-"," ").toUpperCase();
-hero.src=`assets/images/template-${template}.jpg`;
+   title.innerText = template.replaceAll("-"," ").toUpperCase();
+   hero.src = `assets/images/template-${template}.jpg`;
 
 }
 
 
-/* ======================
-AUTH + CREDIT LOCK SYSTEM
-====================== */
-
-let USER_DEV_MODE=false;
-let USER_TOKEN=localStorage.getItem("sn_token");
-
-async function authCheck(){
-
-try{
-
-const res=await fetch(`${API_BASE}/api/auth-check`,{
-
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({token:USER_TOKEN})
-
-});
-
-const data=await res.json();
-
-if(data.user && data.user.dev===true){
-
-USER_DEV_MODE=true;
-
-}
-
-if(data.limit){
-
-alert("FREE LIMIT REACHED (3/day)");
-return false;
-
-}
-
-return true;
-
-}catch(e){
-
-console.log("AUTH ERROR:",e);
-return false;
-
-}
-
-}
-
-
-/* ======================
-PREVIEW
-====================== */
+// ==============================
+// PREVIEW FILE
+// ==============================
 
 let videoFile=null;
 let imageFile=null;
 
-videoInput.onchange=e=>{
+document.getElementById("videoInput").addEventListener("change",(e)=>{
 
-videoFile=e.target.files[0];
+   videoFile=e.target.files[0];
 
-if(videoFile){
-videoPreview.src=URL.createObjectURL(videoFile);
-}
+   if(videoFile){
 
-};
+      const vid=document.getElementById("videoPreview");
+      vid.src=URL.createObjectURL(videoFile);
 
-imageInput.onchange=e=>{
+      vid.onloadedmetadata=function(){
 
-imageFile=e.target.files[0];
+         if(vid.duration > 30){
 
-if(imageFile){
-imagePreview.src=URL.createObjectURL(imageFile);
-}
+            showBlock("Video limit 30 seconds");
 
-};
+            videoFile=null;
+            vid.src="";
 
+         }
 
-/* ======================
-AUTO RESULT CHECK
-====================== */
+      };
 
-async function autoCheck(jobId){
-
-const timer=setInterval(async()=>{
-
-const res=await fetch(`${API_BASE}/api/result/${jobId}`);
-const data=await res.json();
-
-if(data.ready){
-
-clearInterval(timer);
-
-alert("Render completed");
-
-}
-
-},5000);
-
-}
-
-
-/* ======================
-REAL RENDER ENGINE
-====================== */
-
-createBtn.onclick=async()=>{
-
-const allow=await authCheck();
-
-if(!allow){
-
-alert("AUTH REQUIRED");
-return;
-
-}
-
-const inputData={
-
-video: videoFile ? videoFile.name : null,
-image: imageFile ? imageFile.name : null
-
-};
-
-const res=await fetch(`${API_BASE}/api/render`,{
-
-method:"POST",
-headers:{ "Content-Type":"application/json"},
-body:JSON.stringify({
-
-template:template,
-input:inputData
-
-})
+   }
 
 });
 
-const data=await res.json();
+document.getElementById("imageInput").addEventListener("change",(e)=>{
 
-if(data.jobId){
+   imageFile=e.target.files[0];
 
-autoCheck(data.jobId);
+   if(imageFile){
+      document.getElementById("imagePreview").src=
+      URL.createObjectURL(imageFile);
+   }
+
+});
+
+
+// ==============================
+// UI BLOCK
+// ==============================
+
+function showBlock(msg){
+
+   const box=document.createElement("div");
+
+   box.className="ultra-block";
+
+   box.innerHTML=`<h3>${msg}</h3>`;
+
+   document.body.appendChild(box);
 
 }
 
-alert("Render job sent");
 
-};
+// ==============================
+// CREDIT CHECK
+// ==============================
+
+function allowRender(){
+
+   if(USER.dev===true) return true;
+
+   if(USER.usedToday < USER.freeDaily){
+
+      USER.usedToday++;
+      return true;
+
+   }
+
+   if(USER.points >= 100){
+
+      USER.points -= 100;
+      return true;
+
+   }
+
+   showBlock("Not enough credits");
+
+   return false;
+
+}
+
+
+// ==============================
+// AUTO RESULT WATCH
+// ==============================
+
+async function watchJob(id){
+
+   const timer=setInterval(async()=>{
+
+      const res=await fetch("/api/job/"+id);
+      const data=await res.json();
+
+      if(data.status==="done"){
+
+         clearInterval(timer);
+
+         alert("Render completed");
+
+      }
+
+   },3000);
+
+}
+
+
+// ==============================
+// CREATE BUTTON
+// ==============================
+
+document.getElementById("createBtn").addEventListener("click", async ()=>{
+
+   if(!template){
+
+      showBlock("Template missing");
+      return;
+
+   }
+
+   if(!allowRender()) return;
+
+   const res=await fetch("/api/render",{
+
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({
+
+         template:template,
+         video: videoFile ? videoFile.name:null,
+         image: imageFile ? imageFile.name:null
+
+      })
+
+   });
+
+   const data=await res.json();
+
+   if(data.jobId){
+
+      watchJob(data.jobId);
+
+   }
+
+});
+
+</script>
+
+<!-- ====================================================== -->
+<!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
+<!-- ====================================================== -->
+
+<script>
+
+document.querySelectorAll("[data-template]").forEach(el=>{
+   el.addEventListener("click",()=>{
+      const model = el.dataset.template;
+      if(model){
+         window.location.href = "create.html?template="+model;
+      }
+   });
+});
 
 </script>
 
