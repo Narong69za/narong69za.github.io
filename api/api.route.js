@@ -1,58 +1,97 @@
-const express=require("express");
-const router=express.Router();
+const express = require("express");
+const router = express.Router();
 
-const { runAI } = require("../services/ai.service");
-const { verifyGoogle } = require("../services/auth.service");
-const { checkUsage } = require("../services/credit.service");
-const { getModel } = require("../models/model.router");
+const auth = require("../auth.service");
+const credit = require("../credit.service");
+const usage = require("../usage-engine");
+const ai = require("../ai.service");
 
 
-router.post("/auth-check",async(req,res)=>{
+/* ===================================
+AI READY TEST
+=================================== */
 
-const {token}=req.body;
+router.post("/generate",(req,res)=>{
 
-const user=await verifyGoogle(token);
-
-const usage=checkUsage(user);
-
-if(!usage.allow){
-
-return res.json({limit:true});
-
-}
-
-res.json({
-
-ok:true,
-user:user
-
-});
+   res.json({
+      status:"AI READY"
+   });
 
 });
 
 
-router.post("/render",async(req,res)=>{
+/* ===================================
+ULTRA FINAL RENDER ENGINE
+=================================== */
 
-const {template,input}=req.body;
+router.post("/render", async (req,res)=>{
 
-const model=getModel(template);
+   try{
 
-if(!model){
+      const user = await auth.check(req);
 
-return res.status(400).json({error:"INVALID TEMPLATE"});
+      /* ===============================
+      DEV MODE BYPASS
+      =============================== */
 
-}
+      if(!user.dev){
 
-const output=await runAI(model,input);
+         const allowed = await usage.checkDailyFree(user.id);
 
-res.json({
+         if(!allowed){
 
-success:true,
-jobId:"demo123",
-output
+            const creditOK = await credit.consume(user.id);
+
+            if(!creditOK){
+
+               return res.status(403).json({
+                  error:"NO CREDIT"
+               });
+
+            }
+
+         }
+
+      }
+
+      const jobId = global.SN_CREATE_JOB(req.body);
+
+      /* simulate async render */
+
+      setTimeout(()=>{
+
+         global.SN_UPDATE_JOB(jobId,{
+            status:"done",
+            output:"AI_VIDEO_READY"
+         });
+
+      },5000);
+
+      res.json({
+         jobId
+      });
+
+   }catch(e){
+
+      res.status(401).json({
+         error:"AUTH REQUIRED"
+      });
+
+   }
 
 });
 
+
+/* ===================================
+JOB STATUS WATCH
+=================================== */
+
+router.get("/job/:id",(req,res)=>{
+
+   const job = global.SN_QUEUE.get(req.params.id);
+
+   res.json(job || {status:"not_found"});
+
 });
 
-module.exports=router;
+module.exports = router;
