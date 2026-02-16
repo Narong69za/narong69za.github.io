@@ -1,17 +1,38 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 
-router.post('/generate', (req, res) => {
-  res.json({ status: 'AI READY' });
-});
+/*
+================================
+IMPORT SERVICES
+================================
+*/
 
-module.exports = router;
+const { verifyGoogle } = require("../services/auth.service");
+const { runAI } = require("../services/ai.service");
 
-// =============================
-// USAGE CHECK ENGINE (ADD ONLY)
-// =============================
+/*
+================================
+MEMORY STORE
+================================
+*/
 
 const usageStore = {};
+
+/*
+================================
+TEST ROUTE
+================================
+*/
+
+router.post("/generate",(req,res)=>{
+   res.json({status:"AI READY"});
+});
+
+/*
+================================
+USAGE LIMIT CHECK
+================================
+*/
 
 router.post("/usage-check",(req,res)=>{
 
@@ -20,32 +41,29 @@ router.post("/usage-check",(req,res)=>{
       req.socket.remoteAddress;
 
    if(!usageStore[ip]){
-      usageStore[ip] = 0;
+      usageStore[ip]=0;
    }
 
    usageStore[ip]++;
 
    if(usageStore[ip] > 3){
 
-      return res.json({
-         limit:true
-      });
+      return res.json({ limit:true });
 
    }
 
    res.json({
       limit:false,
-      remaining: 3 - usageStore[ip]
+      remaining:3-usageStore[ip]
    });
 
 });
-// =============================
-// AUTH CHECK REAL
-// =============================
 
-const { verifyGoogle } = require("./auth.service");
-
-const usageStore = {};
+/*
+================================
+AUTH CHECK
+================================
+*/
 
 router.post("/auth-check", async (req,res)=>{
 
@@ -64,9 +82,7 @@ router.post("/auth-check", async (req,res)=>{
       usageStore[key]++;
 
       if(usageStore[key] > 3){
-
          return res.json({ limit:true });
-
       }
 
       res.json({
@@ -75,56 +91,19 @@ router.post("/auth-check", async (req,res)=>{
          remaining:3-usageStore[key]
       });
 
-   }catch(e){
+   }catch(err){
 
-      res.status(401).json({ error:"AUTH FAILED" });
-
-   }
-
-});
-
-// ADD ONLY - REAL RENDER ROUTE
-const { runAI } = require("./ai.service");
-
-router.post("/render", async (req,res)=>{
-
-   try{
-
-      const { template, input } = req.body;
-
-      const modelMap = {
-         "dark-viral":"owner/model1",
-         "ai-lipsync":"owner/model2",
-         "dance-motion":"owner/model3",
-         "face-swap":"owner/model4"
-      };
-
-      const model = modelMap[template];
-
-      if(!model){
-         return res.status(400).json({error:"INVALID TEMPLATE"});
-      }
-
-      const output = await runAI(model,input);
-
-      res.json({
-         success:true,
-         output
-      });
-
-   }catch(e){
-
-      console.error(e);
-      res.status(500).json({success:false});
+      res.status(401).json({error:"AUTH FAILED"});
 
    }
 
 });
-// ==============================
-// SN DESIGN ADD ONLY : REAL RENDER ENGINE ROUTE
-// ==============================
 
-const { runAI } = require("./ai.service");
+/*
+================================
+AI RENDER ENGINE
+================================
+*/
 
 router.post("/render", async (req,res)=>{
 
@@ -165,3 +144,5 @@ router.post("/render", async (req,res)=>{
    }
 
 });
+
+module.exports = router;
