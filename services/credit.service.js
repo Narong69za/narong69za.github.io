@@ -1,9 +1,27 @@
-const config = require('../config/credit.config.json');
-let users = {};
+const usageStore={};
 
-exports.addCredit = async (ip, amount) => {
-  const credit = amount * config.conversion;
-  if (!users[ip]) users[ip] = 0;
-  users[ip] += credit;
-  console.log('CREDIT:', ip, users[ip]);
-};
+function checkUsage(user){
+
+if(user.dev===true){
+
+return { allow:true };
+
+}
+
+const key=user.email;
+
+if(!usageStore[key]) usageStore[key]=0;
+
+usageStore[key]++;
+
+if(usageStore[key]>3){
+
+return { allow:false };
+
+}
+
+return { allow:true };
+
+}
+
+module.exports={ checkUsage };
