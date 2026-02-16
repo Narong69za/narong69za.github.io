@@ -1,47 +1,34 @@
 require("dotenv").config();
 
-const express = require("express");
-const path = require("path");
+const express = require('express');
+const path = require('path');
 
 const app = express();
 
 app.use(express.json());
 
-/*
-================================
-STATIC WEBSITE (ROOT HTML)
-================================
-*/
-app.use(express.static(__dirname));
+/* ==============================
+   STATIC ROOT SERVE
+============================== */
 
-/*
-================================
-API ROUTES
-================================
-*/
+app.use(express.static(__dirname)); // serve ROOT html
 
-const apiRouter = require("./api/api.route");
+/* ==============================
+   API ROUTER
+============================== */
 
-app.use("/api", apiRouter);
+app.use('/api', require('./api/api.route'));
 
-/*
-================================
-HEALTH CHECK
-================================
-*/
+/* ==============================
+   ROOT INDEX
+============================== */
 
-app.get("/health", (req,res)=>{
-   res.json({status:"SN DESIGN SERVER OK"});
+app.get('/', (req,res)=>{
+   res.sendFile(path.join(__dirname,'index.html'));
 });
-
-/*
-================================
-START SERVER
-================================
-*/
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, ()=>{
-   console.log("Server running on port",PORT);
+   console.log("SN DESIGN SERVER RUNNING:",PORT);
 });
