@@ -1,10 +1,12 @@
 async function verifyGoogle(token){
 
-   // TODO real verify
-   return {
-      email:"demo@sndesign.ai"
-   };
+return {
+
+email:"dev@sndesign.com",
+dev:true // change later
+
+};
 
 }
 
-module.exports = { verifyGoogle };
+module.exports={ verifyGolater};
