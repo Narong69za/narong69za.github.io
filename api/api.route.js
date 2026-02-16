@@ -1,148 +1,83 @@
-const express = require("express");
-const router = express.Router();
+const express=require("express");
+const router=express.Router();
 
-/*
-================================
-IMPORT SERVICES
-================================
-*/
-
-const { verifyGoogle } = require("../services/auth.service");
 const { runAI } = require("../services/ai.service");
+const { verifyGoogle } = require("../services/auth.service");
 
-/*
-================================
-MEMORY STORE
-================================
-*/
+const usageStore={};
 
-const usageStore = {};
+/* AUTH CHECK */
 
-/*
-================================
-TEST ROUTE
-================================
-*/
+router.post("/auth-check",async(req,res)=>{
 
-router.post("/generate",(req,res)=>{
-   res.json({status:"AI READY"});
-});
+try{
 
-/*
-================================
-USAGE LIMIT CHECK
-================================
-*/
+const {token}=req.body;
 
-router.post("/usage-check",(req,res)=>{
+const user=await verifyGoogle(token);
 
-   const ip =
-      req.headers["x-forwarded-for"] ||
-      req.socket.remoteAddress;
+const key=user.email;
 
-   if(!usageStore[ip]){
-      usageStore[ip]=0;
-   }
+if(!usageStore[key]) usageStore[key]=0;
 
-   usageStore[ip]++;
+usageStore[key]++;
 
-   if(usageStore[ip] > 3){
+if(user.dev!==true && usageStore[key]>3){
 
-      return res.json({ limit:true });
+return res.json({limit:true});
 
-   }
+}
 
-   res.json({
-      limit:false,
-      remaining:3-usageStore[ip]
-   });
+res.json({
+
+ok:true,
+user:user,
+remaining:3-usageStore[key]
 
 });
 
-/*
-================================
-AUTH CHECK
-================================
-*/
+}catch(e){
 
-router.post("/auth-check", async (req,res)=>{
+res.status(401).json({error:"AUTH FAILED"});
 
-   try{
-
-      const { token } = req.body;
-
-      const user = await verifyGoogle(token);
-
-      const key = user.email;
-
-      if(!usageStore[key]){
-         usageStore[key]=0;
-      }
-
-      usageStore[key]++;
-
-      if(usageStore[key] > 3){
-         return res.json({ limit:true });
-      }
-
-      res.json({
-         ok:true,
-         user:user,
-         remaining:3-usageStore[key]
-      });
-
-   }catch(err){
-
-      res.status(401).json({error:"AUTH FAILED"});
-
-   }
+}
 
 });
 
-/*
-================================
-AI RENDER ENGINE
-================================
-*/
 
-router.post("/render", async (req,res)=>{
+/* RENDER */
 
-   try{
+router.post("/render",async(req,res)=>{
 
-      const { template, input } = req.body;
+const {template,input}=req.body;
 
-      const MODEL_MAP = {
+const modelMap={
 
-         "dark-viral":"owner/model1",
-         "ai-lipsync":"owner/model2",
-         "dance-motion":"owner/model3",
-         "face-swap":"owner/model4"
+"dark-viral":"owner/model1",
+"ai-lipsync":"owner/model2",
+"dance-motion":"owner/model3",
+"face-swap":"owner/model4"
 
-      };
+};
 
-      const model = MODEL_MAP[template];
+const model=modelMap[template];
 
-      if(!model){
-         return res.status(400).json({error:"INVALID TEMPLATE"});
-      }
+if(!model){
 
-      const output = await runAI(model,input);
+return res.status(400).json({error:"INVALID TEMPLATE"});
 
-      res.json({
-         success:true,
-         output
-      });
+}
 
-   }catch(err){
+const output=await runAI(model,input);
 
-      console.error("SN DESIGN RENDER ERROR:",err);
+res.json({
 
-      res.status(500).json({
-         success:false
-      });
-
-   }
+success:true,
+jobId:"demo123",
+output
 
 });
 
-module.exports = router;
+});
+
+module.exports=router;
