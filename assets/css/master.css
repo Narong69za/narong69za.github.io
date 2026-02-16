@@ -2512,3 +2512,16 @@ display:flex;
 gap:28px;
 margin:auto;
 }
+.ultra-progress{
+width:100%;
+height:10px;
+background:#111;
+margin-top:20px;
+}
+
+#progressBar{
+height:100%;
+width:0%;
+background:#00ffaa;
+transition:0.3s;
+}
