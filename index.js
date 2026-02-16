@@ -5,40 +5,17 @@ const path = require("path");
 
 const app = express();
 
-/* ======================================================
-CORE MIDDLEWARE
-====================================================== */
-
 app.use(express.json());
 
-/* ======================================================
-STATIC WEBSITE SERVE
-====================================================== */
+/* ===================================
+STATIC WEBSITE
+=================================== */
 
 app.use(express.static(__dirname));
 
-/* ======================================================
-API ROUTER (MAIN BACKEND)
-====================================================== */
-
-try{
-   app.use('/api', require('./api/api.route'));
-   console.log("API ROUTER LOADED");
-}catch(e){
-   console.log("API ROUTER LOAD ERROR:", e.message);
-}
-
-/* ======================================================
-ROOT STATUS CHECK
-====================================================== */
-
-app.get("/", (req,res)=>{
-   res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
-});
-
-/* ======================================================
-SN DESIGN AUTO QUEUE ENGINE
-====================================================== */
+/* ===================================
+GLOBAL JOB QUEUE
+=================================== */
 
 const jobQueue = new Map();
 
@@ -65,14 +42,25 @@ global.SN_UPDATE_JOB = function(id,data){
       ...jobQueue.get(id),
       ...data
    });
+
 }
 
-/* ======================================================
-SERVER START
-====================================================== */
+/* ===================================
+API ROUTER LOAD
+=================================== */
+
+app.use('/api', require('./api/api.route'));
+
+/* ===================================
+ROOT CHECK
+=================================== */
+
+app.get("/", (req,res)=>{
+   res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
+});
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, ()=>{
-   console.log("🔥 SN DESIGN SERVER RUNNING:",PORT);
+   console.log("ULTRA FINAL PLATFORM RUNNING:",PORT);
 });
