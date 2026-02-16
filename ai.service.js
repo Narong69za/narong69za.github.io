@@ -134,3 +134,56 @@ async function runAI_DEBUG(model,input){
 }
 
 module.exports.runAI_DEBUG = runAI_DEBUG;
+
+// ======================================================
+// SN DESIGN ADD ONLY : AUTO MODEL VERSION FIX
+// ======================================================
+
+async function resolveModelVersion(model){
+
+   try{
+
+      console.log("AUTO VERSION CHECK:",model);
+
+      const parts = model.split("/");
+
+      if(parts.length !== 2) return model;
+
+      const owner = parts[0];
+      const name = parts[1];
+
+      const modelData = await replicate.models.get(owner,name);
+
+      if(modelData.latest_version){
+
+         const fullModel = `${owner}/${name}:${modelData.latest_version.id}`;
+
+         console.log("AUTO VERSION RESOLVED:",fullModel);
+
+         return fullModel;
+
+      }
+
+      return model;
+
+   }catch(err){
+
+      console.log("AUTO VERSION ERROR:",err);
+
+      return model;
+
+   }
+
+}
+
+// PATCH runAI DEBUG auto resolve
+
+const originalRunAI_DEBUG = module.exports.runAI_DEBUG;
+
+module.exports.runAI_DEBUG = async function(model,input){
+
+   const resolvedModel = await resolveModelVersion(model);
+
+   return originalRunAI_DEBUG(resolvedModel,input);
+
+};
