@@ -1,12 +1,27 @@
-async function verifyGoogle(token){
+exports.check = async function(req){
 
-return {
+   const token = req.headers.authorization;
 
-email:"dev@sndesign.com",
-dev:true // change later
+   if(!token){
 
-};
+      throw new Error("AUTH REQUIRED");
+
+   }
+
+   /* dev bypass */
+
+   if(token==="dev-mode"){
+
+      return {
+         id:"dev",
+         dev:true
+      }
+
+   }
+
+   return {
+      id:"google-user",
+      dev:false
+   }
 
 }
-
-module.exports={ verifyGolater};
