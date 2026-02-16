@@ -51,8 +51,6 @@ box-shadow:0 0 20px rgba(0,180,255,0.35);
 color:#00c3ff;
 }
 
-/* ===== PREMIUM TEXT GLOW ===== */
-
 h1,h2,.section-title{
 text-shadow:
 0 0 8px rgba(255,255,255,0.3),
@@ -60,37 +58,25 @@ text-shadow:
 0 0 30px rgba(0,150,255,0.2);
 }
 
-/* ======================================================
-ULTRA ANIME NETWORK GRAPH (ADD ONLY FINAL)
-====================================================== */
-
 .network-screen{
-
 position:relative;
 overflow:hidden;
 background:#020202;
 border-radius:14px;
 border:1px solid rgba(255,255,255,0.08);
-
 }
 
-/* animated anime waveform */
-
 .ultra-graph{
-
 position:absolute;
 bottom:0;
 width:300%;
 height:100%;
-
 background:
-
 linear-gradient(
 180deg,
 transparent 60%,
 rgba(0,255,180,0.4)
 ),
-
 repeating-linear-gradient(
 90deg,
 rgba(0,255,255,0.2) 0px,
@@ -98,37 +84,26 @@ rgba(0,255,255,0.2) 2px,
 transparent 2px,
 transparent 12px
 );
-
 animation:animeGraphMove 5s linear infinite;
-
 }
 
-/* glow layer */
-
 .ultra-graph-glow{
-
 position:absolute;
 bottom:0;
 width:300%;
 height:100%;
-
 background:linear-gradient(
 to top,
 rgba(0,255,255,0.35),
 transparent
 );
-
 animation:animeGraphMove 5s linear infinite;
-
 mix-blend-mode:screen;
-
 }
 
 @keyframes animeGraphMove{
-
 0%{transform:translateX(0);}
 100%{transform:translateX(-50%);}
-
 }
 
 </style>
@@ -187,11 +162,6 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 <button class="gui-btn">Start Preview</button>
 
-
-<!-- ======================================================
-ULTRA STATUS BAR FINAL (ADD ONLY)
-====================================================== -->
-
 <div class="ultra-cta-status">
 
 <div class="cta-box server-online">
@@ -207,11 +177,6 @@ AI CONNECT<br><span id="ai-status">CONNECTED</span>
 </div>
 
 </div>
-
-
-<!-- ======================================================
-ULTRA NETWORK TRAFFIC FINAL ANIME VERSION
-====================================================== -->
 
 <div class="ultra-network-panel">
 
@@ -267,7 +232,6 @@ allowfullscreen>
 
 <script src="assets/js/nav.js"></script>
 
-
 <!-- ====================================================== -->
 <!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
 <!-- ====================================================== -->
@@ -280,6 +244,37 @@ document.querySelectorAll("[data-template]").forEach(el=>{
       }
    });
 });
+</script>
+
+<!-- ====================================================== -->
+<!-- SN DESIGN ADD ONLY : API CONNECT SYSTEM -->
+<!-- ====================================================== -->
+<script>
+
+document.querySelector(".gui-btn").addEventListener("click", async ()=>{
+
+   try{
+
+      const res = await fetch("/api/generate",{
+         method:"POST",
+         headers:{
+            "Content-Type":"application/json"
+         },
+         body: JSON.stringify({})
+      });
+
+      const data = await res.json();
+
+      document.getElementById("ai-status").innerText = data.status;
+
+   }catch(err){
+
+      document.getElementById("ai-status").innerText = "ERROR";
+
+   }
+
+});
+
 </script>
 
 </body>
