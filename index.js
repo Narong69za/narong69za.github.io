@@ -64,3 +64,19 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, ()=>{
    console.log("ULTRA FINAL PLATFORM RUNNING:",PORT);
 });
+// REAL NETWORK TRAFFIC
+
+global.SN_TRAFFIC = {
+   activeUsers:0
+};
+
+app.use((req,res,next)=>{
+
+   global.SN_TRAFFIC.activeUsers++;
+
+   res.on("finish",()=>{
+      global.SN_TRAFFIC.activeUsers--;
+   });
+
+   next();
+});
