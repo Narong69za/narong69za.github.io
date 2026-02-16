@@ -22,7 +22,6 @@
 
 </section>
 
-
 <section class="create-area">
 
 <input type="file" id="videoInput" accept="video/*">
@@ -35,7 +34,6 @@
 
 </section>
 
-
 <footer>
 © SN Design Studio, 2026 · All rights reserved.
 </footer>
@@ -44,206 +42,176 @@
 
 <script>
 
-// TEMPLATE LOAD
+/* ======================
+API BASE AUTO
+====================== */
 
-const params = new URLSearchParams(window.location.search);
-const template = params.get("template");
+const API_BASE = window.location.origin;
 
-const hero = document.getElementById("heroImage");
-const title = document.getElementById("engineTitle");
+
+/* ======================
+TEMPLATE LOAD
+====================== */
+
+const params=new URLSearchParams(window.location.search);
+const template=params.get("template");
+
+const hero=document.getElementById("heroImage");
+const title=document.getElementById("engineTitle");
 
 if(template && hero && title){
 
-   title.innerText = template.replaceAll("-"," ").toUpperCase();
-   hero.src = `assets/images/template-${template}.jpg`;
+title.innerText=template.replaceAll("-"," ").toUpperCase();
+hero.src=`assets/images/template-${template}.jpg`;
 
 }
 
 
-// ==============================
-// SN DESIGN ADD ONLY : TEMPLATE SAFETY CHECK
-// ==============================
+/* ======================
+AUTH + CREDIT LOCK SYSTEM
+====================== */
 
-if(!template){
-   console.warn("SN DESIGN TEMPLATE MISSING");
+let USER_DEV_MODE=false;
+let USER_TOKEN=localStorage.getItem("sn_token");
+
+async function authCheck(){
+
+try{
+
+const res=await fetch(`${API_BASE}/api/auth-check`,{
+
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({token:USER_TOKEN})
+
+});
+
+const data=await res.json();
+
+if(data.user && data.user.dev===true){
+
+USER_DEV_MODE=true;
+
+}
+
+if(data.limit){
+
+alert("FREE LIMIT REACHED (3/day)");
+return false;
+
+}
+
+return true;
+
+}catch(e){
+
+console.log("AUTH ERROR:",e);
+return false;
+
+}
+
 }
 
 
-// PREVIEW
+/* ======================
+PREVIEW
+====================== */
 
 let videoFile=null;
 let imageFile=null;
 
-document.getElementById("videoInput").addEventListener("change",(e)=>{
+videoInput.onchange=e=>{
 
-   videoFile=e.target.files[0];
+videoFile=e.target.files[0];
 
-   if(videoFile){
-      document.getElementById("videoPreview").src=
-      URL.createObjectURL(videoFile);
-   }
+if(videoFile){
+videoPreview.src=URL.createObjectURL(videoFile);
+}
 
-});
+};
 
-document.getElementById("imageInput").addEventListener("change",(e)=>{
+imageInput.onchange=e=>{
 
-   imageFile=e.target.files[0];
+imageFile=e.target.files[0];
 
-   if(imageFile){
-      document.getElementById("imagePreview").src=
-      URL.createObjectURL(imageFile);
-   }
+if(imageFile){
+imagePreview.src=URL.createObjectURL(imageFile);
+}
 
-});
+};
 
 
-// ==============================
-// SN DESIGN ADD ONLY : AUTO RESULT CHECK
-// ==============================
+/* ======================
+AUTO RESULT CHECK
+====================== */
 
 async function autoCheck(jobId){
 
-   console.log("AUTO CHECK START:",jobId);
+const timer=setInterval(async()=>{
 
-   const timer = setInterval(async ()=>{
+const res=await fetch(`${API_BASE}/api/result/${jobId}`);
+const data=await res.json();
 
-      try{
+if(data.ready){
 
-         const res = await fetch(`/api/result/${jobId}`);
+clearInterval(timer);
 
-         const data = await res.json();
+alert("Render completed");
 
-         console.log("STATUS:",data);
+}
 
-         if(data && data.ready){
-
-            clearInterval(timer);
-
-            alert("Render completed");
-
-            console.log("FINAL OUTPUT:",data.output);
-
-         }
-
-      }catch(e){
-
-         console.log("CHECK ERROR:",e);
-
-      }
-
-   },5000);
+},5000);
 
 }
 
 
-// REAL RENDER ENGINE
+/* ======================
+REAL RENDER ENGINE
+====================== */
 
-document.getElementById("createBtn").addEventListener("click", async ()=>{
+createBtn.onclick=async()=>{
 
-   console.log("BUTTON CLICKED");
+const allow=await authCheck();
 
-   const inputData={
+if(!allow){
 
-      video: videoFile ? videoFile.name : null,
-      image: imageFile ? imageFile.name : null
+alert("AUTH REQUIRED");
+return;
 
-   };
+}
 
-   try{
+const inputData={
 
-      const res = await fetch("/api/render",{
+video: videoFile ? videoFile.name : null,
+image: imageFile ? imageFile.name : null
 
-         method:"POST",
-         headers:{ "Content-Type":"application/json" },
-         body:JSON.stringify({
-            template:template,
-            input:inputData
-         })
+};
 
-      });
+const res=await fetch(`${API_BASE}/api/render`,{
 
-      const data = await res.json();
+method:"POST",
+headers:{ "Content-Type":"application/json"},
+body:JSON.stringify({
 
-      console.log("RENDER RESULT:",data);
+template:template,
+input:inputData
 
-      // ==============================
-      // SN DESIGN ADD ONLY : AUTO PIPELINE START
-      // ==============================
-
-      if(data.jobId){
-
-         autoCheck(data.jobId);
-
-      }
-
-      alert("Render job sent");
-
-   }catch(e){
-
-      console.log("ERROR:",e);
-
-   }
+})
 
 });
 
-</script>
-<script>
+const data=await res.json();
 
-// ======================================================
-// SN DESIGN AUTO RENDER ENGINE
-// ======================================================
+if(data.jobId){
 
-async function startRender(model,input){
-
-   const res = await fetch("/api/render-auto",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json"},
-      body:JSON.stringify({model,input})
-   });
-
-   const data = await res.json();
-
-   if(!data.jobId) return;
-
-   watchJob(data.jobId);
+autoCheck(data.jobId);
 
 }
 
-async function watchJob(id){
+alert("Render job sent");
 
-   const timer = setInterval(async()=>{
+};
 
-      const res = await fetch("/api/job/"+id);
-      const job = await res.json();
-
-      console.log("JOB STATUS:",job.status);
-
-      if(job.status==="done"){
-
-         clearInterval(timer);
-
-         console.log("OUTPUT:",job.output);
-
-      }
-
-   },3000);
-
-}
-
-   </script>
-
-<!-- ====================================================== -->
-<!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
-<!-- ====================================================== -->
-<script>
-document.querySelectorAll("[data-template]").forEach(el=>{
-   el.addEventListener("click",()=>{
-      const model = el.dataset.template;
-      if(model){
-         window.location.href = "create.html?template="+model;
-      }
-   });
-});
 </script>
 
 </body>
