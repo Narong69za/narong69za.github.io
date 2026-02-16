@@ -74,3 +74,23 @@ function checkUsage(req){
 module.exports = {
    checkUsage
 };
+// ======================================================
+// ULTRA CREDIT ENGINE (ADD ONLY)
+// ======================================================
+
+global.SN_USE_CREDIT = function(user,cost){
+
+   // dev mode ไม่หักเครดิต
+   if(user.dev === true) return true;
+
+   if(!user.points) return false;
+
+   if(user.points < cost) return false;
+
+   user.points -= cost;
+
+   console.log("CREDIT USED:",cost,"LEFT:",user.points);
+
+   return true;
+
+}
