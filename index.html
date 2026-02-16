@@ -277,6 +277,33 @@ document.querySelectorAll("[data-template]").forEach(el=>{
    });
 });
 </script>
+<script>
 
+async function updateStatus(){
+
+   try{
+
+      const server = await fetch("/api/status/server").then(r=>r.json());
+      const ai = await fetch("/api/status/ai").then(r=>r.json());
+      const net = await fetch("/api/status/network").then(r=>r.json());
+
+      document.getElementById("server-status").innerText =
+         server.server.toUpperCase();
+
+      document.getElementById("ai-status").innerText =
+         ai.ai ? "CONNECTED":"OFFLINE";
+
+      console.log("TRAFFIC:", net.traffic);
+
+   }catch(e){
+      console.log("STATUS ERROR",e);
+   }
+
+}
+
+setInterval(updateStatus,5000);
+updateStatus();
+
+</script>
 </body>
    </html>
