@@ -187,6 +187,49 @@ document.getElementById("createBtn").addEventListener("click", async ()=>{
 });
 
 </script>
+<script>
 
+// ======================================================
+// SN DESIGN AUTO RENDER ENGINE
+// ======================================================
+
+async function startRender(model,input){
+
+   const res = await fetch("/api/render-auto",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify({model,input})
+   });
+
+   const data = await res.json();
+
+   if(!data.jobId) return;
+
+   watchJob(data.jobId);
+
+}
+
+async function watchJob(id){
+
+   const timer = setInterval(async()=>{
+
+      const res = await fetch("/api/job/"+id);
+      const job = await res.json();
+
+      console.log("JOB STATUS:",job.status);
+
+      if(job.status==="done"){
+
+         clearInterval(timer);
+
+         console.log("OUTPUT:",job.output);
+
+      }
+
+   },3000);
+
+}
+
+   </script>
 </body>
 </html>
