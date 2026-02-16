@@ -208,6 +208,44 @@ router.post("/render-debug", async (req,res)=>{
          error:e.message
       });
 
+   }// ======================================================
+// SN DESIGN AUTO JOB API
+// ======================================================
+
+router.post("/render-auto",async(req,res)=>{
+
+   try{
+
+      const {model,input} = req.body;
+
+      const jobId = await aiService.runAsyncRender(model,input);
+
+      res.json({
+         success:true,
+         jobId
+      });
+
+   }catch(err){
+
+      res.status(500).json({error:err.message});
+
    }
+
+});
+
+
+router.get("/job/:id",(req,res)=>{
+
+   const job = global.SN_QUEUE.get(req.params.id);
+
+   if(!job){
+
+      return res.status(404).json({error:"not found"});
+
+   }
+
+   res.json(job);
+
+});
 
 });
