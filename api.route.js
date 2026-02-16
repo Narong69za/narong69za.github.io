@@ -165,3 +165,49 @@ router.post("/render", async (req,res)=>{
    }
 
 });
+// ======================================================
+// SN DESIGN ADD ONLY : DEV DEBUG RENDER ROUTE
+// ======================================================
+
+const { runAI_DEBUG } = require("./ai.service");
+
+router.post("/render-debug", async (req,res)=>{
+
+   try{
+
+      const { template, input } = req.body;
+
+      console.log("DEBUG TEMPLATE:",template);
+
+      const MODEL_MAP = {
+
+         "dark-viral":"owner/model1",
+         "ai-lipsync":"owner/model2",
+         "dance-motion":"owner/model3",
+         "face-swap":"owner/model4"
+
+      };
+
+      const model = MODEL_MAP[template];
+
+      console.log("DEBUG MODEL:",model);
+
+      const output = await runAI_DEBUG(model,input);
+
+      res.json({
+         debug:true,
+         output
+      });
+
+   }catch(e){
+
+      console.log("DEBUG ROUTE ERROR:",e);
+
+      res.status(500).json({
+         debug:true,
+         error:e.message
+      });
+
+   }
+
+});
