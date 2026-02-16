@@ -109,7 +109,7 @@ async function autoCheck(jobId){
 
       try{
 
-         const res = await fetch(`https://api.sn-designstudio.dev/api/result/${jobId}`);
+         const res = await fetch(`/api/result/${jobId}`);
 
          const data = await res.json();
 
@@ -151,7 +151,7 @@ document.getElementById("createBtn").addEventListener("click", async ()=>{
 
    try{
 
-      const res = await fetch("https://api.sn-designstudio.dev/api/render",{
+      const res = await fetch("/api/render",{
 
          method:"POST",
          headers:{ "Content-Type":"application/json" },
@@ -231,5 +231,20 @@ async function watchJob(id){
 }
 
    </script>
+
+<!-- ====================================================== -->
+<!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
+<!-- ====================================================== -->
+<script>
+document.querySelectorAll("[data-template]").forEach(el=>{
+   el.addEventListener("click",()=>{
+      const model = el.dataset.template;
+      if(model){
+         window.location.href = "create.html?template="+model;
+      }
+   });
+});
+</script>
+
 </body>
 </html>

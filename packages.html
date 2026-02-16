@@ -148,5 +148,20 @@ FOOTER
 
 <script src="assets/js/nav.js"></script>
 
+
+<!-- ====================================================== -->
+<!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
+<!-- ====================================================== -->
+<script>
+document.querySelectorAll("[data-template]").forEach(el=>{
+   el.addEventListener("click",()=>{
+      const model = el.dataset.template;
+      if(model){
+         window.location.href = "create.html?template="+model;
+      }
+   });
+});
+</script>
+
 </body>
   </html>
