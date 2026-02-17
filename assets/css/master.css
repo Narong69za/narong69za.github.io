@@ -390,3 +390,47 @@ font-weight:600;
 white-space:nowrap;
 
 }
+/* =====================================
+ULTRA NAV REAL FIX
+===================================== */
+
+.global-nav{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+
+display:flex !important;
+justify-content:center !important;
+
+z-index:9999;
+}
+
+.nav-wrap{
+
+display:flex !important;
+justify-content:center !important;
+align-items:center !important;
+
+width:100%;
+max-width:1200px;
+}
+
+.nav-menu{
+
+display:flex !important;
+flex-direction:row !important;
+
+justify-content:center !important;
+align-items:center !important;
+
+gap:28px;
+
+}
+
+.nav-menu a{
+display:inline-block;
+text-align:center;
+font-size:18px;
+font-weight:600;
+}
