@@ -1,11 +1,6 @@
-/* =================================================
-ULTRA MASTER CORE — SN DESIGN STUDIO
-FINAL CLEAN ENGINE
-================================================= */
-
-/* =========================
-RESET
-========================= */
+/* =================================
+ULTRA RESET
+================================= */
 
 *{
 margin:0;
@@ -20,217 +15,16 @@ font-family:system-ui,-apple-system;
 overflow-x:hidden;
 }
 
-/* =========================
+/* =================================
 ROOT
-========================= */
+================================= */
 
 :root{
---nav-height:60px;
+--nav-h:70px;
 }
 
-/* =========================
-GLOBAL IMAGE SAFE
-========================= */
-
-img{
-max-width:100%;
-height:auto;
-display:block;
-}
-
-/* =================================================
-NAV SYSTEM (FINAL LOCK)
-================================================= */
-
-.global-nav{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-background:#000;
-border-bottom:1px solid #111;
-z-index:99999;
-display:flex;
-justify-content:center;
-}
-
-.nav-wrap{
-width:100%;
-max-width:1200px;
-display:flex;
-justify-content:center;
-padding:14px 20px;
-}
-
-.nav-menu{
-display:flex;
-gap:32px;
-list-style:none;
-}
-
-.nav-menu a{
-color:#fff;
-text-decoration:none;
-font-size:clamp(16px,1.5vw,20px);
-font-weight:600;
-white-space:nowrap;
-}
-
-.nav-active{
-text-shadow:0 0 10px rgba(0,200,255,.6);
-}
-
-/* =================================================
-LAYOUT
-================================================= */
-
-.section{
-padding:80px 20px;
-}
-
-.container{
-width:100%;
-max-width:1200px;
-margin:auto;
-padding:0 20px;
-text-align:center;
-}
-
-/* =================================================
-HERO MASTER
-================================================= */
-
-.hero-master{
-position:relative;
-width:100%;
-padding-top:var(--nav-height);
-overflow:hidden;
-}
-
-.hero-master img{
-width:100%;
-object-fit:cover;
-animation:heroBreath 6s ease-in-out infinite;
-}
-
-@keyframes heroBreath{
-0%{transform:scale(1)}
-50%{transform:scale(1.015)}
-100%{transform:scale(1)}
-}
-
-/* =================================================
-BUTTON
-================================================= */
-
-.btn-primary{
-display:inline-block;
-padding:14px 28px;
-border-radius:12px;
-background:#00ffaa;
-color:#000;
-font-weight:600;
-text-decoration:none;
-}
-
-/* =================================================
-MARQUEE FINAL (ONE VERSION ONLY)
-================================================= */
-
-.marquee-wrap{
-width:100%;
-overflow:hidden;
-background:#000;
-margin-top:var(--nav-height);
-border-bottom:1px solid rgba(255,255,255,.1);
-}
-
-.marquee-text{
-display:inline-block;
-padding-left:100%;
-white-space:nowrap;
-animation:ultraMarquee 20s linear infinite;
-}
-
-@keyframes ultraMarquee{
-0%{transform:translate
-/* ===== ULTRA CENTER LAYOUT FIX ===== */
-
-body{
-display:flex;
-flex-direction:column;
-align-items:center;
-}
-
-.section,
-.container{
-
-max-width:1200px !important;
-margin-left:auto !important;
-margin-right:auto !important;
-
-}
-/* ===============================
-SN ULTRA NAV SYSTEM
-=============================== */
-
-.sn-nav{
-
-position:fixed;
-top:0;
-left:0;
-
-width:100%;
-height:70px;
-
-background:#000;
-border-bottom:1px solid #111;
-
-z-index:99999;
-
-display:flex;
-justify-content:center;
-
-}
-
-.sn-nav-inner{
-
-width:100%;
-max-width:1200px;
-
-display:flex;
-justify-content:space-between;
-align-items:center;
-
-padding:0 20px;
-
-}
-
-.sn-menu{
-
-display:flex;
-gap:28px;
-
-}
-
-.sn-menu a{
-
-color:#fff;
-text-decoration:none;
-font-size:18px;
-font-weight:600;
-
-}
-
-.sn-menu a:hover,
-.nav-active{
-
-text-shadow:
-0 0 6px rgba(0,255,255,.6);
-
-}
 /* =================================
-SN NAV FORCE FIX (ULTRA FINAL)
+NAV SYSTEM (NEW CORE)
 ================================= */
 
 .sn-nav{
@@ -238,18 +32,19 @@ position:fixed;
 top:0;
 left:0;
 width:100%;
-height:70px;
-background:#000 !important;
+height:var(--nav-h);
+background:#000;
 border-bottom:1px solid #111;
 z-index:99999;
+
 display:flex;
 justify-content:center;
 align-items:center;
 }
 
 .sn-nav-inner{
-max-width:1200px;
 width:100%;
+max-width:1200px;
 display:flex;
 justify-content:center;
 align-items:center;
@@ -257,16 +52,86 @@ align-items:center;
 
 .sn-menu{
 display:flex;
-gap:28px;
+gap:32px;
+list-style:none;
 }
 
 .sn-menu a{
-color:#fff !important;
-text-decoration:none !important;
-font-size:18px !important;
+color:#fff;
+text-decoration:none;
+font-size:18px;
 font-weight:600;
+letter-spacing:.5px;
 }
 
+.sn-menu a.active{
+text-shadow:0 0 8px #0ff;
+}
+
+/* =================================
+LAYOUT
+================================= */
+
 body{
-padding-top:70px;
+padding-top:var(--nav-h);
+}
+
+.section{
+padding:80px 20px;
+}
+
+.container{
+max-width:1200px;
+margin:auto;
+}
+
+img{
+max-width:100%;
+display:block;
+}
+
+/* =================================
+HERO
+================================= */
+
+.hero-master{
+width:100%;
+}
+
+.hero-master img{
+width:100%;
+height:auto;
+}
+
+/* =================================
+STATUS PANEL
+================================= */
+
+.status-panel{
+margin-top:30px;
+border:1px solid #222;
+padding:20px;
+}
+
+.network-traffic{
+margin-top:20px;
+height:120px;
+background:#050505;
+border-radius:10px;
+}
+
+/* =================================
+RESPONSIVE
+================================= */
+
+@media(max-width:700px){
+
+.sn-menu{
+gap:18px;
+}
+
+.sn-menu a{
+font-size:15px;
+}
+
 }
