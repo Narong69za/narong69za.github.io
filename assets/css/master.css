@@ -1,11 +1,7 @@
-/* ======================================================
-SN DESIGN ULTRA MASTER CSS CORE
-REBUILD VERSION
-====================================================== */
-
-/* ===============================
-RESET
-=============================== */
+/* ===========================
+SN DESIGN MASTER CSS
+FINAL CORE SYSTEM
+=========================== */
 
 *{
 margin:0;
@@ -16,433 +12,115 @@ box-sizing:border-box;
 html,body{
 background:#000;
 color:#fff;
-font-family:system-ui,-apple-system,Arial;
+font-family:system-ui,-apple-system;
 overflow-x:hidden;
 }
 
-/* ===============================
-GLOBAL CENTER ENGINE
-(แก้ทุก text ไม่อยู่ center)
-=============================== */
-
-h1,h2,h3,p{
-
-text-align:center;
-
-}
-
-/* premium typography */
-
-h1{
-
-font-size:clamp(28px,5vw,48px);
-font-weight:700;
-letter-spacing:1px;
-
-}
-
-p{
-
-opacity:.85;
-line-height:1.6;
-
-}
-
-/* ===============================
-NAV FINAL (ULTRA LOCK)
-=============================== */
+/* ===== NAV GLOBAL ===== */
 
 .global-nav{
-
 position:fixed;
 top:0;
 left:0;
 width:100%;
+height:60px;
+
 background:#000;
+border-bottom:1px solid #111;
 z-index:9999;
-border-bottom:1px solid rgba(255,255,255,.1);
-
-display:flex;
-justify-content:center;
-
-}
-
-.nav-wrap{
 
 display:flex;
 justify-content:center;
 align-items:center;
-gap:32px;
+}
 
-padding:14px 20px;
-
+.nav-wrap{
+width:100%;
+max-width:1200px;
+display:flex;
+justify-content:center;
 }
 
 .nav-menu{
-
 display:flex;
 gap:28px;
-
+list-style:none;
 }
 
 .nav-menu a{
-
+color:#fff;
+text-decoration:none;
 font-size:18px;
 font-weight:600;
-text-decoration:none;
-color:#fff;
-
 }
 
-.nav-active{
-
-text-shadow:0 0 12px #00c3ff;
-
-}
-
-/* ===============================
-LAYOUT BASE
-=============================== */
-
-.section{
-
-padding:80px 20px;
-
-}
-
-.container{
-
-max-width:1100px;
-margin:auto;
-
-}
-
-/* ===============================
-HERO ENGINE
-=============================== */
+/* ===== HERO ===== */
 
 .hero-master{
-
-padding-top:80px;
+margin-top:60px; /* offset nav */
+width:100%;
 text-align:center;
-
 }
 
 .hero-master img{
-
 width:100%;
 display:block;
-margin:auto;
-
 }
 
-/* ===============================
-GUI PANEL (AI PREVIEW)
-=============================== */
+/* ===== CENTER TEXT GLOBAL ===== */
 
-.ultra-gui-preview{
-
-padding:60px 20px;
-display:flex;
-justify-content:center;
-
-}
-
-.gui-container{
-
-max-width:700px;
-width:100%;
-
-}
-
-.gui-screen{
-
-position:relative;
-overflow:hidden;
-border-radius:14px;
-
-box-shadow:
-0 0 30px rgba(0,200,255,.25);
-
-}
-
-.gui-screen img{
-
-width:100%;
-
-}
-
-/* scan line */
-
-.scan-line{
-
-position:absolute;
-width:100%;
-height:2px;
-background:#00ffff;
-
-animation:scanMove 3s linear infinite;
-
-}
-
-@keyframes scanMove{
-
-0%{top:0}
-100%{top:100%}
-
-}
-
-/* ===============================
-STATUS PANEL
-=============================== */
-
-.ultra-cta-status{
-
-display:flex;
-gap:12px;
-justify-content:center;
-margin-top:20px;
-
-}
-
-.cta-box{
-
-flex:1;
-max-width:180px;
-
-padding:14px;
+h1,h2,p{
 text-align:center;
-
-border-radius:12px;
-
-background:#060606;
-border:1px solid rgba(255,255,255,.15);
-
 }
 
-/* color state */
+/* ===== STATUS BOX ===== */
 
-.server-online{
-
-color:#00ffa2;
-
+.system-status{
+display:flex;
+justify-content:center;
+gap:16px;
+margin-top:20px;
 }
 
-.ai-connected{
-
-color:#00c3ff;
-
-}
-
-/* ===============================
-NETWORK TRAFFIC GRAPH (REAL LOOK)
-=============================== */
-
-.ultra-network-panel{
-
-margin-top:30px;
-padding:20px;
-
+.status-box{
+padding:18px;
 border-radius:14px;
-
-background:#050505;
-
+border:1px solid rgba(255,255,255,.15);
 }
 
-.network-title{
-
-letter-spacing:2px;
-margin-bottom:15px;
-
-}
+/* ===== NETWORK TRAFFIC ===== */
 
 .network-screen{
-
-position:relative;
+margin:40px auto;
+max-width:600px;
 height:120px;
-overflow:hidden;
-
+border-radius:12px;
 background:#000;
-border-radius:10px;
-
+position:relative;
+overflow:hidden;
 }
 
-/* animated bars */
-
 .network-screen::before{
-
 content:"";
-
 position:absolute;
 bottom:0;
-
+left:0;
 width:200%;
 height:100%;
 
 background:
-
 repeating-linear-gradient(
 90deg,
 rgba(0,255,255,.8) 0px,
 rgba(0,255,255,.8) 2px,
 transparent 2px,
-transparent 24px
+transparent 20px
 );
 
-animation:netMove 3s linear infinite;
-
+animation:trafficMove 2s linear infinite;
 }
 
-@keyframes netMove{
-
-0%{transform:translateX(0);}
-100%{transform:translateX(-50%);}
-
-}
-
-/* ===============================
-MARQUEE
-=============================== */
-
-.marquee-wrap{
-
-margin-top:60px;
-overflow:hidden;
-
-}
-
-.marquee-text{
-
-display:inline-block;
-white-space:nowrap;
-
-animation:marqueeMove 18s linear infinite;
-
-}
-
-@keyframes marqueeMove{
-
-0%{transform:translateX(100%)}
-100%{transform:translateX(-100%)}
-
-}
-
-/* ===============================
-FOOTER
-=============================== */
-
-footer{
-
-text-align:center;
-margin:60px 0;
-
-  }
-/* =====================================
-ULTRA NAV CENTER FINAL FIX
-===================================== */
-
-.global-nav{
-
-display:flex !important;
-justify-content:center !important;
-align-items:center !important;
-
-}
-
-.nav-wrap{
-
-width:100%;
-max-width:1200px;
-
-display:flex !important;
-justify-content:center !important;
-align-items:center !important;
-
-}
-
-.nav-menu{
-
-display:flex !important;
-flex-direction:row !important;
-justify-content:center !important;
-align-items:center !important;
-
-gap:28px;
-
-list-style:none;
-
-}
-
-.nav-menu a{
-
-display:inline-block;
-text-align:center;
-
-font-size:18px;
-font-weight:600;
-
-}
-
-/* กัน mobile browser บังคับ vertical */
-
-.nav-menu{
-
-white-space:nowrap;
-
-}
-/* =====================================
-ULTRA NAV REAL FIX
-===================================== */
-
-.global-nav{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-
-display:flex !important;
-justify-content:center !important;
-
-z-index:9999;
-}
-
-.nav-wrap{
-
-display:flex !important;
-justify-content:center !important;
-align-items:center !important;
-
-width:100%;
-max-width:1200px;
-}
-
-.nav-menu{
-
-display:flex !important;
-flex-direction:row !important;
-
-justify-content:center !important;
-align-items:center !important;
-
-gap:28px;
-
-}
-
-.nav-menu a{
-display:inline-block;
-text-align:center;
-font-size:18px;
-font-weight:600;
-}
-/* =====================================
-CENTER SYSTEM STATUS TEXT
-===================================== */
-
-.system-status,
-.system-status *{
-
-text-align:center !important;
-margin-left:auto;
-margin-right:auto;
-
+@keyframes trafficMove{
+0%{transform:translateX(0)}
+100%{transform:translateX(-50%)}
 }
