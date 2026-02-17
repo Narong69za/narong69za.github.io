@@ -1,86 +1,89 @@
 const express = require("express");
 const path = require("path");
-const cors = require("cors");
 
-const queue = require("./queue");
+const { createJob,getJob } = require("./jobQueue");
+const { startRender } = require("./engineWorker");
 
 const app = express();
 
-app.use(cors());
+app.use((req,res,next)=>{
+   res.header("Access-Control-Allow-Origin","*");
+   res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
+   res.header("Access-Control-Allow-Methods","GET,POST,OPTIONS");
+   next();
+});
+
 app.use(express.json());
 
 const ROOT = path.join(__dirname,"..");
 
+/* STATIC */
+
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* =========================
-REAL JOB STORAGE
-========================= */
+/* ROOT */
 
-let jobs={};
+app.get("/",(req,res)=>{
+   res.sendFile(path.join(ROOT,"index.html"));
+});
 
-/* =========================
-CREATE RENDER JOB
-========================= */
+/* ======================================
+ULTRA ENGINE API
+====================================== */
 
 app.post("/api/render",(req,res)=>{
 
-const jobID = Date.now().toString();
+   const job = createJob();
 
-jobs[jobID]={
-status:"queued",
-progress:0
-};
+   console.log("🔥 NEW JOB:",job.id);
 
-queue.add(jobID,jobs);
+   startRender(job.id);
 
-res.json({jobID});
+   res.json({
+      jobID:job.id
+   });
 
 });
-
-/* =========================
-STATUS CHECK
-========================= */
 
 app.get("/api/status",(req,res)=>{
 
-const id=req.query.id;
+   const id = req.query.id;
 
-if(!jobs[id]){
-return res.status(404).json({error:"not found"});
-}
+   const job = getJob(id);
 
-res.json(jobs[id]);
+   if(!job){
 
-});
+      return res.status(404).json({
+         status:"not_found"
+      });
 
-/* =========================
-ROUTER AUTO HTML
-========================= */
+   }
 
-app.get("/",(req,res)=>{
-res.sendFile(path.join(ROOT,"index.html"));
-});
-
-app.get(/^\/(?!api).*/,(req,res,next)=>{
-
-let requestPath=req.path;
-
-if(!requestPath.includes(".")){
-requestPath+=".html";
-}
-
-const filePath=path.join(ROOT,requestPath);
-
-res.sendFile(filePath,(err)=>{
-if(err) next();
-});
+   res.json(job);
 
 });
 
-const PORT=process.env.PORT || 10000;
+/* AUTO HTML ROUTER */
+
+app.get(/^\/(?!api).*/, (req,res,next)=>{
+
+   let requestPath = req.path;
+
+   if(!requestPath.includes(".")){
+      requestPath += ".html";
+   }
+
+   const filePath = path.join(ROOT,requestPath);
+
+   res.sendFile(filePath,(err)=>{
+      if(err) next();
+   });
+
+});
+
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-console.log("🔥 ULTRA REAL ENGINE LIVE:",PORT);
+   console.log("🔥 ULTRA REAL ENGINE LIVE:",PORT);
 });
