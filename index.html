@@ -305,5 +305,34 @@ setInterval(updateStatus,5000);
 updateStatus();
 
 </script>
+<script>
+
+async function updateLiveUsers(){
+
+   try{
+
+      const res = await fetch("/api/live-users");
+      const data = await res.json();
+
+      const el = document.getElementById("server-status");
+
+      if(el){
+
+         el.innerText = "ONLINE ("+data.online+" USERS)";
+
+      }
+
+   }catch(e){
+
+      console.log("LIVE USER ERROR");
+
+   }
+
+}
+
+setInterval(updateLiveUsers,5000);
+
+</script>
+   
 </body>
    </html>
