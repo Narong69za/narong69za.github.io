@@ -1,25 +1,19 @@
-exports.run=(jobID,jobs,done)=>{
+const engine = require("../engine/motionEngine");
+const project = require("./projectService");
 
-jobs[jobID].status="processing";
+module.exports = {
 
-let progress=0;
+   async process(job){
 
-const interval=setInterval(()=>{
+      await project.update(job.id,{
+         status:"running",
+         progress:10
+      });
 
-progress+=5;
+      const result = await engine.run(job);
 
-jobs[jobID].progress=progress;
+      await project.update(job.id,result);
 
-if(progress>=100){
-
-jobs[jobID].status="complete";
-
-clearInterval(interval);
-
-done();
-
-}
-
-},1500);
+   }
 
 };
