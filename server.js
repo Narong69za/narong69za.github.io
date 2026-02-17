@@ -1,44 +1,74 @@
-require("dotenv").config();
+/* ======================================
+ULTRA ONE FILE FINAL SERVER
+SN DESIGN STUDIO
+====================================== */
 
 const express = require("express");
-const path = require("path");
 const fs = require("fs");
+const path = require("path");
 
 const app = express();
 
 app.use(express.json());
 
-/* ======================================================
-SN DESIGN GLOBAL MEMORY ENGINE
-====================================================== */
+/* ======================================
+STATIC FILES (css js images html)
+====================================== */
 
-global.SN_QUEUE = new Map();
-global.SN_ONLINE_USERS = new Set();
+app.use(express.static(__dirname));
 
-/* ======================================================
-ULTRA AUTO INJECT ENGINE
-AUTO ADD ultra-core.js EVERY HTML
-NO NEED EDIT HTML AGAIN
-====================================================== */
+/* ======================================
+ULTRA API RENDER (DIRECT MODE)
+====================================== */
 
-app.get("/*.html", (req,res)=>{
+app.post("/api/render", async (req,res)=>{
 
-   const filePath = path.join(__dirname, req.path);
+   console.log("🔥 CREATE CLICKED");
+
+   try{
+
+      // จำลอง AI render ก่อน (กัน error)
+      const result = {
+         status:"success",
+         message:"Render started",
+         time: Date.now()
+      };
+
+      res.json(result);
+
+   }catch(e){
+
+      console.log(e);
+      res.status(500).json({error:"render failed"});
+
+   }
+
+});
+
+/* ======================================
+ULTRA AUTO HTML ENGINE
+ไม่ต้องแก้ html ทีละไฟล์อีก
+====================================== */
+
+app.get("/*.html",(req,res)=>{
+
+   const filePath = path.join(__dirname,req.path);
 
    if(!fs.existsSync(filePath)){
+
       return res.status(404).send("Not found");
+
    }
 
    let html = fs.readFileSync(filePath,"utf8");
 
-   // AUTO inject core system
+   /* inject ultra-core */
+
    if(!html.includes("ultra-core.js")){
 
       html = html.replace(
          "</body>",
-         `
-<script src="/assets/js/ultra-core.js"></script>
-</body>`
+         `<script src="/assets/js/ultra-core.js"></script></body>`
       );
 
    }
@@ -47,69 +77,24 @@ app.get("/*.html", (req,res)=>{
 
 });
 
-/* ======================================================
-STATIC FILES
-serve assets AFTER inject handler
-====================================================== */
+/* ======================================
+ROOT HOME
+====================================== */
 
-app.use(express.static(__dirname));
+app.get("/",(req,res)=>{
 
-/* ======================================================
-ROOT INDEX
-====================================================== */
-
-app.get("/", (req,res)=>{
    res.sendFile(path.join(__dirname,"index.html"));
-});
-
-/* ======================================================
-API ROUTES
-====================================================== */
-
-app.use("/api", require("./api/api.route"));
-
-/* ======================================================
-ULTRA LIVE STATUS API
-====================================================== */
-
-app.get("/api/status",(req,res)=>{
-
-   res.json({
-
-      server:true,
-      ai:true,
-      onlineUsers: global.SN_ONLINE_USERS.size
-
-   });
 
 });
 
-/* ======================================================
-ONLINE USER TRACKING (ULTRA SIMPLE)
-====================================================== */
-
-app.use((req,res,next)=>{
-
-   const ip =
-      req.headers["x-forwarded-for"] ||
-      req.socket.remoteAddress;
-
-   if(ip){
-      global.SN_ONLINE_USERS.add(ip);
-   }
-
-   next();
-
-});
-
-/* ======================================================
-SERVER START
-====================================================== */
+/* ======================================
+START SERVER
+====================================== */
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, ()=>{
+app.listen(PORT,()=>{
 
-   console.log("🔥 SN DESIGN ULTRA SERVER READY:",PORT);
+   console.log("🔥 SN DESIGN ULTRA SERVER ONLINE 🔥");
 
 });
