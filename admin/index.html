@@ -2,162 +2,47 @@
 <html>
 <head>
 
-<title>ULTRA ENGINE DEV CONTROL CENTER</title>
+<title>ULTRA ADMIN MATRIX</title>
+
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<style>
-
-body{
- background:#000;
- color:#00ffd0;
- font-family:monospace;
- padding:20px;
-}
-
-h1{
- font-size:24px;
-}
-
-.panel{
- border:2px solid #00ffd0;
- border-radius:14px;
- padding:16px;
- margin-bottom:18px;
- box-shadow:0 0 10px #00ffd0;
-}
-
-.progress{
- width:100%;
- height:14px;
- background:#111;
- border-radius:8px;
- overflow:hidden;
-}
-
-.bar{
- height:100%;
- width:0%;
- background:#00ffd0;
- transition:0.4s;
-}
-
-button{
- background:#00ffd0;
- border:none;
- padding:10px;
- margin-top:10px;
- cursor:pointer;
-}
-
-</style>
+<link rel="stylesheet" href="/admin/admin.css">
 
 </head>
 
 <body>
 
-<h1>🔥 ULTRA ENGINE DEV CONTROL CENTER</h1>
+<h1>🔥 ULTRA ADMIN MATRIX</h1>
 
-<div class="panel">
-<h2>SERVER STATUS</h2>
+<div class="grid">
+
+<div class="card">
+<h2>SERVER</h2>
 <pre id="server"></pre>
+<button onclick="restart()">RESTART</button>
 </div>
 
-<div class="panel">
+<div class="card">
 <h2>LIVE USERS</h2>
 <pre id="users"></pre>
 </div>
 
-<div class="panel">
+<div class="card">
 <h2>QUEUE</h2>
 <pre id="queue"></pre>
+<button onclick="clearQueue()">CLEAR QUEUE</button>
 </div>
 
-<div class="panel">
-<h2>GPU STATUS</h2>
-<div id="gpu">READY</div>
-</div>
-
-<div class="panel">
-<h2>LIVE TRAFFIC</h2>
-<div class="progress">
-<div class="bar" id="trafficBar"></div>
-</div>
-</div>
-
-<div class="panel">
-<h2>JOB QUEUE</h2>
-<div id="jobStatus">waiting...</div>
-</div>
-
-<div class="panel">
-<h2>💰 WALLET SYSTEM</h2>
-
-<button onclick="testTopup()">TEST TOPUP +50</button>
-
+<div class="card">
+<h2>WALLET</h2>
+<button onclick="testTopup()">TEST +50</button>
 <pre id="wallet"></pre>
+</div>
 
 </div>
 
-<script>
-
-const ADMIN_HEADER={
- headers:{
-   "x-admin":"true"
- }
-};
-
-async function updatePanel(){
-
- try{
-
-   const server = await fetch("/api/status/server").then(r=>r.json());
-   document.getElementById("server").innerText =
-      JSON.stringify(server,null,2);
-
-   const users = await fetch("/api/live-users").then(r=>r.json());
-   document.getElementById("users").innerText =
-      JSON.stringify(users,null,2);
-
-   const queue = await fetch("/api/admin/queue",ADMIN_HEADER).then(r=>r.json());
-   document.getElementById("queue").innerText =
-      JSON.stringify(queue,null,2);
-
-   const wallet = await fetch("/api/admin/wallet",ADMIN_HEADER).then(r=>r.json());
-   document.getElementById("wallet").innerText =
-      JSON.stringify(wallet,null,2);
-
-   // fake realtime traffic visual
-   const percent=Math.random()*100;
-   document.getElementById("trafficBar").style.width=percent+"%";
-
- }catch(e){
-   console.log(e);
- }
-
-}
-
-async function testTopup(){
-
- await fetch("/api/wallet/deposit",{
-   method:"POST",
-   headers:{
-     "Content-Type":"application/json"
-   },
-   body:JSON.stringify({
-     user:"dev",
-     amount:50
-   })
- });
-
- updatePanel();
-
-}
-
-setInterval(updatePanel,1500);
-
-updatePanel();
-
-</script>
+<script src="/admin/guard.js"></script>
+<script src="/admin/admin.js"></script>
 
 </body>
 </html>
