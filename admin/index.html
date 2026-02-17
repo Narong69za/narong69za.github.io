@@ -2,121 +2,39 @@
 <html>
 <head>
 
-<title>ULTRA ENGINE CONTROL CENTER</title>
+<title>ULTRA ENGINE ADMIN</title>
 
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="/admin/admin.css">
 
 </head>
 
 <body>
 
-<script src="guard.js"></script>
-
 <h1>🔥 ULTRA ENGINE DEV CONTROL CENTER</h1>
 
-<div class="grid">
-
-<div class="card">
-
+<div class="box">
 <h2>SERVER STATUS</h2>
-
-<div id="serverStatus">loading...</div>
-
+<pre id="server"></pre>
 </div>
 
-<div class="card">
-
+<div class="box">
 <h2>LIVE USERS</h2>
-
-<div id="userCount">0</div>
-
+<pre id="users"></pre>
 </div>
 
-<div class="card">
-
+<div class="box">
 <h2>QUEUE</h2>
-
-<div id="queueStatus"></div>
-
+<pre id="queue"></pre>
 </div>
 
-<div class="card">
-
-<h2>GPU STATUS</h2>
-
-<div id="gpu">READY</div>
-
+<div class="box">
+<h2>WALLET SYSTEM</h2>
+<button onclick="testTopup()">TEST TOPUP +50</button>
+<pre id="wallet"></pre>
 </div>
 
-</div>
-
-<h2>📊 LIVE TRAFFIC</h2>
-
-<div class="graph">
-
-<div id="trafficBar"></div>
-
-</div>
-
-<h2>🎬 JOB QUEUE</h2>
-
-<div id="jobs"></div>
-
-<h2>💰 WALLET SYSTEM</h2>
-
-<div id="wallet"></div>
-
-<script>
-
-let traffic=0;
-
-async function update(){
-
-const server = await fetch("/api/status/server").then(r=>r.json());
-document.getElementById("serverStatus").innerText =
-server.online ? "ONLINE" : "OFFLINE";
-
-const users = await fetch("/api/live-users").then(r=>r.json());
-document.getElementById("userCount").innerText = users.total;
-
-const jobs = await fetch("/api/jobs").then(r=>r.json());
-
-let html="";
-Object.keys(jobs).forEach(id=>{
-
-const j = jobs[id];
-
-html+=`
-<div class="job">
-${id} — ${j.status} (${j.progress}%)
-</div>
-`;
-
-});
-
-document.getElementById("jobs").innerHTML=html;
-
-const wallet = await fetch("/api/admin/wallet").then(r=>r.json());
-
-document.getElementById("wallet").innerText =
-JSON.stringify(wallet,null,2);
-
-/* traffic animation */
-
-traffic+=10;
-if(traffic>100) traffic=10;
-
-document.getElementById("trafficBar").style.width=traffic+"%";
-
-}
-
-setInterval(update,1000);
-
-update();
-
-</script>
+<script src="/admin/guard.js"></script>
+<script src="/admin/admin.js"></script>
 
 </body>
 </html>
