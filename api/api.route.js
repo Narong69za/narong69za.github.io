@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const auth = require('../services/auth.service');
-const credit = require("../credit.service");
+const credit = require("../services/credit.service")
 const usage = require("../usage-engine");
 const ai = require("../ai.service");
 
