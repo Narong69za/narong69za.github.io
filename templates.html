@@ -717,5 +717,217 @@ document.querySelectorAll("button,.btn,input[type=button]").forEach(btn=>{
 })();
 
  </script>  
+ <script>
+
+/* =====================================
+ULTRA SYSTEM LOCK FINAL
+FULL RENDER CONTROL ENGINE
+ADD ONLY
+===================================== */
+
+(function(){
+
+console.log("ULTRA SYSTEM LOCK FINAL ACTIVE");
+
+/* ================================
+CONFIG
+================================ */
+
+const CONFIG = {
+
+   renderAPI:"/api/render",
+   statusAPI:"/api/status",
+
+   pollInterval:2000
+
+};
+
+/* ================================
+UTIL
+================================ */
+
+function uuid(){
+
+   return "job-"+Date.now()+"-"+Math.random().toString(36).substring(2,9);
+
+}
+
+function findCTA(){
+
+   const nodes=document.querySelectorAll("button,.btn,input[type=button]");
+
+   for(let n of nodes){
+
+      const t=(n.innerText||n.value||"").toLowerCase();
+
+      if(t.includes("create video")) return n;
+
+   }
+
+   return null;
+
+}
+
+function getFiles(){
+
+   const inputs=document.querySelectorAll("input[type=file]");
+
+   const arr=[];
+
+   inputs.forEach(i=>{
+
+      if(i.files){
+
+         for(let f of i.files){
+
+            arr.push({
+
+               name:f.name,
+               size:f.size,
+               type:f.type
+
+            });
+
+         }
+
+      }
+
+   });
+
+   return arr;
+
+}
+
+/* ================================
+STATUS PANEL
+================================ */
+
+function panel(){
+
+   let p=document.getElementById("ultra-panel");
+
+   if(p) return p;
+
+   p=document.createElement("div");
+
+   p.id="ultra-panel";
+
+   p.style.cssText=`
+   position:fixed;
+   bottom:20px;
+   right:20px;
+   background:#000;
+   color:#00ffc8;
+   padding:14px;
+   border:1px solid #00ffc8;
+   z-index:999999;
+   font-size:12px;
+   min-width:220px`;
+
+   p.innerHTML="READY";
+
+   document.body.appendChild(p);
+
+   return p;
+
+}
+
+function update(txt){
+
+   panel().innerHTML=txt;
+
+}
+
+/* ================================
+WATCH STATUS
+================================ */
+
+async function watch(jobID){
+
+   const timer=setInterval(async()=>{
+
+      try{
+
+         const r=await fetch(CONFIG.statusAPI+"?id="+jobID);
+
+         const d=await r.json();
+
+         update(`
+         JOB ID: ${jobID}<br>
+         STATUS: ${d.status}<br>
+         PROGRESS: ${d.progress||0}%
+         `);
+
+         if(d.status==="complete"){
+
+            clearInterval(timer);
+
+            update("RENDER COMPLETE<br>"+jobID);
+
+         }
+
+      }catch(e){
+
+         console.log("status fail");
+
+      }
+
+   },CONFIG.pollInterval);
+
+}
+
+/* ================================
+SEND JOB
+================================ */
+
+async function send(){
+
+   const jobID=uuid();
+
+   const files=getFiles();
+
+   update("SENDING...");
+
+   try{
+
+      const res=await fetch(CONFIG.renderAPI,{
+
+         method:"POST",
+
+         headers:{
+            "Content-Type":"application/json"
+         },
+
+         body:JSON.stringify({
+
+            jobID:jobID,
+            files:files,
+            created:Date.now()
+
+         })
+
+      });
+
+      const data=await res.json();
+
+      const real=data.jobID || jobID;
+
+      watch(real);
+
+   }catch(e){
+
+      update("RENDER ERROR");
+
+      console.error(e);
+
+   }
+
+}
+
+/* ================================
+BIND CTA
+================================ */
+
+document.addEventListener("DOMContentLoaded",()=>{  
 </body>
 </html>
