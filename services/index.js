@@ -8,13 +8,34 @@ const cors = require("cors");
 
 const app = express();
 
-// ===== BASIC CONFIG =====
+
+// ==============================
+// BASIC CONFIG
+// ==============================
 
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended:true }));
 
 // IMPORTANT: Render ต้องใช้ PORT env
 const PORT = process.env.PORT || 10000;
+
+
+// ==============================
+// GLOBAL LOGGER (ADD ONLY)
+// ==============================
+
+app.use((req,res,next)=>{
+
+console.log(
+"[API]",
+req.method,
+req.url
+);
+
+next();
+
+});
 
 
 // ==============================
@@ -80,14 +101,20 @@ app.post("/api/render", async(req,res)=>{
 
     try{
 
-        const data = req.body;
+        const data = req.body || {};
 
         console.log("DATA:", data);
 
-        // fake render result
+        /*
+        ตรงนี้คือจุดต่อ AI engine จริง
+        ตอนนี้ return success ก่อน
+        */
+
         res.json({
             status:"render-started",
-            video:"processing"
+            video:"processing",
+            engine:"ULTRA DIRECT MODE",
+            time:Date.now()
         });
 
     }catch(err){
@@ -102,10 +129,24 @@ app.post("/api/render", async(req,res)=>{
 
 
 // ==============================
+// 404 API HANDLER (ADD ONLY)
+// ==============================
+
+app.use("/api",(req,res)=>{
+
+res.status(404).json({
+error:true,
+message:"API route not found"
+});
+
+});
+
+
+// ==============================
 // START SERVER
 // ==============================
 
-app.listen(PORT,()=>{
+app.listen(PORT,"0.0.0.0",()=>{
 
     console.log("=================================");
     console.log("SN DESIGN API RUNNING");
