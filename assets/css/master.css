@@ -229,3 +229,44 @@ text-shadow:
 0 0 6px rgba(0,255,255,.6);
 
 }
+/* =================================
+SN NAV FORCE FIX (ULTRA FINAL)
+================================= */
+
+.sn-nav{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:70px;
+background:#000 !important;
+border-bottom:1px solid #111;
+z-index:99999;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.sn-nav-inner{
+max-width:1200px;
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+.sn-menu{
+display:flex;
+gap:28px;
+}
+
+.sn-menu a{
+color:#fff !important;
+text-decoration:none !important;
+font-size:18px !important;
+font-weight:600;
+}
+
+body{
+padding-top:70px;
+}
