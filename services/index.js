@@ -1,200 +1,139 @@
 const express = require("express");
 const path = require("path");
+const os = require("os");
 
 const app = express();
 app.use(express.json());
 
 const ROOT = path.join(__dirname,"..");
-
-/* =============================
-STATIC
-============================= */
-
-app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* =============================
-ULTRA ENGINE STATE
-============================= */
+/* ======================
+GLOBAL STATE
+====================== */
 
 let jobs = {};
 let queue = [];
-let processing = false;
+let processing=false;
 
-/* =============================
-HELPERS
-============================= */
+const ENGINE_CONFIG = {
+   "motion-v1":{
+      engine:"ULTRA MOTION V1",
+      resolution:"720p",
+      durationLimit:30,
+      creditCost:120,
+      eta:45
+   }
+};
 
-function getIP(req){
-   return (
-      req.headers["x-forwarded-for"] ||
-      req.socket.remoteAddress ||
-      "unknown"
-   ).toString().split(",")[0];
-}
-
-/* =============================
-CREATE JOB (FINAL)
-============================= */
+/* ======================
+RENDER REQUEST
+====================== */
 
 app.post("/api/render",(req,res)=>{
 
-   const payload = req.body || {};
+   const {templateID="motion-v1"} = req.body;
 
    const jobID = Date.now().toString();
 
-   jobs[jobID] = {
+   const meta = ENGINE_CONFIG[templateID];
 
-      id: jobID,
-
-      ip: getIP(req),
-
+   jobs[jobID]={
+      id:jobID,
+      templateID,
+      engine:meta.engine,
+      resolution:meta.resolution,
+      durationLimit:meta.durationLimit,
+      creditCost:meta.creditCost,
+      eta:meta.eta,
       status:"queued",
       progress:0,
-
-      createdAt: Date.now(),
-
-      meta:{
-
-         template: payload.template || "unknown",
-         model: payload.model || "default",
-         platform: payload.platform || "unknown",
-
-         duration: payload.duration || 0,
-         resolution: payload.resolution || "auto",
-
-         assets: payload.assets || {},
-         settings: payload.settings || {}
-
-      }
-
+      created:Date.now()
    };
 
    queue.push(jobID);
 
-   console.log("NEW JOB:", jobs[jobID]);
-
    startWorker();
 
-   res.json({
-      jobID,
-      meta: jobs[jobID].meta
-   });
-
+   res.json(jobs[jobID]);
 });
 
-/* =============================
-STATUS (FINAL DETAIL)
-============================= */
+/* ======================
+STATUS
+====================== */
 
 app.get("/api/status",(req,res)=>{
 
    const id=req.query.id;
 
-   if(!jobs[id]){
-      return res.status(404).json({error:"not found"});
-   }
-
-   res.json(jobs[id]);
-
+   res.json(jobs[id] || {error:"not found"});
 });
 
-/* =============================
+/* ======================
 WORKER
-============================= */
+====================== */
 
 async function startWorker(){
 
    if(processing) return;
 
-   processing = true;
+   processing=true;
 
-   while(queue.length>0){
+   while(queue.length){
 
-      const jobID = queue.shift();
-
-      await processJob(jobID);
+      const id=queue.shift();
+      await processJob(id);
 
    }
 
-   processing = false;
+   processing=false;
 }
 
 function processJob(id){
 
    return new Promise(resolve=>{
 
-      const job = jobs[id];
+      let p=0;
 
-      job.status="processing";
+      jobs[id].status="processing";
 
-      let progress=0;
+      const timer=setInterval(()=>{
 
-      const interval=setInterval(()=>{
+         p+=10;
+         jobs[id].progress=p;
 
-         progress+=10;
+         if(p>=100){
 
-         job.progress = progress;
-
-         if(progress>=100){
-
-            job.status="complete";
-            clearInterval(interval);
-
+            jobs[id].status="complete";
+            clearInterval(timer);
             resolve();
 
          }
 
       },2000);
-
    });
 }
 
-/* =============================
+/* ======================
 SERVER STATUS
-============================= */
+====================== */
 
 app.get("/api/status/server",(req,res)=>{
 
    res.json({
-
       online:true,
-      jobs:Object.keys(jobs).length,
       queue:queue.length,
-      processing
-
+      processing,
+      jobs:Object.keys(jobs).length,
+      memory:process.memoryUsage(),
+      uptime:process.uptime()
    });
-
 });
-
-/* =============================
-ROOT ROUTER
-============================= */
-
-app.get("/",(req,res)=>{
-   res.sendFile(path.join(ROOT,"index.html"));
-});
-
-app.get(/^\/(?!api).*/,(req,res,next)=>{
-
-   let requestPath=req.path;
-
-   if(!requestPath.includes(".")){
-      requestPath+=".html";
-   }
-
-   res.sendFile(path.join(ROOT,requestPath),(err)=>{
-      if(err) next();
-   });
-
-});
-
-/* =============================
-START
-============================= */
 
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("🔥 ULTRA ENGINE FINAL READY:",PORT);
+
+   console.log("🔥 ULTRA ENGINE FINAL LIVE:",PORT);
+
 });
