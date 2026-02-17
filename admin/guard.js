@@ -1,5 +1,4 @@
-window.ADMIN_HEADER = {
-
-   "x-admin":"true"
-
-};
+if(location.hostname !== "sn-designstudio.dev"){
+alert("ADMIN BLOCK");
+location="/";
+}
