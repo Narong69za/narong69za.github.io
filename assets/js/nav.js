@@ -24,61 +24,7 @@ const navHTML = `
 
 document.body.insertAdjacentHTML("afterbegin", navHTML);
 
-
-/* ======================================================
-ULTRA NAV CENTER ENGINE (ADD ONLY FINAL)
-แก้ nav center ทุกหน้าแบบถาวร
-====================================================== */
-
-const style = document.createElement("style");
-style.innerHTML = `
-
-.global-nav{
-width:100%;
-display:flex;
-justify-content:center;
-}
-
-.global-nav .nav-wrap{
-display:flex;
-justify-content:center;
-width:100%;
-}
-
-.global-nav .nav-menu{
-display:flex;
-justify-content:center;
-align-items:center;
-gap:30px;
-margin:0 auto;
-}
-
-`;
-document.head.appendChild(style);
-
-
-/* ===============================
-ULTRA NAV LOCK (EVENT SAFE)
-=============================== */
-
-const nav = document.querySelector(".global-nav");
-
-if(nav){
-
-nav.addEventListener("click", function(e){
-
-if(e.target.tagName !== "A"){
-e.stopPropagation();
-}
-
-}, true);
-
-}
-
-
-/* ===============================
-ULTRA NAV ACTIVE STATE ENGINE
-=============================== */
+/* ACTIVE MENU */
 
 const path = window.location.pathname.toLowerCase();
 
@@ -96,10 +42,7 @@ link.classList.add("nav-active");
 
 });
 
-
-/* ===============================
-NAV AUTO HIDE (mobile scroll)
-=============================== */
+/* MOBILE AUTO HIDE */
 
 let lastScroll = 0;
 
