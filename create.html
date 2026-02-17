@@ -1,221 +1,88 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Create | SN Design Studio</title>
-
+<title>Official Website — SN DESIGN STUDIO</title>
 <link rel="stylesheet" href="assets/css/master.css">
-
-<style>
-
-body{
-background:#050505;
-color:white;
-font-family:Arial;
-}
-
-.container{
-max-width:800px;
-margin:auto;
-padding:20px;
-}
-
-button{
-background:#00ffc8;
-border:none;
-padding:14px;
-width:100%;
-font-weight:bold;
-cursor:pointer;
-}
-
-#statusPanel{
-position:fixed;
-bottom:20px;
-right:20px;
-background:#000;
-border:1px solid #00ffc8;
-padding:14px;
-font-size:12px;
-z-index:9999;
-min-width:240px;
-}
-
-</style>
-
 </head>
 
 <body>
 
-<div class="container">
-
-<h2>PROJECT DETAIL</h2>
-
-<div id="projectBox">
-Template: <span id="templateID">ai-lipsync</span><br>
-Engine: motion-ai<br>
-Max Length: 30 sec
-</div>
-
-<br>
-
-<input type="file" id="fileInput" multiple>
-
-<br><br>
+<h1 id="engineTitle">AI ENGINE</h1>
 
 <button id="createBtn">CREATE VIDEO</button>
 
-</div>
-
-<div id="statusPanel">SYSTEM READY</div>
+<div id="detail"></div>
+<div id="progress"></div>
 
 <script>
 
-/* ===================================
-ULTRA FINAL SYSTEM
-=================================== */
+const params=new URLSearchParams(location.search);
 
-const API_RENDER="/api/render";
-const API_STATUS="/api/status";
+const template=params.get("template") || "unknown";
 
-const statusPanel=document.getElementById("statusPanel");
+document.getElementById("engineTitle").innerText=
+"ENGINE : "+template;
 
-function setStatus(html){
-   statusPanel.innerHTML=html;
-}
+let jobID=null;
 
-function uuid(){
- return "job-"+Date.now()+"-"+Math.random().toString(36).slice(2);
-}
+document.getElementById("createBtn").onclick=async()=>{
 
-function collectFiles(){
+const detail=document.getElementById("detail");
 
-   const inp=document.getElementById("fileInput");
+detail.innerText="Sending job...";
 
-   const arr=[];
+const res=await fetch("/api/render",{
 
-   if(inp.files){
+method:"POST",
 
-      for(let f of inp.files){
+headers:{ "Content-Type":"application/json" },
 
-         arr.push({
-            name:f.name,
-            size:f.size,
-            type:f.type
-         });
+body:JSON.stringify({
 
-      }
+templateID:template,
+engine:"motion-ai",
+duration:30
 
-   }
-
-   return arr;
-
-}
-
-/* ===================================
-WATCH STATUS LOOP
-=================================== */
-
-async function watchStatus(jobID){
-
-   setStatus("JOB CREATED<br>"+jobID);
-
-   const loop=setInterval(async()=>{
-
-      try{
-
-         const r=await fetch(API_STATUS+"?id="+jobID,{
-            credentials:"include"
-         });
-
-         const d=await r.json();
-
-         setStatus(
-            "JOB:"+jobID+
-            "<br>Status:"+d.status+
-            "<br>Progress:"+ (d.progress||0)+"%"
-         );
-
-         if(d.status==="complete"){
-
-            clearInterval(loop);
-
-            setStatus("RENDER COMPLETE<br>"+jobID);
-
-         }
-
-      }catch(e){
-
-         console.log(e);
-
-      }
-
-   },2000);
-
-}
-
-/* ===================================
-SEND RENDER JOB
-=================================== */
-
-async function sendJob(){
-
-   const jobID=uuid();
-
-   const files=collectFiles();
-
-   setStatus("SENDING JOB...");
-
-   try{
-
-      const res=await fetch(API_RENDER,{
-
-         method:"POST",
-
-         headers:{
-            "Content-Type":"application/json"
-         },
-
-         credentials:"include",
-
-         body:JSON.stringify({
-
-            jobID:jobID,
-            templateID:"ai-lipsync",
-            engine:"motion-ai",
-            duration:30,
-            files:files
-
-         })
-
-      });
-
-      const data=await res.json();
-
-      const realID=data.jobID||jobID;
-
-      watchStatus(realID);
-
-   }catch(err){
-
-      setStatus("RENDER ERROR");
-
-      console.error(err);
-
-   }
-
-}
-
-document.getElementById("createBtn").addEventListener("click",(e)=>{
-
-   e.preventDefault();
-
-   sendJob();
+})
 
 });
+
+const data=await res.json();
+
+jobID=data.jobID;
+
+detail.innerText="JOB CREATED : "+jobID;
+
+watch();
+
+};
+
+async function watch(){
+
+const progress=document.getElementById("progress");
+
+const loop=setInterval(async()=>{
+
+const res=await fetch("/api/status?id="+jobID);
+
+const d=await res.json();
+
+progress.innerText=
+
+"Template:"+d.templateID+
+" | Status:"+d.status+
+" | "+d.progress+"%";
+
+if(d.status==="complete"){
+
+clearInterval(loop);
+
+}
+
+},1500);
+
+}
 
 </script>
 
