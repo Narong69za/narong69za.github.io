@@ -15,6 +15,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+// ===== STATIC FILE SERVE =====
+
+// serve public folder (หน้าเว็บ)
+app.use(express.static("public"));
+
+// 🔥 ADD ONLY — บังคับให้เห็น assets ที่อยู่ root
+app.use("/assets", express.static("assets"));
 
 // IMPORTANT: Render ใช้ PORT env
 const PORT = process.env.PORT || 10000;
