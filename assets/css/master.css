@@ -2525,3 +2525,27 @@ width:0%;
 background:#00ffaa;
 transition:0.3s;
 }
+/* ======================================================
+SN DESIGN ULTRA NAV CENTER FIX (ADD ONLY)
+====================================================== */
+
+#nav nav,
+.nav,
+.navbar {
+
+    display:flex !important;
+    justify-content:center !important;
+    align-items:center !important;
+    gap:40px;
+
+}
+
+#nav a,
+.nav a,
+.navbar a {
+
+    font-size:18px !important;
+    font-weight:600;
+    letter-spacing:1px;
+
+}
