@@ -40,3 +40,23 @@ function restart(){
 alert("restart command placeholder");
 
 }
+async function cancelJob(id){
+
+await fetch("/api/admin/job/cancel?id="+id,{
+headers:{"x-admin":"true"}
+});
+
+}
+
+async function addCredit(user,amount){
+
+await fetch("/api/admin/wallet/add",{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"x-admin":"true"
+},
+body:JSON.stringify({user,amount})
+});
+
+}
