@@ -3,222 +3,221 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Official Website — SN DESIGN STUDIO</title>
+<title>Create | SN Design Studio</title>
 
 <link rel="stylesheet" href="assets/css/master.css">
 
 <style>
 
-.ultra-info-panel{
-background:#070707;
-border:1px solid rgba(255,255,255,.1);
+body{
+background:#050505;
+color:white;
+font-family:Arial;
+}
+
+.container{
+max-width:800px;
+margin:auto;
 padding:20px;
-border-radius:12px;
-margin-bottom:20px;
 }
 
-.progress-bar{
-height:8px;
-background:#111;
-margin-top:10px;
+button{
+background:#00ffc8;
+border:none;
+padding:14px;
+width:100%;
+font-weight:bold;
+cursor:pointer;
 }
 
-.progress-fill{
-height:100%;
-width:0%;
-background:#00ffaa;
-transition:.3s;
+#statusPanel{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#000;
+border:1px solid #00ffc8;
+padding:14px;
+font-size:12px;
+z-index:9999;
+min-width:240px;
 }
 
 </style>
 
 </head>
 
-<body class="create-page">
+<body>
 
-<div id="nav"></div>
+<div class="container">
 
-<section class="hero-master">
+<h2>PROJECT DETAIL</h2>
 
-<h1 id="engineTitle">AI ENGINE</h1>
-<img id="heroImage" style="max-width:600px">
-
-</section>
-
-<section class="create-area">
-
-<div class="ultra-info-panel">
-
-<h3>PROJECT DETAIL</h3>
-
-<div id="templateInfo"></div>
-
-<ul>
-<li>🎬 MAX LENGTH : 30s</li>
-<li>📦 ENGINE : MOTION AI</li>
-<li>💰 COST : <span id="pointCost">--</span> POINT</li>
-<li>⚡ STATUS : <span id="engineStatus">READY</span></li>
-</ul>
-
+<div id="projectBox">
+Template: <span id="templateID">ai-lipsync</span><br>
+Engine: motion-ai<br>
+Max Length: 30 sec
 </div>
 
-<input type="file" id="videoInput" accept="video/*">
-<video id="videoPreview" controls></video>
+<br>
 
-<input type="file" id="imageInput" accept="image/*">
-<img id="imagePreview">
+<input type="file" id="fileInput" multiple>
+
+<br><br>
 
 <button id="createBtn">CREATE VIDEO</button>
 
-<div id="progressText"></div>
-
-<div class="progress-bar">
-<div class="progress-fill" id="progressFill"></div>
 </div>
 
-</section>
-
-<footer>
-© SN Design Studio, 2026 · All rights reserved.
-</footer>
-
-<script src="assets/js/nav.js"></script>
+<div id="statusPanel">SYSTEM READY</div>
 
 <script>
 
-/* ===============================
-ULTRA CREATOR ENGINE FINAL
-=============================== */
+/* ===================================
+ULTRA FINAL SYSTEM
+=================================== */
 
-const TEMPLATE_CONFIG = {
+const API_RENDER="/api/render";
+const API_STATUS="/api/status";
 
-"dark-viral":{duration:30,points:120},
-"ai-lipsync":{duration:30,points:150},
-"dance-motion":{duration:20,points:100},
-"face-swap":{duration:15,points:80}
+const statusPanel=document.getElementById("statusPanel");
 
-};
+function setStatus(html){
+   statusPanel.innerHTML=html;
+}
 
-let jobID=null;
+function uuid(){
+ return "job-"+Date.now()+"-"+Math.random().toString(36).slice(2);
+}
 
-document.addEventListener("DOMContentLoaded",()=>{
+function collectFiles(){
 
-const params=new URLSearchParams(window.location.search);
-const template=params.get("template");
+   const inp=document.getElementById("fileInput");
 
-const hero=document.getElementById("heroImage");
-const title=document.getElementById("engineTitle");
+   const arr=[];
 
-if(template && hero && title){
+   if(inp.files){
 
-title.innerText=template.replaceAll("-"," ").toUpperCase();
-hero.src=`assets/images/template-${template}.jpg`;
+      for(let f of inp.files){
 
-const cfg=TEMPLATE_CONFIG[template];
+         arr.push({
+            name:f.name,
+            size:f.size,
+            type:f.type
+         });
 
-document.getElementById("templateInfo").innerText=
-"TEMPLATE : "+template;
+      }
 
-document.getElementById("pointCost").innerText=
-cfg.points;
+   }
+
+   return arr;
 
 }
 
-/* PREVIEW */
+/* ===================================
+WATCH STATUS LOOP
+=================================== */
 
-const videoInput=document.getElementById("videoInput");
-const videoPreview=document.getElementById("videoPreview");
+async function watchStatus(jobID){
 
-videoInput.addEventListener("change",(e)=>{
+   setStatus("JOB CREATED<br>"+jobID);
 
-const file=e.target.files[0];
+   const loop=setInterval(async()=>{
 
-if(file){
+      try{
 
-videoPreview.src=URL.createObjectURL(file);
+         const r=await fetch(API_STATUS+"?id="+jobID,{
+            credentials:"include"
+         });
 
-videoPreview.onloadedmetadata=function(){
+         const d=await r.json();
 
-if(videoPreview.duration>30){
+         setStatus(
+            "JOB:"+jobID+
+            "<br>Status:"+d.status+
+            "<br>Progress:"+ (d.progress||0)+"%"
+         );
 
-alert("VIDEO MUST NOT EXCEED 30s");
+         if(d.status==="complete"){
 
-videoInput.value="";
-videoPreview.src="";
+            clearInterval(loop);
+
+            setStatus("RENDER COMPLETE<br>"+jobID);
+
+         }
+
+      }catch(e){
+
+         console.log(e);
+
+      }
+
+   },2000);
 
 }
 
-};
+/* ===================================
+SEND RENDER JOB
+=================================== */
+
+async function sendJob(){
+
+   const jobID=uuid();
+
+   const files=collectFiles();
+
+   setStatus("SENDING JOB...");
+
+   try{
+
+      const res=await fetch(API_RENDER,{
+
+         method:"POST",
+
+         headers:{
+            "Content-Type":"application/json"
+         },
+
+         credentials:"include",
+
+         body:JSON.stringify({
+
+            jobID:jobID,
+            templateID:"ai-lipsync",
+            engine:"motion-ai",
+            duration:30,
+            files:files
+
+         })
+
+      });
+
+      const data=await res.json();
+
+      const realID=data.jobID||jobID;
+
+      watchStatus(realID);
+
+   }catch(err){
+
+      setStatus("RENDER ERROR");
+
+      console.error(err);
+
+   }
 
 }
+
+document.getElementById("createBtn").addEventListener("click",(e)=>{
+
+   e.preventDefault();
+
+   sendJob();
 
 });
-
-/* CREATE */
-
-document.getElementById("createBtn").onclick=async()=>{
-
-document.getElementById("engineStatus").innerText="STARTING";
-
-const res=await fetch("https://sn-design-api.onrender.com/api/render",{
-
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-
-body:JSON.stringify({
-
-template:template,
-time:Date.now()
-
-})
-
-});
-
-const data=await res.json();
-
-jobID=data.jobID;
-
-pollStatus();
-
-};
-
-});
-
-/* STATUS POLLING */
-
-async function pollStatus(){
-
-const progressFill=document.getElementById("progressFill");
-const progressText=document.getElementById("progressText");
-
-const timer=setInterval(async()=>{
-
-const res=await fetch("https://sn-design-api.onrender.com/api/status?id="+jobID);
-
-const data=await res.json();
-
-progressFill.style.width=data.progress+"%";
-
-progressText.innerText=
-"JOB "+jobID+" | "+data.status+" "+data.progress+"%";
-
-document.getElementById("engineStatus").innerText=
-data.status.toUpperCase();
-
-if(data.status==="complete"){
-
-clearInterval(timer);
-
-progressText.innerText="RENDER COMPLETE";
-
-}
-
-},1500);
-
-}
 
 </script>
+
 </body>
 </html>
