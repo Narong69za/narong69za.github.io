@@ -10,10 +10,10 @@ const app = express();
 app.use(express.json());
 
 /* ======================================
-ROOT PATH (สำคัญ)
+ROOT PATH
 ====================================== */
 
-const ROOT = path.join(__dirname, ".."); // ย้อนออกจาก services
+const ROOT = path.join(__dirname, ".."); // ออกจาก services
 
 /* ======================================
 STATIC FILES
@@ -29,16 +29,17 @@ ROOT INDEX
 app.get("/", (req,res)=>{
    res.sendFile(path.join(ROOT,"index.html"));
 });
+
 /* ======================================
 API ROUTES
 ====================================== */
 
 app.post("/api/render",(req,res)=>{
 
-   console.log("RENDER REQUEST");
+   console.log("RENDER REQUEST OK");
 
    res.json({
-      status:"render started"
+      status:"ok"
    });
 
 });
@@ -59,18 +60,3 @@ app.get(/^\/(?!api).*/, (req,res,next)=>{
 
    res.sendFile(filePath,(err)=>{
       if(err){
-         next();
-      }
-   });
-
-});
-
-/* ======================================
-SERVER START
-====================================== */
-
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT,()=>{
-   console.log("🔥 SN DESIGN ULTRA ROUTER READY:",PORT);
-});
