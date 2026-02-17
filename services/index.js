@@ -1,159 +1,115 @@
-/* ======================================================
-SN DESIGN STUDIO — ULTRA FINAL API CORE
-ONE FILE FINAL BUILD
-====================================================== */
+// ==============================
+// SN DESIGN STUDIO API SERVER
+// ULTRA FINAL BUILD
+// ==============================
 
 const express = require("express");
-const path = require("path");
+const cors = require("cors");
 
 const app = express();
 
+// ===== BASIC CONFIG =====
+
+app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
 
-/* ======================================================
-SERVER BASIC
-====================================================== */
-
+// IMPORTANT: Render ต้องใช้ PORT env
 const PORT = process.env.PORT || 10000;
 
-/* ======================================================
-ULTRA STATE ENGINE
-====================================================== */
 
-let onlineUsers = new Set();
-let trafficCounter = 0;
-
-function randomTraffic(){
-   return Math.floor(Math.random()*50)+10;
-}
-
-/* ======================================================
-ROOT CHECK
-====================================================== */
+// ==============================
+// HEALTH CHECK
+// ==============================
 
 app.get("/", (req,res)=>{
-   res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
+    res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
 });
-
-/* ======================================================
-LIVE USERS (FIX 404)
-====================================================== */
-
-app.get("/api/live-users",(req,res)=>{
-
-   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-
-   onlineUsers.add(ip);
-
-   res.json({
-      online: onlineUsers.size
-   });
-
-});
-
-/* ======================================================
-SERVER STATUS (FIX 404)
-====================================================== */
 
 app.get("/api/status/server",(req,res)=>{
-
-   res.json({
-      server:"online",
-      payment:"online",
-      ai:"connected",
-      uptime:process.uptime()
-   });
-
+    res.json({
+        status:"online",
+        server:"SN DESIGN API",
+        time: new Date()
+    });
 });
 
-/* ======================================================
-NETWORK TRAFFIC (GRAPH DATA)
-====================================================== */
 
-app.get("/api/network-traffic",(req,res)=>{
+// ==============================
+// PREVIEW ROUTE
+// (ใช้ตอน preview motion)
+// ==============================
 
-   trafficCounter += randomTraffic();
+app.post("/api/preview", async(req,res)=>{
 
-   res.json({
-      traffic:trafficCounter,
-      burst:randomTraffic()
-   });
+    console.log("PREVIEW REQUEST");
 
+    try{
+
+        const { image } = req.body;
+
+        if(!image){
+            return res.status(400).json({
+                error:"no image"
+            });
+        }
+
+        // fake preview response (ทดสอบก่อน)
+        res.json({
+            status:"preview-ok",
+            preview:"generated"
+        });
+
+    }catch(err){
+
+        console.error(err);
+
+        res.status(500).json({
+            error:"preview fail"
+        });
+    }
 });
 
-/* ======================================================
-CREATE RENDER JOB
-====================================================== */
 
-const jobQueue = new Map();
+// ==============================
+// CREATE / RENDER ROUTE
+// ==============================
 
-function createJob(data){
+app.post("/api/render", async(req,res)=>{
 
-   const id = "job_" + Date.now();
+    console.log("CREATE CLICKED");
 
-   jobQueue.set(id,{
-      status:"processing",
-      input:data,
-      output:null
-   });
+    try{
 
-   setTimeout(()=>{
+        const data = req.body;
 
-      jobQueue.set(id,{
-         ...jobQueue.get(id),
-         status:"done",
-         output:"render_complete"
-      });
+        console.log("DATA:", data);
 
-   },3000);
+        // fake render result
+        res.json({
+            status:"render-started",
+            video:"processing"
+        });
 
-   return id;
-}
+    }catch(err){
 
-app.post("/api/render", async (req,res)=>{
+        console.error(err);
 
-   try{
-
-      const jobId = createJob(req.body);
-
-      res.json({
-         success:true,
-         job:jobId
-      });
-
-   }catch(e){
-
-      res.status(500).json({
-         error:"render error"
-      });
-
-   }
-
+        res.status(500).json({
+            error:"render fail"
+        });
+    }
 });
 
-/* ======================================================
-JOB STATUS
-====================================================== */
 
-app.get("/api/job/:id",(req,res)=>{
+// ==============================
+// START SERVER
+// ==============================
 
-   const job = jobQueue.get(req.params.id);
+app.listen(PORT,()=>{
 
-   if(!job){
-      return res.status(404).json({error:"job not found"});
-   }
-
-   res.json(job);
-
-});
-
-/* ======================================================
-START SERVER
-====================================================== */
-
-app.listen(PORT, ()=>{
-
-   console.log("🔥 SN DESIGN API ONLINE PORT:",PORT);
+    console.log("=================================");
+    console.log("SN DESIGN API RUNNING");
+    console.log("PORT:", PORT);
+    console.log("=================================");
 
 });
