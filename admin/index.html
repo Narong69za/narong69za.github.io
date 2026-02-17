@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <title>ULTRA ENGINE DEV PANEL</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<link rel="stylesheet" href="admin.css">
-
 </head>
 
-<body>
+<body style="background:#000;color:#0ff;font-family:monospace">
 
-<h2>ULTRA ENGINE DEV CONTROL CENTER</h2>
+<h2>ULTRA ENGINE DEV PANEL</h2>
 
-<div class="box">
-<h3>SERVER STATUS</h3>
 <pre id="server"></pre>
-</div>
-
-<div class="box">
-<h3>LIVE USERS</h3>
 <pre id="users"></pre>
-</div>
-
-<div class="box">
-<h3>JOBS</h3>
 <pre id="jobs"></pre>
-</div>
-
-<div class="box">
-<h3>WALLET / PAYMENT</h3>
 <pre id="wallet"></pre>
-</div>
 
-<div class="box">
-<h3>CLOUDFLARE STATUS</h3>
-<pre id="cloudflare"></pre>
-</div>
+<script>
 
-<script src="guard.js"></script>
-<script src="admin-api.js"></script>
-<script src="admin.js"></script>
+const HEADERS={
+   "x-admin-key":"ULTRA_ENGINE_DEV"
+};
+
+async function update(){
+
+   const server=await fetch("/api/status/server").then(r=>r.json());
+   document.getElementById("server").innerText=
+      JSON.stringify(server,null,2);
+
+   const users=await fetch("/api/live-users").then(r=>r.json());
+   document.getElementById("users").innerText=
+      JSON.stringify(users,null,2);
+
+   const jobs=await fetch("/api/jobs",{headers:HEADERS}).then(r=>r.json());
+   document.getElementById("jobs").innerText=
+      JSON.stringify(jobs,null,2);
+
+   const wallet=await fetch("/api/admin/wallet",{headers:HEADERS}).then(r=>r.json());
+   document.getElementById("wallet").innerText=
+      JSON.stringify(wallet,null,2);
+
+}
+
+setInterval(update,2000);
+
+</script>
 
 </body>
 </html>
