@@ -1,95 +1,115 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
-const auth = require("../../services/auth.service");
-const credit = require("../../services/credit.service");
-const ai = require("../../services/ai.service");
+const { runAI } = require("../services/ai.service");
+const { verifyGoogle } = require("../services/auth.service");
 
+/* =============================
+LIVE USER STORE
+============================= */
 
-/* ===================================
-AI READY TEST
-=================================== */
+if(!global.SN_ONLINE_USERS){
 
-router.post("/generate",(req,res)=>{
+   global.SN_ONLINE_USERS = new Set();
 
-   res.json({
-      status:"AI READY"
-   });
+}
+
+/* =============================
+BASIC STATUS
+============================= */
+
+router.post('/generate', (req, res) => {
+
+  res.json({ status: 'AI READY' });
 
 });
 
+/* =============================
+AUTH CHECK
+============================= */
 
-/* ===================================
-ULTRA FINAL RENDER ENGINE
-=================================== */
-
-router.post("/render", async (req,res)=>{
+router.post("/auth-check", async (req,res)=>{
 
    try{
 
-      const user = await auth.check(req);
+      const { token } = req.body;
 
-      /* ===============================
-      DEV MODE BYPASS
-      =============================== */
+      const user = await verifyGoogle(token);
 
-      if(!user.dev){
-
-         const allowed = await usage.checkDailyFree(user.id);
-
-         if(!allowed){
-
-            const creditOK = await credit.consume(user.id);
-
-            if(!creditOK){
-
-               return res.status(403).json({
-                  error:"NO CREDIT"
-               });
-
-            }
-
-         }
-
-      }
-
-      const jobId = global.SN_CREATE_JOB(req.body);
-
-      /* simulate async render */
-
-      setTimeout(()=>{
-
-         global.SN_UPDATE_JOB(jobId,{
-            status:"done",
-            output:"AI_VIDEO_READY"
-         });
-
-      },5000);
+      global.SN_ONLINE_USERS.add(user.email);
 
       res.json({
-         jobId
+         ok:true,
+         user:user
       });
 
    }catch(e){
 
-      res.status(401).json({
-         error:"AUTH REQUIRED"
-      });
+      res.status(401).json({ error:"AUTH FAILED" });
 
    }
 
 });
 
+/* =============================
+LIVE USERS API
+============================= */
 
-/* ===================================
-JOB STATUS WATCH
-=================================== */
+router.get("/live-users",(req,res)=>{
 
-router.get("/job/:id",(req,res)=>{
+   res.json({
+      online: global.SN_ONLINE_USERS.size
+   });
 
-   const job = global.SN_QUEUE.get(req.params.id);
+});
 
-   res.json(job || {status:"not_found"});
+/* =============================
+RENDER ENGINE
+============================= */
+
+router.post("/render", async (req,res)=>{
+
+   try{
+
+      const { template, input } = req.body;
+
+      const MODEL_MAP = {
+
+         "dark-viral":"owner/model1",
+         "ai-lipsync":"owner/model2",
+         "dance-motion":"owner/model3",
+         "face-swap":"owner/model4"
+
+      };
+
+      const model = MODEL_MAP[template];
+
+      if(!model){
+
+         return res.status(400).json({error:"INVALID TEMPLATE"});
+
+      }
+
+      const output = await runAI(model,input);
+
+      res.json({
+
+         success:true,
+         output
+
+      });
+
+   }catch(err){
+
+      console.log(err);
+
+      res.status(500).json({
+
+         success:false
+
+      });
+
+   }
 
 });
 
