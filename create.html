@@ -48,11 +48,21 @@
 SN DESIGN CREATE ENGINE — ULTRA FINAL
 ====================================== */
 
-document.addEventListener("DOMContentLoaded",()=>{
+window.addEventListener("load",()=>{
 
-console.log("CREATE PAGE READY");
+console.log("ULTRA ENGINE ACTIVE");
 
-/* TEMPLATE LOAD */
+const progressDiv = document.getElementById("progress");
+const btn = document.getElementById("createBtn");
+
+const videoInput=document.getElementById("videoInput");
+const imageInput=document.getElementById("imageInput");
+const videoPreview=document.getElementById("videoPreview");
+const imagePreview=document.getElementById("imagePreview");
+
+/* ======================
+TEMPLATE LOAD
+====================== */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
@@ -62,81 +72,62 @@ const title = document.getElementById("engineTitle");
 
 if(template && hero && title){
 
-   title.innerText = template.replaceAll("-"," ").toUpperCase();
-   hero.src = `assets/images/template-${template}.jpg`;
+title.innerText = template.replaceAll("-"," ").toUpperCase();
+hero.src = `assets/images/template-${template}.jpg`;
 
 }
 
-/* PREVIEW SYSTEM */
-
-let videoFile=null;
-let imageFile=null;
-
-const videoInput=document.getElementById("videoInput");
-const imageInput=document.getElementById("imageInput");
-const videoPreview=document.getElementById("videoPreview");
-const imagePreview=document.getElementById("imagePreview");
+/* ======================
+PREVIEW SYSTEM
+====================== */
 
 if(videoInput){
 videoInput.addEventListener("change",(e)=>{
-videoFile=e.target.files[0];
-if(videoFile){
-videoPreview.src=URL.createObjectURL(videoFile);
+const file=e.target.files[0];
+if(file){
+videoPreview.src=URL.createObjectURL(file);
 }
 });
 }
 
 if(imageInput){
 imageInput.addEventListener("change",(e)=>{
-imageFile=e.target.files[0];
-if(imageFile){
-imagePreview.src=URL.createObjectURL(imageFile);
+const file=e.target.files[0];
+if(file){
+imagePreview.src=URL.createObjectURL(file);
 }
 });
 }
 
-/* ======================================
-ULTRA RENDER + STATUS ENGINE
-====================================== */
-
-let jobID=null;
-const progressDiv=document.getElementById("progress");
-
-const btn=document.getElementById("createBtn");
+/* ======================
+CREATE BUTTON (REAL ENGINE)
+====================== */
 
 if(btn){
 
-btn.addEventListener("click",async()=>{
+btn.addEventListener("click", async()=>{
 
 progressDiv.innerText="Starting render...";
 
 try{
 
-const res=await fetch("https://sn-design-api.onrender.com/api/render",{
-
+const res = await fetch("https://sn-design-api.onrender.com/api/render",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-mode:"direct"
-})
-
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({ mode:"direct" })
 });
 
 if(!res.ok) throw new Error("render failed");
 
-const data=await res.json();
+const data = await res.json();
 
-jobID=data.jobID;
+/* ⭐ IMPORTANT */
+window.jobID = data.jobID;
 
 progressDiv.innerText="Render started";
 
-pollStatus();
-
 }catch(err){
 
-console.error(err);
 progressDiv.innerText="Render error";
 
 }
@@ -145,34 +136,50 @@ progressDiv.innerText="Render error";
 
 }
 
-/* STATUS POLLING */
+/* ======================
+REAL STATUS SYNC ENGINE
+====================== */
 
-async function pollStatus(){
+let lastStatus="";
 
-if(!jobID) return;
+async function ultraSync(){
 
-const interval=setInterval(async()=>{
+if(!window.jobID) return;
 
 try{
 
-const res=await fetch("https://sn-design-api.onrender.com/api/status?id="+jobID);
-const data=await res.json();
+const res = await fetch("https://sn-design-api.onrender.com/api/status?id="+window.jobID);
 
-progressDiv.innerText="STATUS: "+data.status+" ("+data.progress+"%)";
+if(!res.ok) return;
+
+const data = await res.json();
+
+const newStatus = data.status+"-"+data.progress;
+
+if(newStatus !== lastStatus){
+
+lastStatus=newStatus;
+
+progressDiv.innerText =
+"ENGINE STATUS : "+data.status.toUpperCase()+" | "+data.progress+"%";
+
+}
 
 if(data.status==="complete"){
-clearInterval(interval);
+
+progressDiv.innerText="✅ RENDER COMPLETE";
+
 }
 
 }catch(e){
 
-progressDiv.innerText="Status error";
+console.log("ULTRA SYNC FAIL");
 
 }
 
-},1500);
-
 }
+
+setInterval(ultraSync,1000);
 
 });
 
