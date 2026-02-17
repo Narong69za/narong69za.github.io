@@ -2549,3 +2549,65 @@ SN DESIGN ULTRA NAV CENTER FIX (ADD ONLY)
     letter-spacing:1px;
 
 }
+/* =========================================
+SN DESIGN ULTRA NAV FINAL FIX
+========================================= */
+
+#nav {
+
+   width:100%;
+   display:flex;
+   justify-content:center;
+
+}
+
+#nav nav {
+
+   width:100%;
+   max-width:none !important;
+
+   display:flex;
+   justify-content:center;
+   align-items:center;
+
+   gap:32px;
+
+}
+
+#nav a {
+
+   font-size:clamp(16px,2vw,22px) !important;
+   font-weight:700;
+}
+/* =========================================
+SN DESIGN HERO FULL WIDTH
+========================================= */
+
+.hero-master {
+
+   width:100%;
+   max-width:100%;
+   padding:0;
+   margin:0 auto;
+
+}
+
+.hero-master img {
+
+   width:100%;
+   max-width:100%;
+   object-fit:cover;
+   display:block;
+
+}
+/* =========================================
+REMOVE WIDTH LIMIT
+========================================= */
+
+.container,
+.wrapper,
+.section {
+
+   max-width:100% !important;
+
+}
