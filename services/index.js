@@ -52,7 +52,33 @@ SERVER START
 ====================================== */
 
 const PORT = process.env.PORT || 10000;
+// ==============================
+// ROUTER FIX
+// ==============================
 
+app.use("/assets", express.static(path.join(__dirname,"assets")));
+
+app.get(/^\/(?!api).*/, (req,res,next)=>{
+
+   let requestPath = req.path;
+
+   if(requestPath === "/"){
+      return res.sendFile(path.join(__dirname,"index.html"));
+   }
+
+   if(!requestPath.includes(".")){
+      requestPath = requestPath + ".html";
+   }
+
+   const filePath = path.join(__dirname, requestPath);
+
+   res.sendFile(filePath,(err)=>{
+      if(err){
+         next();
+      }
+   });
+
+});
 app.listen(PORT,()=>{
    console.log("🔥 SN DESIGN ULTRA ROUTER READY:",PORT);
 });
