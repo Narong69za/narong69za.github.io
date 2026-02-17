@@ -4,81 +4,74 @@ const http = require("http");
 const WebSocket = require("ws");
 
 const app = express();
-app.use(express.json());
-
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-const ROOT = path.join(__dirname,"..");
+app.use(express.json());
 
-/* STATIC */
+const ROOT = path.join(__dirname,"..");
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* ===================================
-ULTRA ENGINE GOD MODE CORE
-=================================== */
+/* ============================
+ULTRA ENGINE CORE
+============================ */
 
 let jobs = {};
 let queue = [];
 let processing = false;
 
-let ipUsage = {};
-let clients = new Set();
+let liveUsers = {};
+let ipUsage = {}; // ฟรี 3 ครั้ง
 
-/* WEBSOCKET */
+/* ============================
+WEBSOCKET REALTIME
+============================ */
 
 wss.on("connection",(ws,req)=>{
 
-   clients.add(ws);
+   const ip = req.socket.remoteAddress;
+
+   liveUsers[ip]=true;
+
+   broadcast();
 
    ws.on("close",()=>{
-
-      clients.delete(ws);
-
+      delete liveUsers[ip];
+      broadcast();
    });
 
 });
 
-/* BROADCAST */
+function broadcast(){
 
-function broadcast(data){
-
-   const msg = JSON.stringify(data);
-
-   clients.forEach(ws=>{
-
-      if(ws.readyState===WebSocket.OPEN){
-         ws.send(msg);
-      }
-
+   const payload = JSON.stringify({
+      type:"status",
+      users:Object.keys(liveUsers).length,
+      queue:queue.length,
+      processing
    });
 
+   wss.clients.forEach(c=>{
+      if(c.readyState===1){
+         c.send(payload);
+      }
+   });
 }
 
-/* ===================================
-SECURITY — FREE 3 TIMES PER IP
-=================================== */
-
-function getIP(req){
-
-   return req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
-
-}
-
-/* CREATE JOB */
+/* ============================
+CREATE JOB
+============================ */
 
 app.post("/api/render",(req,res)=>{
 
-   const ip = getIP(req);
+   const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
    if(!ipUsage[ip]) ipUsage[ip]=0;
 
-   if(ipUsage[ip] >= 3){
-
-      return res.status(403).json({error:"FREE LIMIT REACHED"});
-
+   if(ipUsage[ip] >=3){
+      return res.json({error:"FREE LIMIT REACHED"});
    }
 
    ipUsage[ip]++;
@@ -87,50 +80,55 @@ app.post("/api/render",(req,res)=>{
 
    jobs[jobID]={
       status:"queued",
-      progress:0,
-      ip
+      progress:0
    };
 
    queue.push(jobID);
 
    console.log("NEW JOB:",jobID);
 
-   broadcast({
-      type:"job_new",
-      jobID
-   });
-
    startWorker();
 
    res.json({jobID});
 });
 
-/* STATUS */
+/* ============================
+STATUS
+============================ */
 
 app.get("/api/status",(req,res)=>{
 
    const id=req.query.id;
 
    if(!jobs[id]){
-
       return res.status(404).json({error:"not found"});
-
    }
 
    res.json(jobs[id]);
-
 });
 
-/* SERVER STATUS REALTIME */
+/* SERVER STATUS */
 
 app.get("/api/status/server",(req,res)=>{
 
    res.json({
       online:true,
-      liveUsers:clients.size,
+      liveUsers:Object.keys(liveUsers).length,
       queue:queue.length,
       jobs:Object.keys(jobs).length,
       processing
+   });
+
+});
+
+/* AI STATUS */
+
+app.get("/api/status/ai",(req,res)=>{
+
+   res.json({
+      gpu:"ready",
+      renderEngine:"ULTRA",
+      mode:"GOD"
    });
 
 });
@@ -139,11 +137,15 @@ app.get("/api/status/server",(req,res)=>{
 
 app.get("/api/live-users",(req,res)=>{
 
-   res.json({users:clients.size});
+   res.json({
+      count:Object.keys(liveUsers).length
+   });
 
 });
 
-/* WORKER */
+/* ============================
+WORKER
+============================ */
 
 async function startWorker(){
 
@@ -153,14 +155,13 @@ async function startWorker(){
 
    while(queue.length>0){
 
-      const jobID = queue.shift();
+      const jobID=queue.shift();
 
       await processJob(jobID);
 
    }
 
    processing=false;
-
 }
 
 function processJob(id){
@@ -176,28 +177,17 @@ function processJob(id){
          progress+=10;
          jobs[id].progress=progress;
 
-         broadcast({
-            type:"job_update",
-            jobID:id,
-            status:jobs[id].status,
-            progress
-         });
+         broadcast();
 
          if(progress>=100){
 
             jobs[id].status="complete";
-
-            broadcast({
-               type:"job_complete",
-               jobID:id
-            });
-
             clearInterval(interval);
             resolve();
 
          }
 
-      },1000);
+      },2000);
 
    });
 
@@ -206,9 +196,7 @@ function processJob(id){
 /* ROOT */
 
 app.get("/",(req,res)=>{
-
    res.sendFile(path.join(ROOT,"index.html"));
-
 });
 
 /* AUTO HTML ROUTER */
@@ -222,9 +210,7 @@ app.get(/^\/(?!api).*/,(req,res,next)=>{
    }
 
    res.sendFile(path.join(ROOT,requestPath),(err)=>{
-
       if(err) next();
-
    });
 
 });
@@ -233,6 +219,6 @@ const PORT = process.env.PORT || 10000;
 
 server.listen(PORT,()=>{
 
-   console.log("🔥 ULTRA ENGINE GOD MODE LIVE:",PORT);
+   console.log("🔥 ULTRA ENGINE SINGULARITY LIVE:",PORT);
 
 });
