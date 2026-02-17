@@ -1,84 +1,67 @@
-require("dotenv").config();
-
 const express = require("express");
 const path = require("path");
 
 const app = express();
 
-app.use(express.json());
-
-/* ===================================
-STATIC WEBSITE
-=================================== */
+/* =====================================
+ULTRA STATIC WEBSITE CORE
+Serve HTML website จริง
+===================================== */
 
 app.use(express.static(__dirname));
 
-/* ===================================
-GLOBAL JOB QUEUE
-=================================== */
 
-const jobQueue = new Map();
+/* =====================================
+ULTRA API ROUTER
+(API endpoint ต้องอยู่หลัง static)
+===================================== */
 
-global.SN_QUEUE = jobQueue;
+app.use(express.json());
 
-global.SN_CREATE_JOB = function(data){
+/* TEST API */
 
-   const id = "job_" + Date.now();
-
-   jobQueue.set(id,{
-      status:"pending",
-      input:data,
-      output:null
-   });
-
-   return id;
-}
-
-global.SN_UPDATE_JOB = function(id,data){
-
-   if(!jobQueue.has(id)) return;
-
-   jobQueue.set(id,{
-      ...jobQueue.get(id),
-      ...data
-   });
-
-}
-
-/* ===================================
-API ROUTER LOAD
-=================================== */
-
-app.use('/api', require('./api/api.route'));
-
-/* ===================================
-ROOT CHECK
-=================================== */
-
-app.get("/", (req,res)=>{
-   res.send("🔥 SN DESIGN SERVER ONLINE 🔥");
+app.get("/api/status/server",(req,res)=>{
+    res.json({
+        server:"online",
+        time:Date.now()
+    });
 });
+
+
+/* =====================================
+ULTRA AUTO INJECT ENGINE
+ไม่ต้องแก้ HTML ทีละหน้า
+===================================== */
+
+const fs = require("fs");
+
+app.get("/*.html",(req,res)=>{
+
+    const filePath = path.join(__dirname, req.path);
+
+    if(!fs.existsSync(filePath)){
+        return res.status(404).send("Not found");
+    }
+
+    let html = fs.readFileSync(filePath,"utf8");
+
+    if(!html.includes("ultra-core.js")){
+        html = html.replace(
+            "</body>",
+            `<script src="/assets/js/ultra-core.js"></script></body>`
+        );
+    }
+
+    res.send(html);
+});
+
+
+/* =====================================
+ULTRA SERVER START
+===================================== */
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, ()=>{
-   console.log("ULTRA FINAL PLATFORM RUNNING:",PORT);
-});
-// REAL NETWORK TRAFFIC
-
-global.SN_TRAFFIC = {
-   activeUsers:0
-};
-
-app.use((req,res,next)=>{
-
-   global.SN_TRAFFIC.activeUsers++;
-
-   res.on("finish",()=>{
-      global.SN_TRAFFIC.activeUsers--;
-   });
-
-   next();
-});
-
+app.listen(PORT,()=>{
+    console.log("SN DESIGN SERVER RUNNING ON PORT "+PORT);
 });
