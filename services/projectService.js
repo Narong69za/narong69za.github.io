@@ -1,55 +1,46 @@
 const db = require("../db/db");
 
-module.exports = {
+exports.createProject = (data)=>{
 
-   create(job){
+   return new Promise((resolve,reject)=>{
 
-      return new Promise((resolve,reject)=>{
+      const id = "job_"+Date.now();
 
-         db.run(
-            `INSERT INTO jobs VALUES(?,?,?,?,?,?,?)`,
-            [
-               job.id,
-               job.templateID,
-               job.engine,
-               job.duration,
-               "queued",
-               0,
-               Date.now()
-            ],
-            err=> err ? reject(err) : resolve(job)
-         );
-
+      db.run(
+      `INSERT INTO projects
+      (id,templateID,engine,duration,status,progress,creditUsed,eta)
+      VALUES (?,?,?,?,?,?,?,?)`,
+      [
+         id,
+         data.templateID,
+         data.engine || "motion-ai",
+         data.duration || 30,
+         "queued",
+         0,
+         0,
+         "waiting"
+      ],
+      err=>{
+         if(err) reject(err);
+         else resolve(id);
       });
 
-   },
+   });
 
-   update(id,data){
+};
 
-      return new Promise((resolve,reject)=>{
+exports.getProject = (id)=>{
 
-         db.run(
-            `UPDATE jobs SET status=?, progress=? WHERE id=?`,
-            [data.status,data.progress,id],
-            err=> err ? reject(err) : resolve()
-         );
+   return new Promise((resolve,reject)=>{
 
-      });
+      db.get(
+         `SELECT * FROM projects WHERE id=?`,
+         [id],
+         (err,row)=>{
+            if(err) reject(err);
+            else resolve(row);
+         });
 
-   },
-
-   get(id){
-
-      return new Promise((resolve,reject)=>{
-
-         db.get(
-            `SELECT * FROM jobs WHERE id=?`,
-            [id],
-            (err,row)=> err ? reject(err) : resolve(row)
-         );
-
-      });
-
-   }
+   });
 
 };
