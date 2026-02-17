@@ -31,7 +31,7 @@ app.post("/api/render",(req,res)=>{
 
    queue.push(jobID);
 
-   cconsole.log("NEW JOB:",jobID
+   console.log("NEW JOB:", jobID);
 
    startWorker();
 
