@@ -114,8 +114,28 @@ try{
 const res = await fetch("https://sn-design-api.onrender.com/api/render",{
 method:"POST",
 headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({ mode:"direct" })
-});
+body:JSON.stringify({
+
+ template: template,
+
+ model:"replicate-ai",
+
+ platform:"tiktok",
+
+ duration:15,
+
+ resolution:"1080x1920",
+
+ assets:{
+   video: videoFile ? videoFile.name : null,
+   image: imageFile ? imageFile.name : null
+ },
+
+ settings:{
+   ai:"ultra"
+ }
+
+})
 
 if(!res.ok) throw new Error("render failed");
 
