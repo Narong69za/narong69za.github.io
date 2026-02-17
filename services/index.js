@@ -1,228 +1,165 @@
 const express = require("express");
 const path = require("path");
 const http = require("http");
-const crypto = require("crypto");
 const WebSocket = require("ws");
 
 const app = express();
+app.use(express.json());
+
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
-app.use(express.json());
-
-/* =============================
-ROOT
-============================= */
-
 const ROOT = path.join(__dirname,"..");
+
+/* STATIC */
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* =============================
-ULTRA STATE
-============================= */
+/* ===================================
+ULTRA ENGINE GOD MODE CORE
+=================================== */
 
 let jobs = {};
 let queue = [];
+let processing = false;
 
-let users = {};       // token users
-let ipUsage = {};     // free limit tracker
+let ipUsage = {};
+let clients = new Set();
 
-const MAX_WORKERS = 2;
-let activeWorkers = 0;
+/* WEBSOCKET */
 
-/* =============================
-REALTIME BROADCAST
-============================= */
+wss.on("connection",(ws,req)=>{
+
+   clients.add(ws);
+
+   ws.on("close",()=>{
+
+      clients.delete(ws);
+
+   });
+
+});
+
+/* BROADCAST */
 
 function broadcast(data){
 
    const msg = JSON.stringify(data);
 
-   wss.clients.forEach(ws=>{
-      if(ws.readyState === WebSocket.OPEN){
+   clients.forEach(ws=>{
+
+      if(ws.readyState===WebSocket.OPEN){
          ws.send(msg);
       }
+
    });
 
 }
 
-/* =============================
-SECURITY LAYER
-============================= */
+/* ===================================
+SECURITY — FREE 3 TIMES PER IP
+=================================== */
 
 function getIP(req){
 
-   return req.headers["x-forwarded-for"]?.split(",")[0] ||
-          req.socket.remoteAddress;
+   return req.headers["x-forwarded-for"]?.split(",")[0] || req.socket.remoteAddress;
 
 }
 
-function authLite(req,res,next){
-
-   let token = req.headers["x-token"];
-
-   if(!token){
-
-      token = crypto.randomBytes(12).toString("hex");
-
-      users[token]={ created:Date.now(), credit:0 };
-
-      res.setHeader("x-token",token);
-
-   }
-
-   req.token = token;
-
-   if(!users[token]){
-      users[token]={ created:Date.now(), credit:0 };
-   }
-
-   next();
-}
-
-app.use(authLite);
-
-/* =============================
-FREE LIMIT CHECK
-============================= */
-
-function checkFreeLimit(ip){
-
-   if(!ipUsage[ip]){
-      ipUsage[ip]=0;
-   }
-
-   if(ipUsage[ip] < 3){
-      ipUsage[ip]++;
-      return true;
-   }
-
-   return false;
-}
-
-/* =============================
-CREATE JOB
-============================= */
+/* CREATE JOB */
 
 app.post("/api/render",(req,res)=>{
 
    const ip = getIP(req);
 
-   const user = users[req.token];
+   if(!ipUsage[ip]) ipUsage[ip]=0;
 
-   const free = checkFreeLimit(ip);
+   if(ipUsage[ip] >= 3){
 
-   if(!free && user.credit<=0){
-
-      return res.status(403).json({
-         error:"no credit"
-      });
+      return res.status(403).json({error:"FREE LIMIT REACHED"});
 
    }
 
-   if(!free){
-      user.credit--;
-   }
+   ipUsage[ip]++;
 
    const jobID = Date.now().toString();
 
    jobs[jobID]={
-      id:jobID,
       status:"queued",
       progress:0,
-      result:null,
-      ip,
-      token:req.token
+      ip
    };
 
    queue.push(jobID);
 
-   broadcast({type:"new_job",jobID});
+   console.log("NEW JOB:",jobID);
 
-   runWorkers();
+   broadcast({
+      type:"job_new",
+      jobID
+   });
+
+   startWorker();
 
    res.json({jobID});
-
 });
 
-/* =============================
-STATUS
-============================= */
+/* STATUS */
 
 app.get("/api/status",(req,res)=>{
 
    const id=req.query.id;
 
-   if(!jobs[id]) return res.status(404).end();
+   if(!jobs[id]){
+
+      return res.status(404).json({error:"not found"});
+
+   }
 
    res.json(jobs[id]);
 
 });
 
-/* =============================
-SERVER DASHBOARD DATA
-============================= */
+/* SERVER STATUS REALTIME */
 
-app.get("/api/system",(req,res)=>{
+app.get("/api/status/server",(req,res)=>{
 
    res.json({
-
+      online:true,
+      liveUsers:clients.size,
       queue:queue.length,
-      workers:activeWorkers,
       jobs:Object.keys(jobs).length,
-      users:Object.keys(users).length,
-
-      gpu:{
-         status:"ready",
-         load: Math.floor(Math.random()*100)
-      }
-
+      processing
    });
 
 });
 
-/* =============================
-TOPUP SYSTEM (placeholder)
-============================= */
+/* LIVE USERS */
 
-app.post("/api/topup",(req,res)=>{
+app.get("/api/live-users",(req,res)=>{
 
-   const amount = req.body.amount;
-
-   if(amount < 50 || amount > 500){
-
-      return res.status(400).json({error:"invalid range"});
-   }
-
-   users[req.token].credit += amount;
-
-   res.json({success:true,credit:users[req.token].credit});
+   res.json({users:clients.size});
 
 });
 
-/* =============================
-WORKERS
-============================= */
+/* WORKER */
 
-function runWorkers(){
+async function startWorker(){
 
-   while(activeWorkers < MAX_WORKERS && queue.length>0){
+   if(processing) return;
+
+   processing=true;
+
+   while(queue.length>0){
 
       const jobID = queue.shift();
 
-      activeWorkers++;
-
-      processJob(jobID).then(()=>{
-
-         activeWorkers--;
-
-         runWorkers();
-
-      });
+      await processJob(jobID);
 
    }
+
+   processing=false;
 
 }
 
@@ -230,36 +167,32 @@ function processJob(id){
 
    return new Promise(resolve=>{
 
-      if(!jobs[id]) return resolve();
-
       jobs[id].status="processing";
 
       let progress=0;
 
       const interval=setInterval(()=>{
 
-         progress+=5;
-
+         progress+=10;
          jobs[id].progress=progress;
 
          broadcast({
-            type:"progress",
+            type:"job_update",
             jobID:id,
+            status:jobs[id].status,
             progress
          });
 
          if(progress>=100){
 
             jobs[id].status="complete";
-            jobs[id].result="/assets/demo-result.mp4";
 
             broadcast({
-               type:"complete",
+               type:"job_complete",
                jobID:id
             });
 
             clearInterval(interval);
-
             resolve();
 
          }
@@ -270,13 +203,15 @@ function processJob(id){
 
 }
 
-/* =============================
-ROOT
-============================= */
+/* ROOT */
 
 app.get("/",(req,res)=>{
+
    res.sendFile(path.join(ROOT,"index.html"));
+
 });
+
+/* AUTO HTML ROUTER */
 
 app.get(/^\/(?!api).*/,(req,res,next)=>{
 
@@ -287,17 +222,17 @@ app.get(/^\/(?!api).*/,(req,res,next)=>{
    }
 
    res.sendFile(path.join(ROOT,requestPath),(err)=>{
+
       if(err) next();
+
    });
 
 });
 
-/* =============================
-SERVER START
-============================= */
-
 const PORT = process.env.PORT || 10000;
 
 server.listen(PORT,()=>{
+
    console.log("🔥 ULTRA ENGINE GOD MODE LIVE:",PORT);
+
 });
