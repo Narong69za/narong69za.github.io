@@ -1,27 +1,19 @@
-/* ======================================================
+/* ===============================
 SN DESIGN ULTRA NAV CORE
-REBUILD FINAL VERSION
-====================================================== */
+REBUILD FINAL
+=============================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded",()=>{
 
-/* ======================================
-STOP IF NAV EXISTS
-====================================== */
+if(document.querySelector(".sn-nav")) return;
 
-if(document.querySelector(".global-nav")) return;
+const nav = `
+<header class="sn-nav">
+<div class="sn-nav-inner">
 
+<a class="sn-logo" href="index.html">SN DESIGN</a>
 
-/* ======================================
-NAV HTML STRUCTURE
-====================================== */
-
-const navHTML = `
-<header class="global-nav">
-
-<nav class="nav-wrap">
-
-<div class="nav-menu">
+<nav class="sn-menu">
 
 <a href="index.html">Home</a>
 <a href="packages.html">Packages</a>
@@ -30,91 +22,29 @@ const navHTML = `
 <a href="seo.html">SEO</a>
 <a href="contact.html">Contact</a>
 
-</div>
-
 </nav>
 
+</div>
 </header>
 `;
 
-
-/* ======================================
-INJECT NAV
-====================================== */
-
-document.body.insertAdjacentHTML("afterbegin", navHTML);
+document.body.insertAdjacentHTML("afterbegin",nav);
 
 
-/* ======================================
-FORCE CENTER ALIGN (NO CSS DEPENDENCY)
-====================================== */
+/* ACTIVE MENU */
 
-const nav = document.querySelector(".global-nav");
-const wrap = document.querySelector(".nav-wrap");
-const menu = document.querySelector(".nav-menu");
+const path = location.pathname.toLowerCase();
 
-if(nav && wrap && menu){
+document.querySelectorAll(".sn-menu a").forEach(a=>{
 
-nav.style.display="flex";
-nav.style.justifyContent="center";
-
-wrap.style.display="flex";
-wrap.style.justifyContent="center";
-wrap.style.width="100%";
-
-menu.style.display="flex";
-menu.style.justifyContent="center";
-menu.style.alignItems="center";
-
+if(path.endsWith(a.getAttribute("href"))){
+a.classList.add("nav-active");
 }
 
-
-/* ======================================
-ACTIVE MENU SYSTEM
-====================================== */
-
-const currentPath = window.location.pathname.toLowerCase();
-
-document.querySelectorAll(".nav-menu a").forEach(link => {
-
-const href = link.getAttribute("href").toLowerCase();
-
-if(currentPath.endsWith(href)){
-link.classList.add("nav-active");
-}
-
-if((currentPath === "/" || currentPath.endsWith("index.html")) && href === "index.html"){
-link.classList.add("nav-active");
+if(path==="/" && a.getAttribute("href")==="index.html"){
+a.classList.add("nav-active");
 }
 
 });
-
-
-/* ======================================
-AUTO HIDE NAV (MOBILE SCROLL)
-====================================== */
-
-let lastScroll = 0;
-
-window.addEventListener("scroll", () => {
-
-if(!nav) return;
-
-const current = window.pageYOffset;
-
-if(current > lastScroll && current > 80){
-
-nav.style.transform = "translateY(-100%)";
-
-}else{
-
-nav.style.transform = "translateY(0)";
-
-}
-
-lastScroll = current;
-
-});
-
 
 });
