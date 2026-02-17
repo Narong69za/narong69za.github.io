@@ -43,7 +43,7 @@
 <script>
 
 /* ======================================
-SN DESIGN CREATE ENGINE — FINAL FIX
+SN DESIGN CREATE ENGINE — ULTRA FINAL
 ====================================== */
 
 document.addEventListener("DOMContentLoaded",()=>{
@@ -75,4 +75,84 @@ const imageInput=document.getElementById("imageInput");
 const videoPreview=document.getElementById("videoPreview");
 const imagePreview=document.getElementById("imagePreview");
 
-videoInput.add
+if(videoInput){
+
+videoInput.addEventListener("change",(e)=>{
+
+videoFile=e.target.files[0];
+
+if(videoFile){
+
+videoPreview.src=URL.createObjectURL(videoFile);
+
+}
+
+});
+
+}
+
+if(imageInput){
+
+imageInput.addEventListener("change",(e)=>{
+
+imageFile=e.target.files[0];
+
+if(imageFile){
+
+imagePreview.src=URL.createObjectURL(imageFile);
+
+}
+
+});
+
+}
+
+/* CREATE BUTTON */
+
+const btn=document.getElementById("createBtn");
+
+if(btn){
+
+btn.addEventListener("click",async()=>{
+
+console.log("CREATE CLICKED");
+
+try{
+
+const res=await fetch("/api/render",{
+
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+mode:"direct"
+})
+
+});
+
+if(!res.ok) throw new Error("render failed");
+
+const data=await res.json();
+
+console.log("RENDER SUCCESS",data);
+
+alert("Render Started");
+
+}catch(err){
+
+console.error(err);
+alert("Render error");
+
+}
+
+});
+
+}
+
+});
+
+</script>
+<script src="assets/js/api-core.js"></script>
+</body>
+</html>
