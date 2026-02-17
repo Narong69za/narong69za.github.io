@@ -153,5 +153,50 @@ alert("Render error");
 });
 
 </script>
+   
+<script>
+
+/* ===== ULTRA FORCE CONNECT ===== */
+
+window.addEventListener("load", ()=>{
+
+setTimeout(()=>{
+
+const btn=document.getElementById("createBtn");
+
+if(!btn){
+alert("CREATE BTN NOT FOUND");
+return;
+}
+
+btn.onclick=async ()=>{
+
+alert("CREATE CLICKED");
+
+try{
+
+const res=await fetch("https://sn-design-api.onrender.com/api/render",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({mode:"direct"})
+});
+
+const data=await res.json();
+
+alert("SUCCESS");
+
+}catch(e){
+
+alert("FETCH ERROR");
+
+}
+
+};
+
+},1200);
+
+});
+
+</script>
 </body>
 </html>
