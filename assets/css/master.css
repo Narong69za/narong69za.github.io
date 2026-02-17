@@ -434,3 +434,15 @@ text-align:center;
 font-size:18px;
 font-weight:600;
 }
+/* =====================================
+CENTER SYSTEM STATUS TEXT
+===================================== */
+
+.system-status,
+.system-status *{
+
+text-align:center !important;
+margin-left:auto;
+margin-right:auto;
+
+}
