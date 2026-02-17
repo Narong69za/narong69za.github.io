@@ -1,7 +1,3 @@
-// ======================================
-// SN DESIGN STUDIO — ULTRA REAL ENGINE CORE
-// ======================================
-
 const express = require("express");
 const path = require("path");
 
@@ -9,52 +5,56 @@ const app = express();
 
 app.use(express.json());
 
-/* ======================================
+/* =============================
 ROOT PATH
-====================================== */
+============================= */
 
 const ROOT = path.join(__dirname,"..");
 
-/* ======================================
+/* =============================
 STATIC FILES
-====================================== */
+============================= */
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* ======================================
-ULTRA JOB ENGINE
-====================================== */
+/* =============================
+ULTRA ENGINE CORE
+============================= */
 
 let jobs = {};
 let queue = [];
-let processing = false;
+let processingWorkers = 0;
 
-/* ======================================
+const MAX_WORKERS = 2; // parallel render (เพิ่มได้)
+
+/* =============================
 CREATE JOB
-====================================== */
+============================= */
 
 app.post("/api/render",(req,res)=>{
 
    const jobID = Date.now().toString();
 
    jobs[jobID]={
+      id: jobID,
       status:"queued",
-      progress:0
+      progress:0,
+      created: Date.now()
    };
 
    queue.push(jobID);
 
    console.log("🔥 NEW JOB:", jobID);
 
-   startWorker();
+   startWorkers();
 
    res.json({jobID});
 });
 
-/* ======================================
-STATUS CHECK
-====================================== */
+/* =============================
+STATUS
+============================= */
 
 app.get("/api/status",(req,res)=>{
 
@@ -67,30 +67,35 @@ app.get("/api/status",(req,res)=>{
    res.json(jobs[id]);
 });
 
-/* ======================================
-WORKER QUEUE
-====================================== */
+/* =============================
+WORKER SYSTEM (PARALLEL)
+============================= */
 
-async function startWorker(){
+async function startWorkers(){
 
-   if(processing) return;
-
-   processing = true;
-
-   while(queue.length>0){
+   while(processingWorkers < MAX_WORKERS && queue.length>0){
 
       const jobID = queue.shift();
 
-      await processJob(jobID);
+      processingWorkers++;
+
+      runJob(jobID).then(()=>{
+         processingWorkers--;
+         startWorkers();
+      });
 
    }
-
-   processing = false;
 }
 
-function processJob(id){
+/* =============================
+REAL PROCESS SIMULATION
+============================= */
+
+function runJob(id){
 
    return new Promise(resolve=>{
+
+      if(!jobs[id]) return resolve();
 
       jobs[id].status="processing";
 
@@ -98,7 +103,7 @@ function processJob(id){
 
       const interval=setInterval(()=>{
 
-         progress+=10;
+         progress+=5;
 
          jobs[id].progress=progress;
 
@@ -108,26 +113,28 @@ function processJob(id){
 
             clearInterval(interval);
 
+            console.log("✅ COMPLETE:", id);
+
             resolve();
 
          }
 
-      },2000);
+      },1000);
 
    });
 }
 
-/* ======================================
+/* =============================
 ROOT INDEX
-====================================== */
+============================= */
 
 app.get("/",(req,res)=>{
    res.sendFile(path.join(ROOT,"index.html"));
 });
 
-/* ======================================
+/* =============================
 AUTO HTML ROUTER
-====================================== */
+============================= */
 
 app.get(/^\/(?!api).*/,(req,res,next)=>{
 
@@ -143,12 +150,12 @@ app.get(/^\/(?!api).*/,(req,res,next)=>{
 
 });
 
-/* ======================================
+/* =============================
 SERVER START
-====================================== */
+============================= */
 
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("🔥 ULTRA REAL ENGINE LIVE:", PORT);
+   console.log("🔥 ULTRA REAL ENGINE LIVE:",PORT);
 });
