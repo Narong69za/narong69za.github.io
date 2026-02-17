@@ -1,71 +1,42 @@
-async function loadServer(){
+const API="/api";
 
-   const res = await fetch("/api/status/server");
-   const data = await res.json();
+async function load(){
 
-   document.getElementById("server").innerText =
-      JSON.stringify(data,null,2);
+const server=await fetch(API+"/status/server").then(r=>r.json());
+document.getElementById("server").innerText=JSON.stringify(server,null,2);
+
+const users=await fetch(API+"/live-users").then(r=>r.json());
+document.getElementById("users").innerText=JSON.stringify(users,null,2);
+
+const queue=await fetch(API+"/api/admin/queue",{headers:{"x-admin":"true"}}).then(r=>r.json());
+document.getElementById("queue").innerText=JSON.stringify(queue,null,2);
+
+const wallet=await fetch(API+"/admin/wallet",{headers:{"x-admin":"true"}}).then(r=>r.json());
+document.getElementById("wallet").innerText=JSON.stringify(wallet,null,2);
+
 }
 
-async function loadUsers(){
+setInterval(load,1500);
+load();
 
-   const res = await fetch("/api/live-users");
-   const data = await res.json();
+function testTopup(){
 
-   document.getElementById("users").innerText =
-      JSON.stringify(data,null,2);
+fetch("/api/wallet/deposit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({user:"dev",amount:50})
+});
+
 }
 
-async function loadQueue(){
+function clearQueue(){
 
-   const res = await fetch("/api/admin/queue",{
-      headers:ADMIN_HEADER
-   });
+fetch("/api/admin/clear-queue",{headers:{"x-admin":"true"}});
 
-   const data = await res.json();
-
-   document.getElementById("queue").innerText =
-      JSON.stringify(data,null,2);
 }
 
-async function loadWallet(){
+function restart(){
 
-   const res = await fetch("/api/admin/wallet",{
-      headers:ADMIN_HEADER
-   });
+alert("restart command placeholder");
 
-   const data = await res.json();
-
-   document.getElementById("wallet").innerText =
-      JSON.stringify(data,null,2);
 }
-
-async function testTopup(){
-
-   await fetch("/api/admin/topup",{
-
-      method:"POST",
-
-      headers:{
-         "Content-Type":"application/json",
-         ...ADMIN_HEADER
-      },
-
-      body:JSON.stringify({
-         user:"test",
-         amount:50
-      })
-
-   });
-
-   loadWallet();
-}
-
-setInterval(()=>{
-
-   loadServer();
-   loadUsers();
-   loadQueue();
-   loadWallet();
-
-},3000);
