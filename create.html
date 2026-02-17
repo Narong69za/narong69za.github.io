@@ -32,6 +32,8 @@
 
 <button id="createBtn">CREATE VIDEO</button>
 
+<div id="progress"></div>
+
 </section>
 
 <footer>
@@ -76,38 +78,29 @@ const videoPreview=document.getElementById("videoPreview");
 const imagePreview=document.getElementById("imagePreview");
 
 if(videoInput){
-
 videoInput.addEventListener("change",(e)=>{
-
 videoFile=e.target.files[0];
-
 if(videoFile){
-
 videoPreview.src=URL.createObjectURL(videoFile);
-
 }
-
 });
-
 }
 
 if(imageInput){
-
 imageInput.addEventListener("change",(e)=>{
-
 imageFile=e.target.files[0];
-
 if(imageFile){
-
 imagePreview.src=URL.createObjectURL(imageFile);
-
 }
-
 });
-
 }
 
-/* CREATE BUTTON */
+/* ======================================
+ULTRA RENDER + STATUS ENGINE
+====================================== */
+
+let jobID=null;
+const progressDiv=document.getElementById("progress");
 
 const btn=document.getElementById("createBtn");
 
@@ -115,7 +108,7 @@ if(btn){
 
 btn.addEventListener("click",async()=>{
 
-console.log("CREATE CLICKED");
+progressDiv.innerText="Starting render...";
 
 try{
 
@@ -135,23 +128,55 @@ if(!res.ok) throw new Error("render failed");
 
 const data=await res.json();
 
-console.log("RENDER SUCCESS",data);
+jobID=data.jobID;
 
-alert("Render Started");
+progressDiv.innerText="Render started";
+
+pollStatus();
 
 }catch(err){
 
 console.error(err);
-alert("Render error");
+progressDiv.innerText="Render error";
 
 }
 
 });
+
+}
+
+/* STATUS POLLING */
+
+async function pollStatus(){
+
+if(!jobID) return;
+
+const interval=setInterval(async()=>{
+
+try{
+
+const res=await fetch("https://sn-design-api.onrender.com/api/status?id="+jobID);
+const data=await res.json();
+
+progressDiv.innerText="STATUS: "+data.status+" ("+data.progress+"%)";
+
+if(data.status==="complete"){
+clearInterval(interval);
+}
+
+}catch(e){
+
+progressDiv.innerText="Status error";
+
+}
+
+},1500);
 
 }
 
 });
 
 </script>
+
 </body>
 </html>
