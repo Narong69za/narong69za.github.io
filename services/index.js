@@ -29,6 +29,19 @@ ROOT INDEX
 app.get("/", (req,res)=>{
    res.sendFile(path.join(ROOT,"index.html"));
 });
+/* ======================================
+API ROUTES
+====================================== */
+
+app.post("/api/render",(req,res)=>{
+
+   console.log("RENDER REQUEST");
+
+   res.json({
+      status:"render started"
+   });
+
+});
 
 /* ======================================
 ULTRA AUTO HTML ROUTER
