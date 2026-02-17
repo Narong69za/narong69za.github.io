@@ -154,3 +154,19 @@ animation:ultraMarquee 20s linear infinite;
 
 @keyframes ultraMarquee{
 0%{transform:translate
+/* ===== ULTRA CENTER LAYOUT FIX ===== */
+
+body{
+display:flex;
+flex-direction:column;
+align-items:center;
+}
+
+.section,
+.container{
+
+max-width:1200px !important;
+margin-left:auto !important;
+margin-right:auto !important;
+
+}
