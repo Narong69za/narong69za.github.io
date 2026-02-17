@@ -1,46 +1,30 @@
-const db = require("../db/db");
+exports.updateStatus = (id,status)=>{
 
-exports.createProject = (data)=>{
-
-   return new Promise((resolve,reject)=>{
-
-      const id = "job_"+Date.now();
-
-      db.run(
-      `INSERT INTO projects
-      (id,templateID,engine,duration,status,progress,creditUsed,eta)
-      VALUES (?,?,?,?,?,?,?,?)`,
-      [
-         id,
-         data.templateID,
-         data.engine || "motion-ai",
-         data.duration || 30,
-         "queued",
-         0,
-         0,
-         "waiting"
-      ],
-      err=>{
-         if(err) reject(err);
-         else resolve(id);
-      });
-
-   });
+   db.run(
+      "UPDATE projects SET status=? WHERE id=?",
+      [status,id]
+   );
 
 };
 
-exports.getProject = (id)=>{
+exports.saveExternalJobID = (id,externalID)=>{
 
-   return new Promise((resolve,reject)=>{
+   db.run(
+      "UPDATE projects SET externalJobID=? WHERE id=?",
+      [externalID,id]
+   );
 
-      db.get(
-         `SELECT * FROM projects WHERE id=?`,
-         [id],
-         (err,row)=>{
-            if(err) reject(err);
-            else resolve(row);
-         });
+};
 
-   });
+exports.updateResult = (externalID,data)=>{
+
+   db.run(
+      `UPDATE projects SET
+      status='complete',
+      progress=100,
+      resultURL=?
+      WHERE externalJobID=?`,
+      [data.resultURL,externalID]
+   );
 
 };
