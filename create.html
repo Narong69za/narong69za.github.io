@@ -2,37 +2,12 @@
 <html lang="en">
 <head>
 
-<title>Official Website — SN DESIGN STUDIO</title>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
+<title>Official Website — SN DESIGN STUDIO</title>
+
 <link rel="stylesheet" href="assets/css/master.css">
-
-<style>
-
-/* ======================================================
-ULTRA BLOCK UI (ADD ONLY)
-====================================================== */
-
-.ultra-block{
-
-position:fixed;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-background:#0b0b0b;
-border:1px solid rgba(255,0,80,0.4);
-padding:30px;
-border-radius:14px;
-z-index:9999;
-color:#fff;
-text-align:center;
-box-shadow:0 0 40px rgba(255,0,80,0.4);
-
-}
-
-</style>
 
 </head>
 
@@ -67,23 +42,15 @@ box-shadow:0 0 40px rgba(255,0,80,0.4);
 
 <script>
 
-/* ======================================================
-ULTRA FINAL PLATFORM CORE
-====================================================== */
+/* ======================================
+SN DESIGN CREATE ENGINE (FINAL CLEAN)
+====================================== */
 
-const USER = {
+document.addEventListener("DOMContentLoaded",()=>{
 
-   dev:true,          // DEV MODE
-   freeDaily:3,
-   usedToday:0,
-   points:11000
+console.log("CREATE PAGE READY");
 
-};
-
-
-// ==============================
-// TEMPLATE LOAD
-// ==============================
+/* template load */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
@@ -91,183 +58,86 @@ const template = params.get("template");
 const hero = document.getElementById("heroImage");
 const title = document.getElementById("engineTitle");
 
-if(template && hero && title){
+if(template){
 
-   title.innerText = template.replaceAll("-"," ").toUpperCase();
-   hero.src = `assets/images/template-${template}.jpg`;
+title.innerText = template.replaceAll("-"," ").toUpperCase();
+hero.src = `assets/images/template-${template}.jpg`;
 
 }
 
-
-// ==============================
-// PREVIEW FILE
-// ==============================
+/* preview */
 
 let videoFile=null;
 let imageFile=null;
 
 document.getElementById("videoInput").addEventListener("change",(e)=>{
 
-   videoFile=e.target.files[0];
+videoFile=e.target.files[0];
 
-   if(videoFile){
+if(videoFile){
 
-      const vid=document.getElementById("videoPreview");
-      vid.src=URL.createObjectURL(videoFile);
+document.getElementById("videoPreview").src=
+URL.createObjectURL(videoFile);
 
-      vid.onloadedmetadata=function(){
-
-         if(vid.duration > 30){
-
-            showBlock("Video limit 30 seconds");
-
-            videoFile=null;
-            vid.src="";
-
-         }
-
-      };
-
-   }
+}
 
 });
 
 document.getElementById("imageInput").addEventListener("change",(e)=>{
 
-   imageFile=e.target.files[0];
+imageFile=e.target.files[0];
 
-   if(imageFile){
-      document.getElementById("imagePreview").src=
-      URL.createObjectURL(imageFile);
-   }
+if(imageFile){
+
+document.getElementById("imagePreview").src=
+URL.createObjectURL(imageFile);
+
+}
 
 });
 
+/* CREATE BUTTON */
 
-// ==============================
-// UI BLOCK
-// ==============================
+const btn = document.getElementById("createBtn");
 
-function showBlock(msg){
+btn.addEventListener("click",async ()=>{
 
-   const box=document.createElement("div");
+console.log("CREATE CLICKED");
 
-   box.className="ultra-block";
+try{
 
-   box.innerHTML=`<h3>${msg}</h3>`;
+const res = await fetch("/api/render",{
 
-   document.body.appendChild(box);
+method:"POST",
+headers:{ "Content-Type":"application/json" },
 
+body:JSON.stringify({
+
+template:template,
+input:{
+video: videoFile ? videoFile.name : null,
+image: imageFile ? imageFile.name : null
 }
 
-
-// ==============================
-// CREDIT CHECK
-// ==============================
-
-function allowRender(){
-
-   if(USER.dev===true) return true;
-
-   if(USER.usedToday < USER.freeDaily){
-
-      USER.usedToday++;
-      return true;
-
-   }
-
-   if(USER.points >= 100){
-
-      USER.points -= 100;
-      return true;
-
-   }
-
-   showBlock("Not enough credits");
-
-   return false;
-
-}
-
-
-// ==============================
-// AUTO RESULT WATCH
-// ==============================
-
-async function watchJob(id){
-
-   const timer=setInterval(async()=>{
-
-      const res=await fetch("/api/job/"+id);
-      const data=await res.json();
-
-      if(data.status==="done"){
-
-         clearInterval(timer);
-
-         alert("Render completed");
-
-      }
-
-   },3000);
-
-}
-
-
-// ==============================
-// CREATE BUTTON
-// ==============================
-
-document.getElementById("createBtn").addEventListener("click", async ()=>{
-
-   if(!template){
-
-      showBlock("Template missing");
-      return;
-
-   }
-
-   if(!allowRender()) return;
-
-   const res=await fetch("/api/render",{
-
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify({
-
-         template:template,
-         video: videoFile ? videoFile.name:null,
-         image: imageFile ? imageFile.name:null
-
-      })
-
-   });
-
-   const data=await res.json();
-
-   if(data.jobId){
-
-      watchJob(data.jobId);
-
-   }
+})
 
 });
 
-</script>
+const data = await res.json();
 
-<!-- ====================================================== -->
-<!-- SN DESIGN ADD ONLY : AUTO TEMPLATE MODEL SYSTEM -->
-<!-- ====================================================== -->
+console.log("RENDER RESULT:",data);
 
-<script>
+alert("Render job sent");
 
-document.querySelectorAll("[data-template]").forEach(el=>{
-   el.addEventListener("click",()=>{
-      const model = el.dataset.template;
-      if(model){
-         window.location.href = "create.html?template="+model;
-      }
-   });
+}catch(e){
+
+console.error(e);
+alert("Render error");
+
+}
+
+});
+
 });
 
 </script>
