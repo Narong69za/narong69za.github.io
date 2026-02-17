@@ -1,17 +1,22 @@
-const router = require("express").Router();
-const queue = require("../services/queueService");
+const express = require("express");
+const router = express.Router();
 
-router.post("/", async (req,res)=>{
+const projectService = require("../services/projectService");
+
+router.post("/", async(req,res)=>{
 
    try{
 
-      const job = await queue.addJob(req.body);
+      const id = await projectService.createProject(req.body);
 
-      res.json({ jobID: job.id });
+      res.json({
+         success:true,
+         jobID:id
+      });
 
    }catch(e){
 
-      res.status(500).json({ error:e.message });
+      res.status(500).json({error:e.message});
 
    }
 
