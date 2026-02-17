@@ -1,126 +1,94 @@
-const express = require("express");
-const path = require("path");
+const express=require("express");
+const app=express();
 
-const app = express();
 app.use(express.json());
 
-const ROOT = path.join(__dirname,"..");
+/* =========================
+DATABASE MOCK (แทน SQL)
+========================= */
 
-app.use("/assets", express.static(path.join(ROOT,"assets")));
-app.use(express.static(ROOT));
+const projects={};
 
-/* =============================
-ULTRA JOB ENGINE FINAL
-============================= */
-
-let jobs = {};
-let queue = [];
-let processing = false;
+/* =========================
+CREATE PROJECT
+========================= */
 
 app.post("/api/render",(req,res)=>{
 
-   const { templateID, engine, duration } = req.body;
+const body=req.body||{};
 
-   const jobID = Date.now().toString();
+if(!body.templateID){
 
-   jobs[jobID]={
-      jobID,
-      templateID,
-      engine,
-      duration,
-      status:"queued",
-      progress:0,
-      created:Date.now()
-   };
+return res.status(400).json({error:"missing templateID"});
+}
 
-   queue.push(jobID);
+const jobID="job_"+Date.now();
 
-   startWorker();
+projects[jobID]={
 
-   res.json({ jobID });
+jobID,
+templateID:body.templateID,
+engine:body.engine || "motion-ai",
+duration:body.duration || 30,
+
+status:"queued",
+progress:0,
+creditUsed:0,
+eta:"calculating",
+media:body.files||[]
+
+};
+
+startProcess(jobID);
+
+res.json(projects[jobID]);
 
 });
+
+/* =========================
+STATUS
+========================= */
 
 app.get("/api/status",(req,res)=>{
 
-   const id=req.query.id;
+const id=req.query.id;
 
-   if(!jobs[id]){
-      return res.status(404).json({error:"not found"});
-   }
+if(!projects[id]){
 
-   res.json(jobs[id]);
-});
-
-async function startWorker(){
-
-   if(processing) return;
-
-   processing=true;
-
-   while(queue.length){
-
-      const id=queue.shift();
-
-      await processJob(id);
-
-   }
-
-   processing=false;
+return res.status(404).json({error:"not found"});
 }
 
-function processJob(id){
+res.json(projects[id]);
 
-   return new Promise(resolve=>{
+});
 
-      jobs[id].status="processing";
+/* =========================
+PROCESS SIMULATION
+========================= */
 
-      let p=0;
+function startProcess(id){
 
-      const interval=setInterval(()=>{
+projects[id].status="processing";
 
-         p+=10;
-         jobs[id].progress=p;
+let p=0;
 
-         if(p>=100){
+const loop=setInterval(()=>{
 
-            jobs[id].status="complete";
+p+=10;
 
-            clearInterval(interval);
-            resolve();
+projects[id].progress=p;
+projects[id].creditUsed = (p/100)*30;
+projects[id].eta = (100-p)/10+" sec";
 
-         }
+if(p>=100){
 
-      },1500);
-
-   });
+projects[id].status="complete";
+clearInterval(loop);
 
 }
 
-/* ROUTER */
+},1500);
 
-app.get("/",(req,res)=>{
-   res.sendFile(path.join(ROOT,"index.html"));
-});
+}
 
-app.get(/^\/(?!api).*/,(req,res,next)=>{
-
-   let requestPath=req.path;
-
-   if(!requestPath.includes(".")){
-      requestPath+=".html";
-   }
-
-   res.sendFile(path.join(ROOT,requestPath),(err)=>{
-      if(err) next();
-   });
-
-});
-
-const PORT=process.env.PORT || 10000;
-
-app.listen(PORT,()=>{
-
-   console.log("ULTRA FINAL ENGINE RUNNING",PORT);
-
-});
+app.listen(10000);
