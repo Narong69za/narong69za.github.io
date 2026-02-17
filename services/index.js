@@ -10,9 +10,10 @@ const app = express();
 app.use(express.json());
 
 /* ======================================
-STATIC WEBSITE ROOT
+STATIC FILES (สำคัญ ต้องอยู่บนสุด)
 ====================================== */
 
+app.use("/assets", express.static(path.join(__dirname,"assets")));
 app.use(express.static(__dirname));
 
 /* ======================================
@@ -24,61 +25,15 @@ app.get("/", (req,res)=>{
 });
 
 /* ======================================
-ULTRA AUTO HTML ROUTER
-ไม่ต้องเขียน route ทีละหน้าอีก
+ULTRA AUTO HTML ROUTER (ตัวเดียวพอ)
 ====================================== */
-
-app.get("*",(req,res,next)=>{
-
-   let requestPath = req.path;
-
-   // ถ้าไม่มี .html → เติม .html ให้อัตโนมัติ
-   if(!requestPath.includes(".")){
-      requestPath = requestPath + ".html";
-   }
-
-   const filePath = path.join(__dirname, requestPath);
-
-   res.sendFile(filePath,(err)=>{
-      if(err){
-         next(); // ถ้าไม่มีไฟล์ → ไป middleware ต่อ
-      }
-   });
-
-});
-
-/* ======================================
-SERVER START
-====================================== */
-
-const PORT = process.env.PORT || 10000;
-// ==============================
-// ROUTER FIX
-// ==============================
-
-app.use("/assets", express.static(path.join(__dirname,"assets")));
 
 app.get(/^\/(?!api).*/, (req,res,next)=>{
 
    let requestPath = req.path;
 
-   if(requestPath === "/"){
-      return res.sendFile(path.join(__dirname,"index.html"));
-   }
-
    if(!requestPath.includes(".")){
       requestPath = requestPath + ".html";
    }
 
-   const filePath = path.join(__dirname, requestPath);
-
-   res.sendFile(filePath,(err)=>{
-      if(err){
-         next();
-      }
-   });
-
-});
-app.listen(PORT,()=>{
-   console.log("🔥 SN DESIGN ULTRA ROUTER READY:",PORT);
-});
+   const filePath = path.join(__dirname,
