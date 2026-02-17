@@ -10,22 +10,28 @@ const app = express();
 app.use(express.json());
 
 /* ======================================
-STATIC FILES (สำคัญ ต้องอยู่บนสุด)
+ROOT PATH (สำคัญ)
 ====================================== */
 
-app.use("/assets", express.static(path.join(__dirname,"assets")));
-app.use(express.static(__dirname));
+const ROOT = path.join(__dirname, ".."); // ย้อนออกจาก services
+
+/* ======================================
+STATIC FILES
+====================================== */
+
+app.use("/assets", express.static(path.join(ROOT,"assets")));
+app.use(express.static(ROOT));
 
 /* ======================================
 ROOT INDEX
 ====================================== */
 
 app.get("/", (req,res)=>{
-   res.sendFile(path.join(__dirname,"index.html"));
+   res.sendFile(path.join(ROOT,"index.html"));
 });
 
 /* ======================================
-ULTRA AUTO HTML ROUTER (ตัวเดียวพอ)
+ULTRA AUTO HTML ROUTER
 ====================================== */
 
 app.get(/^\/(?!api).*/, (req,res,next)=>{
@@ -36,4 +42,22 @@ app.get(/^\/(?!api).*/, (req,res,next)=>{
       requestPath = requestPath + ".html";
    }
 
-   const filePath = path.join(__dirname,
+   const filePath = path.join(ROOT, requestPath);
+
+   res.sendFile(filePath,(err)=>{
+      if(err){
+         next();
+      }
+   });
+
+});
+
+/* ======================================
+SERVER START
+====================================== */
+
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT,()=>{
+   console.log("🔥 SN DESIGN ULTRA ROUTER READY:",PORT);
+});
