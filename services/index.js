@@ -1,3 +1,7 @@
+// ======================================
+// SN DESIGN STUDIO — ULTRA REAL ENGINE CORE
+// ======================================
+
 const express = require("express");
 const path = require("path");
 
@@ -5,20 +9,30 @@ const app = express();
 
 app.use(express.json());
 
+/* ======================================
+ROOT PATH
+====================================== */
+
 const ROOT = path.join(__dirname,"..");
+
+/* ======================================
+STATIC FILES
+====================================== */
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* =============================
+/* ======================================
 ULTRA JOB ENGINE
-============================= */
+====================================== */
 
 let jobs = {};
 let queue = [];
 let processing = false;
 
-/* CREATE JOB */
+/* ======================================
+CREATE JOB
+====================================== */
 
 app.post("/api/render",(req,res)=>{
 
@@ -31,14 +45,16 @@ app.post("/api/render",(req,res)=>{
 
    queue.push(jobID);
 
-   console.log("NEW JOB:", jobID);
+   console.log("🔥 NEW JOB:", jobID);
 
    startWorker();
 
    res.json({jobID});
 });
 
-/* STATUS */
+/* ======================================
+STATUS CHECK
+====================================== */
 
 app.get("/api/status",(req,res)=>{
 
@@ -51,7 +67,9 @@ app.get("/api/status",(req,res)=>{
    res.json(jobs[id]);
 });
 
-/* WORKER */
+/* ======================================
+WORKER QUEUE
+====================================== */
 
 async function startWorker(){
 
@@ -81,12 +99,15 @@ function processJob(id){
       const interval=setInterval(()=>{
 
          progress+=10;
+
          jobs[id].progress=progress;
 
          if(progress>=100){
 
             jobs[id].status="complete";
+
             clearInterval(interval);
+
             resolve();
 
          }
@@ -96,13 +117,17 @@ function processJob(id){
    });
 }
 
-/* ROOT */
+/* ======================================
+ROOT INDEX
+====================================== */
 
 app.get("/",(req,res)=>{
    res.sendFile(path.join(ROOT,"index.html"));
 });
 
-/* AUTO HTML ROUTER */
+/* ======================================
+AUTO HTML ROUTER
+====================================== */
 
 app.get(/^\/(?!api).*/,(req,res,next)=>{
 
@@ -118,12 +143,12 @@ app.get(/^\/(?!api).*/,(req,res,next)=>{
 
 });
 
+/* ======================================
+SERVER START
+====================================== */
+
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT,()=>{
-   console.log("ULTRA REAL ENGINE LIVE:", PORT);
+   console.log("🔥 ULTRA REAL ENGINE LIVE:", PORT);
 });
