@@ -384,6 +384,338 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 })();
 
+</script>
+ <!-- =========================================================
+ULTRA CTA CONTROL FINAL
+ADD ONLY — FULL SYSTEM
+NO MODIFY EXISTING FILE
+READY COPY PASTE
+========================================================= -->
+
+<script>
+
+(function(){
+
+/* =========================================================
+ULTRA FINAL INIT
+========================================================= */
+
+console.log("ULTRA CTA CONTROL FINAL ACTIVE");
+
+
+/* =========================================================
+CONFIG FINAL
+========================================================= */
+
+const ULTRA_FINAL_CONFIG = {
+
+   API_RENDER : "/api/render",
+   API_STATUS : "/api/status",
+
+   DEFAULT_TEMPLATE : "ai-lipsync",
+   DEFAULT_ENGINE : "motion-ai",
+
+   MAX_LENGTH : 30,
+
+   STATUS_INTERVAL : 2000
+
+};
+
+
+/* =========================================================
+UTILS
+========================================================= */
+
+function uuid(){
+
+   return "job-"+Date.now()+"-"+Math.random().toString(36).substring(2,9);
+
+}
+
+function findCTA(){
+
+   const nodes = document.querySelectorAll("button,.btn,input[type=button]");
+
+   for(let n of nodes){
+
+      const t = (n.innerText || n.value || "").toLowerCase();
+
+      if(t.includes("create video")) return n;
+
+   }
+
+   return null;
+}
+
+function collectFiles(){
+
+   const inputs = document.querySelectorAll("input[type=file]");
+
+   const arr = [];
+
+   inputs.forEach(i=>{
+
+      if(i.files){
+
+         for(let f of i.files){
+
+            arr.push({
+
+               name:f.name,
+               size:f.size,
+               type:f.type
+
+            });
+
+         }
+
+      }
+
+   });
+
+   return arr;
+}
+
+function readProject(){
+
+   const txt = document.body.innerText;
+
+   const obj = {
+
+      templateID : ULTRA_FINAL_CONFIG.DEFAULT_TEMPLATE,
+      engine : ULTRA_FINAL_CONFIG.DEFAULT_ENGINE,
+      maxLength : ULTRA_FINAL_CONFIG.MAX_LENGTH
+
+   };
+
+   const m = txt.match(/MAX LENGTH\s*:\s*(\d+)/i);
+
+   if(m) obj.maxLength = Number(m[1]);
+
+   return obj;
+}
+
+
+/* =========================================================
+UI STATUS PANEL
+========================================================= */
+
+function getPanel(){
+
+   let p = document.getElementById("ultra-final-panel");
+
+   if(p) return p;
+
+   p=document.createElement("div");
+
+   p.id="ultra-final-panel";
+
+   p.style.cssText=`
+      position:fixed;
+      right:15px;
+      bottom:15px;
+      background:#000;
+      color:#00ffc8;
+      padding:14px;
+      font-size:12px;
+      border:1px solid #00ffc8;
+      z-index:999999;
+      min-width:200px;
+   `;
+
+   p.innerHTML="ULTRA FINAL READY";
+
+   document.body.appendChild(p);
+
+   return p;
+}
+
+function updatePanel(html){
+
+   const p=getPanel();
+
+   p.innerHTML=html;
+
+}
+
+
+/* =========================================================
+STATUS POLLING
+========================================================= */
+
+async function watchStatus(jobID){
+
+   updatePanel("JOB SENT<br>ID:"+jobID);
+
+   const loop=setInterval(async()=>{
+
+      try{
+
+         const r=await fetch(ULTRA_FINAL_CONFIG.API_STATUS+"?id="+jobID);
+
+         const d=await r.json();
+
+         updatePanel(
+            "JOB:"+jobID+
+            "<br>Status:"+d.status+
+            "<br>Progress:"+ (d.progress || 0)+"%"
+         );
+
+         if(d.status==="complete"){
+
+            clearInterval(loop);
+
+            updatePanel("RENDER COMPLETE<br>ID:"+jobID);
+
+         }
+
+      }catch(e){
+
+         console.log("status error",e);
+
+      }
+
+   },ULTRA_FINAL_CONFIG.STATUS_INTERVAL);
+
+}
+
+
+/* =========================================================
+SEND JOB FINAL
+========================================================= */
+
+async function sendJob(){
+
+   const project=readProject();
+
+   const files=collectFiles();
+
+   const jobID=uuid();
+
+   updatePanel("SENDING...");
+
+   try{
+
+      const res=await fetch(ULTRA_FINAL_CONFIG.API_RENDER,{
+
+         method:"POST",
+
+         headers:{
+            "Content-Type":"application/json"
+         },
+
+         body:JSON.stringify({
+
+            jobID:jobID,
+            templateID:project.templateID,
+            engine:project.engine,
+            duration:project.maxLength,
+            files:files,
+            createdAt:Date.now()
+
+         })
+
+      });
+
+      const data=await res.json();
+
+      const realID=data.jobID || jobID;
+
+      watchStatus(realID);
+
+   }catch(err){
+
+      updatePanel("RENDER ERROR");
+
+      console.error(err);
+
+   }
+
+}
+
+
+/* =========================================================
+AUTO CTA BIND FINAL
+========================================================= */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+   const cta=findCTA();
+
+   if(!cta){
+
+      console.log("CTA NOT FOUND");
+
+      return;
+
+   }
+
+   console.log("ULTRA CTA FOUND");
+
+   cta.addEventListener("click",(e)=>{
+
+      e.preventDefault();
+
+      sendJob();
+
+   });
+
+});
+
+
+})();
+
 </script>  
+ <script>
+
+/* ===============================
+ULTRA TEMPLATE FINAL SAFE
+=============================== */
+
+(function(){
+
+console.log("ULTRA TEMPLATE FINAL MODE");
+
+/* Template page = redirect only */
+
+document.querySelectorAll("[data-template]").forEach(el=>{
+
+   el.addEventListener("click",(e)=>{
+
+      e.preventDefault();
+
+      const template = el.dataset.template;
+
+      if(!template) return;
+
+      const url = "create.html?template="+encodeURIComponent(template);
+
+      console.log("LOAD TEMPLATE:",template);
+
+      window.location.href = url;
+
+   });
+
+});
+
+/* Disable render CTA if exist */
+
+document.querySelectorAll("button,.btn,input[type=button]").forEach(btn=>{
+
+   const t = (btn.innerText||btn.value||"").toLowerCase();
+
+   if(t.includes("create video")){
+
+      console.log("CTA BLOCKED ON TEMPLATE PAGE");
+
+      btn.onclick=null;
+
+   }
+
+});
+
+})();
+
+ </script>  
 </body>
 </html>
