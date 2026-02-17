@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>Official Website — SN DESIGN STUDIO</title>
+
+<style>
+
+body{
+background:#000;
+color:#00ffcc;
+font-family:monospace;
+margin:0;
+padding:20px;
+}
+
+.box{
+border:1px solid #00ffcc;
+padding:15px;
+margin-bottom:20px;
+}
+
+h2{
+margin-top:0;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr;
+gap:20px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- TOP GUIDE BOX -->
+
+<div class="box">
+
+<h2>ULTRA ENGINE DEV PANEL</h2>
+
+<p>
+
+🔥 Monitor server realtime<br>
+🔥 ตรวจสอบ user / wallet / render queue<br>
+🔥 ใช้สำหรับ DEV ONLY
+
+</p>
+
+</div>
+
+<!-- SERVER STATUS -->
+
+<div class="box">
+<h2>SERVER STATUS</h2>
+<pre id="server"></pre>
+</div>
+
+<!-- LIVE USERS -->
+
+<div class="box">
+<h2>LIVE USERS</h2>
+<pre id="users"></pre>
+</div>
+
+<!-- JOB QUEUE -->
+
+<div class="box">
+<h2>JOBS</h2>
+<pre id="jobs"></pre>
+</div>
+
+<!-- WALLET -->
+
+<div class="box">
+<h2>WALLET / PAYMENT</h2>
+<pre id="wallet"></pre>
+</div>
+
+<!-- CLOUDFLARE STATUS (placeholder) -->
+
+<div class="box">
+<h2>CLOUDFLARE STATUS</h2>
+<pre id="cf">waiting...</pre>
+</div>
+
+<script>
+
+/* ==========================
+ULTRA DEV REALTIME DASHBOARD
+========================== */
+
+async function loadServer(){
+
+try{
+
+const r=await fetch("/api/admin/server");
+const d=await r.json();
+
+document.getElementById("server").innerText=
+JSON.stringify(d,null,2);
+
+}catch(e){}
+
+}
+
+async function loadUsers(){
+
+try{
+
+const r=await fetch("/api/admin/live-users");
+const d=await r.json();
+
+document.getElementById("users").innerText=
+JSON.stringify(d,null,2);
+
+}catch(e){}
+
+}
+
+async function loadJobs(){
+
+try{
+
+const r=await fetch("/api/admin/jobs");
+const d=await r.json();
+
+document.getElementById("jobs").innerText=
+JSON.stringify(d,null,2);
+
+}catch(e){}
+
+}
+
+async function loadWallet(){
+
+try{
+
+const r=await fetch("/api/admin/wallet");
+const d=await r.json();
+
+document.getElementById("wallet").innerText=
+JSON.stringify(d,null,2);
+
+}catch(e){}
+
+}
+
+/* CLOUDFLARE STATUS
+   (ตอนนี้ placeholder — เดี๋ยวต่อ API จริง)
+*/
+
+function loadCloudflare(){
+
+document.getElementById("cf").innerText =
+"Cloudflare connected (manual check)";
+
+}
+
+/* REALTIME LOOP */
+
+function ultraLoop(){
+
+loadServer();
+loadUsers();
+loadJobs();
+loadWallet();
+loadCloudflare();
+
+}
+
+setInterval(ultraLoop,2000);
+ultraLoop();
+
+</script>
+
+</body>
+  </html>
