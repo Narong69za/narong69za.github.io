@@ -1,45 +1,120 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>ULTRA ENGINE DEV PANEL</title>
+
+<title>ULTRA ENGINE CONTROL CENTER</title>
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link rel="stylesheet" href="admin.css">
+
 </head>
 
-<body style="background:#000;color:#0ff;font-family:monospace">
+<body>
 
-<h2>ULTRA ENGINE DEV PANEL</h2>
+<script src="guard.js"></script>
 
-<pre id="server"></pre>
-<pre id="users"></pre>
-<pre id="jobs"></pre>
-<pre id="wallet"></pre>
+<h1>🔥 ULTRA ENGINE DEV CONTROL CENTER</h1>
+
+<div class="grid">
+
+<div class="card">
+
+<h2>SERVER STATUS</h2>
+
+<div id="serverStatus">loading...</div>
+
+</div>
+
+<div class="card">
+
+<h2>LIVE USERS</h2>
+
+<div id="userCount">0</div>
+
+</div>
+
+<div class="card">
+
+<h2>QUEUE</h2>
+
+<div id="queueStatus"></div>
+
+</div>
+
+<div class="card">
+
+<h2>GPU STATUS</h2>
+
+<div id="gpu">READY</div>
+
+</div>
+
+</div>
+
+<h2>📊 LIVE TRAFFIC</h2>
+
+<div class="graph">
+
+<div id="trafficBar"></div>
+
+</div>
+
+<h2>🎬 JOB QUEUE</h2>
+
+<div id="jobs"></div>
+
+<h2>💰 WALLET SYSTEM</h2>
+
+<div id="wallet"></div>
 
 <script>
 
-const HEADERS={
-   "x-admin-key":"ULTRA_ENGINE_DEV"
-};
+let traffic=0;
 
 async function update(){
 
-   const server=await fetch("/api/status/server").then(r=>r.json());
-   document.getElementById("server").innerText=
-      JSON.stringify(server,null,2);
+const server = await fetch("/api/status/server").then(r=>r.json());
+document.getElementById("serverStatus").innerText =
+server.online ? "ONLINE" : "OFFLINE";
 
-   const users=await fetch("/api/live-users").then(r=>r.json());
-   document.getElementById("users").innerText=
-      JSON.stringify(users,null,2);
+const users = await fetch("/api/live-users").then(r=>r.json());
+document.getElementById("userCount").innerText = users.total;
 
-   const jobs=await fetch("/api/jobs",{headers:HEADERS}).then(r=>r.json());
-   document.getElementById("jobs").innerText=
-      JSON.stringify(jobs,null,2);
+const jobs = await fetch("/api/jobs").then(r=>r.json());
 
-   const wallet=await fetch("/api/admin/wallet",{headers:HEADERS}).then(r=>r.json());
-   document.getElementById("wallet").innerText=
-      JSON.stringify(wallet,null,2);
+let html="";
+Object.keys(jobs).forEach(id=>{
+
+const j = jobs[id];
+
+html+=`
+<div class="job">
+${id} — ${j.status} (${j.progress}%)
+</div>
+`;
+
+});
+
+document.getElementById("jobs").innerHTML=html;
+
+const wallet = await fetch("/api/admin/wallet").then(r=>r.json());
+
+document.getElementById("wallet").innerText =
+JSON.stringify(wallet,null,2);
+
+/* traffic animation */
+
+traffic+=10;
+if(traffic>100) traffic=10;
+
+document.getElementById("trafficBar").style.width=traffic+"%";
 
 }
 
-setInterval(update,2000);
+setInterval(update,1000);
+
+update();
 
 </script>
 
