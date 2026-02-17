@@ -98,45 +98,54 @@ URL.createObjectURL(imageFile);
 
 /* CREATE BUTTON */
 
-const btn = document.getElementById("createBtn");
+/* =====================================
+ULTRA FINAL CREATE ENGINE
+SAFE NULL CHECK + REAL API CALL
+===================================== */
 
-btn.addEventListener("click",async ()=>{
+document.addEventListener("DOMContentLoaded", () => {
 
-console.log("CREATE CLICKED");
+  const btn = document.getElementById("createBtn");
 
-try{
+  if(!btn){
+    console.warn("CREATE BUTTON NOT FOUND");
+    return;
+  }
 
-const res = await fetch("/api/render",{
+  btn.addEventListener("click", async () => {
 
-method:"POST",
-headers:{ "Content-Type":"application/json" },
+    console.log("CREATE CLICKED");
 
-body:JSON.stringify({
+    try{
 
-template:template,
-input:{
-video: videoFile ? videoFile.name : null,
-image: imageFile ? imageFile.name : null
-}
+      const res = await fetch("/api/render",{
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+          mode:"direct"
+        })
+      });
 
-})
+      if(!res.ok){
+        throw new Error("Render failed");
+      }
 
-});
+      const data = await res.json();
 
-const data = await res.json();
+      console.log("RENDER SUCCESS",data);
 
-console.log("RENDER RESULT:",data);
+      alert("Render Started");
 
-alert("Render job sent");
+    }catch(err){
 
-}catch(e){
+      console.error(err);
+      alert("Render error");
 
-console.error(e);
-alert("Render error");
+    }
 
-}
-
-});
+  });
 
 });
 
