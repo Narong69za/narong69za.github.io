@@ -1,60 +1,24 @@
-(function(){
-
-console.log("ULTRA CORE ACTIVE");
-
-/* AUTO NAV BUILD */
+document.addEventListener("DOMContentLoaded",()=>{
 
 if(!document.querySelector(".global-nav")){
 
-document.body.insertAdjacentHTML("afterbegin",`
-
+const nav=`
 <header class="global-nav">
-
-<nav class="nav-center">
-
+<nav class="nav-wrap">
+<div class="nav-menu">
 <a href="/index.html">Home</a>
 <a href="/packages.html">Packages</a>
 <a href="/services.html">Services</a>
 <a href="/templates.html">Templates</a>
 <a href="/seo.html">SEO</a>
 <a href="/contact.html">Contact</a>
-
+</div>
 </nav>
-
 </header>
-
-`);
-
-}
-
-/* CENTER NAV FIX */
-
-const style = document.createElement("style");
-
-style.innerHTML = `
-
-.global-nav{
-position:fixed;
-top:0;
-width:100%;
-background:#000;
-z-index:9999;
-}
-
-.nav-center{
-display:flex;
-justify-content:center;
-gap:40px;
-padding:16px;
-font-size:18px;
-}
-
 `;
 
-document.head.appendChild(style);
+document.body.insertAdjacentHTML("afterbegin",nav);
 
-/* BODY OFFSET */
+}
 
-document.body.style.paddingTop="70px";
-
-})();
+});
