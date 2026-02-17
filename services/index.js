@@ -6,13 +6,13 @@ const app = express();
 app.use(express.json());
 
 /* =============================
-ROOT PATH
+ROOT
 ============================= */
 
 const ROOT = path.join(__dirname,"..");
 
 /* =============================
-STATIC FILES
+STATIC
 ============================= */
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
@@ -24,9 +24,9 @@ ULTRA ENGINE CORE
 
 let jobs = {};
 let queue = [];
-let processingWorkers = 0;
 
-const MAX_WORKERS = 2; // parallel render (เพิ่มได้)
+const MAX_WORKERS = 2;
+let activeWorkers = 0;
 
 /* =============================
 CREATE JOB
@@ -37,19 +37,21 @@ app.post("/api/render",(req,res)=>{
    const jobID = Date.now().toString();
 
    jobs[jobID]={
-      id: jobID,
+      id:jobID,
       status:"queued",
       progress:0,
-      created: Date.now()
+      result:null,
+      created:Date.now()
    };
 
    queue.push(jobID);
 
-   console.log("🔥 NEW JOB:", jobID);
+   console.log("🔥 NEW JOB:",jobID);
 
-   startWorkers();
+   runWorkers();
 
    res.json({jobID});
+
 });
 
 /* =============================
@@ -65,33 +67,54 @@ app.get("/api/status",(req,res)=>{
    }
 
    res.json(jobs[id]);
+
 });
 
 /* =============================
-WORKER SYSTEM (PARALLEL)
+RESULT (future download)
 ============================= */
 
-async function startWorkers(){
+app.get("/api/result",(req,res)=>{
 
-   while(processingWorkers < MAX_WORKERS && queue.length>0){
+   const id=req.query.id;
+
+   if(!jobs[id]) return res.status(404).end();
+
+   res.json({
+      result: jobs[id].result
+   });
+
+});
+
+/* =============================
+WORKER SYSTEM
+============================= */
+
+function runWorkers(){
+
+   while(activeWorkers < MAX_WORKERS && queue.length>0){
 
       const jobID = queue.shift();
 
-      processingWorkers++;
+      activeWorkers++;
 
-      runJob(jobID).then(()=>{
-         processingWorkers--;
-         startWorkers();
+      processJob(jobID).then(()=>{
+
+         activeWorkers--;
+         runWorkers();
+
       });
 
    }
+
 }
 
 /* =============================
-REAL PROCESS SIMULATION
+REAL PROCESS (SIMULATION)
+replace later with AI render
 ============================= */
 
-function runJob(id){
+function processJob(id){
 
    return new Promise(resolve=>{
 
@@ -111,9 +134,11 @@ function runJob(id){
 
             jobs[id].status="complete";
 
-            clearInterval(interval);
+            jobs[id].result = "/assets/demo-result.mp4";
 
-            console.log("✅ COMPLETE:", id);
+            console.log("✅ COMPLETE:",id);
+
+            clearInterval(interval);
 
             resolve();
 
@@ -122,10 +147,11 @@ function runJob(id){
       },1000);
 
    });
+
 }
 
 /* =============================
-ROOT INDEX
+ROOT
 ============================= */
 
 app.get("/",(req,res)=>{
@@ -151,11 +177,11 @@ app.get(/^\/(?!api).*/,(req,res,next)=>{
 });
 
 /* =============================
-SERVER START
+SERVER
 ============================= */
 
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("🔥 ULTRA REAL ENGINE LIVE:",PORT);
+   console.log("🔥 ULTRA ENGINE FINAL LIVE:",PORT);
 });
