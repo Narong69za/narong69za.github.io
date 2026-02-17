@@ -1,11 +1,21 @@
-const router = require("express").Router();
-const project = require("../services/projectService");
+const express = require("express");
+const router = express.Router();
 
-router.get("/", async (req,res)=>{
+const projectService = require("../services/projectService");
 
-   const data = await project.get(req.query.id);
+router.get("/", async(req,res)=>{
 
-   res.json(data || { status:"not_found" });
+   const id = req.query.id;
+
+   const data = await projectService.getProject(id);
+
+   if(!data){
+
+      return res.status(404).json({error:"not found"});
+
+   }
+
+   res.json(data);
 
 });
 
