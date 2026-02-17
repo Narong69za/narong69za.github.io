@@ -1,38 +1,12 @@
 body{
-background:#000;
-color:#00ffc3;
-font-family:system-ui;
-padding:20px;
+   background:#000;
+   color:#00ffd0;
+   font-family:monospace;
+   padding:20px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:20px;
-}
-
-.card{
-background:#050505;
-border:1px solid #00ffc3;
-padding:15px;
-border-radius:10px;
-}
-
-.graph{
-height:30px;
-background:#111;
-border-radius:10px;
-overflow:hidden;
-}
-
-#trafficBar{
-height:100%;
-background:#00ffc3;
-width:10%;
-transition:.5s;
-}
-
-.job{
-padding:8px;
-border-bottom:1px solid #111;
+.box{
+   border:2px solid #00ffd0;
+   margin:20px 0;
+   padding:20px;
 }
