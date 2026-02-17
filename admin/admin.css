@@ -1,0 +1,12 @@
+body{
+background:#000;
+color:#00ffc3;
+font-family:monospace;
+padding:20px;
+}
+
+.box{
+border:1px solid #00ffc3;
+padding:15px;
+margin-bottom:20px;
+}
