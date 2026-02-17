@@ -1,10 +1,11 @@
 {
-  "name": "sn-design-studio",
+  "name": "sn-design-ultra-engine",
   "version": "1.0.0",
-  "main": "server.js",
+
+  "main": "services/index.js",
 
   "scripts": {
-    "start": "node server.js"
+    "start": "node services/index.js"
   },
 
   "dependencies": {
