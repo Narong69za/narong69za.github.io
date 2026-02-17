@@ -1,6 +1,11 @@
-/* =================================
-ULTRA RESET
-================================= */
+/* ======================================================
+SN DESIGN ULTRA MASTER CSS CORE
+REBUILD VERSION
+====================================================== */
+
+/* ===============================
+RESET
+=============================== */
 
 *{
 margin:0;
@@ -11,127 +16,324 @@ box-sizing:border-box;
 html,body{
 background:#000;
 color:#fff;
-font-family:system-ui,-apple-system;
+font-family:system-ui,-apple-system,Arial;
 overflow-x:hidden;
 }
 
-/* =================================
-ROOT
-================================= */
+/* ===============================
+GLOBAL CENTER ENGINE
+(แก้ทุก text ไม่อยู่ center)
+=============================== */
 
-:root{
---nav-h:70px;
+h1,h2,h3,p{
+
+text-align:center;
+
 }
 
-/* =================================
-NAV SYSTEM (NEW CORE)
-================================= */
+/* premium typography */
 
-.sn-nav{
+h1{
+
+font-size:clamp(28px,5vw,48px);
+font-weight:700;
+letter-spacing:1px;
+
+}
+
+p{
+
+opacity:.85;
+line-height:1.6;
+
+}
+
+/* ===============================
+NAV FINAL (ULTRA LOCK)
+=============================== */
+
+.global-nav{
+
 position:fixed;
 top:0;
 left:0;
 width:100%;
-height:var(--nav-h);
 background:#000;
-border-bottom:1px solid #111;
-z-index:99999;
+z-index:9999;
+border-bottom:1px solid rgba(255,255,255,.1);
+
+display:flex;
+justify-content:center;
+
+}
+
+.nav-wrap{
 
 display:flex;
 justify-content:center;
 align-items:center;
-}
-
-.sn-nav-inner{
-width:100%;
-max-width:1200px;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-.sn-menu{
-display:flex;
 gap:32px;
-list-style:none;
+
+padding:14px 20px;
+
 }
 
-.sn-menu a{
-color:#fff;
-text-decoration:none;
+.nav-menu{
+
+display:flex;
+gap:28px;
+
+}
+
+.nav-menu a{
+
 font-size:18px;
 font-weight:600;
-letter-spacing:.5px;
+text-decoration:none;
+color:#fff;
+
 }
 
-.sn-menu a.active{
-text-shadow:0 0 8px #0ff;
+.nav-active{
+
+text-shadow:0 0 12px #00c3ff;
+
 }
 
-/* =================================
-LAYOUT
-================================= */
-
-body{
-padding-top:var(--nav-h);
-}
+/* ===============================
+LAYOUT BASE
+=============================== */
 
 .section{
+
 padding:80px 20px;
+
 }
 
 .container{
-max-width:1200px;
+
+max-width:1100px;
 margin:auto;
+
 }
 
-img{
-max-width:100%;
-display:block;
-}
-
-/* =================================
-HERO
-================================= */
+/* ===============================
+HERO ENGINE
+=============================== */
 
 .hero-master{
-width:100%;
+
+padding-top:80px;
+text-align:center;
+
 }
 
 .hero-master img{
+
 width:100%;
-height:auto;
+display:block;
+margin:auto;
+
 }
 
-/* =================================
+/* ===============================
+GUI PANEL (AI PREVIEW)
+=============================== */
+
+.ultra-gui-preview{
+
+padding:60px 20px;
+display:flex;
+justify-content:center;
+
+}
+
+.gui-container{
+
+max-width:700px;
+width:100%;
+
+}
+
+.gui-screen{
+
+position:relative;
+overflow:hidden;
+border-radius:14px;
+
+box-shadow:
+0 0 30px rgba(0,200,255,.25);
+
+}
+
+.gui-screen img{
+
+width:100%;
+
+}
+
+/* scan line */
+
+.scan-line{
+
+position:absolute;
+width:100%;
+height:2px;
+background:#00ffff;
+
+animation:scanMove 3s linear infinite;
+
+}
+
+@keyframes scanMove{
+
+0%{top:0}
+100%{top:100%}
+
+}
+
+/* ===============================
 STATUS PANEL
-================================= */
+=============================== */
 
-.status-panel{
-margin-top:30px;
-border:1px solid #222;
-padding:20px;
-}
+.ultra-cta-status{
 
-.network-traffic{
+display:flex;
+gap:12px;
+justify-content:center;
 margin-top:20px;
-height:120px;
+
+}
+
+.cta-box{
+
+flex:1;
+max-width:180px;
+
+padding:14px;
+text-align:center;
+
+border-radius:12px;
+
+background:#060606;
+border:1px solid rgba(255,255,255,.15);
+
+}
+
+/* color state */
+
+.server-online{
+
+color:#00ffa2;
+
+}
+
+.ai-connected{
+
+color:#00c3ff;
+
+}
+
+/* ===============================
+NETWORK TRAFFIC GRAPH (REAL LOOK)
+=============================== */
+
+.ultra-network-panel{
+
+margin-top:30px;
+padding:20px;
+
+border-radius:14px;
+
 background:#050505;
+
+}
+
+.network-title{
+
+letter-spacing:2px;
+margin-bottom:15px;
+
+}
+
+.network-screen{
+
+position:relative;
+height:120px;
+overflow:hidden;
+
+background:#000;
 border-radius:10px;
-}
-
-/* =================================
-RESPONSIVE
-================================= */
-
-@media(max-width:700px){
-
-.sn-menu{
-gap:18px;
-}
-
-.sn-menu a{
-font-size:15px;
-}
 
 }
+
+/* animated bars */
+
+.network-screen::before{
+
+content:"";
+
+position:absolute;
+bottom:0;
+
+width:200%;
+height:100%;
+
+background:
+
+repeating-linear-gradient(
+90deg,
+rgba(0,255,255,.8) 0px,
+rgba(0,255,255,.8) 2px,
+transparent 2px,
+transparent 24px
+);
+
+animation:netMove 3s linear infinite;
+
+}
+
+@keyframes netMove{
+
+0%{transform:translateX(0);}
+100%{transform:translateX(-50%);}
+
+}
+
+/* ===============================
+MARQUEE
+=============================== */
+
+.marquee-wrap{
+
+margin-top:60px;
+overflow:hidden;
+
+}
+
+.marquee-text{
+
+display:inline-block;
+white-space:nowrap;
+
+animation:marqueeMove 18s linear infinite;
+
+}
+
+@keyframes marqueeMove{
+
+0%{transform:translateX(100%)}
+100%{transform:translateX(-100%)}
+
+}
+
+/* ===============================
+FOOTER
+=============================== */
+
+footer{
+
+text-align:center;
+margin:60px 0;
+
+  }
