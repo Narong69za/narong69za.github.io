@@ -1,19 +1,50 @@
-const engine = require("../engine/motionEngine");
-const project = require("./projectService");
+const projectService = require("./projectService");
 
-module.exports = {
+let queue=[];
+let running=false;
 
-   async process(job){
+exports.enqueue = (jobID)=>{
 
-      await project.update(job.id,{
-         status:"running",
-         progress:10
-      });
+   queue.push(jobID);
+   processQueue();
 
-      const result = await engine.run(job);
+};
 
-      await project.update(job.id,result);
+async function processQueue(){
+
+   if(running) return;
+   running=true;
+
+   while(queue.length){
+
+      const jobID = queue.shift();
+
+      const job = await projectService.getProject(jobID);
+
+      if(!job) continue;
+
+      await projectService.updateStatus(jobID,"processing");
+
+      const response = await fetch(
+         "https://adverraai.com/videoSystem/motion_control",
+         {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+               templateID:job.templateID,
+               webhook:"https://sn-designstudio.dev/api/webhook"
+            })
+         }
+      );
+
+      const result = await response.json();
+
+      await projectService.saveExternalJobID(
+         jobID,
+         result.externalID
+      );
 
    }
 
-};
+   running=false;
+}
