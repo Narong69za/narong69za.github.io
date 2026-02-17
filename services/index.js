@@ -1,36 +1,29 @@
 const express = require("express");
 const path = require("path");
-const http = require("http");
-const {startSocket,broadcast} = require("./socket");
+const os = require("os");
 
 const app = express();
 
 app.use(express.json());
+
 /* ================================
-CORS FIX (ULTRA RENDER ENABLE)
+ROOT
 ================================ */
 
-app.use((req,res,next)=>{
-
-   res.header("Access-Control-Allow-Origin","*");
-   res.header("Access-Control-Allow-Headers","Content-Type,x-admin");
-   res.header("Access-Control-Allow-Methods","GET,POST,OPTIONS");
-
-   if(req.method === "OPTIONS"){
-      return res.sendStatus(200);
-   }
-
-   next();
-
-});
 const ROOT = path.join(__dirname,"..");
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* =================
+/* ================================
+ENV
+================================ */
+
+const ADMIN_KEY = process.env.ADMIN_KEY || "true";
+
+/* ================================
 GLOBAL STATE
-================= */
+================================ */
 
 let jobs = {};
 let queue = [];
@@ -41,89 +34,149 @@ let liveUsers = new Set();
 const wallets = {};
 const transactions = [];
 
-/* =================
+/* ================================
 HELPERS
-================= */
+================================ */
 
 function getIP(req){
-
    return (
       req.headers["x-forwarded-for"] ||
       req.socket.remoteAddress ||
       "unknown"
    ).toString().split(",")[0];
-
 }
 
 function getWallet(user){
 
    if(!wallets[user]){
-      wallets[user]={balance:0};
+      wallets[user] = { balance:0 };
    }
 
    return wallets[user];
+}
+
+function generateID(){
+
+   return Date.now().toString() + "_" + Math.random().toString(36).slice(2);
 
 }
 
-/* =================
+function calculateCost(duration){
+
+   return Math.ceil(duration/5);
+
+}
+
+/* ================================
 LIVE USERS
-================= */
+================================ */
 
 app.use((req,res,next)=>{
-   liveUsers.add(getIP(req));
+
+   const ip = getIP(req);
+   liveUsers.add(ip);
+
    next();
 });
 
-/* =================
+/* ================================
 ADMIN SHIELD
-================= */
+================================ */
 
-app.use("/api/admin",(req,res,next)=>{
+function adminGuard(req,res,next){
 
-   if(req.headers["x-admin"]!=="true"){
+   const key = req.headers["x-admin"];
+
+   if(key !== ADMIN_KEY){
       return res.json({error:"blocked"});
    }
 
    next();
-});
+}
 
-/* =================
-JOB ENGINE
-================= */
+/* ================================
+RENDER ENGINE
+================================ */
 
 app.post("/api/render",(req,res)=>{
 
-   const jobID = Date.now().toString();
+   const jobID = generateID();
 
-   jobs[jobID]={status:"queued",progress:0};
+   const duration = req.body.duration || 10;
+
+   jobs[jobID] = {
+
+      id:jobID,
+
+      status:"queued",
+      progress:0,
+      stage:"queued",
+
+      meta:{
+         user:req.body.user || "guest",
+         templateID:req.body.templateID || "unknown",
+         platform:req.body.platform || "unknown",
+
+         duration,
+
+         cost: calculateCost(duration),
+
+         created:Date.now(),
+
+         input:req.body.input || null,
+         output:`/renders/render_${jobID}.mp4`,
+
+         requestIP:getIP(req)
+      }
+
+   };
 
    queue.push(jobID);
 
    startWorker();
 
-   res.json({jobID});
+   res.json({
+
+      requestID:jobID,
+      status:"accepted"
+
+   });
+
 });
 
+/* STATUS */
+
 app.get("/api/status",(req,res)=>{
-   res.json(jobs[req.query.id]||{error:"not found"});
+
+   const id=req.query.id;
+
+   if(!jobs[id]){
+      return res.status(404).json({error:"not found"});
+   }
+
+   res.json(jobs[id]);
+
 });
+
+/* ================================
+WORKER
+================================ */
 
 async function startWorker(){
 
    if(processing) return;
 
-   processing=true;
+   processing = true;
 
    while(queue.length>0){
 
-      const id = queue.shift();
+      const jobID = queue.shift();
 
-      await processJob(id);
+      await processJob(jobID);
 
-      broadcast({type:"queue",queue:queue.length});
    }
 
-   processing=false;
+   processing = false;
 }
 
 function processJob(id){
@@ -131,113 +184,143 @@ function processJob(id){
    return new Promise(resolve=>{
 
       jobs[id].status="processing";
+      jobs[id].stage="rendering";
 
-      let p=0;
+      let progress=0;
 
-      const i=setInterval(()=>{
+      const interval=setInterval(()=>{
 
-         p+=10;
-         jobs[id].progress=p;
+         progress+=10;
 
-         if(p>=100){
+         jobs[id].progress=progress;
+
+         if(progress>=100){
+
             jobs[id].status="complete";
-            clearInterval(i);
+            jobs[id].stage="done";
+
+            jobs[id].meta.videoUrl = jobs[id].meta.output;
+
+            clearInterval(interval);
             resolve();
+
          }
 
-      },1000);
+      },2000);
 
    });
 }
 
-/* =================
-WALLET
-================= */
+/* ================================
+WALLET SYSTEM
+================================ */
 
 app.post("/api/wallet/deposit",(req,res)=>{
 
-   const {user,amount}=req.body;
+   const {user,amount} = req.body;
 
-   if(!user||amount<50||amount>500){
+   if(!user || !amount){
       return res.json({error:"invalid"});
    }
 
-   const w=getWallet(user);
+   if(amount < 50 || amount > 500){
+      return res.json({error:"invalid amount"});
+   }
 
-   w.balance+=amount;
+   const w = getWallet(user);
 
-   transactions.push({type:"deposit",user,amount,time:Date.now()});
+   w.balance += amount;
 
-   broadcast({type:"wallet",user,balance:w.balance});
+   transactions.push({
+      type:"deposit",
+      user,
+      amount,
+      time:Date.now()
+   });
 
    res.json({success:true,balance:w.balance});
+
 });
 
-/* =================
+/* ================================
 ADMIN API
-================= */
+================================ */
 
-app.get("/api/admin/wallet",(req,res)=>{
-   res.json({wallets,transactions});
-});
+app.get("/api/admin/jobs",adminGuard,(req,res)=>{
 
-app.get("/api/admin/jobs",(req,res)=>{
    res.json(jobs);
+
 });
 
-app.get("/api/admin/queue",(req,res)=>{
-   res.json({queue:queue.length,processing,jobs});
+app.get("/api/admin/wallet",adminGuard,(req,res)=>{
+
+   res.json({
+      wallets,
+      transactions
+   });
+
 });
 
-/* =================
-STATUS
-================= */
+/* ================================
+SERVER STATUS
+================================ */
 
 app.get("/api/status/server",(req,res)=>{
+
    res.json({
+
       online:true,
       queue:queue.length,
       processing,
       jobs:Object.keys(jobs).length,
       memory:process.memoryUsage(),
       uptime:process.uptime()
+
    });
+
 });
 
 app.get("/api/live-users",(req,res)=>{
+
    res.json({
+
       total:liveUsers.size,
       users:Array.from(liveUsers)
+
    });
+
 });
 
-/* =================
-ROUTES
-================= */
+/* ================================
+ROUTER
+================================ */
 
 app.get("/",(req,res)=>{
+
    res.sendFile(path.join(ROOT,"index.html"));
+
 });
 
 app.get(/^\/(?!api).*/,(req,res,next)=>{
 
-   let p=req.path;
+   let requestPath=req.path;
 
-   if(!p.includes(".")) p+=".html";
+   if(!requestPath.includes(".")){
+      requestPath+=".html";
+   }
 
-   res.sendFile(path.join(ROOT,p),(e)=>{if(e)next();});
+   res.sendFile(path.join(ROOT,requestPath),(err)=>{
+      if(err) next();
+   });
+
 });
 
-/* =================
+/* ================================
 START
-================= */
+================================ */
 
 const PORT = process.env.PORT || 10000;
 
-const server = http.createServer(app);
-
-startSocket(server);
-
-server.listen(PORT,()=>{
-   console.log("🔥 ULTRA ADMIN GOD MATRIX LIVE:",PORT);
+app.listen(PORT,()=>{
+   console.log("🔥 ULTRA ENGINE FINAL CORE LIVE:",PORT);
 });
