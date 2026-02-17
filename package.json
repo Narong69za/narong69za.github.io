@@ -1,17 +1,12 @@
 {
-  "name": "sn-design-ultra-engine",
-  "version": "1.0.0",
-
-  "main": "services/index.js",
-
-  "scripts": {
-    "start": "node services/index.js"
-  },
-
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.0",
-    "replicate": "^0.32.0"
-  }
+"name":"sn-design-ultra-engine",
+"version":"1.0.0",
+"main":"services/index.js",
+"scripts":{
+"start":"node services/index.js"
+},
+"dependencies":{
+"express":"^4.18.2",
+"cors":"^2.8.5"
+}
 }
