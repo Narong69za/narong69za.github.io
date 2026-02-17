@@ -2487,3 +2487,34 @@ text-align:center;
 color:#fff;
 max-width:320px;
 }
+/* ===================================================
+ULTRA FINAL CLICK FIX
+GLOBAL INTERACTION PATCH
+=================================================== */
+
+/* ---------------------------
+KILL OVERLAY CLICK BLOCK
+---------------------------- */
+
+.hero-master::before,
+.hero-master::after,
+.ultra-dashboard::before,
+.ultra-dashboard::after,
+.scan-line,
+.scan-line-live,
+.gui-screen::before,
+.gui-screen::after{
+
+pointer-events:none !important;
+
+}
+
+/* ---------------------------
+ALLOW CLICKABLE ELEMENTS
+---------------------------- */
+
+a,
+button,
+.btn-primary,
+.cta-button,
+input,
