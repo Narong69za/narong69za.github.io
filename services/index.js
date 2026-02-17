@@ -1,7 +1,3 @@
-// ======================================
-// SN DESIGN STUDIO — ULTRA FINAL ROUTER
-// ======================================
-
 const express = require("express");
 const path = require("path");
 
@@ -9,54 +5,46 @@ const app = express();
 
 app.use(express.json());
 
-/* ======================================
-ROOT PATH
-====================================== */
+const ROOT = path.join(__dirname,"..");
 
-const ROOT = path.join(__dirname, ".."); // ออกจาก services
-
-/* ======================================
-STATIC FILES
-====================================== */
+/* STATIC */
 
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* ======================================
-ROOT INDEX
-====================================== */
+/* ROOT */
 
-app.get("/", (req,res)=>{
+app.get("/",(req,res)=>{
    res.sendFile(path.join(ROOT,"index.html"));
 });
 
-/* ======================================
-API ROUTES
-====================================== */
+/* API */
 
 app.post("/api/render",(req,res)=>{
-
    console.log("RENDER REQUEST OK");
-
-   res.json({
-      status:"ok"
-   });
-
+   res.json({ status:"ok" });
 });
 
-/* ======================================
-ULTRA AUTO HTML ROUTER
-====================================== */
+/* AUTO HTML ROUTER */
 
 app.get(/^\/(?!api).*/, (req,res,next)=>{
 
    let requestPath = req.path;
 
    if(!requestPath.includes(".")){
-      requestPath = requestPath + ".html";
+      requestPath += ".html";
    }
 
-   const filePath = path.join(ROOT, requestPath);
+   const filePath = path.join(ROOT,requestPath);
 
    res.sendFile(filePath,(err)=>{
-      if(err){
+      if(err) next();
+   });
+
+});
+
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT,()=>{
+   console.log("ULTRA ROUTER READY",PORT);
+});
