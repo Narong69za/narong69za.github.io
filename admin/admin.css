@@ -1,12 +1,18 @@
 body{
-   background:#000;
-   color:#00ffd0;
-   font-family:monospace;
-   padding:20px;
+background:#000;
+color:#00ffd0;
+font-family:monospace;
+padding:20px;
 }
 
-.box{
-   border:2px solid #00ffd0;
-   margin:20px 0;
-   padding:20px;
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.card{
+border:2px solid #00ffd0;
+padding:15px;
+border-radius:10px;
 }
