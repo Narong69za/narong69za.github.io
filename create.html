@@ -43,14 +43,14 @@
 <script>
 
 /* ======================================
-SN DESIGN CREATE ENGINE (FINAL CLEAN)
+SN DESIGN CREATE ENGINE — FINAL FIX
 ====================================== */
 
 document.addEventListener("DOMContentLoaded",()=>{
 
 console.log("CREATE PAGE READY");
 
-/* template load */
+/* TEMPLATE LOAD */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
@@ -58,98 +58,21 @@ const template = params.get("template");
 const hero = document.getElementById("heroImage");
 const title = document.getElementById("engineTitle");
 
-if(template){
+if(template && hero && title){
 
-title.innerText = template.replaceAll("-"," ").toUpperCase();
-hero.src = `assets/images/template-${template}.jpg`;
+   title.innerText = template.replaceAll("-"," ").toUpperCase();
+   hero.src = `assets/images/template-${template}.jpg`;
 
 }
 
-/* preview */
+/* PREVIEW SYSTEM */
 
 let videoFile=null;
 let imageFile=null;
 
-document.getElementById("videoInput").addEventListener("change",(e)=>{
+const videoInput=document.getElementById("videoInput");
+const imageInput=document.getElementById("imageInput");
+const videoPreview=document.getElementById("videoPreview");
+const imagePreview=document.getElementById("imagePreview");
 
-videoFile=e.target.files[0];
-
-if(videoFile){
-
-document.getElementById("videoPreview").src=
-URL.createObjectURL(videoFile);
-
-}
-
-});
-
-document.getElementById("imageInput").addEventListener("change",(e)=>{
-
-imageFile=e.target.files[0];
-
-if(imageFile){
-
-document.getElementById("imagePreview").src=
-URL.createObjectURL(imageFile);
-
-}
-
-});
-
-/* CREATE BUTTON */
-
-/* =====================================
-ULTRA FINAL CREATE ENGINE
-SAFE NULL CHECK + REAL API CALL
-===================================== */
-
-document.addEventListener("DOMContentLoaded", () => {
-
-  const btn = document.getElementById("createBtn");
-
-  if(!btn){
-    console.warn("CREATE BUTTON NOT FOUND");
-    return;
-  }
-
-  btn.addEventListener("click", async () => {
-
-    console.log("CREATE CLICKED");
-
-    try{
-
-      const res = await fetch("/api/render",{
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json"
-        },
-        body:JSON.stringify({
-          mode:"direct"
-        })
-      });
-
-      if(!res.ok){
-        throw new Error("Render failed");
-      }
-
-      const data = await res.json();
-
-      console.log("RENDER SUCCESS",data);
-
-      alert("Render Started");
-
-    }catch(err){
-
-      console.error(err);
-      alert("Render error");
-
-    }
-
-  });
-
-});
-
-</script>
-<script src="assets/js/api-core.js"></script>
-</body>
-</html>
+videoInput.add
