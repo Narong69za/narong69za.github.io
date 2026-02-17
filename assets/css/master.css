@@ -170,3 +170,62 @@ margin-left:auto !important;
 margin-right:auto !important;
 
 }
+/* ===============================
+SN ULTRA NAV SYSTEM
+=============================== */
+
+.sn-nav{
+
+position:fixed;
+top:0;
+left:0;
+
+width:100%;
+height:70px;
+
+background:#000;
+border-bottom:1px solid #111;
+
+z-index:99999;
+
+display:flex;
+justify-content:center;
+
+}
+
+.sn-nav-inner{
+
+width:100%;
+max-width:1200px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+padding:0 20px;
+
+}
+
+.sn-menu{
+
+display:flex;
+gap:28px;
+
+}
+
+.sn-menu a{
+
+color:#fff;
+text-decoration:none;
+font-size:18px;
+font-weight:600;
+
+}
+
+.sn-menu a:hover,
+.nav-active{
+
+text-shadow:
+0 0 6px rgba(0,255,255,.6);
+
+}
