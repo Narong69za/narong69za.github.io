@@ -105,3 +105,23 @@ app.post("/api/render", async(req,res)=>{
     }catch(err){
 
         console.error(err);
+
+        res.status(500).json({
+            error:"render fail"
+        });
+    }
+});
+
+
+// ==============================
+// START SERVER
+// ==============================
+
+app.listen(PORT,()=>{
+
+    console.log("=================================");
+    console.log("SN DESIGN API + WEBSITE RUNNING");
+    console.log("PORT:", PORT);
+    console.log("=================================");
+
+});
