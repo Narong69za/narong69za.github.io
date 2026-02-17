@@ -9,9 +9,8 @@ const webhookRoute = require("../routes/webhook");
 
 const app = express();
 
-app.use(express.static(path.join(__dirname,"../public")));
-app.use("/assets", express.static(path.join(__dirname,"../assets")));
 
+app.use("/assets", express.static(path.join(__dirname,"../assets")));
 app.get("/",(req,res)=>{
-   res.sendFile(path.join(__dirname,"../public/index.html"));
+   res.sendFile(path.join(__dirname,"../index.html"));
 });
