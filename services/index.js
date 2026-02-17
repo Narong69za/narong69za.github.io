@@ -15,6 +15,11 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+const path = require("path");
+
+/* STATIC ROOT FIX (NO PUBLIC FOLDER) */
+
+app.use(express.static(path.join(__dirname, "../")));
 // ===== STATIC FILE SERVE =====
 
 // serve public folder (หน้าเว็บ)
