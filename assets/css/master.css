@@ -124,3 +124,76 @@ animation:trafficMove 2s linear infinite;
 0%{transform:translateX(0)}
 100%{transform:translateX(-50%)}
 }
+/* ================================
+ULTRA CORE SURGICAL FIX
+FINAL PATCH
+================================ */
+
+/* ===== NAV RESET ===== */
+
+.global-nav,
+#nav,
+.nav,
+.navbar{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+
+display:flex;
+justify-content:center;
+align-items:center;
+
+background:#000;
+z-index:9999;
+}
+
+/* menu center จริง */
+
+.nav-menu{
+display:flex !important;
+justify-content:center !important;
+align-items:center !important;
+gap:28px;
+margin:auto;
+}
+
+/* ===== HERO FIX ===== */
+
+.hero-master{
+
+margin-top:60px !important;
+padding-top:0 !important;
+text-align:center;
+
+}
+
+/* ===== TEXT CENTER GLOBAL ===== */
+
+.section,
+.container,
+.hero-content-bottom{
+
+text-align:center !important;
+margin-left:auto;
+margin-right:auto;
+
+}
+
+/* ===== FIX WIDTH BREAK ===== */
+
+.container{
+
+max-width:1100px !important;
+margin:auto !important;
+
+}
+
+/* ===== REMOVE EXTRA PUSH ===== */
+
+.marquee-wrap{
+
+margin-top:0 !important;
+
+}
