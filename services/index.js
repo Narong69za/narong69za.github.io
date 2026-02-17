@@ -137,3 +137,38 @@ app.listen(PORT,()=>{
    console.log("🔥 ULTRA ENGINE FINAL LIVE:",PORT);
 
 });
+/* ================================
+ULTRA IMPORT TRACK (ADD ONLY)
+================================ */
+
+app.post("/api/render",(req,res)=>{
+
+   const {
+      templateID,
+      motion,
+      duration,
+      inputFiles
+   } = req.body || {};
+
+   const jobID = Date.now().toString();
+
+   jobs[jobID] = {
+
+      status:"queued",
+      progress:0,
+
+      /* IMPORT DATA */
+      templateID: templateID || null,
+      motion: motion || null,
+      duration: duration || null,
+      inputFiles: inputFiles || []
+
+   };
+
+   queue.push(jobID);
+
+   startWorker();
+
+   res.json({jobID});
+
+});
