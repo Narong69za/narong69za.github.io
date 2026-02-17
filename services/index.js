@@ -1,12 +1,7 @@
 const express = require("express");
 const path = require("path");
-const http = require("http");
-const crypto = require("crypto");
-const WebSocket = require("ws");
 
 const app = express();
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
 
 app.use(express.json());
 
@@ -15,306 +10,122 @@ const ROOT = path.join(__dirname,"..");
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* =====================================
-COSMIC DATABASE (memory core)
-===================================== */
+/* =============================
+ULTRA ENGINE CORE DATA
+============================= */
 
 let jobs = {};
 let queue = [];
-let priorityQueue = [];
-
 let processing = false;
 
-let users = {};
-let tokens = {};
-let ipUsage = {};
 let liveUsers = {};
+let wallets = {};
+let transactions = [];
+let freeUsage = {}; // free 3 times per IP
 
-/* =====================================
-HELPERS
-===================================== */
+/* =============================
+SECURITY + IP TRACKING
+============================= */
 
-function createToken(){
+app.use((req,res,next)=>{
 
-   return crypto.randomBytes(24).toString("hex");
+   const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
 
-}
+   liveUsers[ip]=Date.now();
 
-function getIP(req){
+   req.clientIP = ip;
 
-   return req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-
-}
-
-function getUser(req){
-
-   const token = req.headers.authorization;
-
-   if(!token || !tokens[token]) return null;
-
-   return users[tokens[token]];
-
-}
-
-/* =====================================
-WEBSOCKET REALTIME
-===================================== */
-
-wss.on("connection",(ws,req)=>{
-
-   const ip = req.socket.remoteAddress;
-
-   liveUsers[ip]=true;
-
-   broadcast();
-
-   ws.on("close",()=>{
-
-      delete liveUsers[ip];
-      broadcast();
-
-   });
-
+   next();
 });
 
-function broadcast(){
+/* =============================
+FREE LIMIT CHECK
+============================= */
 
-   const payload = JSON.stringify({
+function checkFree(ip){
 
-      type:"status",
-      users:Object.keys(liveUsers).length,
-      queue:queue.length,
-      priority:priorityQueue.length,
-      processing
+   if(!freeUsage[ip]) freeUsage[ip]=0;
 
-   });
+   if(freeUsage[ip] >= 3){
 
-   wss.clients.forEach(c=>{
-
-      if(c.readyState===1){
-
-         c.send(payload);
-
+      if(!wallets[ip] || wallets[ip].balance <=0){
+         return false;
       }
 
-   });
+      wallets[ip].balance -= 1; // cost 1 credit
+   }
 
+   freeUsage[ip]++;
+
+   return true;
 }
 
-/* =====================================
-LOGIN LIGHT (NO PASSWORD)
-===================================== */
-
-app.post("/api/login",(req,res)=>{
-
-   const ip = getIP(req);
-
-   if(!users[ip]){
-
-      users[ip]={
-
-         id:ip,
-         credit:0,
-         free:3
-
-      };
-
-   }
-
-   const token = createToken();
-
-   tokens[token]=ip;
-
-   res.json({
-
-      token,
-      user:users[ip]
-
-   });
-
-});
-
-/* =====================================
-WALLET TOPUP (50-500)
-===================================== */
-
-app.post("/api/wallet/topup",(req,res)=>{
-
-   const user=getUser(req);
-
-   if(!user) return res.status(401).json({error:"unauthorized"});
-
-   const amount=req.body.amount;
-
-   if(amount<50 || amount>500){
-
-      return res.json({error:"invalid amount"});
-
-   }
-
-   user.credit += amount;
-
-   res.json({
-
-      credit:user.credit
-
-   });
-
-});
-
-/* =====================================
+/* =============================
 CREATE JOB
-===================================== */
+============================= */
 
 app.post("/api/render",(req,res)=>{
 
-   const ip=getIP(req);
+   const ip=req.clientIP;
 
-   const user=getUser(req);
-
-   let priority=false;
-
-   if(user){
-
-      if(user.credit>0){
-
-         user.credit--;
-         priority=true;
-
-      }
-      else if(user.free>0){
-
-         user.free--;
-
-      }else{
-
-         return res.json({error:"NO CREDIT"});
-
-      }
-
-   }else{
-
-      if(!ipUsage[ip]) ipUsage[ip]=0;
-
-      if(ipUsage[ip]>=3){
-
-         return res.json({error:"FREE LIMIT"});
-
-      }
-
-      ipUsage[ip]++;
-
+   if(!checkFree(ip)){
+      return res.json({
+         error:"NO CREDIT",
+         message:"เติมเงินก่อน"
+      });
    }
 
-   const jobID=Date.now().toString();
+   const jobID = Date.now().toString();
 
    jobs[jobID]={
-
       status:"queued",
-      progress:0
-
+      progress:0,
+      owner:ip
    };
 
-   if(priority){
+   queue.push(jobID);
 
-      priorityQueue.push(jobID);
-
-   }else{
-
-      queue.push(jobID);
-
-   }
+   console.log("🔥 NEW JOB:", jobID);
 
    startWorker();
 
    res.json({jobID});
-
 });
 
-/* =====================================
-STATUS
-===================================== */
+/* =============================
+JOB STATUS
+============================= */
 
 app.get("/api/status",(req,res)=>{
 
    const id=req.query.id;
 
    if(!jobs[id]){
-
       return res.status(404).json({error:"not found"});
-
    }
 
    res.json(jobs[id]);
-
 });
 
-app.get("/api/status/server",(req,res)=>{
-
-   res.json({
-
-      online:true,
-      liveUsers:Object.keys(liveUsers).length,
-      queue:queue.length,
-      priority:priorityQueue.length,
-      processing
-
-   });
-
-});
-
-app.get("/api/status/ai",(req,res)=>{
-
-   res.json({
-
-      gpu:"ready",
-      engine:"COSMIC",
-      mode:"GOD"
-
-   });
-
-});
-
-app.get("/api/live-users",(req,res)=>{
-
-   res.json({
-
-      count:Object.keys(liveUsers).length
-
-   });
-
-});
-
-/* =====================================
+/* =============================
 WORKER
-===================================== */
+============================= */
 
 async function startWorker(){
 
    if(processing) return;
 
-   processing=true;
+   processing = true;
 
-   while(priorityQueue.length>0 || queue.length>0){
+   while(queue.length>0){
 
-      let jobID;
-
-      if(priorityQueue.length>0){
-
-         jobID=priorityQueue.shift();
-
-      }else{
-
-         jobID=queue.shift();
-
-      }
+      const jobID = queue.shift();
 
       await processJob(jobID);
 
    }
 
-   processing=false;
-
+   processing = false;
 }
 
 function processJob(id){
@@ -328,17 +139,13 @@ function processJob(id){
       const interval=setInterval(()=>{
 
          progress+=10;
-
          jobs[id].progress=progress;
-
-         broadcast();
 
          if(progress>=100){
 
             jobs[id].status="complete";
 
             clearInterval(interval);
-
             resolve();
 
          }
@@ -346,45 +153,114 @@ function processJob(id){
       },2000);
 
    });
-
 }
 
-/* =====================================
-ROUTER
-===================================== */
+/* =============================
+ADMIN API
+============================= */
 
-app.get("/",(req,res)=>{
+app.get("/api/admin/server",(req,res)=>{
 
-   res.sendFile(path.join(ROOT,"index.html"));
+   res.json({
+      online:true,
+      queue:queue.length,
+      processing,
+      jobs:Object.keys(jobs).length,
+      memory:process.memoryUsage(),
+      uptime:process.uptime()
+   });
 
 });
+
+app.get("/api/admin/live-users",(req,res)=>{
+
+   const now=Date.now();
+
+   const active=Object.entries(liveUsers)
+      .filter(([ip,time])=> now-time < 60000);
+
+   res.json({
+      total:active.length,
+      users:active.map(v=>v[0])
+   });
+
+});
+
+app.get("/api/admin/jobs",(req,res)=>{
+   res.json(jobs);
+});
+
+app.get("/api/admin/wallet",(req,res)=>{
+   res.json({
+      wallets,
+      transactions
+   });
+});
+
+/* =============================
+PAYMENT TEST (เติมเงินจริง mock)
+============================= */
+
+app.post("/api/payment/topup",(req,res)=>{
+
+   const ip=req.clientIP;
+
+   const amount = Number(req.body.amount);
+
+   if(amount < 50 || amount > 500){
+
+      return res.json({
+         error:"amount limit 50-500"
+      });
+
+   }
+
+   if(!wallets[ip]){
+      wallets[ip]={balance:0};
+   }
+
+   wallets[ip].balance += amount;
+
+   transactions.push({
+      type:"topup",
+      ip,
+      amount,
+      time:Date.now()
+   });
+
+   res.json({
+      success:true,
+      balance:wallets[ip].balance
+   });
+
+});
+
+/* =============================
+ROOT
+============================= */
+
+app.get("/",(req,res)=>{
+   res.sendFile(path.join(ROOT,"index.html"));
+});
+
+/* AUTO HTML ROUTER */
 
 app.get(/^\/(?!api).*/,(req,res,next)=>{
 
    let requestPath=req.path;
 
    if(!requestPath.includes(".")){
-
       requestPath+=".html";
-
    }
 
    res.sendFile(path.join(ROOT,requestPath),(err)=>{
-
       if(err) next();
-
    });
 
 });
 
-/* =====================================
-START
-===================================== */
+const PORT = process.env.PORT || 10000;
 
-const PORT=process.env.PORT||10000;
-
-server.listen(PORT,()=>{
-
-   console.log("🔥 ULTRA ENGINE COSMIC FORM LIVE:",PORT);
-
+app.listen(PORT,()=>{
+   console.log("🔥 ULTRA ENGINE COSMIC LIVE:",PORT);
 });
