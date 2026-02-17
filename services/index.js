@@ -1,51 +1,33 @@
 const express = require("express");
 const path = require("path");
-const os = require("os");
 
 const app = express();
 app.use(express.json());
 
 const ROOT = path.join(__dirname,"..");
+
+app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
 
-/* ======================
-GLOBAL STATE
-====================== */
+/* =============================
+ULTRA JOB ENGINE FINAL
+============================= */
 
 let jobs = {};
 let queue = [];
-let processing=false;
-
-const ENGINE_CONFIG = {
-   "motion-v1":{
-      engine:"ULTRA MOTION V1",
-      resolution:"720p",
-      durationLimit:30,
-      creditCost:120,
-      eta:45
-   }
-};
-
-/* ======================
-RENDER REQUEST
-====================== */
+let processing = false;
 
 app.post("/api/render",(req,res)=>{
 
-   const {templateID="motion-v1"} = req.body;
+   const { templateID, engine, duration } = req.body;
 
    const jobID = Date.now().toString();
 
-   const meta = ENGINE_CONFIG[templateID];
-
    jobs[jobID]={
-      id:jobID,
+      jobID,
       templateID,
-      engine:meta.engine,
-      resolution:meta.resolution,
-      durationLimit:meta.durationLimit,
-      creditCost:meta.creditCost,
-      eta:meta.eta,
+      engine,
+      duration,
       status:"queued",
       progress:0,
       created:Date.now()
@@ -55,23 +37,20 @@ app.post("/api/render",(req,res)=>{
 
    startWorker();
 
-   res.json(jobs[jobID]);
-});
+   res.json({ jobID });
 
-/* ======================
-STATUS
-====================== */
+});
 
 app.get("/api/status",(req,res)=>{
 
    const id=req.query.id;
 
-   res.json(jobs[id] || {error:"not found"});
-});
+   if(!jobs[id]){
+      return res.status(404).json({error:"not found"});
+   }
 
-/* ======================
-WORKER
-====================== */
+   res.json(jobs[id]);
+});
 
 async function startWorker(){
 
@@ -82,6 +61,7 @@ async function startWorker(){
    while(queue.length){
 
       const id=queue.shift();
+
       await processJob(id);
 
    }
@@ -93,11 +73,11 @@ function processJob(id){
 
    return new Promise(resolve=>{
 
-      let p=0;
-
       jobs[id].status="processing";
 
-      const timer=setInterval(()=>{
+      let p=0;
+
+      const interval=setInterval(()=>{
 
          p+=10;
          jobs[id].progress=p;
@@ -105,70 +85,42 @@ function processJob(id){
          if(p>=100){
 
             jobs[id].status="complete";
-            clearInterval(timer);
+
+            clearInterval(interval);
             resolve();
 
          }
 
-      },2000);
+      },1500);
+
    });
+
 }
 
-/* ======================
-SERVER STATUS
-====================== */
+/* ROUTER */
 
-app.get("/api/status/server",(req,res)=>{
-
-   res.json({
-      online:true,
-      queue:queue.length,
-      processing,
-      jobs:Object.keys(jobs).length,
-      memory:process.memoryUsage(),
-      uptime:process.uptime()
-   });
+app.get("/",(req,res)=>{
+   res.sendFile(path.join(ROOT,"index.html"));
 });
 
-const PORT = process.env.PORT || 10000;
+app.get(/^\/(?!api).*/,(req,res,next)=>{
+
+   let requestPath=req.path;
+
+   if(!requestPath.includes(".")){
+      requestPath+=".html";
+   }
+
+   res.sendFile(path.join(ROOT,requestPath),(err)=>{
+      if(err) next();
+   });
+
+});
+
+const PORT=process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
 
-   console.log("🔥 ULTRA ENGINE FINAL LIVE:",PORT);
-
-});
-/* ================================
-ULTRA IMPORT TRACK (ADD ONLY)
-================================ */
-
-app.post("/api/render",(req,res)=>{
-
-   const {
-      templateID,
-      motion,
-      duration,
-      inputFiles
-   } = req.body || {};
-
-   const jobID = Date.now().toString();
-
-   jobs[jobID] = {
-
-      status:"queued",
-      progress:0,
-
-      /* IMPORT DATA */
-      templateID: templateID || null,
-      motion: motion || null,
-      duration: duration || null,
-      inputFiles: inputFiles || []
-
-   };
-
-   queue.push(jobID);
-
-   startWorker();
-
-   res.json({jobID});
+   console.log("ULTRA FINAL ENGINE RUNNING",PORT);
 
 });
