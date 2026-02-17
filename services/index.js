@@ -1,6 +1,5 @@
 const express = require("express");
 const path = require("path");
-const os = require("os");
 
 const app = express();
 
@@ -23,9 +22,7 @@ let jobs = {};
 let queue = [];
 let processing = false;
 
-let liveUsers = new Set();
-
-/* WALLET SYSTEM */
+let liveUsers = {};
 
 const wallets = {};
 const transactions = [];
@@ -47,9 +44,7 @@ function getIP(req){
 function getWallet(user){
 
    if(!wallets[user]){
-      wallets[user] = {
-         balance:0
-      };
+      wallets[user] = { balance:0 };
    }
 
    return wallets[user];
@@ -63,25 +58,30 @@ LIVE USER TRACKING
 app.use((req,res,next)=>{
 
    const ip = getIP(req);
-   liveUsers.add(ip);
+
+   liveUsers[ip]=Date.now();
 
    next();
+
 });
 
 /* ================================
 ADMIN SHIELD
 ================================ */
 
-app.use("/api/admin",(req,res,next)=>{
+const ADMIN_KEY = "true";
 
-   const adminKey = req.headers["x-admin"];
+function adminGuard(req,res,next){
 
-   if(adminKey !== "true"){
+   const key = req.headers["x-admin"];
+
+   if(key !== ADMIN_KEY){
       return res.json({error:"blocked"});
    }
 
    next();
-});
+
+}
 
 /* ================================
 ULTRA JOB ENGINE
@@ -115,8 +115,6 @@ app.get("/api/status",(req,res)=>{
    res.json(jobs[id]);
 
 });
-
-/* WORKER */
 
 async function startWorker(){
 
@@ -162,7 +160,7 @@ function processJob(id){
 }
 
 /* ================================
-WALLET / ATM SYSTEM
+WALLET SYSTEM
 ================================ */
 
 app.post("/api/wallet/deposit",(req,res)=>{
@@ -192,42 +190,11 @@ app.post("/api/wallet/deposit",(req,res)=>{
 
 });
 
-app.post("/api/wallet/withdraw",(req,res)=>{
-
-   try{
-
-      const {user,amount} = req.body;
-
-      const w = getWallet(user);
-
-      if(w.balance < amount){
-         return res.json({error:"not enough balance"});
-      }
-
-      w.balance -= amount;
-
-      transactions.push({
-         type:"withdraw",
-         user,
-         amount,
-         time:Date.now()
-      });
-
-      res.json({success:true,balance:w.balance});
-
-   }catch(e){
-
-      res.json({error:e.message});
-
-   }
-
-});
-
 /* ================================
 ADMIN API
 ================================ */
 
-app.get("/api/admin/wallet",(req,res)=>{
+app.get("/api/admin/wallet",adminGuard,(req,res)=>{
 
    res.json({
       wallets,
@@ -236,27 +203,35 @@ app.get("/api/admin/wallet",(req,res)=>{
 
 });
 
-app.get("/api/admin/jobs",(req,res)=>{
+app.get("/api/admin/jobs",adminGuard,(req,res)=>{
+
    res.json(jobs);
+
+});
+
+app.get("/api/admin/queue",adminGuard,(req,res)=>{
+
+   res.json({
+      queue:queue.length,
+      processing,
+      jobs
+   });
+
 });
 
 /* ================================
-SERVER STATUS
+STATUS API
 ================================ */
 
 app.get("/api/status/server",(req,res)=>{
 
    res.json({
-
       online:true,
       queue:queue.length,
       processing,
       jobs:Object.keys(jobs).length,
-
       memory:process.memoryUsage(),
-
       uptime:process.uptime()
-
    });
 
 });
@@ -264,8 +239,8 @@ app.get("/api/status/server",(req,res)=>{
 app.get("/api/live-users",(req,res)=>{
 
    res.json({
-      total:liveUsers.size,
-      users:Array.from(liveUsers)
+      total:Object.keys(liveUsers).length,
+      users:Object.keys(liveUsers)
    });
 
 });
