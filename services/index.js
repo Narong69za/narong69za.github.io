@@ -302,3 +302,14 @@ app.post("/api/admin/clear-queue",adminGuard,(req,res)=>{
 queue=[];
 res.json({cleared:true});
 });
+app.post("/api/admin/wallet/add",adminGuard,(req,res)=>{
+
+const {user,amount}=req.body;
+
+const w=getWallet(user);
+
+w.balance+=amount;
+
+res.json({ok:true,balance:w.balance});
+
+});
