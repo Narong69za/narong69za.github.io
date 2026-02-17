@@ -11,8 +11,6 @@ const nav = `
 <header class="sn-nav">
 <div class="sn-nav-inner">
 
-<a class="sn-logo" href="index.html">SN DESIGN</a>
-
 <nav class="sn-menu">
 
 <a href="index.html">Home</a>
