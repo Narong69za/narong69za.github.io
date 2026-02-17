@@ -1,5 +1,22 @@
 const express = require("express");
+const express = require("express");
+const path = require("path");
 
+const app = express();
+
+app.use(express.json());
+
+/* ===================================
+STATIC FRONTEND FINAL FIX
+=================================== */
+
+app.use(express.static(path.join(__dirname,"public")));
+
+app.get("/",(req,res)=>{
+
+   res.sendFile(path.join(__dirname,"public","index.html"));
+
+});
 const renderRoute = require("./routes/render");
 const statusRoute = require("./routes/status");
 
