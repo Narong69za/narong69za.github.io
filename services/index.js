@@ -1,26 +1,100 @@
 const express = require("express");
 const path = require("path");
 
-const { createJob,getJob } = require("./jobQueue");
-const { startRender } = require("./engineWorker");
-
 const app = express();
-
-app.use((req,res,next)=>{
-   res.header("Access-Control-Allow-Origin","*");
-   res.header("Access-Control-Allow-Headers","Origin, X-Requested-With, Content-Type, Accept");
-   res.header("Access-Control-Allow-Methods","GET,POST,OPTIONS");
-   next();
-});
 
 app.use(express.json());
 
 const ROOT = path.join(__dirname,"..");
 
-/* STATIC */
-
 app.use("/assets", express.static(path.join(ROOT,"assets")));
 app.use(express.static(ROOT));
+
+/* =============================
+ULTRA JOB ENGINE
+============================= */
+
+let jobs = {};
+let queue = [];
+let processing = false;
+
+/* CREATE JOB */
+
+app.post("/api/render",(req,res)=>{
+
+   const jobID = Date.now().toString();
+
+   jobs[jobID]={
+      status:"queued",
+      progress:0
+   };
+
+   queue.push(jobID);
+
+   console.log("🔥 NEW JOB:",jobID);
+
+   startWorker();
+
+   res.json({jobID});
+});
+
+/* STATUS */
+
+app.get("/api/status",(req,res)=>{
+
+   const id=req.query.id;
+
+   if(!jobs[id]){
+      return res.status(404).json({error:"not found"});
+   }
+
+   res.json(jobs[id]);
+});
+
+/* WORKER */
+
+async function startWorker(){
+
+   if(processing) return;
+
+   processing = true;
+
+   while(queue.length>0){
+
+      const jobID = queue.shift();
+
+      await processJob(jobID);
+
+   }
+
+   processing = false;
+}
+
+function processJob(id){
+
+   return new Promise(resolve=>{
+
+      jobs[id].status="processing";
+
+      let progress=0;
+
+      const interval=setInterval(()=>{
+
+         progress+=10;
+         jobs[id].progress=progress;
+
+         if(progress>=100){
+
+            jobs[id].status="complete";
+            clearInterval(interval);
+            resolve();
+
+         }
+
+      },2000);
+
+   });
+}
 
 /* ROOT */
 
@@ -28,55 +102,17 @@ app.get("/",(req,res)=>{
    res.sendFile(path.join(ROOT,"index.html"));
 });
 
-/* ======================================
-ULTRA ENGINE API
-====================================== */
-
-app.post("/api/render",(req,res)=>{
-
-   const job = createJob();
-
-   console.log("🔥 NEW JOB:",job.id);
-
-   startRender(job.id);
-
-   res.json({
-      jobID:job.id
-   });
-
-});
-
-app.get("/api/status",(req,res)=>{
-
-   const id = req.query.id;
-
-   const job = getJob(id);
-
-   if(!job){
-
-      return res.status(404).json({
-         status:"not_found"
-      });
-
-   }
-
-   res.json(job);
-
-});
-
 /* AUTO HTML ROUTER */
 
-app.get(/^\/(?!api).*/, (req,res,next)=>{
+app.get(/^\/(?!api).*/,(req,res,next)=>{
 
-   let requestPath = req.path;
+   let requestPath=req.path;
 
    if(!requestPath.includes(".")){
-      requestPath += ".html";
+      requestPath+=".html";
    }
 
-   const filePath = path.join(ROOT,requestPath);
-
-   res.sendFile(filePath,(err)=>{
+   res.sendFile(path.join(ROOT,requestPath),(err)=>{
       if(err) next();
    });
 
@@ -85,5 +121,4 @@ app.get(/^\/(?!api).*/, (req,res,next)=>{
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("🔥 ULTRA REAL ENGINE LIVE:",PORT);
-});
+   console.log("
