@@ -337,3 +337,56 @@ text-align:center;
 margin:60px 0;
 
   }
+/* =====================================
+ULTRA NAV CENTER FINAL FIX
+===================================== */
+
+.global-nav{
+
+display:flex !important;
+justify-content:center !important;
+align-items:center !important;
+
+}
+
+.nav-wrap{
+
+width:100%;
+max-width:1200px;
+
+display:flex !important;
+justify-content:center !important;
+align-items:center !important;
+
+}
+
+.nav-menu{
+
+display:flex !important;
+flex-direction:row !important;
+justify-content:center !important;
+align-items:center !important;
+
+gap:28px;
+
+list-style:none;
+
+}
+
+.nav-menu a{
+
+display:inline-block;
+text-align:center;
+
+font-size:18px;
+font-weight:600;
+
+}
+
+/* กัน mobile browser บังคับ vertical */
+
+.nav-menu{
+
+white-space:nowrap;
+
+}
