@@ -1,139 +1,58 @@
-// ==============================
-// SN DESIGN STUDIO API + WEBSITE
-// ULTRA FINAL ONE FILE
-// ==============================
+// ======================================
+// SN DESIGN STUDIO — ULTRA FINAL ROUTER
+// ======================================
 
 const express = require("express");
-const cors = require("cors");
 const path = require("path");
 
 const app = express();
 
-// ==============================
-// BASIC CONFIG
-// ==============================
-
-app.use(cors());
 app.use(express.json());
-const path = require("path");
 
-/* STATIC ROOT FIX (NO PUBLIC FOLDER) */
+/* ======================================
+STATIC WEBSITE ROOT
+====================================== */
 
-app.use(express.static(path.join(__dirname, "../")));
-// ===== STATIC FILE SERVE =====
+app.use(express.static(__dirname));
 
-// serve public folder (หน้าเว็บ)
-app.use(express.static("public"));
-
-// 🔥 ADD ONLY — บังคับให้เห็น assets ที่อยู่ root
-app.use("/assets", express.static("assets"));
-
-// IMPORTANT: Render ใช้ PORT env
-const PORT = process.env.PORT || 10000;
-
-
-// ==============================
-// SERVE WEBSITE (สำคัญมาก)
-// ==============================
-
-app.use(express.static(path.join(__dirname,"../public")));
-
-
-// ==============================
-// ROOT WEBSITE
-// ==============================
+/* ======================================
+ROOT INDEX
+====================================== */
 
 app.get("/", (req,res)=>{
-    res.sendFile(path.join(__dirname,"../public/index.html"));
+   res.sendFile(path.join(__dirname,"index.html"));
 });
 
+/* ======================================
+ULTRA AUTO HTML ROUTER
+ไม่ต้องเขียน route ทีละหน้าอีก
+====================================== */
 
-// ==============================
-// HEALTH CHECK
-// ==============================
+app.get("*",(req,res,next)=>{
 
-app.get("/api/status/server",(req,res)=>{
-    res.json({
-        status:"online",
-        server:"SN DESIGN API",
-        time: new Date()
-    });
+   let requestPath = req.path;
+
+   // ถ้าไม่มี .html → เติม .html ให้อัตโนมัติ
+   if(!requestPath.includes(".")){
+      requestPath = requestPath + ".html";
+   }
+
+   const filePath = path.join(__dirname, requestPath);
+
+   res.sendFile(filePath,(err)=>{
+      if(err){
+         next(); // ถ้าไม่มีไฟล์ → ไป middleware ต่อ
+      }
+   });
+
 });
 
+/* ======================================
+SERVER START
+====================================== */
 
-// ==============================
-// PREVIEW ROUTE
-// ==============================
-
-app.post("/api/preview", async(req,res)=>{
-
-    console.log("PREVIEW REQUEST");
-
-    try{
-
-        const { image } = req.body;
-
-        if(!image){
-            return res.status(400).json({
-                error:"no image"
-            });
-        }
-
-        res.json({
-            status:"preview-ok",
-            preview:"generated"
-        });
-
-    }catch(err){
-
-        console.error(err);
-
-        res.status(500).json({
-            error:"preview fail"
-        });
-    }
-});
-
-
-// ==============================
-// CREATE / RENDER ROUTE
-// ==============================
-
-app.post("/api/render", async(req,res)=>{
-
-    console.log("CREATE CLICKED");
-
-    try{
-
-        const data = req.body;
-
-        console.log("DATA:", data);
-
-        res.json({
-            status:"render-started",
-            video:"processing"
-        });
-
-    }catch(err){
-
-        console.error(err);
-
-        res.status(500).json({
-            error:"render fail"
-        });
-    }
-});
-
-
-// ==============================
-// START SERVER
-// ==============================
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-
-    console.log("=================================");
-    console.log("SN DESIGN API + WEBSITE RUNNING");
-    console.log("PORT:", PORT);
-    console.log("=================================");
-
+   console.log("🔥 SN DESIGN ULTRA ROUTER READY:",PORT);
 });
