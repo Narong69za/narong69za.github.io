@@ -85,6 +85,58 @@ clearInterval(loop);
 }
 
 </script>
+<button id="createBtn">CREATE VIDEO</button>
 
+<div id="panel"></div>
+
+<script>
+
+const template=new URLSearchParams(location.search).get("template");
+
+document.getElementById("createBtn").onclick=async()=>{
+
+const res=await fetch("/api/render",{
+
+method:"POST",
+
+headers:{ "Content-Type":"application/json" },
+
+body:JSON.stringify({
+
+templateID:template,
+engine:"motion-ai",
+duration:30
+
+})
+
+});
+
+const job=await res.json();
+
+watch(job.jobID);
+
+};
+
+async function watch(id){
+
+setInterval(async()=>{
+
+const r=await fetch("/api/status?id="+id);
+const d=await r.json();
+
+document.getElementById("panel").innerHTML=`
+
+Template:${d.templateID}<br>
+Status:${d.status}<br>
+Progress:${d.progress}%<br>
+Credit:${d.creditUsed}<br>
+ETA:${d.eta}
+
+`;
+
+},1500);
+
+}
+</script>
 </body>
 </html>
