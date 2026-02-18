@@ -7,270 +7,172 @@
 
 <title>Official Website — SN DESIGN STUDIO</title>
 
-<link rel="stylesheet" href="assets/css/master.css">
+<meta name="description" content="SN Design Studio AI Create Engine">
+<meta name="keywords" content="AI Creator, Motion AI, SN Design Studio, Video Generator">
 
-<style>
-
-/* =========================
-ULTRA PROJECT HEADER
-========================= */
-
-.project-block{
-background:#0a0a0a;
-border:1px solid #ff0033;
-padding:16px;
-margin-bottom:20px;
-}
-
-.project-row{
-display:flex;
-justify-content:space-between;
-margin:6px 0;
-color:#fff;
-font-size:14px;
-}
-
-#progress{
-margin-top:20px;
-font-weight:bold;
-color:#00ffc8;
-}
-
-</style>
+<link rel="stylesheet" href="/assets/create.css">
 
 </head>
 
-<body class="create-page">
+<body>
 
-<div id="nav"></div>
+<!-- ======================
+NAV
+====================== -->
 
-<section class="hero-master">
+<nav>
+SN AI CREATE ENGINE
+</nav>
 
-<h1 id="engineTitle">AI ENGINE</h1>
-<img id="heroImage" style="max-width:600px">
+
+<!-- ======================
+HERO DETAIL BAR
+====================== -->
+
+<section class="hero-mini">
+
+<div class="model-title" id="modelTitle">AI ENGINE</div>
+
+<div class="model-info">
+
+MAX LENGTH : 30 sec  
+Auto credit system active
+
+</div>
 
 </section>
 
-<section class="create-area">
 
-<!-- =========================
-PROJECT DETAIL BLOCK
-========================= -->
 
-<div class="project-block">
+<!-- ======================
+MAIN CREATE LAYOUT
+====================== -->
 
-<div class="project-row">
-<span>MODEL</span>
-<span id="modelName">-</span>
-</div>
+<div class="create-layout">
 
-<div class="project-row">
-<span>MAX LENGTH</span>
-<span>30 SEC</span>
-</div>
 
-<div class="project-row">
-<span>CREDIT COST</span>
-<span id="creditCost">-</span>
-</div>
+<!-- LEFT PREVIEW -->
+
+<div class="left-panel">
+
+<h3>Preview</h3>
+
+<img id="templatePreview">
 
 </div>
 
-<!-- =========================
-INPUT MEDIA
-========================= -->
+
+
+<!-- CENTER CONTROL -->
+
+<div class="center-panel">
+
+<h3>Create Project</h3>
+
+<textarea id="promptInput" placeholder="Enter AI instruction..."></textarea>
 
 <input type="file" id="videoInput" accept="video/*">
-<video id="videoPreview" controls></video>
 
 <input type="file" id="imageInput" accept="image/*">
-<img id="imagePreview">
 
-<textarea id="promptBox"
-placeholder="Enter prompt or instruction..."
-style="width:100%;height:100px;margin-top:10px;"></textarea>
+<button class="cta-primary" id="createBtn">
 
-<button id="createBtn">CREATE VIDEO</button>
+CREATE VIDEO
 
-<div id="progress"></div>
+</button>
 
-</section>
+</div>
 
-<footer>
-© SN Design Studio, 2026 · All rights reserved.
-</footer>
 
-<script src="assets/js/nav.js"></script>
+
+<!-- RIGHT STATUS -->
+
+<div class="right-panel">
+
+<h3>Status</h3>
+
+<div id="statusText">Ready</div>
+
+<div class="progress-bar">
+
+<div id="progressFill"></div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ======================
+ENGINE SCRIPT
+====================== -->
 
 <script>
 
-/* ===================================
-ULTRA CREATE ENGINE FINAL
-=================================== */
+const params = new URLSearchParams(window.location.search);
+const template = params.get("template");
 
-document.addEventListener("DOMContentLoaded",()=>{
+const preview = document.getElementById("templatePreview");
+const title = document.getElementById("modelTitle");
 
-const modelMap={
+if(template){
 
-"dark-viral":{
-model:"flux",
-cost:33.60
-},
+   title.innerText = template.toUpperCase();
 
-"ai-lipsync":{
-model:"lipsync-ai",
-cost:25.00
-},
-
-"dance-motion":{
-model:"motion-ai",
-cost:30.00
-},
-
-"face-swap":{
-model:"face-swap-pro",
-cost:40.00
-}
-
-};
-
-/* =========================
-READ TEMPLATE PARAM
-========================= */
-
-const params=new URLSearchParams(window.location.search);
-const template=params.get("template");
-
-const modelName=document.getElementById("modelName");
-const creditCost=document.getElementById("creditCost");
-
-let activeModel=null;
-
-if(template && modelMap[template]){
-
-activeModel=modelMap[template];
-
-modelName.innerText=activeModel.model;
-creditCost.innerText=activeModel.cost+" BAHT";
-
-document.getElementById("engineTitle").innerText=
-template.replaceAll("-"," ").toUpperCase();
-
-document.getElementById("heroImage").src=
-"assets/images/template-"+template+".jpg";
+   preview.src = "/assets/images/template-"+template+".jpg";
 
 }
-
-/* =========================
-PREVIEW
-========================= */
-
-const videoInput=document.getElementById("videoInput");
-const videoPreview=document.getElementById("videoPreview");
-
-videoInput.addEventListener("change",(e)=>{
-
-const file=e.target.files[0];
-
-if(file){
-
-videoPreview.src=URL.createObjectURL(file);
-
-}
-
-});
-
-const imageInput=document.getElementById("imageInput");
-const imagePreview=document.getElementById("imagePreview");
-
-imageInput.addEventListener("change",(e)=>{
-
-const file=e.target.files[0];
-
-if(file){
-
-imagePreview.src=URL.createObjectURL(file);
-
-}
-
-});
-
-/* =========================
-CREATE JOB
-========================= */
-
-const progress=document.getElementById("progress");
 
 let jobID=null;
 
-document.getElementById("createBtn").addEventListener("click",async()=>{
+const statusText = document.getElementById("statusText");
+const progressFill = document.getElementById("progressFill");
 
-if(!activeModel){
+document.getElementById("createBtn").addEventListener("click", async()=>{
 
-alert("MODEL NOT FOUND");
-return;
+   statusText.innerText="Sending request...";
 
-}
+   const res = await fetch("/api/render",{
 
-progress.innerText="Creating job...";
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
 
-try{
+         templateID:template,
+         prompt:document.getElementById("promptInput").value
 
-const res=await fetch("/api/render",{
+      })
 
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+   });
 
-body:JSON.stringify({
+   const data = await res.json();
 
-templateID:template,
-engine:activeModel.model,
-duration:30,
-prompt:document.getElementById("promptBox").value
+   jobID=data.jobID;
 
-})
+   pollStatus();
 
 });
 
-const data=await res.json();
 
-jobID=data.jobID;
+async function pollStatus(){
 
-progress.innerText="JOB CREATED : "+jobID;
+const interval=setInterval(async()=>{
 
-watchStatus();
+const res = await fetch("/api/status?id="+jobID);
 
-}catch(e){
+const d = await res.json();
 
-progress.innerText="Render error";
+statusText.innerText=d.status+" "+d.progress+"%";
 
-}
+progressFill.style.width=d.progress+"%";
 
-});
+if(d.status==="complete"){
 
-/* =========================
-STATUS LOOP
-========================= */
+clearInterval(interval);
 
-async function watchStatus(){
-
-if(!jobID) return;
-
-const loop=setInterval(async()=>{
-
-const res=await fetch("/api/status?id="+jobID);
-const data=await res.json();
-
-progress.innerText=
-"STATUS: "+data.status+
-" | "+data.progress+"%"+
-" | ETA "+data.eta;
-
-if(data.status==="complete"){
-
-clearInterval(loop);
+statusText.innerText="RENDER COMPLETE";
 
 }
 
@@ -278,9 +180,8 @@ clearInterval(loop);
 
 }
 
-});
-
 </script>
+
 
 </body>
 </html>
