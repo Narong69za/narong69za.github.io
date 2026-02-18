@@ -1,48 +1,234 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Official Website — SN DESIGN STUDIO</title>
+
 <link rel="stylesheet" href="assets/css/master.css">
+
+<style>
+
+/* =========================
+ULTRA PROJECT HEADER
+========================= */
+
+.project-block{
+background:#0a0a0a;
+border:1px solid #ff0033;
+padding:16px;
+margin-bottom:20px;
+}
+
+.project-row{
+display:flex;
+justify-content:space-between;
+margin:6px 0;
+color:#fff;
+font-size:14px;
+}
+
+#progress{
+margin-top:20px;
+font-weight:bold;
+color:#00ffc8;
+}
+
+</style>
+
 </head>
 
-<body>
+<body class="create-page">
+
+<div id="nav"></div>
+
+<section class="hero-master">
 
 <h1 id="engineTitle">AI ENGINE</h1>
+<img id="heroImage" style="max-width:600px">
+
+</section>
+
+<section class="create-area">
+
+<!-- =========================
+PROJECT DETAIL BLOCK
+========================= -->
+
+<div class="project-block">
+
+<div class="project-row">
+<span>MODEL</span>
+<span id="modelName">-</span>
+</div>
+
+<div class="project-row">
+<span>MAX LENGTH</span>
+<span>30 SEC</span>
+</div>
+
+<div class="project-row">
+<span>CREDIT COST</span>
+<span id="creditCost">-</span>
+</div>
+
+</div>
+
+<!-- =========================
+INPUT MEDIA
+========================= -->
+
+<input type="file" id="videoInput" accept="video/*">
+<video id="videoPreview" controls></video>
+
+<input type="file" id="imageInput" accept="image/*">
+<img id="imagePreview">
+
+<textarea id="promptBox"
+placeholder="Enter prompt or instruction..."
+style="width:100%;height:100px;margin-top:10px;"></textarea>
 
 <button id="createBtn">CREATE VIDEO</button>
 
-<div id="detail"></div>
 <div id="progress"></div>
+
+</section>
+
+<footer>
+© SN Design Studio, 2026 · All rights reserved.
+</footer>
+
+<script src="assets/js/nav.js"></script>
 
 <script>
 
-const params=new URLSearchParams(location.search);
+/* ===================================
+ULTRA CREATE ENGINE FINAL
+=================================== */
 
-const template=params.get("template") || "unknown";
+document.addEventListener("DOMContentLoaded",()=>{
+
+const modelMap={
+
+"dark-viral":{
+model:"flux",
+cost:33.60
+},
+
+"ai-lipsync":{
+model:"lipsync-ai",
+cost:25.00
+},
+
+"dance-motion":{
+model:"motion-ai",
+cost:30.00
+},
+
+"face-swap":{
+model:"face-swap-pro",
+cost:40.00
+}
+
+};
+
+/* =========================
+READ TEMPLATE PARAM
+========================= */
+
+const params=new URLSearchParams(window.location.search);
+const template=params.get("template");
+
+const modelName=document.getElementById("modelName");
+const creditCost=document.getElementById("creditCost");
+
+let activeModel=null;
+
+if(template && modelMap[template]){
+
+activeModel=modelMap[template];
+
+modelName.innerText=activeModel.model;
+creditCost.innerText=activeModel.cost+" BAHT";
 
 document.getElementById("engineTitle").innerText=
-"ENGINE : "+template;
+template.replaceAll("-"," ").toUpperCase();
+
+document.getElementById("heroImage").src=
+"assets/images/template-"+template+".jpg";
+
+}
+
+/* =========================
+PREVIEW
+========================= */
+
+const videoInput=document.getElementById("videoInput");
+const videoPreview=document.getElementById("videoPreview");
+
+videoInput.addEventListener("change",(e)=>{
+
+const file=e.target.files[0];
+
+if(file){
+
+videoPreview.src=URL.createObjectURL(file);
+
+}
+
+});
+
+const imageInput=document.getElementById("imageInput");
+const imagePreview=document.getElementById("imagePreview");
+
+imageInput.addEventListener("change",(e)=>{
+
+const file=e.target.files[0];
+
+if(file){
+
+imagePreview.src=URL.createObjectURL(file);
+
+}
+
+});
+
+/* =========================
+CREATE JOB
+========================= */
+
+const progress=document.getElementById("progress");
 
 let jobID=null;
 
-document.getElementById("createBtn").onclick=async()=>{
+document.getElementById("createBtn").addEventListener("click",async()=>{
 
-const detail=document.getElementById("detail");
+if(!activeModel){
 
-detail.innerText="Sending job...";
+alert("MODEL NOT FOUND");
+return;
+
+}
+
+progress.innerText="Creating job...";
+
+try{
 
 const res=await fetch("/api/render",{
 
 method:"POST",
-
-headers:{ "Content-Type":"application/json" },
+headers:{
+"Content-Type":"application/json"
+},
 
 body:JSON.stringify({
 
 templateID:template,
-engine:"motion-ai",
-duration:30
+engine:activeModel.model,
+duration:30,
+prompt:document.getElementById("promptBox").value
 
 })
 
@@ -52,29 +238,37 @@ const data=await res.json();
 
 jobID=data.jobID;
 
-detail.innerText="JOB CREATED : "+jobID;
+progress.innerText="JOB CREATED : "+jobID;
 
-watch();
+watchStatus();
 
-};
+}catch(e){
 
-async function watch(){
+progress.innerText="Render error";
 
-const progress=document.getElementById("progress");
+}
+
+});
+
+/* =========================
+STATUS LOOP
+========================= */
+
+async function watchStatus(){
+
+if(!jobID) return;
 
 const loop=setInterval(async()=>{
 
 const res=await fetch("/api/status?id="+jobID);
-
-const d=await res.json();
+const data=await res.json();
 
 progress.innerText=
+"STATUS: "+data.status+
+" | "+data.progress+"%"+
+" | ETA "+data.eta;
 
-"Template:"+d.templateID+
-" | Status:"+d.status+
-" | "+d.progress+"%";
-
-if(d.status==="complete"){
+if(data.status==="complete"){
 
 clearInterval(loop);
 
@@ -84,59 +278,9 @@ clearInterval(loop);
 
 }
 
-</script>
-<button id="createBtn">CREATE VIDEO</button>
-
-<div id="panel"></div>
-
-<script>
-
-const template=new URLSearchParams(location.search).get("template");
-
-document.getElementById("createBtn").onclick=async()=>{
-
-const res=await fetch("/api/render",{
-
-method:"POST",
-
-headers:{ "Content-Type":"application/json" },
-
-body:JSON.stringify({
-
-templateID:template,
-engine:"motion-ai",
-duration:30
-
-})
-
 });
 
-const job=await res.json();
-
-watch(job.jobID);
-
-};
-
-async function watch(id){
-
-setInterval(async()=>{
-
-const r=await fetch("/api/status?id="+id);
-const d=await r.json();
-
-document.getElementById("panel").innerHTML=`
-
-Template:${d.templateID}<br>
-Status:${d.status}<br>
-Progress:${d.progress}%<br>
-Credit:${d.creditUsed}<br>
-ETA:${d.eta}
-
-`;
-
-},1500);
-
-}
 </script>
+
 </body>
 </html>
