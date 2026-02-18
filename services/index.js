@@ -3,22 +3,34 @@ const path = require("path");
 
 require("../db/db");
 
-const renderRoute = require("../api/render.route");
+const renderRoute = require("../routes/render");
+const statusRoute = require("../routes/status");
 
 const app = express();
 
 app.use(express.json());
 
-// serve root index.html
+/* =========================
+SERVE WEBSITE ROOT (MASTER)
+========================= */
+
+app.use(express.static(path.join(__dirname,"..")));
+
 app.get("/",(req,res)=>{
    res.sendFile(path.join(__dirname,"../index.html"));
 });
 
-// mount API
-app.use("/api", renderRoute);
+/* =========================
+API
+========================= */
+
+app.use("/api/render",renderRoute);
+app.use("/api/status",statusRoute);
+
+/* ========================= */
 
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("SERVER RUNNING",PORT);
+   console.log("🔥 ULTRA ENGINE ROOT MODE:",PORT);
 });
