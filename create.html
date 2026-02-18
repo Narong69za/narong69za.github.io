@@ -16,98 +16,78 @@
 
 <body>
 
-<!-- ======================
-NAV
-====================== -->
+<!-- ================= NAV ================= -->
 
-<nav>
-SN AI CREATE ENGINE
-</nav>
+<header class="topbar">
+   SN DESIGN — CREATE ENGINE
+</header>
 
+<!-- ================= HERO ================= -->
 
-<!-- ======================
-HERO DETAIL BAR
-====================== -->
+<section class="hero-block">
 
-<section class="hero-mini">
+<div class="hero-left">
 
-<div class="model-title" id="modelTitle">AI ENGINE</div>
+   <img id="templatePreview">
 
-<div class="model-info">
+</div>
 
-MAX LENGTH : 30 sec  
-Auto credit system active
+<div class="hero-right">
+
+   <h1 id="modelTitle">AI ENGINE</h1>
+
+   <div class="detail-box">
+
+      <p>MAX LENGTH : 30 sec</p>
+      <p>Auto credit system active</p>
+      <p>Realtime render engine</p>
+
+   </div>
 
 </div>
 
 </section>
 
+<!-- ================= MAIN ================= -->
 
+<section class="create-container">
 
-<!-- ======================
-MAIN CREATE LAYOUT
-====================== -->
+<!-- LEFT PANEL -->
 
-<div class="create-layout">
+<div class="panel left">
 
+<h3>PROJECT</h3>
 
-<!-- LEFT PREVIEW -->
-
-<div class="left-panel">
-
-<h3>Preview</h3>
-
-<img id="templatePreview">
-
-</div>
-
-
-
-<!-- CENTER CONTROL -->
-
-<div class="center-panel">
-
-<h3>Create Project</h3>
-
-<textarea id="promptInput" placeholder="Enter AI instruction..."></textarea>
+<textarea id="promptInput"
+placeholder="Enter AI instruction..."></textarea>
 
 <input type="file" id="videoInput" accept="video/*">
 
 <input type="file" id="imageInput" accept="image/*">
 
-<button class="cta-primary" id="createBtn">
-
+<button id="createBtn" class="cta-btn">
 CREATE VIDEO
-
 </button>
 
 </div>
 
+<!-- RIGHT PANEL -->
 
+<div class="panel right">
 
-<!-- RIGHT STATUS -->
+<h3>STATUS</h3>
 
-<div class="right-panel">
+<div id="statusText">READY</div>
 
-<h3>Status</h3>
-
-<div id="statusText">Ready</div>
-
-<div class="progress-bar">
-
-<div id="progressFill"></div>
-
+<div class="progress">
+   <div id="progressFill"></div>
 </div>
 
 </div>
 
-</div>
+</section>
 
-
-
-<!-- ======================
-ENGINE SCRIPT
-====================== -->
+<!-- ================= ENGINE SCRIPT ================= -->
 
 <script>
 
@@ -121,56 +101,60 @@ if(template){
 
    title.innerText = template.toUpperCase();
 
-   preview.src = "/assets/images/template-"+template+".jpg";
+   preview.src =
+   "/assets/images/template-"+template+".jpg";
 
 }
 
 let jobID=null;
 
-const statusText = document.getElementById("statusText");
-const progressFill = document.getElementById("progressFill");
+const statusText=document.getElementById("statusText");
+const progressFill=document.getElementById("progressFill");
 
-document.getElementById("createBtn").addEventListener("click", async()=>{
+document.getElementById("createBtn")
+.addEventListener("click",async()=>{
 
-   statusText.innerText="Sending request...";
+statusText.innerText="Sending...";
 
-   const res = await fetch("/api/render",{
+const res=await fetch("/api/render",{
 
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({
+method:"POST",
+headers:{"Content-Type":"application/json"},
 
-         templateID:template,
-         prompt:document.getElementById("promptInput").value
+body:JSON.stringify({
 
-      })
+templateID:template,
+prompt:document.getElementById("promptInput").value
 
-   });
-
-   const data = await res.json();
-
-   jobID=data.jobID;
-
-   pollStatus();
+})
 
 });
 
+const data=await res.json();
+
+jobID=data.jobID;
+
+pollStatus();
+
+});
 
 async function pollStatus(){
 
-const interval=setInterval(async()=>{
+const loop=setInterval(async()=>{
 
-const res = await fetch("/api/status?id="+jobID);
+const res=await fetch("/api/status?id="+jobID);
 
-const d = await res.json();
+const d=await res.json();
 
-statusText.innerText=d.status+" "+d.progress+"%";
+statusText.innerText =
+d.status+" "+d.progress+"%";
 
-progressFill.style.width=d.progress+"%";
+progressFill.style.width =
+d.progress+"%";
 
 if(d.status==="complete"){
 
-clearInterval(interval);
+clearInterval(loop);
 
 statusText.innerText="RENDER COMPLETE";
 
@@ -181,7 +165,6 @@ statusText.innerText="RENDER COMPLETE";
 }
 
 </script>
-
 
 </body>
 </html>
