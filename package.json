@@ -6,7 +6,8 @@
     "start": "node services/index.js"
   },
   "dependencies": {
-    "express": "^4.19.2",
-    "sqlite3": "^5.1.6"
+  "express": "^4.19.2",
+  "sqlite3": "^5.1.6",
+  "replicate": "^0.34.0"
   }
 }
