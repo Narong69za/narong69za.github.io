@@ -100,61 +100,53 @@ const title = document.getElementById("modelTitle");
 if(template){
 
    title.innerText = template.toUpperCase();
-
-   preview.src =
-   "/assets/images/template-"+template+".jpg";
+   preview.src = "/assets/images/template-"+template+".jpg";
 
 }
 
 let jobID=null;
 
-const statusText=document.getElementById("statusText");
-const progressFill=document.getElementById("progressFill");
+const statusText = document.getElementById("statusText");
+const progressFill = document.getElementById("progressFill");
 
-document.getElementById("createBtn")
-.addEventListener("click",async()=>{
+document.getElementById("createBtn").addEventListener("click", async()=>{
 
-statusText.innerText="Sending...";
+   statusText.innerText="Sending request...";
 
-const res=await fetch("/api/render",{
+   const res = await fetch("/api/render",{
 
-method:"POST",
-headers:{"Content-Type":"application/json"},
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({
+         templateID:template,
+         prompt:document.getElementById("promptInput").value
+      })
 
-body:JSON.stringify({
+   });
 
-templateID:template,
-prompt:document.getElementById("promptInput").value
+   const data = await res.json();
 
-})
+   jobID=data.jobID;
 
-});
-
-const data=await res.json();
-
-jobID=data.jobID;
-
-pollStatus();
+   pollStatus();
 
 });
+
 
 async function pollStatus(){
 
-const loop=setInterval(async()=>{
+const interval=setInterval(async()=>{
 
-const res=await fetch("/api/status?id="+jobID);
+const res = await fetch("/api/status/"+jobID);
 
-const d=await res.json();
+const d = await res.json();
 
-statusText.innerText =
-d.status+" "+d.progress+"%";
-
-progressFill.style.width =
-d.progress+"%";
+statusText.innerText=d.status+" "+d.progress+"%";
+progressFill.style.width=d.progress+"%";
 
 if(d.status==="complete"){
 
-clearInterval(loop);
+clearInterval(interval);
 
 statusText.innerText="RENDER COMPLETE";
 
