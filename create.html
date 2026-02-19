@@ -41,7 +41,7 @@ img{
 
 <h2 id="templateTitle">Loading Template...</h2>
 
-<img id="previewImage" src="" />
+<img id="previewImage" />
 
 <br><br>
 
@@ -49,7 +49,7 @@ img{
 
 <br><br>
 
-<button onclick="startRender()">CREATE</button>
+<button id="createBtn">CREATE</button>
 
 <p id="statusText"></p>
 
@@ -61,31 +61,41 @@ img{
 ULTRA SAFE CONFIG
 =============================== */
 
-const API_URL = "https://sn-design-api.onrender.com";
+const API_URL = "https://api.sn-designstudio.dev";
 
 /* ===============================
-SAFE PARAM CHECK
+INIT
 =============================== */
 
-const params = new URLSearchParams(window.location.search);
+document.addEventListener("DOMContentLoaded", ()=>{
 
-let template = params.get("template");
+ console.log("CREATE READY");
 
-/* fallback ถ้าไม่มี template */
+ const params = new URLSearchParams(window.location.search);
 
-if(!template){
+ let template = params.get("template");
 
- console.warn("NO TEMPLATE PARAM → using default");
+ if(!template){
 
- template = "dance-motion";
+   console.warn("NO TEMPLATE PARAM → using default");
 
-}
+   template = "dance-motion";
+
+ }
+
+ loadTemplate(template);
+
+ document.getElementById("createBtn")
+   .addEventListener("click", ()=>startRender(template));
+
+});
+
 
 /* ===============================
 LOAD TEMPLATE UI
 =============================== */
 
-function loadTemplate(){
+function loadTemplate(template){
 
  const title = document.getElementById("templateTitle");
  const img = document.getElementById("previewImage");
@@ -104,21 +114,22 @@ function loadTemplate(){
 
 }
 
-loadTemplate();
 
 /* ===============================
 RENDER ENGINE
 =============================== */
 
-async function startRender(){
+async function startRender(template){
+
+ console.log("CTA CLICKED");
 
  const prompt = document.getElementById("promptInput").value;
 
  if(!prompt){
 
-  alert("Enter prompt");
+   alert("Enter prompt");
 
-  return;
+   return;
 
  }
 
@@ -143,13 +154,15 @@ async function startRender(){
 
    const data = await res.json();
 
+   console.log("JOB CREATED:",data);
+
    if(!data.success){
 
      throw new Error("ENGINE FAIL");
 
    }
 
-   trackStatus(data.jobID);
+   document.getElementById("statusText").innerText="JOB STARTED";
 
  }catch(err){
 
@@ -158,82 +171,6 @@ async function startRender(){
    document.getElementById("statusText").innerText="ERROR START ENGINE";
 
  }
-<script>
-
-document.addEventListener("DOMContentLoaded", () => {
-
-console.log("CREATE READY")
-const params = new URLSearchParams(window.location.search);
-   const templateID = params.get("template");
-
-   if(!templateID){
-      document.body.innerHTML = "TEMPLATE NOT FOUND";
-      return;
-   }
-
-   if(typeof presetMap === "undefined"){
-      document.body.innerHTML = "PRESET MAP NOT LOADED";
-      return;
-   }
-
-   const preset = presetMap[templateID];
-
-   if(!preset){
-      document.body.innerHTML = "INVALID TEMPLATE";
-      return;
-   }
-
-   renderUI(preset);
-
-});
-
-function renderUI(preset){
-
-   const container = document.getElementById("app");
-
-   if(!container){
-      console.log("APP CONTAINER NOT FOUND");
-      return;
-   }
-
-   container.innerHTML = `
-      <h2>${preset.name}</h2>
-      <video id="previewVideo" controls width="100%"></video>
-      <button id="createBtn">CREATE VIDEO</button>
-   `;
-
-   const video = document.getElementById("previewVideo");
-
-   if(preset.previewVideo){
-      video.src = preset.previewVideo;
-   }
-
-   document.getElementById("createBtn")
-   .addEventListener("click", startRender);
-
-}
-
-function startRender(){
-
-   console.log("CTA CLICKED");
-
-   fetch("https://api.sn-designstudio.dev/api/render",{
-      method:"POST",
-      headers:{
-         "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-         templateID:"ai-lipsync",
-         prompt:"test"
-      })
-   })
-   .then(res=>res.json())
-   .then(data=>{
-      console.log("JOB CREATED:",data);
-   })
-   .catch(err=>{
-      console.log("RENDER ERROR:",err);
-   });
 
 }
 
