@@ -106,7 +106,7 @@ about:"Face swap transformation"
 provider:"runway",
 model:"motion-control",
 maxLength:30,
-credit:6.0,
+credit:6.0, in
 about:"Motion control & dance animation"
 },
 
@@ -179,30 +179,140 @@ btn.onclick = async ()=>{
 
    const res = await fetch("/api/render",{
 
-      method:"POST",
+<script>
 
-      headers:{"Content-Type":"application/json"},
+document.addEventListener("DOMContentLoaded", ()=>{
 
-      body:JSON.stringify({
+const presetMap = {
 
-         templateID:template,
-         provider:preset.provider,
-         model:preset.model,
-         duration:preset.maxLength,
-         prompt:document.getElementById("promptInput").value
+"dark-viral":{
+provider:"replicate",
+model:"black-forest-labs/flux-2-pro",
+maxLength:30,
+credit:3.5,
+about:"Dark cinematic viral generation preset"
+},
 
-      })
+"cinematic-pro":{
+provider:"runway",
+model:"gen3",
+maxLength:30,
+credit:4.0,
+about:"Professional cinematic video generator"
+},
 
-   });
+"face-swap":{
+provider:"replicate",
+model:"face-swap-ai",
+maxLength:20,
+credit:5.0,
+about:"Face swap transformation"
+},
 
-   const data = await res.json();
+"dance-motion":{
+provider:"runway",
+model:"motion-control",
+maxLength:30,
+credit:6.0,
+about:"Motion control & dance animation"
+},
 
-   jobID = data.jobID;
+"hyper-real":{
+provider:"replicate",
+model:"hyper-real-gen",
+maxLength:15,
+credit:3.0,
+about:"Ultra realistic generation"
+},
 
-   watchStatus();
+"ai-lipsync":{
+provider:"replicate",
+model:"ai-lipsync-model",
+maxLength:20,
+credit:4.0,
+about:"AI LipSync video generation"
+}
 
 };
 
+const params = new URLSearchParams(window.location.search);
+const template = params.get("template");
+
+if(!template){
+
+document.body.innerHTML = `
+<div style="color:white;padding:40px;font-size:18px">
+TEMPLATE PARAMETER MISSING<br>
+Please access from template page.
+</div>
+`;
+
+return;
+
+}
+
+const preview = document.getElementById("templatePreview");
+const title = document.getElementById("modelTitle");
+const detailBox = document.getElementById("detailBox");
+
+const preset = presetMap[template];
+
+if(!preset){
+
+title.innerText="INVALID TEMPLATE";
+console.error("preset not found:", template);
+return;
+
+}
+
+title.innerText = template.toUpperCase();
+
+preview.src = "assets/images/template-"+template+".jpg";
+
+detailBox.innerHTML = `
+<p>${preset.about}</p>
+<p>Provider : ${preset.provider}</p>
+<p>Model : ${preset.model}</p>
+<p>MAX LENGTH : ${preset.maxLength} sec</p>
+<p>Credit cost : ${preset.credit}</p>
+`;
+
+let jobID=null;
+
+const statusText = document.getElementById("statusText");
+const progressFill = document.getElementById("progressFill");
+
+const btn = document.getElementById("createBtn");
+
+btn.onclick = async ()=>{
+
+statusText.innerText="Sending request...";
+
+const res = await fetch("/api/render",{
+
+method:"POST",
+
+headers:{"Content-Type":"application/json"},
+
+body:JSON.stringify({
+
+templateID:template,
+provider:preset.provider,
+model:preset.model,
+duration:preset.maxLength,
+prompt:document.getElementById("promptInput").value
+
+})
+
+});
+
+const data = await res.json();
+
+jobID = data.jobID;
+
+watchStatus();
+
+};
 
 function watchStatus(){
 
@@ -240,5 +350,16 @@ console.log("status error");
 
 </script>
 
+</script>
+if(!template){
+
+   document.body.innerHTML = `
+   <div style="color:white;padding:40px;font-size:18px">
+   TEMPLATE PARAMETER MISSING<br>
+   Please access from template page.
+   </div>
+   `;
+
+}
 </body>
 </html>
