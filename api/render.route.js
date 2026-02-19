@@ -1,29 +1,24 @@
 const express = require("express");
 const router = express.Router();
-const db = require("../db/db");
 
-router.post("/render",(req,res)=>{
+const engine = require("../services");
 
-   const { engine, prompt } = req.body;
 
-   const id = Date.now().toString();
+router.post("/", async(req,res)=>{
 
-   db.run(
-      "INSERT INTO projects (id,engine,prompt,status) VALUES (?,?,?,?)",
-      [id,engine,prompt,"queued"],
-      (err)=>{
+   try{
 
-         if(err){
-            return res.status(500).json({error:err.message});
-         }
+      const result = await engine.runEngine(req.body);
 
-         res.json({
-            status:"queued",
-            id:id
-         });
+      res.json(result);
 
-      }
-   );
+   }catch(err){
+
+      console.log(err);
+
+      res.status(500).json({error:true});
+
+   }
 
 });
 
