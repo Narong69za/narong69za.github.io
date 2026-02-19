@@ -1,4 +1,9 @@
-const fetch = require("node-fetch");
+/*
+=====================================
+RUNWAY SERVICE
+FINAL CLEAN VERSION
+=====================================
+*/
 
 const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 
