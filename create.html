@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>ULTRA GOD CREATE</title>
+<title>Create | SN Design Studio</title>
+
+<link rel="stylesheet" href="assets/css/master.css">
 
 <style>
 
@@ -16,176 +18,195 @@ font-family:sans-serif;
 padding:20px;
 }
 
-input{
-width:100%;
-padding:15px;
-font-size:18px;
+button{
+background:#ff0033;
+color:#fff;
+border:none;
+padding:15px 20px;
 margin-top:10px;
 }
 
-button{
-background:#ff0033;
-color:white;
-border:none;
-padding:15px;
-margin-top:15px;
-font-size:18px;
-}
-
-#debug{
+#preview video{
+width:100%;
 margin-top:20px;
-background:#111;
-padding:15px;
-white-space:pre-wrap;
 }
 
 </style>
 
 </head>
-
 <body>
 
-<h1 id="title">ULTRA GOD CREATE</h1>
+<h1>ULTRA GOD CREATE</h1>
 
-<input id="prompt" placeholder="Prompt">
-
+<input id="prompt" placeholder="Enter prompt">
+<br>
 <button id="createBtn">CREATE VIDEO</button>
 
 <h3 id="status">STATUS: IDLE</h3>
 
-<div id="debug"></div>
+<pre id="debug"></pre>
+
+<div id="preview"></div>
 
 <script>
 
-const API_URL="https://api.sn-designstudio.dev";
+/* ================= CONFIG ================= */
 
-const debugBox=document.getElementById("debug");
+const API = "https://api.sn-designstudio.dev";
 
-function debug(txt){
-debugBox.innerText+=txt+"\n";
+/* ================= DEBUG ================= */
+
+function log(msg){
+document.getElementById("debug").textContent += msg+"\n";
 }
 
-debug("DOM LOADED");
+/* ================= GET TEMPLATE ================= */
 
+const params = new URLSearchParams(window.location.search);
+const template = params.get("template");
 
-/* ================= TEMPLATE AUTO DETECT ================= */
-
-const params=new URLSearchParams(window.location.search);
-const template=params.get("template");
+log("DOM LOADED");
+log("Template: "+template);
 
 if(!template){
 
-debug("NO TEMPLATE PARAM");
-document.getElementById("status").innerText="ERROR: no template";
+document.getElementById("status").textContent =
+"STATUS: NO TEMPLATE";
 
-}else{
-
-debug("Template detected: "+template);
-document.getElementById("title").innerText="ENGINE : "+template;
+throw new Error("Template missing");
 
 }
 
+/* ================= TEMPLATE → MODEL MAP ================= */
 
-/* ================= CREATE EVENT ================= */
+const MODEL_MAP = {
 
-document.getElementById("createBtn").onclick=async ()=>{
+"dark-viral":"dark-viral",
+"ai-lipsync":"ai-lipsync",
+"dance-motion":"dance-motion",
+"face-swap":"face-swap"
 
-debug("CTA CLICKED");
+};
 
-const prompt=document.getElementById("prompt").value;
+const model = MODEL_MAP[template];
 
-if(!prompt){
+if(!model){
 
-debug("NO PROMPT");
-return;
+document.getElementById("status").textContent =
+"STATUS: MODEL NOT FOUND";
+
+throw new Error("Model not mapped");
 
 }
 
-document.getElementById("status").innerText="STATUS: SENDING";
+/* ================= CREATE BUTTON ================= */
 
+document.getElementById("createBtn")
+.addEventListener("click", async ()=>{
+
+log("CTA CLICKED");
+
+const prompt =
+document.getElementById("prompt").value;
+
+document.getElementById("status")
+.textContent="STATUS: SENDING...";
 
 try{
 
-debug("Sending POST...");
-
-const res=await fetch(API_URL+"/api/render",{
+const res = await fetch(API+"/api/render",{
 
 method:"POST",
-
 headers:{
 "Content-Type":"application/json"
 },
 
 body:JSON.stringify({
-engine:template,
+
+model:model,
+input:{
 prompt:prompt
+}
+
 })
 
 });
 
-const data=await res.json();
+const data = await res.json();
 
-debug("Response:"+JSON.stringify(data));
+log("Response: "+JSON.stringify(data));
 
 if(!data.jobID){
 
-debug("NO JOBID");
-return;
+throw new Error("No jobID");
 
 }
 
-document.getElementById("status").innerText="STATUS: PROCESSING";
+document.getElementById("status")
+.textContent="STATUS: PROCESSING";
 
-checkStatus(data.jobID);
+startPolling(data.jobID);
 
 }catch(e){
 
-debug("ERROR:"+e);
+log("ERROR:"+e.message);
+
+document.getElementById("status")
+.textContent="STATUS: ERROR";
 
 }
 
-};
+});
 
+/* ================= STATUS POLLING ================= */
 
-/* ================= STATUS LOOP ================= */
+function startPolling(jobID){
 
-async function checkStatus(id){
+log("Polling start: "+jobID);
 
-debug("START STATUS LOOP");
+const interval = setInterval(async()=>{
 
-const timer=setInterval(async ()=>{
+const res = await fetch(
+API+"/api/status/"+jobID
+);
 
-try{
+const data = await res.json();
 
-const res=await fetch(API_URL+"/api/status/"+id);
+log("Progress:"+data.progress);
 
-const status=await res.json();
+if(data.status==="complete"){
 
-debug("STATUS:"+JSON.stringify(status));
+clearInterval(interval);
 
-if(status.status==="complete"){
+document.getElementById("status")
+.textContent="STATUS: COMPLETE";
 
-clearInterval(timer);
-
-document.getElementById("status").innerText="STATUS: COMPLETE";
-
-}
-
-if(status.status==="error"){
-
-clearInterval(timer);
-
-document.getElementById("status").innerText="STATUS: ERROR";
+showPreview(data);
 
 }
 
-}catch(e){
+if(data.status==="error"){
 
-debug("STATUS FAIL");
+clearInterval(interval);
+
+document.getElementById("status")
+.textContent="STATUS: ERROR";
 
 }
 
-},2000);
+},3000);
+
+}
+
+/* ================= PREVIEW ================= */
+
+function showPreview(data){
+
+if(!data.url) return;
+
+document.getElementById("preview").innerHTML =
+
+'<video controls autoplay src="'+data.url+'"></video>';
 
 }
 
