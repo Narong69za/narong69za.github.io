@@ -1,77 +1,180 @@
-body{
+/* =========================================================
+SN DESIGN STUDIO
+ULTRA FINAL CREATE MASTER CSS
+Mobile First • Clean • Production Ready
+========================================================= */
+
+/* ===== RESET SAFE ===== */
+
+*{
+box-sizing:border-box;
 margin:0;
-background:#0b0b0b;
-color:#fff;
-font-family:Arial;
+padding:0;
 }
 
-.topbar{
-padding:16px;
-background:#111;
-border-bottom:1px solid #222;
-}
-
-.hero-block{
-display:flex;
-gap:20px;
-padding:20px;
-border-bottom:1px solid #222;
-}
-
-.hero-left img{
-width:300px;
-border-radius:10px;
-}
-
-.detail-box{
-background:#111;
-padding:12px;
-border-radius:8px;
-margin-top:10px;
-}
-
-.create-container{
-display:flex;
-gap:20px;
-padding:20px;
-}
-
-.panel{
-background:#111;
-padding:20px;
-border-radius:10px;
-flex:1;
-}
-
-textarea{
-width:100%;
-height:120px;
-margin-bottom:10px;
+html,body{
 background:#000;
 color:#fff;
+font-family:Arial, Helvetica, sans-serif;
+height:100%;
+}
+
+/* ===== LAYOUT WRAPPER ===== */
+
+.create-wrapper{
+max-width:1200px;
+margin:auto;
+padding:20px;
+display:flex;
+flex-direction:column;
+gap:25px;
+}
+
+/* ===== HEADER ===== */
+
+.create-header{
+display:flex;
+flex-direction:column;
+gap:8px;
+}
+
+.create-title{
+font-size:26px;
+font-weight:700;
+letter-spacing:1px;
+}
+
+.engine-badge{
+font-size:14px;
+color:#ff0033;
+font-weight:bold;
+}
+
+/* ===== MAIN GRID ===== */
+
+.create-grid{
+display:flex;
+flex-direction:column;
+gap:25px;
+}
+
+@media(min-width:900px){
+.create-grid{
+flex-direction:row;
+}
+}
+
+/* ===== LEFT PANEL ===== */
+
+.create-left{
+flex:1;
+display:flex;
+flex-direction:column;
+gap:15px;
+}
+
+/* ===== INPUT ===== */
+
+.create-input{
+width:100%;
+padding:14px;
+background:#111;
 border:1px solid #333;
+color:#fff;
+font-size:16px;
+outline:none;
+transition:0.2s;
 }
 
-input{
-margin-bottom:10px;
+.create-input:focus{
+border-color:#ff0033;
 }
 
-.cta-btn{
-background:#00ffc8;
+/* ===== BUTTON ===== */
+
+.create-btn{
+width:100%;
+padding:16px;
+background:#ff0033;
 border:none;
-padding:12px;
+color:#fff;
+font-size:18px;
+font-weight:bold;
 cursor:pointer;
+transition:0.2s;
+}
+
+.create-btn:hover{
+background:#ff1a4d;
+}
+
+.create-btn:active{
+transform:scale(0.98);
+}
+
+/* ===== STATUS ===== */
+
+.status-box{
+margin-top:5px;
+font-weight:bold;
+font-size:14px;
+opacity:0.9;
+}
+
+/* ===== RIGHT PANEL ===== */
+
+.create-right{
+flex:1;
+background:#050505;
+padding:20px;
+border:1px solid #111;
+display:flex;
+flex-direction:column;
+gap:20px;
+}
+
+/* ===== PREVIEW ===== */
+
+.preview-box{
+min-height:240px;
+border:1px dashed #333;
+display:flex;
+align-items:center;
+justify-content:center;
+color:#555;
+font-size:14px;
+}
+
+.preview-box video{
 width:100%;
 }
 
-.progress{
-height:6px;
-background:#222;
-margin-top:10px;
+/* ===== DEBUG PANEL ===== */
+
+.debug-box{
+background:#000;
+border:1px solid #222;
+padding:12px;
+font-size:12px;
+height:200px;
+overflow:auto;
+white-space:pre-wrap;
 }
 
-#progressFill{
+/* ===== PROGRESS BAR (READY FOR FUTURE) ===== */
+
+.progress-container{
+height:6px;
+background:#111;
+border-radius:3px;
+overflow:hidden;
+}
+
+.progress-fill{
 height:100%;
 width:0%;
-background:#00ffc8;
+background:#ff0033;
+transition:width 0.3s ease;
 }
+
+/*
