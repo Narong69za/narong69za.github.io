@@ -14,26 +14,28 @@
 <body>
 
 <header class="topbar">
-   SN DESIGN — CREATE ENGINE
+SN DESIGN — CREATE ENGINE
 </header>
 
+<!-- HERO -->
 
 <section class="hero-block">
 
 <div class="hero-left">
-   <img id="templatePreview">
+<img id="templatePreview">
 </div>
 
 <div class="hero-right">
 
-   <h1 id="modelTitle">AI ENGINE</h1>
+<h1 id="modelTitle">AI ENGINE</h1>
 
-   <div class="detail-box" id="detailBox"></div>
+<div class="detail-box" id="detailBox"></div>
 
 </div>
 
 </section>
 
+<!-- MAIN -->
 
 <section class="create-container">
 
@@ -52,7 +54,6 @@ CREATE VIDEO
 
 </div>
 
-
 <div class="panel right">
 
 <h3>STATUS</h3>
@@ -60,128 +61,20 @@ CREATE VIDEO
 <div id="statusText">READY</div>
 
 <div class="progress">
-   <div id="progressFill"></div>
+<div id="progressFill"></div>
 </div>
 
 </div>
 
 </section>
 
-
 <script>
 
-document.addEventListener("DOMContentLoaded", ()=>{
+document.addEventListener("DOMContentLoaded", function(){
 
-
-/* ================= PRESET MAP ================= */
-
-const presetMap = {
-
-"dark-viral":{
-provider:"replicate",
-model:"black-forest-labs/flux-2-pro",
-maxLength:30,
-credit:3.5,
-about:"Dark cinematic viral generation preset"
-},
-
-"cinematic-pro":{
-provider:"runway",
-model:"gen3",
-maxLength:30,
-credit:4.0,
-about:"Professional cinematic video generator"
-},
-
-/* FIX KEY MATCH TEMPLATE PAGE */
-"face-swap":{
-provider:"replicate",
-model:"face-swap-ai",
-maxLength:20,
-credit:5.0,
-about:"Face swap transformation"
-},
-
-"dance-motion":{
-provider:"runway",
-model:"motion-control",
-maxLength:30,
-credit:6.0, in
-about:"Motion control & dance animation"
-},
-
-"hyper-real":{
-provider:"replicate",
-model:"hyper-real-gen",
-maxLength:15,
-credit:3.0,
-about:"Ultra realistic generation"
-},
-
-"ai-lipsync":{
-provider:"replicate",
-model:"ai-lipsync-model",
-maxLength:20,
-credit:4.0,
-about:"AI LipSync video generation"
-}
-
-};
-
-
-
-/* ================= LOAD TEMPLATE ================= */
-
-const params = new URLSearchParams(window.location.search);
-const template = params.get("template");
-
-const preview = document.getElementById("templatePreview");
-const title = document.getElementById("modelTitle");
-const detailBox = document.getElementById("detailBox");
-
-const preset = presetMap[template];
-
-if(!preset){
-
-   title.innerText="INVALID TEMPLATE";
-   console.error("preset not found:", template);
-   return;
-
-}
-
-title.innerText = template.toUpperCase();
-
-preview.src = "assets/images/template-"+template+".jpg";
-
-detailBox.innerHTML = `
-<p>${preset.about}</p>
-<p>Provider : ${preset.provider}</p>
-<p>Model : ${preset.model}</p>
-<p>MAX LENGTH : ${preset.maxLength} sec</p>
-<p>Credit cost : ${preset.credit}</p>
-`;
-
-
-
-/* ================= ENGINE ================= */
-
-let jobID=null;
-
-const statusText = document.getElementById("statusText");
-const progressFill = document.getElementById("progressFill");
-
-const btn = document.getElementById("createBtn");
-
-/* prevent double bind */
-btn.onclick = async ()=>{
-
-   statusText.innerText="Sending request...";
-
-   const res = await fetch("/api/render",{
-
-<script>
-
-document.addEventListener("DOMContentLoaded", ()=>{
+/* =====================================
+PRESET MAP (FINAL LOCK)
+===================================== */
 
 const presetMap = {
 
@@ -235,35 +128,44 @@ about:"AI LipSync video generation"
 
 };
 
+
+/* =====================================
+LOAD TEMPLATE PARAM
+===================================== */
+
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
 
 if(!template){
 
 document.body.innerHTML = `
-<div style="color:white;padding:40px;font-size:18px">
-TEMPLATE PARAMETER MISSING<br>
-Please access from template page.
-</div>
-`;
-
+<div style="color:white;padding:40px">
+TEMPLATE PARAMETER MISSING
+</div>`;
 return;
 
 }
-
-const preview = document.getElementById("templatePreview");
-const title = document.getElementById("modelTitle");
-const detailBox = document.getElementById("detailBox");
 
 const preset = presetMap[template];
 
 if(!preset){
 
-title.innerText="INVALID TEMPLATE";
-console.error("preset not found:", template);
+document.body.innerHTML = `
+<div style="color:white;padding:40px">
+INVALID TEMPLATE
+</div>`;
 return;
 
 }
+
+
+/* =====================================
+UI LOAD
+===================================== */
+
+const preview = document.getElementById("templatePreview");
+const title = document.getElementById("modelTitle");
+const detailBox = document.getElementById("detailBox");
 
 title.innerText = template.toUpperCase();
 
@@ -277,21 +179,25 @@ detailBox.innerHTML = `
 <p>Credit cost : ${preset.credit}</p>
 `;
 
+
+/* =====================================
+ENGINE CREATE
+===================================== */
+
 let jobID=null;
 
 const statusText = document.getElementById("statusText");
 const progressFill = document.getElementById("progressFill");
 
-const btn = document.getElementById("createBtn");
-
-btn.onclick = async ()=>{
+document.getElementById("createBtn").onclick = async function(){
 
 statusText.innerText="Sending request...";
+
+try{
 
 const res = await fetch("/api/render",{
 
 method:"POST",
-
 headers:{"Content-Type":"application/json"},
 
 body:JSON.stringify({
@@ -312,7 +218,18 @@ jobID = data.jobID;
 
 watchStatus();
 
+}catch(e){
+
+statusText.innerText="ERROR";
+
+}
+
 };
+
+
+/* =====================================
+STATUS WATCH
+===================================== */
 
 function watchStatus(){
 
@@ -321,7 +238,6 @@ const interval=setInterval(async()=>{
 try{
 
 const res = await fetch("/api/status/"+jobID);
-
 const d = await res.json();
 
 statusText.innerText=d.status+" "+(d.progress||0)+"%";
@@ -336,39 +252,11 @@ statusText.innerText="RENDER COMPLETE";
 
 }
 
-}catch(e){
-
-console.log("status error");
-
-}
+}catch(e){}
 
 },1500);
 
 }
-
-});
-
-</script>
-
-<script>
-
-/* TEMPLATE PARAM CHECK (SAFE) */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-   const params = new URLSearchParams(window.location.search);
-   const template = params.get("template");
-
-   if(!template){
-
-      document.body.innerHTML = `
-      <div style="color:white;padding:40px;font-size:18px">
-      TEMPLATE PARAMETER MISSING<br>
-      Please access from template page.
-      </div>
-      `;
-
-   }
 
 });
 
