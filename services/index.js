@@ -1,6 +1,7 @@
 /*
 =====================================
 ULTRA ENGINE MASTER ROUTER
+FINAL CLEAN VERSION
 =====================================
 */
 
@@ -12,9 +13,21 @@ const runwayService = require("./runway/runway.service");
 const db = require("../db/db");
 
 
+/*
+=====================================
+RUN ENGINE
+=====================================
+*/
+
 async function runEngine(data){
 
    const { templateID, prompt, jobID } = data;
+
+   if(!templateID || !jobID){
+
+      throw new Error("MISSING REQUIRED DATA");
+
+   }
 
    const preset = presetMap[templateID];
 
@@ -24,7 +37,8 @@ async function runEngine(data){
 
    }
 
-   let result;
+   let result = null;
+
 
    /*
    ======================
@@ -36,9 +50,15 @@ async function runEngine(data){
 
       case "replicate":
 
+         if(!replicateService.run){
+
+            throw new Error("REPLICATE SERVICE INVALID");
+
+         }
+
          result = await replicateService.run({
 
-            model: preset.model.id,
+            model: preset.model,
             prompt,
             jobID
 
@@ -49,9 +69,15 @@ async function runEngine(data){
 
       case "runway":
 
+         if(!runwayService.run){
+
+            throw new Error("RUNWAY SERVICE INVALID");
+
+         }
+
          result = await runwayService.run({
 
-            model: preset.model.id,
+            model: preset.model,
             prompt,
             jobID
 
@@ -73,9 +99,12 @@ async function runEngine(data){
    */
 
    db.run(
-      "INSERT INTO projects (id, template, status, progress) VALUES (?,?,?,?)",
+      `INSERT OR REPLACE INTO projects
+       (id, templateID, status, progress)
+       VALUES (?,?,?,?)`,
       [jobID, templateID, "processing", 0]
    );
+
 
    return {
 
@@ -85,6 +114,7 @@ async function runEngine(data){
    };
 
 }
+
 
 module.exports = {
 
