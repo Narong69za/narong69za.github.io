@@ -80,23 +80,24 @@ ULTRA TEMPLATE ROUTING (FINAL CLEAN)
 
 document.querySelectorAll("[data-template]").forEach(card=>{
 
-   card.addEventListener("click",()=>{
+   card.addEventListener("click",(e)=>{
+
+      e.preventDefault();      // ⭐ หยุด default navigation
+      e.stopPropagation();     // ⭐ หยุด script อื่น
 
       const template = card.dataset.template;
 
       if(!template) return;
 
-      window.location.href =
-"https://api.sn-designstudio.dev/create.html?template="
-+encodeURIComponent(template);
+      const target =
+      "https://api.sn-designstudio.dev/create.html?template="
+      +encodeURIComponent(template);
+
+      window.location.replace(target); // ⭐ HARD redirect
 
    });
 
 });
-
-console.log("TEMPLATE PAGE READY");
-
-</script>
 
 </body>
 </html>
