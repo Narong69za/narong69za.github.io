@@ -7,8 +7,8 @@
 
 <title>Create | SN Design Studio</title>
 
+<!-- MASTER CSS ONLY (LOCK) -->
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
-<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
 </head>
 <body>
@@ -19,73 +19,150 @@
 
 <h3 id="engineLabel"></h3>
 
-<input id="prompt" placeholder="Enter prompt">
+<input id="prompt" class="create-input" placeholder="Enter prompt">
 
-<button id="createBtn">CREATE VIDEO</button>
+<button id="createBtn" class="create-btn">CREATE VIDEO</button>
 
-<h3 id="status">STATUS: IDLE</h3>
+<h3 id="status" class="status-box">STATUS: IDLE</h3>
 
-<div id="preview"></div>
+<div id="preview" class="preview-box"></div>
 
 </div>
 
 <script>
 
-const API = window.SN_CONFIG?.API_BASE || 
-"https://api.sn-designstudio.dev";
+/* =================================================
+CONFIG
+================================================= */
+
+const API =
+(window.SN_CONFIG && window.SN_CONFIG.API_BASE)
+? window.SN_CONFIG.API_BASE
+: "https://api.sn-designstudio.dev";
+
+/* =================================================
+ELEMENTS
+================================================= */
 
 const params = new URLSearchParams(location.search);
 const templateID = params.get("template");
 
 const promptInput = document.getElementById("prompt");
 const createBtn = document.getElementById("createBtn");
+const statusBox = document.getElementById("status");
+const engineLabel = document.getElementById("engineLabel");
+const previewBox = document.getElementById("preview");
 
-createBtn.addEventListener("click", async () => {
+/* =================================================
+INIT CHECK
+================================================= */
 
-    const prompt = promptInput.value || "";
+if(!templateID){
 
-    if(!prompt.trim()){
-        alert("Enter prompt first");
-        return;
-    }
+statusBox.textContent="STATUS: TEMPLATE MISSING";
+throw new Error("Template not found");
 
-    const res = await fetch(API + "/api/render", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            templateID: templateID,
-            input: { prompt: prompt }
-        })
-    });
+}
 
-    const data = await res.json();
+engineLabel.textContent = "ENGINE: " + templateID;
 
-    if(!data.jobID){
-        console.error("No jobID");
-        return;
-    }
+/* =================================================
+CREATE BUTTON
+================================================= */
 
-    startPolling(data.jobID);
+createBtn.addEventListener("click", async ()=>{
+
+const prompt = promptInput.value.trim();
+
+if(!prompt){
+alert("Enter prompt first");
+return;
+}
+
+statusBox.textContent="STATUS: SENDING...";
+
+try{
+
+const res = await fetch(API + "/api/render", {
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+templateID:templateID,
+input:{prompt:prompt}
+})
 
 });
 
-function startPolling(id){
+const data = await res.json();
 
-    const loop = setInterval(async ()=>{
+if(!data.jobID){
 
-        const res = await fetch(API + "/api/status/" + id);
-        const data = await res.json();
+statusBox.textContent="STATUS: ERROR";
+console.error("Missing jobID",data);
+return;
 
-        if(data.status === "complete"){
+}
 
-            clearInterval(loop);
+statusBox.textContent="STATUS: PROCESSING";
 
-            document.getElementById("preview").innerHTML =
-            '<video controls autoplay src="'+data.url+'"></video>';
+startPolling(data.jobID);
 
-        }
+}catch(err){
 
-    },3000);
+console.error(err);
+statusBox.textContent="STATUS: ERROR";
+
+}
+
+});
+
+/* =================================================
+POLLING
+================================================= */
+
+function startPolling(jobID){
+
+const interval = setInterval(async()=>{
+
+try{
+
+const res = await fetch(API + "/api/status/" + jobID);
+const data = await res.json();
+
+if(data.status === "complete"){
+
+clearInterval(interval);
+
+statusBox.textContent="STATUS: COMPLETE";
+
+if(data.url){
+
+previewBox.innerHTML =
+'<video controls autoplay src="'+data.url+'"></video>';
+
+}
+
+}
+
+if(data.status === "error"){
+
+clearInterval(interval);
+statusBox.textContent="STATUS: ERROR";
+
+}
+
+}catch(e){
+
+console.error(e);
+
+}
+
+},3000);
 
 }
 
