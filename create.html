@@ -350,16 +350,29 @@ console.log("status error");
 
 </script>
 
+<script>
+
+/* TEMPLATE PARAM CHECK (SAFE) */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+   const params = new URLSearchParams(window.location.search);
+   const template = params.get("template");
+
+   if(!template){
+
+      document.body.innerHTML = `
+      <div style="color:white;padding:40px;font-size:18px">
+      TEMPLATE PARAMETER MISSING<br>
+      Please access from template page.
+      </div>
+      `;
+
+   }
+
+});
+
 </script>
-if(!template){
 
-   document.body.innerHTML = `
-   <div style="color:white;padding:40px;font-size:18px">
-   TEMPLATE PARAMETER MISSING<br>
-   Please access from template page.
-   </div>
-   `;
-
-}
 </body>
 </html>
