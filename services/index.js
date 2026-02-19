@@ -1,36 +1,93 @@
-const express = require("express");
-const path = require("path");
+/*
+=====================================
+ULTRA ENGINE MASTER ROUTER
+=====================================
+*/
 
-require("../db/db");
+const presetMap = require("./preset.map");
 
-const renderRoute = require("../routes/render");
-const statusRoute = require("../routes/status");
+const replicateService = require("./replicate/replicate.service");
+const runwayService = require("./runway/runway.service");
 
-const app = express();
+const db = require("../db/db");
 
-app.use(express.json());
 
-/* =========================
-SERVE WEBSITE ROOT (MASTER)
-========================= */
+async function runEngine(data){
 
-app.use(express.static(path.join(__dirname,"..")));
+   const { templateID, prompt, jobID } = data;
 
-app.get("/",(req,res)=>{
-   res.sendFile(path.join(__dirname,"../index.html"));
-});
+   const preset = presetMap[templateID];
 
-/* =========================
-API
-========================= */
+   if(!preset){
 
-app.use("/api/render",renderRoute);
-app.use("/api/status",statusRoute);
+      throw new Error("INVALID PRESET");
 
-/* ========================= */
+   }
 
-const PORT = process.env.PORT || 10000;
+   let result;
 
-app.listen(PORT,()=>{
-   console.log("🔥 ULTRA ENGINE ROOT MODE:",PORT);
-});
+   /*
+   ======================
+   PROVIDER ROUTING
+   ======================
+   */
+
+   switch(preset.provider){
+
+      case "replicate":
+
+         result = await replicateService.run({
+
+            model: preset.model.id,
+            prompt,
+            jobID
+
+         });
+
+      break;
+
+
+      case "runway":
+
+         result = await runwayService.run({
+
+            model: preset.model.id,
+            prompt,
+            jobID
+
+         });
+
+      break;
+
+      default:
+
+         throw new Error("PROVIDER NOT FOUND");
+
+   }
+
+
+   /*
+   ======================
+   SAVE DB
+   ======================
+   */
+
+   db.run(
+      "INSERT INTO projects (id, template, status, progress) VALUES (?,?,?,?)",
+      [jobID, templateID, "processing", 0]
+   );
+
+   return {
+
+      jobID,
+      result
+
+   };
+
+}
+
+module.exports = {
+
+   runEngine
+
+};
