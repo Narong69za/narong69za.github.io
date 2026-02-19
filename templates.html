@@ -74,16 +74,12 @@ content="CapCut Templates, AI Creator system, Viral template collection by SN De
 
 <script>
 
-/* ======================================
-ULTRA TEMPLATE ROUTING (FINAL CLEAN)
-====================================== */
-
 document.querySelectorAll("[data-template]").forEach(card=>{
 
    card.addEventListener("click",(e)=>{
 
-      e.preventDefault();      // ⭐ หยุด default navigation
-      e.stopPropagation();     // ⭐ หยุด script อื่น
+      e.preventDefault();
+      e.stopPropagation();
 
       const template = card.dataset.template;
 
@@ -93,11 +89,13 @@ document.querySelectorAll("[data-template]").forEach(card=>{
       "https://api.sn-designstudio.dev/create.html?template="
       +encodeURIComponent(template);
 
-      window.location.replace(target); // ⭐ HARD redirect
+      window.location.replace(target);
 
    });
 
 });
+
+</script>
 
 </body>
 </html>
