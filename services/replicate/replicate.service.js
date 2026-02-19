@@ -1,6 +1,7 @@
 /*
 =====================================
 REPLICATE ENGINE SERVICE
+FINAL VERSION
 =====================================
 */
 
@@ -15,28 +16,50 @@ const replicate = new Replicate({
 
 async function run({ model, prompt, jobID }){
 
-   const output = await replicate.run(
+   if(!model){
 
-      model,
+      throw new Error("REPLICATE MODEL NOT FOUND");
 
-      {
+   }
 
-         input: {
+   if(!prompt){
 
-            prompt: prompt
+      throw new Error("PROMPT EMPTY");
+
+   }
+
+   try{
+
+      const output = await replicate.run(
+
+         model, // ต้องเป็น owner/model:version
+
+         {
+
+            input: {
+
+               prompt: prompt
+
+            }
 
          }
 
-      }
+      );
 
-   );
+      return {
 
-   return {
+         jobID,
+         output
 
-      jobID,
-      output
+      };
 
-   };
+   }catch(err){
+
+      console.error("REPLICATE ERROR:",err);
+
+      throw err;
+
+   }
 
 }
 
