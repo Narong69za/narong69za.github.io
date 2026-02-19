@@ -1,33 +1,84 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MINIMAL API TEST</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VISUAL DEBUG</title>
+
+<style>
+body{
+ background:#000;
+ color:#00ff00;
+ font-family:monospace;
+ padding:20px;
+}
+button{
+ background:red;
+ color:white;
+ padding:15px;
+ border:none;
+ margin-top:10px;
+}
+.log{
+ margin-top:15px;
+ white-space:pre-wrap;
+ word-break:break-word;
+}
+</style>
 </head>
-<body style="background:#000;color:#fff;font-family:Arial;padding:40px;">
 
-<h2>MINIMAL RENDER TEST</h2>
+<body>
 
-<button id="testBtn" style="padding:15px 25px;background:red;color:white;border:none;">
-SEND TEST JOB
-</button>
+<h2>ULTRA DEBUG MODE</h2>
 
-<p id="status"></p>
+<button onclick="runTest()">TEST CREATE API</button>
+
+<div class="log" id="log">
+STATUS: READY
+</div>
 
 <script>
 
-console.log("SCRIPT LOADED");
+const API = "https://api.sn-designstudio.dev";
+const logBox = document.getElementById("log");
 
-const API_URL = "https://api.sn-designstudio.dev";
+function log(msg){
+ logBox.innerText += "\n" + msg;
+}
 
-document.getElementById("testBtn").addEventListener("click", async () => {
+log("SCRIPT LOADED");
 
-    console.log("BUTTON CLICKED");
-    document.getElementById("status").innerText = "Sending...";
+async function runTest(){
 
-    try {
+ log("BUTTON CLICKED");
 
-        const res = await fetch(API_URL + "/api/render", {
-            method: "POST",
-            headers:
+ try{
+
+   log("SENDING REQUEST...");
+
+   const res = await fetch(API + "/api/render",{
+     method:"POST",
+     headers:{ "Content-Type":"application/json" },
+     body:JSON.stringify({
+       templateID:"ai-lipsync",
+       prompt:"TEST"
+     })
+   });
+
+   log("RESPONSE STATUS: " + res.status);
+
+   const text = await res.text();
+   log("RAW RESPONSE: " + text);
+
+ }catch(err){
+
+   log("ERROR: " + err.message);
+
+ }
+
+}
+
+</script>
+
+</body>
+</html>
