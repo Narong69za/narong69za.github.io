@@ -16,43 +16,33 @@
 
 <body>
 
-<!-- ================= NAV ================= -->
-
 <header class="topbar">
    SN DESIGN — CREATE ENGINE
 </header>
+
 
 <!-- ================= HERO ================= -->
 
 <section class="hero-block">
 
 <div class="hero-left">
-
    <img id="templatePreview">
-
 </div>
 
 <div class="hero-right">
 
    <h1 id="modelTitle">AI ENGINE</h1>
 
-   <div class="detail-box">
-
-      <p>MAX LENGTH : 30 sec</p>
-      <p>Auto credit system active</p>
-      <p>Realtime render engine</p>
-
-   </div>
+   <div class="detail-box" id="detailBox"></div>
 
 </div>
 
 </section>
 
+
 <!-- ================= MAIN ================= -->
 
 <section class="create-container">
-
-<!-- LEFT PANEL -->
 
 <div class="panel left">
 
@@ -62,7 +52,6 @@
 placeholder="Enter AI instruction..."></textarea>
 
 <input type="file" id="videoInput" accept="video/*">
-
 <input type="file" id="imageInput" accept="image/*">
 
 <button id="createBtn" class="cta-btn">
@@ -71,7 +60,6 @@ CREATE VIDEO
 
 </div>
 
-<!-- RIGHT PANEL -->
 
 <div class="panel right">
 
@@ -87,68 +75,165 @@ CREATE VIDEO
 
 </section>
 
-<!-- ================= ENGINE SCRIPT ================= -->
 
 <script>
+
+/* ======================================================
+ULTRA PRESET MAP (MASTER)
+====================================================== */
+
+const presetMap = {
+
+"dark-viral":{
+provider:"replicate",
+model:"black-forest-labs/flux-2-pro",
+maxLength:30,
+credit:3.5,
+about:"Dark cinematic viral generation preset"
+},
+
+"cinematic-pro":{
+provider:"runway",
+model:"gen3",
+maxLength:30,
+credit:4.0,
+about:"Professional cinematic video generator"
+},
+
+"face-clone":{
+provider:"replicate",
+model:"face-swap-ai",
+maxLength:20,
+credit:5.0,
+about:"Face clone & identity transformation"
+},
+
+"dance-motion":{
+provider:"runway",
+model:"motion-control",
+maxLength:30,
+credit:6.0,
+about:"Motion control & dance animation"
+},
+
+"hyper-real":{
+provider:"replicate",
+model:"hyper-real-gen",
+maxLength:15,
+credit:3.0,
+about:"Ultra realistic generation"
+}
+
+};
+
+
+/* ======================================================
+LOAD TEMPLATE
+====================================================== */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
 
 const preview = document.getElementById("templatePreview");
 const title = document.getElementById("modelTitle");
+const detailBox = document.getElementById("detailBox");
 
-if(template){
+let preset = null;
+
+if(template && presetMap[template]){
+
+   preset = presetMap[template];
 
    title.innerText = template.toUpperCase();
+
    preview.src = "/assets/images/template-"+template+".jpg";
 
+   detailBox.innerHTML = `
+      <p>${preset.about}</p>
+      <p>Provider : ${preset.provider}</p>
+      <p>Model : ${preset.model}</p>
+      <p>MAX LENGTH : ${preset.maxLength} sec</p>
+      <p>Credit cost : ${preset.credit}</p>
+   `;
 }
+
+
+/* ======================================================
+ENGINE CREATE
+====================================================== */
 
 let jobID=null;
 
 const statusText = document.getElementById("statusText");
 const progressFill = document.getElementById("progressFill");
 
-document.getElementById("createBtn").addEventListener("click", async()=>{
+document.getElementById("createBtn")
+.addEventListener("click", async()=>{
+
+   if(!preset){
+      alert("Preset not found");
+      return;
+   }
 
    statusText.innerText="Sending request...";
 
    const res = await fetch("/api/render",{
 
       method:"POST",
+
       headers:{"Content-Type":"application/json"},
+
       body:JSON.stringify({
+
          templateID:template,
+         provider:preset.provider,
+         model:preset.model,
+         duration:preset.maxLength,
+
          prompt:document.getElementById("promptInput").value
+
       })
 
    });
 
    const data = await res.json();
 
-   jobID=data.jobID;
+   jobID = data.jobID;
 
-   pollStatus();
+   watchStatus();
 
 });
 
 
-async function pollStatus(){
+/* ======================================================
+STATUS WATCH
+====================================================== */
+
+async function watchStatus(){
 
 const interval=setInterval(async()=>{
+
+try{
 
 const res = await fetch("/api/status/"+jobID);
 
 const d = await res.json();
 
-statusText.innerText=d.status+" "+d.progress+"%";
-progressFill.style.width=d.progress+"%";
+statusText.innerText=d.status+" "+(d.progress||0)+"%";
+
+progressFill.style.width=(d.progress||0)+"%";
 
 if(d.status==="complete"){
 
 clearInterval(interval);
 
 statusText.innerText="RENDER COMPLETE";
+
+}
+
+}catch(e){
+
+console.log("status error");
 
 }
 
