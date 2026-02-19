@@ -39,42 +39,40 @@ STATUS: READY
 
 <script>
 
-const API = "https://api.sn-designstudio.dev";
-const logBox = document.getElementById("log");
+const API_URL = "https://api.sn-designstudio.dev";
 
-function log(msg){
- logBox.innerText += "\n" + msg;
-}
+document.addEventListener("DOMContentLoaded", ()=>{
 
-log("SCRIPT LOADED");
+  document.getElementById("createBtn").addEventListener("click", startRender);
 
-async function runTest(){
+});
 
- log("BUTTON CLICKED");
+async function startRender(){
 
- try{
+  document.getElementById("statusText").innerText="Sending...";
 
-   log("SENDING REQUEST...");
+  try{
 
-   const res = await fetch(API + "/api/render",{
-     method:"POST",
-     headers:{ "Content-Type":"application/json" },
-     body:JSON.stringify({
-       templateID:"ai-lipsync",
-       prompt:"TEST"
-     })
-   });
+    const res = await fetch(API_URL+"/api/render",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({
+        templateID:"ai-lipsync",
+        prompt:"test"
+      })
+    });
 
-   log("RESPONSE STATUS: " + res.status);
+    const data = await res.json();
 
-   const text = await res.text();
-   log("RAW RESPONSE: " + text);
+    document.getElementById("statusText").innerText =
+      "SUCCESS : " + JSON.stringify(data);
 
- }catch(err){
+  }catch(e){
 
-   log("ERROR: " + err.message);
+    document.getElementById("statusText").innerText =
+      "ERROR : " + e.message;
 
- }
+  }
 
 }
 
