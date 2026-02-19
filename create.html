@@ -158,42 +158,83 @@ async function startRender(){
    document.getElementById("statusText").innerText="ERROR START ENGINE";
 
  }
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+   console.log("CREATE READY");
+
+   const params = new URLSearchParams(window.location.search);
+   const templateID = params.get("template");
+
+   if(!templateID){
+      document.body.innerHTML = "TEMPLATE NOT FOUND";
+      return;
+   }
+
+   if(typeof presetMap === "undefined"){
+      document.body.innerHTML = "PRESET MAP NOT LOADED";
+      return;
+   }
+
+   const preset = presetMap[templateID];
+
+   if(!preset){
+      document.body.innerHTML = "INVALID TEMPLATE";
+      return;
+   }
+
+   renderUI(preset);
+
+});
+
+function renderUI(preset){
+
+   const container = document.getElementById("app");
+
+   if(!container){
+      console.log("APP CONTAINER NOT FOUND");
+      return;
+   }
+
+   container.innerHTML = `
+      <h2>${preset.name}</h2>
+      <video id="previewVideo" controls width="100%"></video>
+      <button id="createBtn">CREATE VIDEO</button>
+   `;
+
+   const video = document.getElementById("previewVideo");
+
+   if(preset.previewVideo){
+      video.src = preset.previewVideo;
+   }
+
+   document.getElementById("createBtn")
+   .addEventListener("click", startRender);
 
 }
 
-/* ===============================
-STATUS TRACK
-=============================== */
+function startRender(){
 
-async function trackStatus(jobID){
+   console.log("CTA CLICKED");
 
- const statusText = document.getElementById("statusText");
-
- const interval = setInterval(async()=>{
-
-   try{
-
-     const res = await fetch(API_URL+"/api/status/"+jobID);
-
-     const data = await res.json();
-
-     statusText.innerText = "Progress : "+data.progress+"%";
-
-     if(data.status === "complete"){
-
-       clearInterval(interval);
-
-       statusText.innerText="DONE";
-
-     }
-
-   }catch(e){
-
-     console.warn("status error");
-
-   }
-
- },2000);
+   fetch("https://api.sn-designstudio.dev/api/render",{
+      method:"POST",
+      headers:{
+         "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+         templateID:"ai-lipsync",
+         prompt:"test"
+      })
+   })
+   .then(res=>res.json())
+   .then(data=>{
+      console.log("JOB CREATED:",data);
+   })
+   .catch(err=>{
+      console.log("RENDER ERROR:",err);
+   });
 
 }
 
