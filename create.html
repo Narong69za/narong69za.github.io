@@ -7,8 +7,8 @@
 
 <title>Create | SN Design Studio</title>
 
-<link rel="stylesheet" href="https://sn-designstudio.dev/assets/css/master.css">
-<link rel="stylesheet" href="https://sn-designstudio.dev/assets/css/create.css">
+<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
+<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
 </head>
 <body>
@@ -31,105 +31,46 @@
 
 <script>
 
-/* ===== CONFIG ===== */
+const API="https://api.sn-designstudio.dev";
 
-const API = "https://api.sn-designstudio.dev";
+const params=new URLSearchParams(location.search);
+const templateID=params.get("template");
 
-/* ===== GET TEMPLATE ===== */
-
-const params = new URLSearchParams(window.location.search);
-const templateID = params.get("template");
-
-document.getElementById("engineLabel").innerText =
+document.getElementById("engineLabel").innerText=
 "ENGINE: "+templateID;
 
-if(!templateID){
+document.getElementById("createBtn").onclick=async()=>{
 
-document.getElementById("status").innerText =
-"STATUS: NO TEMPLATE";
+const prompt=document.getElementById("prompt").value;
 
-throw new Error("Template missing");
-
-}
-
-/* ===== CREATE BUTTON ===== */
-
-document.getElementById("createBtn")
-.addEventListener("click", async ()=>{
-
-const prompt =
-document.getElementById("prompt").value;
-
-document.getElementById("status").innerText =
-"STATUS: SENDING";
-
-try{
-
-const res = await fetch(API+"/api/render",{
-
+const res=await fetch(API+"/api/render",{
 method:"POST",
-headers:{ "Content-Type":"application/json" },
-
+headers:{'Content-Type':'application/json'},
 body:JSON.stringify({
-
 templateID:templateID,
-input:{ prompt:prompt }
-
+input:{prompt:prompt}
 })
-
 });
 
-const data = await res.json();
-
-if(!data.jobID) throw new Error("No jobID");
-
-document.getElementById("status").innerText =
-"STATUS: PROCESSING";
+const data=await res.json();
 
 startPolling(data.jobID);
 
-}catch(e){
+};
 
-document.getElementById("status").innerText =
-"STATUS: ERROR";
+function startPolling(id){
 
-}
+const loop=setInterval(async()=>{
 
-});
-
-/* ===== POLLING ===== */
-
-function startPolling(jobID){
-
-const interval = setInterval(async()=>{
-
-const res =
-await fetch(API+"/api/status/"+jobID);
-
-const data = await res.json();
+const res=await fetch(API+"/api/status/"+id);
+const data=await res.json();
 
 if(data.status==="complete"){
 
-clearInterval(interval);
+clearInterval(loop);
 
-document.getElementById("status").innerText =
-"STATUS: COMPLETE";
-
-if(data.url){
-
-document.getElementById("preview").innerHTML =
+document.getElementById("preview").innerHTML=
 '<video controls autoplay src="'+data.url+'"></video>';
-
-}
-
-}
-
-if(data.status==="error"){
-
-clearInterval(interval);
-
-document.getElementById("status").innerText =
-"STATUS: ERROR";
 
 }
 
