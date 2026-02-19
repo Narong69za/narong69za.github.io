@@ -1,264 +1,201 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>Official Website — SN DESIGN STUDIO</title>
+<title>SN DESIGN CREATE</title>
 
-<link rel="stylesheet" href="assets/css/create.css">
+<style>
+
+body{
+ background:#0b0b0b;
+ color:white;
+ font-family:Arial;
+ margin:0;
+}
+
+.container{
+ padding:20px;
+}
+
+button{
+ background:#ff0033;
+ color:white;
+ border:none;
+ padding:12px 20px;
+ cursor:pointer;
+}
+
+img{
+ max-width:100%;
+}
+
+</style>
 
 </head>
-
 <body>
 
-<header class="topbar">
-SN DESIGN — CREATE ENGINE
-</header>
+<div class="container">
 
-<!-- HERO -->
+<h2 id="templateTitle">Loading Template...</h2>
 
-<section class="hero-block">
+<img id="previewImage" src="" />
 
-<div class="hero-left">
-<img id="templatePreview">
-</div>
+<br><br>
 
-<div class="hero-right">
+<input id="promptInput" placeholder="Enter Prompt" style="width:100%;padding:10px;">
 
-<h1 id="modelTitle">AI ENGINE</h1>
+<br><br>
 
-<div class="detail-box" id="detailBox"></div>
+<button onclick="startRender()">CREATE</button>
+
+<p id="statusText"></p>
 
 </div>
-
-</section>
-
-<!-- MAIN -->
-
-<section class="create-container">
-
-<div class="panel left">
-
-<h3>PROJECT</h3>
-
-<textarea id="promptInput"></textarea>
-
-<input type="file" id="videoInput" accept="video/*">
-<input type="file" id="imageInput" accept="image/*">
-
-<button id="createBtn" class="cta-btn">
-CREATE VIDEO
-</button>
-
-</div>
-
-<div class="panel right">
-
-<h3>STATUS</h3>
-
-<div id="statusText">READY</div>
-
-<div class="progress">
-<div id="progressFill"></div>
-</div>
-
-</div>
-
-</section>
 
 <script>
 
-document.addEventListener("DOMContentLoaded", function(){
+/* ===============================
+ULTRA SAFE CONFIG
+=============================== */
 
-/* =====================================
-PRESET MAP (FINAL LOCK)
-===================================== */
+const API_URL = "https://sn-design-api.onrender.com";
 
-const presetMap = {
-
-"dark-viral":{
-provider:"replicate",
-model:"black-forest-labs/flux-2-pro",
-maxLength:30,
-credit:3.5,
-about:"Dark cinematic viral generation preset"
-},
-
-"cinematic-pro":{
-provider:"runway",
-model:"gen3",
-maxLength:30,
-credit:4.0,
-about:"Professional cinematic video generator"
-},
-
-"face-swap":{
-provider:"replicate",
-model:"face-swap-ai",
-maxLength:20,
-credit:5.0,
-about:"Face swap transformation"
-},
-
-"dance-motion":{
-provider:"runway",
-model:"motion-control",
-maxLength:30,
-credit:6.0,
-about:"Motion control & dance animation"
-},
-
-"hyper-real":{
-provider:"replicate",
-model:"hyper-real-gen",
-maxLength:15,
-credit:3.0,
-about:"Ultra realistic generation"
-},
-
-"ai-lipsync":{
-provider:"replicate",
-model:"ai-lipsync-model",
-maxLength:20,
-credit:4.0,
-about:"AI LipSync video generation"
-}
-
-};
-
-
-/* =====================================
-LOAD TEMPLATE PARAM
-===================================== */
+/* ===============================
+SAFE PARAM CHECK
+=============================== */
 
 const params = new URLSearchParams(window.location.search);
-const template = params.get("template");
+
+let template = params.get("template");
+
+/* fallback ถ้าไม่มี template */
 
 if(!template){
 
-document.body.innerHTML = `
-<div style="color:white;padding:40px">
-TEMPLATE PARAMETER MISSING
-</div>`;
-return;
+ console.warn("NO TEMPLATE PARAM → using default");
+
+ template = "dance-motion";
 
 }
 
-const preset = presetMap[template];
+/* ===============================
+LOAD TEMPLATE UI
+=============================== */
 
-if(!preset){
+function loadTemplate(){
 
-document.body.innerHTML = `
-<div style="color:white;padding:40px">
-INVALID TEMPLATE
-</div>`;
-return;
+ const title = document.getElementById("templateTitle");
+ const img = document.getElementById("previewImage");
 
-}
+ title.innerText = "Template : " + template;
 
+ img.src = "/assets/images/template-"+template+".jpg";
 
-/* =====================================
-UI LOAD
-===================================== */
+ img.onerror = ()=>{
 
-const preview = document.getElementById("templatePreview");
-const title = document.getElementById("modelTitle");
-const detailBox = document.getElementById("detailBox");
+  console.warn("preview image missing");
 
-title.innerText = template.toUpperCase();
+  img.style.display="none";
 
-preview.src = "assets/images/template-"+template+".jpg";
-
-detailBox.innerHTML = `
-<p>${preset.about}</p>
-<p>Provider : ${preset.provider}</p>
-<p>Model : ${preset.model}</p>
-<p>MAX LENGTH : ${preset.maxLength} sec</p>
-<p>Credit cost : ${preset.credit}</p>
-`;
-
-
-/* =====================================
-ENGINE CREATE
-===================================== */
-
-let jobID=null;
-
-const statusText = document.getElementById("statusText");
-const progressFill = document.getElementById("progressFill");
-
-document.getElementById("createBtn").onclick = async function(){
-
-statusText.innerText="Sending request...";
-
-try{
-
-const res = await fetch("/api/render",{
-
-method:"POST",
-headers:{"Content-Type":"application/json"},
-
-body:JSON.stringify({
-
-templateID:template,
-provider:preset.provider,
-model:preset.model,
-duration:preset.maxLength,
-prompt:document.getElementById("promptInput").value
-
-})
-
-});
-
-const data = await res.json();
-
-jobID = data.jobID;
-
-watchStatus();
-
-}catch(e){
-
-statusText.innerText="ERROR";
+ };
 
 }
 
-};
+loadTemplate();
 
+/* ===============================
+RENDER ENGINE
+=============================== */
 
-/* =====================================
-STATUS WATCH
-===================================== */
+async function startRender(){
 
-function watchStatus(){
+ const prompt = document.getElementById("promptInput").value;
 
-const interval=setInterval(async()=>{
+ if(!prompt){
 
-try{
+  alert("Enter prompt");
 
-const res = await fetch("/api/status/"+jobID);
-const d = await res.json();
+  return;
 
-statusText.innerText=d.status+" "+(d.progress||0)+"%";
+ }
 
-progressFill.style.width=(d.progress||0)+"%";
+ document.getElementById("statusText").innerText="Starting...";
 
-if(d.status==="complete"){
+ try{
 
-clearInterval(interval);
+   const res = await fetch(API_URL+"/api/render",{
 
-statusText.innerText="RENDER COMPLETE";
+     method:"POST",
+
+     headers:{ "Content-Type":"application/json" },
+
+     body:JSON.stringify({
+
+       templateID:template,
+       prompt:prompt
+
+     })
+
+   });
+
+   const data = await res.json();
+
+   if(!data.success){
+
+     throw new Error("ENGINE FAIL");
+
+   }
+
+   trackStatus(data.jobID);
+
+ }catch(err){
+
+   console.error(err);
+
+   document.getElementById("statusText").innerText="ERROR START ENGINE";
+
+ }
 
 }
 
-}catch(e){}
+/* ===============================
+STATUS TRACK
+=============================== */
 
-},1500);
+async function trackStatus(jobID){
+
+ const statusText = document.getElementById("statusText");
+
+ const interval = setInterval(async()=>{
+
+   try{
+
+     const res = await fetch(API_URL+"/api/status/"+jobID);
+
+     const data = await res.json();
+
+     statusText.innerText = "Progress : "+data.progress+"%";
+
+     if(data.status === "complete"){
+
+       clearInterval(interval);
+
+       statusText.innerText="DONE";
+
+     }
+
+   }catch(e){
+
+     console.warn("status error");
+
+   }
+
+ },2000);
 
 }
-
-});
 
 </script>
 
