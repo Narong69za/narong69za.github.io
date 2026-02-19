@@ -9,6 +9,9 @@
     "express": "^4.19.2",
     "sqlite3": "^5.1.6",
     "replicate": "^0.34.0",
-    "node-fetch": "^2.6.9"
+    "node-fetch": "^2.6.9",
+    "dotenv": "^16.4.5",
+    "cors": "^2.8.5",
+    "uuid": "^9.0.1"
   }
 }
