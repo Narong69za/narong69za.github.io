@@ -1,46 +1,50 @@
 /*
 =====================================
-RUNWAY SERVICE
-FINAL CLEAN VERSION
+RUNWAY ENGINE SERVICE
+FINAL CLEAN
 =====================================
 */
 
+const fetch = require("node-fetch");
+
 const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 
-async function createRunwayJob(preset, prompt){
+async function run({ model, prompt, jobID }){
 
-    let model="";
+   const res = await fetch("https://api.runwayml.com/v1/generate",{
 
-    // mapping preset → model
-    if(preset==="cinematic-pro"){
-        model="gen4_image";
-    }
+      method:"POST",
 
-    if(preset==="dance-motion"){
-        model="act_two";
-    }
+      headers:{
+         "Authorization":`Bearer ${RUNWAY_API_KEY}`,
+         "Content-Type":"application/json"
+      },
 
-    const res = await fetch("https://api.runwayml.com/v1/generate",{
+      body:JSON.stringify({
 
-        method:"POST",
+         model:model,
 
-        headers:{
-            "Authorization":`Bearer ${RUNWAY_API_KEY}`,
-            "Content-Type":"application/json"
-        },
+         input:{
+            prompt:prompt
+         }
 
-        body:JSON.stringify({
-            model:model,
-            input:{
-                prompt:prompt
-            }
-        })
+      })
 
-    });
+   });
 
-    const data = await res.json();
+   const data = await res.json();
 
-    return data;
+   return {
+
+      jobID,
+      output:data
+
+   };
+
 }
 
-module.exports={createRunwayJob};
+module.exports = {
+
+   run
+
+};
