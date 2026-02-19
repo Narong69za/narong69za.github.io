@@ -1,6 +1,5 @@
 // ==============================
 // SN DESIGN STUDIO PAYMENT ENGINE
-// XENDIT QR AUTO SYSTEM
 // ==============================
 
 require("dotenv").config();
@@ -10,12 +9,13 @@ const router = express.Router();
 
 const Xendit = require("xendit-node");
 
+const db = require("../db/db");
+
 const x = new Xendit({
    secretKey: process.env.XENDIT_SECRET
 });
 
 const { QrCode } = x;
-
 const qr = new QrCode();
 
 
@@ -27,37 +27,50 @@ router.post("/create", async (req,res)=>{
 
    try{
 
-      const { amount, user } = req.body;
+      const { amount, userID } = req.body;
 
-      // DEV MODE (ไม่ตัดเงินจริง)
+      if(!userID || !amount){
+         return res.status(400).json({error:"invalid data"});
+      }
+
+      const externalID = `sn-${userID}-${Date.now()}`;
+
+      // DEV MODE
       if(process.env.DEV_MODE === "true"){
+
+         await db.run(
+           "INSERT INTO payments(externalID,userID,amount,status) VALUES(?,?,?,?)",
+           [externalID,userID,amount,"DEV_PENDING"]
+         );
 
          return res.json({
             dev:true,
-            qr_string:"https://dummyimage.com/300x300/000/fff&text=DEV+QR"
+            qr_string:"https://dummyimage.com/300x300/000/fff&text=DEV+QR",
+            externalID
          });
 
       }
 
       const qrCode = await qr.createQRCode({
 
-         externalID:"sn-"+Date.now(),
-
+         externalID,
          type:"DYNAMIC",
-
-         callbackURL:"https://api.sn-designstudio.dev/api/webhook/xendit",
-
-         amount: amount
+         callbackURL:process.env.WEBHOOK_URL,
+         amount
 
       });
+
+      await db.run(
+        "INSERT INTO payments(externalID,userID,amount,status) VALUES(?,?,?,?)",
+        [externalID,userID,amount,"PENDING"]
+      );
 
       res.json(qrCode);
 
    }catch(e){
 
       console.error(e);
-
-      res.json({success:false});
+      res.status(500).json({success:false});
 
    }
 
