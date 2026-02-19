@@ -162,9 +162,8 @@ async function startRender(){
 
 document.addEventListener("DOMContentLoaded", () => {
 
-   console.log("CREATE READY");
-
-   const params = new URLSearchParams(window.location.search);
+console.log("CREATE READY")
+const params = new URLSearchParams(window.location.search);
    const templateID = params.get("template");
 
    if(!templateID){
