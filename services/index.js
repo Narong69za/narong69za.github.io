@@ -17,7 +17,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+const path = require("path");
 
+/* STATIC FRONTEND ROOT (ULTRA SAFE) */
+app.use(express.static(path.join(__dirname,"../")));
 /* ================= HEALTH CHECK ================= */
 
 app.get("/", (req,res)=>{
