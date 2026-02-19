@@ -1,118 +1,33 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>SN DESIGN CREATE</title>
-
-<style>
-body{
- background:#0b0b0b;
- color:white;
- font-family:Arial;
- margin:0;
-}
-.container{
- padding:20px;
-}
-button{
- background:#ff0033;
- color:white;
- border:none;
- padding:12px 20px;
- cursor:pointer;
-}
-</style>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MINIMAL API TEST</title>
 </head>
-<body>
+<body style="background:#000;color:#fff;font-family:Arial;padding:40px;">
 
-<div class="container" id="app">
+<h2>MINIMAL RENDER TEST</h2>
 
-<h2 id="templateTitle"></h2>
+<button id="testBtn" style="padding:15px 25px;background:red;color:white;border:none;">
+SEND TEST JOB
+</button>
 
-<input id="promptInput" placeholder="Enter Prompt">
-
-<br><br>
-
-<button id="createBtn">CREATE</button>
-
-<p id="statusText"></p>
-
-</div>
+<p id="status"></p>
 
 <script>
 
+console.log("SCRIPT LOADED");
+
 const API_URL = "https://api.sn-designstudio.dev";
 
-document.addEventListener("DOMContentLoaded", ()=>{
+document.getElementById("testBtn").addEventListener("click", async () => {
 
- console.log("CREATE READY");
+    console.log("BUTTON CLICKED");
+    document.getElementById("status").innerText = "Sending...";
 
- const params = new URLSearchParams(window.location.search);
- const templateID = params.get("template");
+    try {
 
- if(!templateID){
-   document.body.innerHTML="TEMPLATE NOT FOUND";
-   return;
- }
-
- document.getElementById("templateTitle").innerText =
-   "Template: "+templateID;
-
- document.getElementById("createBtn")
-   .addEventListener("click", ()=>startRender(templateID));
-
-});
-
-async function startRender(templateID){
-
- console.log("CTA CLICKED");
-
- const prompt =
-   document.getElementById("promptInput").value;
-
- if(!prompt){
-   alert("Enter prompt");
-   return;
- }
-
- document.getElementById("statusText").innerText="Starting...";
-
- try{
-
-   const res = await fetch(API_URL+"/api/render",{
-
-     method:"POST",
-     headers:{ "Content-Type":"application/json" },
-     body:JSON.stringify({
-       templateID:templateID,
-       prompt:prompt
-     })
-
-   });
-
-   const data = await res.json();
-
-   console.log("JOB CREATED:",data);
-
-   document.getElementById("statusText")
-     .innerText="Job Started";
-
- }catch(err){
-
-   console.error(err);
-
-   document.getElementById("statusText")
-     .innerText="ENGINE ERROR";
-
- }
-
-}
-
-</script>
-
-</body>
-</html>
+        const res = await fetch(API_URL + "/api/render", {
+            method: "POST",
+            headers:
