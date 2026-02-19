@@ -158,5 +158,17 @@ padding:12px;
 .preview-box{
 min-height:180px;
 }
+.create-wrapper{
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+}
 
+#prompt{
+    width:100%;
+}
+
+#createBtn{
+    width:100%;
+}
 }
