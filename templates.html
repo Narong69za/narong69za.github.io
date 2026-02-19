@@ -10,7 +10,7 @@
 <meta name="description"
 content="CapCut Templates, AI Creator system, Viral template collection by SN Design Studio">
 
-<link rel="stylesheet" href="assets/css/master.css">
+<link rel="stylesheet" href="https://sn-designstudio.dev/assets/css/master.css">
 
 </head>
 
@@ -20,12 +20,11 @@ content="CapCut Templates, AI Creator system, Viral template collection by SN De
 
 <section class="hero-master">
 
-<img src="assets/images/landing.png">
+<img src="https://sn-designstudio.dev/assets/images/landing.png">
 
 <div class="hero-content-bottom fade-up">
 
 <h1>Template Collection</h1>
-
 <p>Create faster. Grow faster. Built for real creators.</p>
 
 </div>
@@ -41,22 +40,22 @@ content="CapCut Templates, AI Creator system, Viral template collection by SN De
 <div class="template-grid">
 
 <a class="template-card" data-template="dark-viral">
-<img src="assets/images/template-dark-viral.jpg">
+<img src="https://sn-designstudio.dev/assets/images/template-dark-viral.jpg">
 <h3>Dark Viral Style</h3>
 </a>
 
 <a class="template-card" data-template="ai-lipsync">
-<img src="assets/images/template-ai-lipsync.jpg">
+<img src="https://sn-designstudio.dev/assets/images/template-ai-lipsync.jpg">
 <h3>AI LipSync</h3>
 </a>
 
 <a class="template-card" data-template="dance-motion">
-<img src="assets/images/template-dance-motion.jpg">
+<img src="https://sn-designstudio.dev/assets/images/template-dance-motion.jpg">
 <h3>Dance Motion</h3>
 </a>
 
 <a class="template-card" data-template="face-swap">
-<img src="assets/images/template-face-swap.jpg">
+<img src="https://sn-designstudio.dev/assets/images/template-face-swap.jpg">
 <h3>Face Swap</h3>
 </a>
 
@@ -70,28 +69,24 @@ content="CapCut Templates, AI Creator system, Viral template collection by SN De
 © SN Design Studio, 2026 · All rights reserved.
 </footer>
 
-<script src="assets/js/nav.js"></script>
+<script src="https://sn-designstudio.dev/assets/js/nav.js"></script>
 
 <script>
 
 document.querySelectorAll("[data-template]").forEach(card=>{
 
-   card.addEventListener("click",(e)=>{
+card.addEventListener("click",(e)=>{
 
-      e.preventDefault();
-      e.stopPropagation();
+e.preventDefault();
+e.stopPropagation();
 
-      const template = card.dataset.template;
+const template = card.dataset.template;
+if(!template) return;
 
-      if(!template) return;
+window.location.href =
+"/create.html?template="+encodeURIComponent(template);
 
-      const target =
-      "https://api.sn-designstudio.dev/create.html?template="
-      +encodeURIComponent(template);
-
-      window.location.replace(target);
-
-   });
+});
 
 });
 
