@@ -3,127 +3,138 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Create | SN Design Studio</title>
 
-<link rel="stylesheet" href="assets/css/create.css">
+<link rel="stylesheet" href="https://sn-designstudio.dev/assets/css/master.css">
+<link rel="stylesheet" href="https://sn-designstudio.dev/assets/css/create.css">
 
 </head>
 <body>
 
 <div class="create-wrapper">
 
-  <div class="create-header">
-    <div class="create-title">ULTRA GOD CREATE</div>
-    <div id="engineLabel" class="engine-badge"></div>
-  </div>
+<h1 class="create-title">ULTRA GOD CREATE</h1>
 
-  <div class="create-grid">
+<h3 id="engineLabel"></h3>
 
-    <div class="create-left">
-      <input id="prompt" class="create-input" placeholder="Enter prompt">
-      <button id="createBtn" class="create-btn">CREATE VIDEO</button>
-      <div id="status" class="status-box">STATUS: IDLE</div>
-    </div>
+<input id="prompt" placeholder="Enter prompt">
 
-    <div class="create-right">
-      <div id="preview" class="preview-box">PREVIEW AREA</div>
-      <pre id="debug" class="debug-box"></pre>
-    </div>
+<button id="createBtn">CREATE VIDEO</button>
 
-  </div>
+<h3 id="status">STATUS: IDLE</h3>
+
+<div id="preview"></div>
 
 </div>
 
 <script>
 
+/* ===== CONFIG ===== */
+
 const API = "https://api.sn-designstudio.dev";
+
+/* ===== GET TEMPLATE ===== */
 
 const params = new URLSearchParams(window.location.search);
 const templateID = params.get("template");
 
-const statusEl = document.getElementById("status");
-const debugEl = document.getElementById("debug");
-const engineLabel = document.getElementById("engineLabel");
-
-function log(msg){
-debugEl.textContent += msg + "\\n";
-}
+document.getElementById("engineLabel").innerText =
+"ENGINE: "+templateID;
 
 if(!templateID){
-statusEl.textContent = "STATUS: NO TEMPLATE";
+
+document.getElementById("status").innerText =
+"STATUS: NO TEMPLATE";
+
 throw new Error("Template missing");
+
 }
 
-engineLabel.textContent = "ENGINE: " + templateID;
-log("Template: " + templateID);
+/* ===== CREATE BUTTON ===== */
 
 document.getElementById("createBtn")
 .addEventListener("click", async ()=>{
 
-statusEl.textContent = "STATUS: SENDING...";
-log("CTA CLICKED");
-
 const prompt =
 document.getElementById("prompt").value;
 
+document.getElementById("status").innerText =
+"STATUS: SENDING";
+
 try{
 
-const res = await fetch(API + "/api/render", {
+const res = await fetch(API+"/api/render",{
+
 method:"POST",
 headers:{ "Content-Type":"application/json" },
+
 body:JSON.stringify({
-templateID: templateID,
-prompt: prompt
+
+templateID:templateID,
+input:{ prompt:prompt }
+
 })
+
 });
 
 const data = await res.json();
-log("Response: " + JSON.stringify(data));
 
-if(!data.jobID){
-throw new Error("No jobID");
-}
+if(!data.jobID) throw new Error("No jobID");
 
-statusEl.textContent = "STATUS: PROCESSING";
-pollStatus(data.jobID);
+document.getElementById("status").innerText =
+"STATUS: PROCESSING";
+
+startPolling(data.jobID);
 
 }catch(e){
-statusEl.textContent = "STATUS: ERROR";
-log("ERROR: " + e.message);
+
+document.getElementById("status").innerText =
+"STATUS: ERROR";
+
 }
 
 });
 
-function pollStatus(jobID){
+/* ===== POLLING ===== */
+
+function startPolling(jobID){
 
 const interval = setInterval(async()=>{
 
-const res = await fetch(API + "/api/status/" + jobID);
+const res =
+await fetch(API+"/api/status/"+jobID);
+
 const data = await res.json();
 
-log("Progress: " + data.progress);
+if(data.status==="complete"){
 
-if(data.status === "complete"){
 clearInterval(interval);
-statusEl.textContent = "STATUS: COMPLETE";
-showPreview(data.url);
+
+document.getElementById("status").innerText =
+"STATUS: COMPLETE";
+
+if(data.url){
+
+document.getElementById("preview").innerHTML =
+'<video controls autoplay src="'+data.url+'"></video>';
+
 }
 
-if(data.status === "error"){
+}
+
+if(data.status==="error"){
+
 clearInterval(interval);
-statusEl.textContent = "STATUS: ERROR";
+
+document.getElementById("status").innerText =
+"STATUS: ERROR";
+
 }
 
 },3000);
 
-}
-
-function showPreview(url){
-if(!url) return;
-document.getElementById("preview").innerHTML =
-'<video controls autoplay src="'+url+'"></video>';
 }
 
 </script>
