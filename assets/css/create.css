@@ -1,10 +1,6 @@
-/* =========================================================
-SN DESIGN STUDIO
-ULTRA FINAL CREATE MASTER CSS
-Mobile First • Clean • Production Ready
-========================================================= */
-
-/* ===== RESET SAFE ===== */
+/* ===============================
+ULTRA CREATE FINAL UI SCALE FIX
+=============================== */
 
 *{
 box-sizing:border-box;
@@ -15,42 +11,37 @@ padding:0;
 html,body{
 background:#000;
 color:#fff;
-font-family:Arial, Helvetica, sans-serif;
+font-family:Arial, sans-serif;
 height:100%;
+overflow-x:hidden;
 }
 
-/* ===== LAYOUT WRAPPER ===== */
+/* ===== MAIN WRAPPER ===== */
 
 .create-wrapper{
-max-width:1200px;
-margin:auto;
+max-width:1100px;
+margin:0 auto;
 padding:20px;
-display:flex;
-flex-direction:column;
-gap:25px;
 }
 
 /* ===== HEADER ===== */
 
 .create-header{
-display:flex;
-flex-direction:column;
-gap:8px;
+margin-bottom:20px;
 }
 
 .create-title{
-font-size:26px;
-font-weight:700;
-letter-spacing:1px;
-}
-
-.engine-badge{
-font-size:14px;
-color:#ff0033;
+font-size:22px;
 font-weight:bold;
 }
 
-/* ===== MAIN GRID ===== */
+.engine-badge{
+font-size:13px;
+color:#ff0033;
+margin-top:5px;
+}
+
+/* ===== GRID ===== */
 
 .create-grid{
 display:flex;
@@ -82,23 +73,17 @@ background:#111;
 border:1px solid #333;
 color:#fff;
 font-size:16px;
-outline:none;
-transition:0.2s;
-}
-
-.create-input:focus{
-border-color:#ff0033;
 }
 
 /* ===== BUTTON ===== */
 
 .create-btn{
 width:100%;
-padding:16px;
+padding:14px;
 background:#ff0033;
 border:none;
 color:#fff;
-font-size:18px;
+font-size:16px;
 font-weight:bold;
 cursor:pointer;
 transition:0.2s;
@@ -108,17 +93,11 @@ transition:0.2s;
 background:#ff1a4d;
 }
 
-.create-btn:active{
-transform:scale(0.98);
-}
-
 /* ===== STATUS ===== */
 
 .status-box{
-margin-top:5px;
-font-weight:bold;
 font-size:14px;
-opacity:0.9;
+margin-top:5px;
 }
 
 /* ===== RIGHT PANEL ===== */
@@ -136,61 +115,48 @@ gap:20px;
 /* ===== PREVIEW ===== */
 
 .preview-box{
-min-height:240px;
+width:100%;
+min-height:220px;
 border:1px dashed #333;
 display:flex;
 align-items:center;
 justify-content:center;
-color:#555;
 font-size:14px;
+color:#666;
 }
 
 .preview-box video{
 width:100%;
+max-height:400px;
+object-fit:contain;
 }
 
-/* ===== DEBUG PANEL ===== */
+/* ===== DEBUG ===== */
 
 .debug-box{
 background:#000;
 border:1px solid #222;
-padding:12px;
+padding:10px;
 font-size:12px;
-height:200px;
+height:160px;
 overflow:auto;
-white-space:pre-wrap;
 }
 
-/* ===== PROGRESS BAR (READY FOR FUTURE) ===== */
+/* ===== MOBILE SAFE FIX ===== */
 
-.progress-container{
-height:6px;
-background:#111;
-border-radius:3px;
-overflow:hidden;
+@media(max-width:600px){
+
+.create-wrapper{
+padding:15px;
 }
 
-.progress-fill{
-height:100%;
-width:0%;
-background:#ff0033;
-transition:width 0.3s ease;
+.create-btn{
+font-size:15px;
+padding:12px;
 }
 
-/* ===== SCROLLBAR DARK ===== */
-
-::-webkit-scrollbar{
-width:6px;
+.preview-box{
+min-height:180px;
 }
 
-::-webkit-scrollbar-track{
-background:#000;
-}
-
-::-webkit-scrollbar-thumb{
-background:#222;
-}
-
-::-webkit-scrollbar-thumb:hover{
-background:#333;
 }
