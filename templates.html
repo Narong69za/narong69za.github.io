@@ -7,69 +7,51 @@
 
 <title>Templates | SN Design Studio</title>
 
-<meta name="description"
-content="CapCut Templates, AI Creator system, Viral template collection by SN Design Studio">
-
-<link rel="stylesheet" href="https://sn-designstudio.dev/assets/css/master.css">
+<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
 
 </head>
 
 <body class="template-page">
 
-<div id="nav"></div>
-
 <section class="hero-master">
 
-<img src="https://sn-designstudio.dev/assets/images/landing.png">
+<img src="https://api.sn-designstudio.dev/assets/images/landing.png">
 
 <div class="hero-content-bottom fade-up">
-
 <h1>Template Collection</h1>
 <p>Create faster. Grow faster. Built for real creators.</p>
-
 </div>
 
 </section>
 
 <section class="section">
-
 <div class="container">
-
-<h2 class="section-title fade-up">Template Collection</h2>
 
 <div class="template-grid">
 
 <a class="template-card" data-template="dark-viral">
-<img src="https://sn-designstudio.dev/assets/images/template-dark-viral.jpg">
+<img src="https://api.sn-designstudio.dev/assets/images/template-dark-viral.jpg">
 <h3>Dark Viral Style</h3>
 </a>
 
 <a class="template-card" data-template="ai-lipsync">
-<img src="https://sn-designstudio.dev/assets/images/template-ai-lipsync.jpg">
+<img src="https://api.sn-designstudio.dev/assets/images/template-ai-lipsync.jpg">
 <h3>AI LipSync</h3>
 </a>
 
 <a class="template-card" data-template="dance-motion">
-<img src="https://sn-designstudio.dev/assets/images/template-dance-motion.jpg">
+<img src="https://api.sn-designstudio.dev/assets/images/template-dance-motion.jpg">
 <h3>Dance Motion</h3>
 </a>
 
 <a class="template-card" data-template="face-swap">
-<img src="https://sn-designstudio.dev/assets/images/template-face-swap.jpg">
+<img src="https://api.sn-designstudio.dev/assets/images/template-face-swap.jpg">
 <h3>Face Swap</h3>
 </a>
 
 </div>
-
 </div>
-
 </section>
-
-<footer>
-© SN Design Studio, 2026 · All rights reserved.
-</footer>
-
-<script src="https://sn-designstudio.dev/assets/js/nav.js"></script>
 
 <script>
 
@@ -78,13 +60,12 @@ document.querySelectorAll("[data-template]").forEach(card=>{
 card.addEventListener("click",(e)=>{
 
 e.preventDefault();
-e.stopPropagation();
 
 const template = card.dataset.template;
-if(!template) return;
 
 window.location.href =
-"/create.html?template="+encodeURIComponent(template);
+"https://api.sn-designstudio.dev/create.html?template="
++encodeURIComponent(template);
 
 });
 
