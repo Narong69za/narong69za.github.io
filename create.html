@@ -3,26 +3,68 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
 <title>Create | SN Design Studio</title>
 
-<link rel="stylesheet" href="assets/css/master.css">
+<link rel="stylesheet" href="assets/css/create.css">
 
 <style>
+
+/* ULTRA GOD UI LAYER (ADD ONLY) */
 
 body{
 background:#000;
 color:#fff;
-font-family:sans-serif;
+margin:0;
+font-family:Arial, sans-serif;
+}
+
+.header{
+padding:20px;
+font-size:22px;
+font-weight:bold;
+}
+
+.wrapper{
+display:flex;
+flex-direction:column;
+gap:20px;
 padding:20px;
 }
 
+@media(min-width:900px){
+.wrapper{
+flex-direction:row;
+}
+}
+
+.left-panel{
+flex:1;
+}
+
+.right-panel{
+flex:1;
+background:#050505;
+padding:20px;
+}
+
+input{
+width:100%;
+padding:15px;
+background:#111;
+border:1px solid #333;
+color:#fff;
+}
+
 button{
+width:100%;
 background:#ff0033;
 color:#fff;
 border:none;
-padding:15px 20px;
+padding:18px;
+font-size:18px;
+font-weight:bold;
 margin-top:10px;
 }
 
@@ -31,22 +73,43 @@ width:100%;
 margin-top:20px;
 }
 
+#debug{
+background:#000;
+border:1px solid #222;
+padding:10px;
+height:200px;
+overflow:auto;
+font-size:12px;
+}
+
 </style>
 
 </head>
 <body>
 
-<h1>ULTRA GOD CREATE</h1>
+<div class="header">ULTRA GOD CREATE ENGINE</div>
+
+<div class="wrapper">
+
+<div class="left-panel">
 
 <input id="prompt" placeholder="Enter prompt">
-<br>
+
 <button id="createBtn">CREATE VIDEO</button>
 
 <h3 id="status">STATUS: IDLE</h3>
 
-<pre id="debug"></pre>
+</div>
+
+<div class="right-panel">
 
 <div id="preview"></div>
+
+<pre id="debug"></pre>
+
+</div>
+
+</div>
 
 <script>
 
@@ -57,15 +120,15 @@ const API = "https://api.sn-designstudio.dev";
 /* ================= DEBUG ================= */
 
 function log(msg){
-document.getElementById("debug").textContent += msg+"\n";
+document.getElementById("debug").textContent += msg+"\\n";
 }
 
-/* ================= GET TEMPLATE ================= */
+/* ================= TEMPLATE PARAM ================= */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
 
-log("DOM LOADED");
+log("CREATE READY");
 log("Template: "+template);
 
 if(!template){
@@ -77,7 +140,7 @@ throw new Error("Template missing");
 
 }
 
-/* ================= TEMPLATE → MODEL MAP ================= */
+/* ================= TEMPLATE MAP ================= */
 
 const MODEL_MAP = {
 
@@ -99,7 +162,7 @@ throw new Error("Model not mapped");
 
 }
 
-/* ================= CREATE BUTTON ================= */
+/* ================= CTA ================= */
 
 document.getElementById("createBtn")
 .addEventListener("click", async ()=>{
@@ -123,10 +186,8 @@ headers:{
 
 body:JSON.stringify({
 
-model:model,
-input:{
+templateID:model,
 prompt:prompt
-}
 
 })
 
@@ -158,7 +219,7 @@ document.getElementById("status")
 
 });
 
-/* ================= STATUS POLLING ================= */
+/* ================= POLLING ================= */
 
 function startPolling(jobID){
 
