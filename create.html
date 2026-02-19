@@ -7,10 +7,6 @@
 
 <title>Official Website — SN DESIGN STUDIO</title>
 
-<meta name="description" content="SN Design Studio AI Create Engine">
-<meta name="keywords" content="AI Creator, Motion AI, SN Design Studio, Video Generator">
-
-<!-- FIX PATH (ADD ONLY SAFE) -->
 <link rel="stylesheet" href="assets/css/create.css">
 
 </head>
@@ -22,12 +18,10 @@
 </header>
 
 
-<!-- ================= HERO ================= -->
-
 <section class="hero-block">
 
 <div class="hero-left">
-   <img id="templatePreview" src="">
+   <img id="templatePreview">
 </div>
 
 <div class="hero-right">
@@ -41,16 +35,13 @@
 </section>
 
 
-<!-- ================= MAIN ================= -->
-
 <section class="create-container">
 
 <div class="panel left">
 
 <h3>PROJECT</h3>
 
-<textarea id="promptInput"
-placeholder="Enter AI instruction..."></textarea>
+<textarea id="promptInput"></textarea>
 
 <input type="file" id="videoInput" accept="video/*">
 <input type="file" id="imageInput" accept="image/*">
@@ -79,16 +70,10 @@ CREATE VIDEO
 
 <script>
 
-/* ======================================================
-ULTRA SAFE DOM READY (ADD ONLY)
-====================================================== */
-
 document.addEventListener("DOMContentLoaded", ()=>{
 
 
-/* ======================================================
-ULTRA PRESET MAP (MASTER)
-====================================================== */
+/* ================= PRESET MAP ================= */
 
 const presetMap = {
 
@@ -108,12 +93,13 @@ credit:4.0,
 about:"Professional cinematic video generator"
 },
 
-"face-clone":{
+/* FIX KEY MATCH TEMPLATE PAGE */
+"face-swap":{
 provider:"replicate",
 model:"face-swap-ai",
 maxLength:20,
 credit:5.0,
-about:"Face clone & identity transformation"
+about:"Face swap transformation"
 },
 
 "dance-motion":{
@@ -132,7 +118,6 @@ credit:3.0,
 about:"Ultra realistic generation"
 },
 
-/* ADD ONLY FIX — template page มี card นี้ */
 "ai-lipsync":{
 provider:"replicate",
 model:"ai-lipsync-model",
@@ -144,9 +129,8 @@ about:"AI LipSync video generation"
 };
 
 
-/* ======================================================
-LOAD TEMPLATE
-====================================================== */
+
+/* ================= LOAD TEMPLATE ================= */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
@@ -155,48 +139,41 @@ const preview = document.getElementById("templatePreview");
 const title = document.getElementById("modelTitle");
 const detailBox = document.getElementById("detailBox");
 
-let preset = null;
+const preset = presetMap[template];
 
-if(template && presetMap[template]){
+if(!preset){
 
-   preset = presetMap[template];
-
-   title.innerText = template.toUpperCase();
-
-   /* FIX IMAGE PATH (SAFE RELATIVE) */
-   preview.src = "assets/images/template-"+template+".jpg";
-
-   detailBox.innerHTML = `
-      <p>${preset.about}</p>
-      <p>Provider : ${preset.provider}</p>
-      <p>Model : ${preset.model}</p>
-      <p>MAX LENGTH : ${preset.maxLength} sec</p>
-      <p>Credit cost : ${preset.credit}</p>
-   `;
-}else{
-
-   /* SAFE FALLBACK (ADD ONLY) */
-   title.innerText="PRESET NOT FOUND";
+   title.innerText="INVALID TEMPLATE";
+   console.error("preset not found:", template);
+   return;
 
 }
 
+title.innerText = template.toUpperCase();
 
-/* ======================================================
-ENGINE CREATE
-====================================================== */
+preview.src = "assets/images/template-"+template+".jpg";
+
+detailBox.innerHTML = `
+<p>${preset.about}</p>
+<p>Provider : ${preset.provider}</p>
+<p>Model : ${preset.model}</p>
+<p>MAX LENGTH : ${preset.maxLength} sec</p>
+<p>Credit cost : ${preset.credit}</p>
+`;
+
+
+
+/* ================= ENGINE ================= */
 
 let jobID=null;
 
 const statusText = document.getElementById("statusText");
 const progressFill = document.getElementById("progressFill");
 
-document.getElementById("createBtn")
-.addEventListener("click", async()=>{
+const btn = document.getElementById("createBtn");
 
-   if(!preset){
-      alert("Preset not found");
-      return;
-   }
+/* prevent double bind */
+btn.onclick = async ()=>{
 
    statusText.innerText="Sending request...";
 
@@ -212,7 +189,6 @@ document.getElementById("createBtn")
          provider:preset.provider,
          model:preset.model,
          duration:preset.maxLength,
-
          prompt:document.getElementById("promptInput").value
 
       })
@@ -225,14 +201,10 @@ document.getElementById("createBtn")
 
    watchStatus();
 
-});
+};
 
 
-/* ======================================================
-STATUS WATCH
-====================================================== */
-
-async function watchStatus(){
+function watchStatus(){
 
 const interval=setInterval(async()=>{
 
