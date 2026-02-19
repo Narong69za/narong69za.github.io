@@ -1,25 +1,32 @@
-module.exports = {
-   runEngine
-};
+/*
+=====================================
+SN DESIGN MOTION ENGINE
+COMMONJS SAFE VERSION
+=====================================
+*/
 
-   async run(job){
+async function runEngine(data){
 
-      console.log("ENGINE START:",job.engine);
+   const { templateID, prompt, jobID } = data;
 
-      // simulate render process
-      for(let i=1;i<=10;i++){
-
-         await new Promise(r=>setTimeout(r,500));
-
-      }
-
-      return {
-
-         status:"complete",
-         progress:100
-
-      };
-
+   if(!templateID){
+      throw new Error("TEMPLATE ID MISSING");
    }
 
+   if(!jobID){
+      throw new Error("JOB ID MISSING");
+   }
+
+   // ตัวอย่างจำลองการทำงาน
+   console.log("RUN ENGINE:", templateID);
+   console.log("PROMPT:", prompt);
+
+   return {
+      success: true
+   };
+
+}
+
+module.exports = {
+   runEngine
 };
