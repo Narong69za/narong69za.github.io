@@ -31,50 +31,61 @@
 
 <script>
 
-const API="https://api.sn-designstudio.dev";
+const API = window.SN_CONFIG?.API_BASE || 
+"https://api.sn-designstudio.dev";
 
-const params=new URLSearchParams(location.search);
-const templateID=params.get("template");
+const params = new URLSearchParams(location.search);
+const templateID = params.get("template");
 
-document.getElementById("engineLabel").innerText=
-"ENGINE: "+templateID;
+const promptInput = document.getElementById("prompt");
+const createBtn = document.getElementById("createBtn");
 
-document.getElementById("createBtn").onclick=async()=>{
+createBtn.addEventListener("click", async () => {
 
-const prompt=document.getElementById("prompt").value;
+    const prompt = promptInput.value || "";
 
-const res=await fetch(API+"/api/render",{
-method:"POST",
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-templateID:templateID,
-input:{prompt:prompt}
-})
+    if(!prompt.trim()){
+        alert("Enter prompt first");
+        return;
+    }
+
+    const res = await fetch(API + "/api/render", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            templateID: templateID,
+            input: { prompt: prompt }
+        })
+    });
+
+    const data = await res.json();
+
+    if(!data.jobID){
+        console.error("No jobID");
+        return;
+    }
+
+    startPolling(data.jobID);
+
 });
-
-const data=await res.json();
-
-startPolling(data.jobID);
-
-};
 
 function startPolling(id){
 
-const loop=setInterval(async()=>{
+    const loop = setInterval(async ()=>{
 
-const res=await fetch(API+"/api/status/"+id);
-const data=await res.json();
+        const res = await fetch(API + "/api/status/" + id);
+        const data = await res.json();
 
-if(data.status==="complete"){
+        if(data.status === "complete"){
 
-clearInterval(loop);
+            clearInterval(loop);
 
-document.getElementById("preview").innerHTML=
-'<video controls autoplay src="'+data.url+'"></video>';
+            document.getElementById("preview").innerHTML =
+            '<video controls autoplay src="'+data.url+'"></video>';
 
-}
+        }
 
-},3000);
+    },3000);
 
 }
 
