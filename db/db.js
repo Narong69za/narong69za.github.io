@@ -7,19 +7,56 @@ const db = new sqlite3.Database(
 
 db.serialize(()=>{
 
-   db.run(`
-      CREATE TABLE IF NOT EXISTS projects(
-         id TEXT PRIMARY KEY,
-         templateID TEXT,
-         engine TEXT,
-         duration INTEGER,
-         status TEXT,
-         progress INTEGER,
-         creditUsed REAL,
-         eta TEXT,
-         createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-   `);
+/* ===============================
+USERS TABLE
+=============================== */
+
+db.run(`
+CREATE TABLE IF NOT EXISTS users(
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   googleID TEXT UNIQUE,
+   email TEXT,
+   name TEXT,
+   credit REAL DEFAULT 0,
+   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+
+/* ===============================
+PROJECTS TABLE
+=============================== */
+
+db.run(`
+CREATE TABLE IF NOT EXISTS projects(
+   id TEXT PRIMARY KEY,
+   userID INTEGER,
+   templateID TEXT,
+   engine TEXT,
+   duration INTEGER,
+   status TEXT,
+   progress INTEGER,
+   creditUsed REAL,
+   eta TEXT,
+   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
+
+
+/* ===============================
+PAYMENTS TABLE
+=============================== */
+
+db.run(`
+CREATE TABLE IF NOT EXISTS payments(
+   id INTEGER PRIMARY KEY AUTOINCREMENT,
+   externalID TEXT UNIQUE,
+   userID INTEGER,
+   amount REAL,
+   status TEXT,
+   createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+`);
 
 });
 
