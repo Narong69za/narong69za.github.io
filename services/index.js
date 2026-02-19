@@ -8,9 +8,8 @@ FULL FIX VERSION (RENDER SAFE)
 const express = require("express");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
-
 const { runEngine } =
-require("./engine/motionEngine");
+require("../engine/motionEngine");
 
 const app = express();
 
