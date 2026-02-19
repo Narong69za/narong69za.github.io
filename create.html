@@ -8,18 +8,15 @@
 <title>SN DESIGN CREATE</title>
 
 <style>
-
 body{
  background:#0b0b0b;
  color:white;
  font-family:Arial;
  margin:0;
 }
-
 .container{
  padding:20px;
 }
-
 button{
  background:#ff0033;
  color:white;
@@ -27,25 +24,16 @@ button{
  padding:12px 20px;
  cursor:pointer;
 }
-
-img{
- max-width:100%;
-}
-
 </style>
 
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="app">
 
-<h2 id="templateTitle">Loading Template...</h2>
+<h2 id="templateTitle"></h2>
 
-<img id="previewImage" />
-
-<br><br>
-
-<input id="promptInput" placeholder="Enter Prompt" style="width:100%;padding:10px;">
+<input id="promptInput" placeholder="Enter Prompt">
 
 <br><br>
 
@@ -57,80 +45,38 @@ img{
 
 <script>
 
-/* ===============================
-ULTRA SAFE CONFIG
-=============================== */
-
 const API_URL = "https://api.sn-designstudio.dev";
-
-/* ===============================
-INIT
-=============================== */
 
 document.addEventListener("DOMContentLoaded", ()=>{
 
  console.log("CREATE READY");
 
  const params = new URLSearchParams(window.location.search);
+ const templateID = params.get("template");
 
- let template = params.get("template");
-
- if(!template){
-
-   console.warn("NO TEMPLATE PARAM → using default");
-
-   template = "dance-motion";
-
+ if(!templateID){
+   document.body.innerHTML="TEMPLATE NOT FOUND";
+   return;
  }
 
- loadTemplate(template);
+ document.getElementById("templateTitle").innerText =
+   "Template: "+templateID;
 
  document.getElementById("createBtn")
-   .addEventListener("click", ()=>startRender(template));
+   .addEventListener("click", ()=>startRender(templateID));
 
 });
 
-
-/* ===============================
-LOAD TEMPLATE UI
-=============================== */
-
-function loadTemplate(template){
-
- const title = document.getElementById("templateTitle");
- const img = document.getElementById("previewImage");
-
- title.innerText = "Template : " + template;
-
- img.src = "/assets/images/template-"+template+".jpg";
-
- img.onerror = ()=>{
-
-  console.warn("preview image missing");
-
-  img.style.display="none";
-
- };
-
-}
-
-
-/* ===============================
-RENDER ENGINE
-=============================== */
-
-async function startRender(template){
+async function startRender(templateID){
 
  console.log("CTA CLICKED");
 
- const prompt = document.getElementById("promptInput").value;
+ const prompt =
+   document.getElementById("promptInput").value;
 
  if(!prompt){
-
    alert("Enter prompt");
-
    return;
-
  }
 
  document.getElementById("statusText").innerText="Starting...";
@@ -140,14 +86,10 @@ async function startRender(template){
    const res = await fetch(API_URL+"/api/render",{
 
      method:"POST",
-
      headers:{ "Content-Type":"application/json" },
-
      body:JSON.stringify({
-
-       templateID:template,
+       templateID:templateID,
        prompt:prompt
-
      })
 
    });
@@ -156,19 +98,15 @@ async function startRender(template){
 
    console.log("JOB CREATED:",data);
 
-   if(!data.success){
-
-     throw new Error("ENGINE FAIL");
-
-   }
-
-   document.getElementById("statusText").innerText="JOB STARTED";
+   document.getElementById("statusText")
+     .innerText="Job Started";
 
  }catch(err){
 
    console.error(err);
 
-   document.getElementById("statusText").innerText="ERROR START ENGINE";
+   document.getElementById("statusText")
+     .innerText="ENGINE ERROR";
 
  }
 
