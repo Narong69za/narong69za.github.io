@@ -9,81 +9,6 @@
 
 <link rel="stylesheet" href="assets/css/create.css">
 
-<style>
-
-/* ULTRA GOD UI LAYER (ADD ONLY) */
-
-body{
-background:#000;
-color:#fff;
-margin:0;
-font-family:Arial, sans-serif;
-}
-
-.header{
-padding:20px;
-font-size:22px;
-font-weight:bold;
-}
-
-.wrapper{
-display:flex;
-flex-direction:column;
-gap:20px;
-padding:20px;
-}
-
-@media(min-width:900px){
-.wrapper{
-flex-direction:row;
-}
-}
-
-.left-panel{
-flex:1;
-}
-
-.right-panel{
-flex:1;
-background:#050505;
-padding:20px;
-}
-
-input{
-width:100%;
-padding:15px;
-background:#111;
-border:1px solid #333;
-color:#fff;
-}
-
-button{
-width:100%;
-background:#ff0033;
-color:#fff;
-border:none;
-padding:18px;
-font-size:18px;
-font-weight:bold;
-margin-top:10px;
-}
-
-#preview video{
-width:100%;
-margin-top:20px;
-}
-
-#debug{
-background:#000;
-border:1px solid #222;
-padding:10px;
-height:200px;
-overflow:auto;
-font-size:12px;
-}
-
-</style>
-
 </head>
 <body>
 
@@ -91,20 +16,20 @@ font-size:12px;
 
   <div class="create-header">
     <div class="create-title">ULTRA GOD CREATE</div>
-    <div class="engine-badge">ENGINE: dark-viral</div>
+    <div id="engineLabel" class="engine-badge"></div>
   </div>
 
   <div class="create-grid">
 
     <div class="create-left">
-      <input class="create-input">
-      <button class="create-btn">CREATE VIDEO</button>
-      <div class="status-box">STATUS</div>
+      <input id="prompt" class="create-input" placeholder="Enter prompt">
+      <button id="createBtn" class="create-btn">CREATE VIDEO</button>
+      <div id="status" class="status-box">STATUS: IDLE</div>
     </div>
 
     <div class="create-right">
-      <div class="preview-box"></div>
-      <div class="debug-box"></div>
+      <div id="preview" class="preview-box">PREVIEW AREA</div>
+      <pre id="debug" class="debug-box"></pre>
     </div>
 
   </div>
@@ -113,162 +38,92 @@ font-size:12px;
 
 <script>
 
-/* ================= CONFIG ================= */
-
 const API = "https://api.sn-designstudio.dev";
 
-/* ================= DEBUG ================= */
+const params = new URLSearchParams(window.location.search);
+const templateID = params.get("template");
+
+const statusEl = document.getElementById("status");
+const debugEl = document.getElementById("debug");
+const engineLabel = document.getElementById("engineLabel");
 
 function log(msg){
-document.getElementById("debug").textContent += msg+"\\n";
+debugEl.textContent += msg + "\\n";
 }
 
-/* ================= TEMPLATE PARAM ================= */
-
-const params = new URLSearchParams(window.location.search);
-const template = params.get("template");
-
-log("CREATE READY");
-log("Template: "+template);
-
-if(!template){
-
-document.getElementById("status").textContent =
-"STATUS: NO TEMPLATE";
-
+if(!templateID){
+statusEl.textContent = "STATUS: NO TEMPLATE";
 throw new Error("Template missing");
-
 }
 
-/* ================= TEMPLATE MAP ================= */
-
-const MODEL_MAP = {
-
-"dark-viral":"dark-viral",
-"ai-lipsync":"ai-lipsync",
-"dance-motion":"dance-motion",
-"face-swap":"face-swap"
-
-};
-
-const model = MODEL_MAP[template];
-
-if(!model){
-
-document.getElementById("status").textContent =
-"STATUS: MODEL NOT FOUND";
-
-throw new Error("Model not mapped");
-
-}
-
-/* ================= CTA ================= */
+engineLabel.textContent = "ENGINE: " + templateID;
+log("Template: " + templateID);
 
 document.getElementById("createBtn")
 .addEventListener("click", async ()=>{
 
+statusEl.textContent = "STATUS: SENDING...";
 log("CTA CLICKED");
 
 const prompt =
 document.getElementById("prompt").value;
 
-document.getElementById("status")
-.textContent="STATUS: SENDING...";
-
 try{
 
-const res = await fetch(API+"/api/render",{
-
+const res = await fetch(API + "/api/render", {
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-
+headers:{ "Content-Type":"application/json" },
 body:JSON.stringify({
-
-templateID:model,
-prompt:prompt
-
+templateID: templateID,
+prompt: prompt
 })
-
 });
 
 const data = await res.json();
-
-log("Response: "+JSON.stringify(data));
+log("Response: " + JSON.stringify(data));
 
 if(!data.jobID){
-
 throw new Error("No jobID");
-
 }
 
-document.getElementById("status")
-.textContent="STATUS: PROCESSING";
-
-startPolling(data.jobID);
+statusEl.textContent = "STATUS: PROCESSING";
+pollStatus(data.jobID);
 
 }catch(e){
-
-log("ERROR:"+e.message);
-
-document.getElementById("status")
-.textContent="STATUS: ERROR";
-
+statusEl.textContent = "STATUS: ERROR";
+log("ERROR: " + e.message);
 }
 
 });
 
-/* ================= POLLING ================= */
-
-function startPolling(jobID){
-
-log("Polling start: "+jobID);
+function pollStatus(jobID){
 
 const interval = setInterval(async()=>{
 
-const res = await fetch(
-API+"/api/status/"+jobID
-);
-
+const res = await fetch(API + "/api/status/" + jobID);
 const data = await res.json();
 
-log("Progress:"+data.progress);
+log("Progress: " + data.progress);
 
-if(data.status==="complete"){
-
+if(data.status === "complete"){
 clearInterval(interval);
-
-document.getElementById("status")
-.textContent="STATUS: COMPLETE";
-
-showPreview(data);
-
+statusEl.textContent = "STATUS: COMPLETE";
+showPreview(data.url);
 }
 
-if(data.status==="error"){
-
+if(data.status === "error"){
 clearInterval(interval);
-
-document.getElementById("status")
-.textContent="STATUS: ERROR";
-
+statusEl.textContent = "STATUS: ERROR";
 }
 
 },3000);
 
 }
 
-/* ================= PREVIEW ================= */
-
-function showPreview(data){
-
-if(!data.url) return;
-
+function showPreview(url){
+if(!url) return;
 document.getElementById("preview").innerHTML =
-
-'<video controls autoplay src="'+data.url+'"></video>';
-
+'<video controls autoplay src="'+url+'"></video>';
 }
 
 </script>
