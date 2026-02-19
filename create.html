@@ -10,7 +10,8 @@
 <meta name="description" content="SN Design Studio AI Create Engine">
 <meta name="keywords" content="AI Creator, Motion AI, SN Design Studio, Video Generator">
 
-<link rel="stylesheet" href="/assets/css/create.css">
+<!-- FIX PATH (ADD ONLY SAFE) -->
+<link rel="stylesheet" href="assets/css/create.css">
 
 </head>
 
@@ -26,7 +27,7 @@
 <section class="hero-block">
 
 <div class="hero-left">
-   <img id="templatePreview">
+   <img id="templatePreview" src="">
 </div>
 
 <div class="hero-right">
@@ -79,6 +80,13 @@ CREATE VIDEO
 <script>
 
 /* ======================================================
+ULTRA SAFE DOM READY (ADD ONLY)
+====================================================== */
+
+document.addEventListener("DOMContentLoaded", ()=>{
+
+
+/* ======================================================
 ULTRA PRESET MAP (MASTER)
 ====================================================== */
 
@@ -122,6 +130,15 @@ model:"hyper-real-gen",
 maxLength:15,
 credit:3.0,
 about:"Ultra realistic generation"
+},
+
+/* ADD ONLY FIX — template page มี card นี้ */
+"ai-lipsync":{
+provider:"replicate",
+model:"ai-lipsync-model",
+maxLength:20,
+credit:4.0,
+about:"AI LipSync video generation"
 }
 
 };
@@ -146,7 +163,8 @@ if(template && presetMap[template]){
 
    title.innerText = template.toUpperCase();
 
-   preview.src = "/assets/images/template-"+template+".jpg";
+   /* FIX IMAGE PATH (SAFE RELATIVE) */
+   preview.src = "assets/images/template-"+template+".jpg";
 
    detailBox.innerHTML = `
       <p>${preset.about}</p>
@@ -155,6 +173,11 @@ if(template && presetMap[template]){
       <p>MAX LENGTH : ${preset.maxLength} sec</p>
       <p>Credit cost : ${preset.credit}</p>
    `;
+}else{
+
+   /* SAFE FALLBACK (ADD ONLY) */
+   title.innerText="PRESET NOT FOUND";
+
 }
 
 
@@ -240,6 +263,8 @@ console.log("status error");
 },1500);
 
 }
+
+});
 
 </script>
 
