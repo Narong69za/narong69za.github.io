@@ -177,4 +177,20 @@ background:#ff0033;
 transition:width 0.3s ease;
 }
 
-/*
+/* ===== SCROLLBAR DARK ===== */
+
+::-webkit-scrollbar{
+width:6px;
+}
+
+::-webkit-scrollbar-track{
+background:#000;
+}
+
+::-webkit-scrollbar-thumb{
+background:#222;
+}
+
+::-webkit-scrollbar-thumb:hover{
+background:#333;
+}
