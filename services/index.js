@@ -1,123 +1,103 @@
 /*
 =====================================
-ULTRA ENGINE MASTER ROUTER
-FINAL CLEAN VERSION
+SN DESIGN ULTRA ENGINE API
+FULL FIX VERSION (RENDER SAFE)
 =====================================
 */
 
-const presetMap = require("./preset.map");
+const express = require("express");
+const cors = require("cors");
+const { v4: uuidv4 } = require("uuid");
 
-const replicateService = require("./replicate/replicate.service");
-const runwayService = require("./runway/runway.service");
+const { runEngine } = require("./engine/engine.router");
 
-const db = require("../db/db");
+const app = express();
 
+/* ================= CONFIG ================= */
 
-/*
-=====================================
-RUN ENGINE
-=====================================
-*/
+app.use(cors());
+app.use(express.json());
 
-async function runEngine(data){
+/* ================= HEALTH CHECK ================= */
 
-   const { templateID, prompt, jobID } = data;
+app.get("/", (req,res)=>{
+   res.send("SN DESIGN API ONLINE");
+});
 
-   if(!templateID || !jobID){
+/* ================= MEMORY STORE (TEMP DB) ================= */
 
-      throw new Error("MISSING REQUIRED DATA");
+const jobs = {};
 
-   }
+/* ================= RENDER ROUTE ================= */
 
-   const preset = presetMap[templateID];
+app.post("/api/render", async (req,res)=>{
 
-   if(!preset){
+   try{
 
-      throw new Error("INVALID PRESET");
+      const jobID = uuidv4();
 
-   }
+      const data = {
+         ...req.body,
+         jobID
+      };
 
-   let result = null;
+      jobs[jobID] = {
+         status:"processing",
+         progress:0
+      };
 
+      runEngine(data)
+      .then(()=>{
+         jobs[jobID].status="complete";
+         jobs[jobID].progress=100;
+      })
+      .catch(err=>{
+         console.log(err);
+         jobs[jobID].status="error";
+      });
 
-   /*
-   ======================
-   PROVIDER ROUTING
-   ======================
-   */
+      res.json({
+         success:true,
+         jobID
+      });
 
-   switch(preset.provider){
+   }catch(e){
 
-      case "replicate":
+      console.log(e);
 
-         if(!replicateService.run){
-
-            throw new Error("REPLICATE SERVICE INVALID");
-
-         }
-
-         result = await replicateService.run({
-
-            model: preset.model,
-            prompt,
-            jobID
-
-         });
-
-      break;
-
-
-      case "runway":
-
-         if(!runwayService.run){
-
-            throw new Error("RUNWAY SERVICE INVALID");
-
-         }
-
-         result = await runwayService.run({
-
-            model: preset.model,
-            prompt,
-            jobID
-
-         });
-
-      break;
-
-      default:
-
-         throw new Error("PROVIDER NOT FOUND");
+      res.status(500).json({
+         error:"ENGINE FAIL"
+      });
 
    }
 
+});
 
-   /*
-   ======================
-   SAVE DB
-   ======================
-   */
+/* ================= STATUS ROUTE ================= */
 
-   db.run(
-      `INSERT OR REPLACE INTO projects
-       (id, templateID, status, progress)
-       VALUES (?,?,?,?)`,
-      [jobID, templateID, "processing", 0]
-   );
+app.get("/api/status/:id",(req,res)=>{
 
+   const job = jobs[req.params.id];
 
-   return {
+   if(!job){
 
-      jobID,
-      result
+      return res.json({
+         status:"not_found",
+         progress:0
+      });
 
-   };
+   }
 
-}
+   res.json(job);
 
+});
 
-module.exports = {
+/* ================= PORT BIND (RENDER RULE) ================= */
 
-   runEngine
+const PORT = process.env.PORT || 4000;
 
-};
+app.listen(PORT, ()=>{
+
+   console.log("SN DESIGN API RUNNING ON PORT:",PORT);
+
+});
