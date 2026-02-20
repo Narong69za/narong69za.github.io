@@ -5,17 +5,24 @@ const app = express();
 
 app.use(express.json());
 
-// serve root folder (แทน public)
+// serve root folder
 app.use(express.static(__dirname));
 
 app.get("/",(req,res)=>{
    res.sendFile(path.join(__dirname,"index.html"));
 });
 
-// ROUTE
+/*
+=====================================
+ROUTES
+=====================================
+*/
+
 const renderRoute = require("./api/render.route");
+const templatesRoute = require("./routes/templates.route");
 
 app.use("/api", renderRoute);
+app.use("/api/templates", templatesRoute);
 
 const PORT = process.env.PORT || 10000;
 
