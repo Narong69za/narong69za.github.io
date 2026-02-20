@@ -7,19 +7,28 @@ app.use(express.json());
 
 /*
 =====================================
-ROUTES (เรียงเฉพาะก่อน)
+API ROUTES (LOCK ORDER)
 =====================================
 */
 
 const templatesRoute = require("./routes/templates.route");
 const renderRoute = require("./api/render.route");
+const statusRoute = require("./routes/status"); // ถ้ามี
+const webhookRoute = require("./routes/webhook"); // ถ้ามี
 
+// 🔥 preset system
 app.use("/api/templates", templatesRoute);
+
+// 🔥 engine run
 app.use("/api/render", renderRoute);
+
+// optional
+app.use("/api/status", statusRoute);
+app.use("/api/webhook", webhookRoute);
 
 /*
 =====================================
-STATIC
+STATIC (ต้องอยู่ล่างสุด)
 =====================================
 */
 
@@ -32,5 +41,5 @@ app.get("/",(req,res)=>{
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT,()=>{
-   console.log("SERVER RUNNING",PORT);
+   console.log("ULTRA SERVER RUNNING:",PORT);
 });
