@@ -1,13 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 
+console.log("=== PRESET LOADER START ===");
+
 /*
 =====================================
-TRACE START
+IMPORTANT:
+ใช้ process.cwd() เพื่อให้ Render หา path ถูก
 =====================================
 */
-
-console.log("=== PRESET LOADER START ===");
 
 const presetDir = path.resolve(process.cwd(),"presets");
 
@@ -33,13 +34,15 @@ try{
 
          const preset = require(fullPath);
 
-         console.log("LOADED PRESET:", preset?.id);
-
          if(preset && preset.id){
+
             presets[preset.id] = preset;
+
+            console.log("LOADED PRESET:", preset.id);
          }
 
       }catch(e){
+
          console.log("PRESET LOAD ERROR:",file,e.message);
       }
 
@@ -52,3 +55,5 @@ try{
 }
 
 console.log("FINAL PRESETS OBJECT:", presets);
+
+module.exports = presets;
