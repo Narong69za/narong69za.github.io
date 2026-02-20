@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Create | SN Design Studio</title>
+<title>ULTRA AUTO CREATE</title>
 
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
@@ -15,180 +15,67 @@
 
 <div class="create-wrapper">
 
-<h1 class="create-title">ULTRA GOD CREATE</h1>
+<h1 class="create-title">ULTRA AUTO PRESET SYSTEM</h1>
 
-<div class="engine-card">
-
-<img id="templatePreview" class="template-preview">
-
-<h3 id="engineLabel">ENGINE: --</h3>
-<p id="creditLabel">Credit: --</p>
-<p id="limitLabel">Limit: --</p>
-
-<div id="dynamicInputs"></div>
-
-<button id="createBtn">CREATE</button>
-
-<h3 id="statusTop">STATUS: IDLE</h3>
-
-<div class="progress-wrap">
-<div id="progressBar"></div>
-</div>
-
-</div>
-
-<div id="preview"></div>
+<div id="presetContainer"></div>
 
 </div>
 
 <script>
 
+const API="https://api.sn-designstudio.dev";
+
 /*
-==========================================
-ULTRA GOD CREATE V4 — AUTO SYNC EDITION
-==========================================
+=====================================
+AUTO LOAD PRESET
+=====================================
 */
 
-const API = "https://api.sn-designstudio.dev";
-const params = new URLSearchParams(location.search);
-const templateID = params.get("template");
+async function loadAllPresets(){
 
-const engineLabel = document.getElementById("engineLabel");
-const creditLabel = document.getElementById("creditLabel");
-const limitLabel = document.getElementById("limitLabel");
-const dynamicInputs = document.getElementById("dynamicInputs");
-const progressBar = document.getElementById("progressBar");
-const statusTop = document.getElementById("statusTop");
+const res = await fetch(API+"/api/template");
 
-let presetData = null;
+const data = await res.json();
 
-if(!templateID){
-   document.body.innerHTML="TEMPLATE PARAM MISSING";
-   throw new Error("Template missing");
-}
+const container = document.getElementById("presetContainer");
 
-/* ================= LOAD PRESET ================= */
+container.innerHTML="";
 
-async function loadPreset(){
+Object.entries(data.presets).forEach(([slug,preset])=>{
 
-   const res = await fetch(API+"/api/template/"+templateID);
-   const preset = await res.json();
+const card=document.createElement("div");
 
-   presetData = preset;
+card.className="engine-card";
 
-   engineLabel.textContent = "ENGINE: "+preset.engine;
-   creditLabel.textContent = "Credit: "+(preset.creditCost || "--");
-   limitLabel.textContent =
-   "Limit: Max "+(preset.limits?.maxDuration || "--")+"s";
+card.innerHTML=`
 
-   document.getElementById("templatePreview").src =
-   API+"/assets/images/template-"+templateID+".jpg";
+<h3>ENGINE: ${preset.engine}</h3>
 
-   buildDynamicUI(preset.input);
-}
+<p>Provider: ${preset.provider}</p>
 
-loadPreset();
+<p>Credit: ${preset.creditCost || "--"}</p>
 
-/* ================= BUILD DYNAMIC UI ================= */
+<p>Limit: Max ${preset.limits?.maxDuration || "--"}s</p>
 
-function buildDynamicUI(inputConfig){
+<button onclick="openCreate('${slug}')">
+CREATE
+</button>
 
-   dynamicInputs.innerHTML="";
+`;
 
-   if(inputConfig.prompt){
-      dynamicInputs.innerHTML +=
-      `<input id="promptInput" placeholder="Enter prompt">`;
-   }
+container.appendChild(card);
 
-   if(inputConfig.image){
-      dynamicInputs.innerHTML +=
-      `<input type="file" id="imageInput" accept="image/*">`;
-   }
-
-   if(inputConfig.video){
-      dynamicInputs.innerHTML +=
-      `<input type="file" id="videoInput" accept="video/*">`;
-   }
-
-}
-
-/* ================= CREATE ================= */
-
-document.getElementById("createBtn")
-.addEventListener("click", async ()=>{
-
-   if(!presetData) return;
-
-   const payload = {
-      templateID: templateID
-   };
-
-   if(presetData.input.prompt){
-      const prompt =
-      document.getElementById("promptInput")?.value || "";
-      if(!prompt.trim()){
-         alert("Prompt required");
-         return;
-      }
-      payload.prompt = prompt;
-   }
-
-   statusTop.textContent="STATUS: SENDING";
-
-   const res = await fetch(API+"/api/render",{
-      method:"POST",
-      headers:{
-         "Content-Type":"application/json"
-      },
-      body:JSON.stringify(payload)
-   });
-
-   const data = await res.json();
-
-   if(!data.jobID){
-      statusTop.textContent="STATUS: ERROR";
-      return;
-   }
-
-   startPolling(data.jobID);
 });
 
-/* ================= POLLING ================= */
-
-function startPolling(jobID){
-
-   let progress=5;
-   progressBar.style.width="5%";
-
-   const loop = setInterval(async ()=>{
-
-      const res = await fetch(API+"/api/status/"+jobID);
-      const data = await res.json();
-
-      progress+=10;
-      if(progress>95) progress=95;
-      progressBar.style.width=progress+"%";
-
-      if(data.status==="complete"){
-
-         clearInterval(loop);
-         progressBar.style.width="100%";
-         statusTop.textContent="STATUS: COMPLETE";
-
-         if(data.url){
-            document.getElementById("preview").innerHTML=
-            '<video controls autoplay src="'+data.url+'"></video>';
-         }
-
-      }
-
-      if(data.status==="error"){
-         clearInterval(loop);
-         statusTop.textContent="STATUS: ERROR";
-      }
-
-   },3000);
 }
+
+function openCreate(slug){
+
+location.href="/create.html?template="+slug;
+
+}
+
+loadAllPresets();
 
 </script>
 
