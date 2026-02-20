@@ -65,7 +65,7 @@ module.exports = {
 
     provider : "replicate",
 
-    engine : "face-swap",
+    engine : "face-clone",
 
     model : {
       id : "face-swap-model",
