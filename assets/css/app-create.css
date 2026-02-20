@@ -1,95 +1,57 @@
-/* =====================================
-ULTRA APP CREATE CSS
-SN DESIGN ULTRA GOD UI
-===================================== */
-
 body{
- background:#080808;
  margin:0;
- font-family:Arial, sans-serif;
+ background:#000;
  color:#fff;
+ font-family:Arial;
 }
 
-.create-wrapper{
+.app{
  max-width:900px;
  margin:auto;
- padding:40px 20px;
+ padding:20px;
 }
 
-.create-title{
- font-size:26px;
- margin-bottom:20px;
-}
-
-/* TOP ENGINE CARD */
-
-.engine-card{
- background:#121212;
+.statusBox{
  border:1px solid #222;
  padding:20px;
- border-radius:12px;
+ margin-bottom:20px;
+ border-radius:10px;
+}
+
+.block{
  margin-bottom:20px;
 }
 
-.engine-card h3{
- margin:0 0 10px;
-}
-
-/* upload */
-
-#uploadBtn{
+.cta{
+ width:100%;
+ padding:20px;
  background:#ff0033;
  border:none;
- padding:10px 16px;
- color:white;
- cursor:pointer;
- margin-top:10px;
-}
-
-/* prompt */
-
-#prompt{
- width:100%;
- padding:12px;
- margin-top:20px;
- background:#000;
- border:1px solid #333;
  color:#fff;
+ font-size:18px;
+ border-radius:8px;
 }
 
-/* create button */
-
-#createBtn{
+.generateBtn{
+ width:100%;
+ padding:20px;
  background:#ff0033;
  border:none;
- padding:15px;
- margin-top:15px;
- width:100%;
- font-weight:bold;
- cursor:pointer;
-}
-
-/* progress */
-
-.progress-wrap{
- height:8px;
- background:#111;
- border-radius:5px;
- overflow:hidden;
- margin-top:10px;
-}
-
-#progressBar{
- height:100%;
- width:0%;
- background:#00ff66;
- transition:width .4s;
-}
-
-/* preview */
-
-#preview video{
- width:100%;
+ color:#fff;
+ font-size:22px;
  margin-top:20px;
- border-radius:10px;
+ border-radius:8px;
+}
+
+textarea{
+ width:100%;
+ height:120px;
+ background:#111;
+ color:#fff;
+ border:1px solid #333;
+ padding:10px;
+}
+
+.hidden{
+ display:none;
 }
