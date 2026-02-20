@@ -5,35 +5,33 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Create | SN Design Studio</title>
+<title>Create | SN DESIGN STUDIO</title>
 
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
 </head>
+
 <body class="create-page">
 
 <section class="section">
-
 <div class="container">
 
 <h1 class="section-title">ULTRA GOD CREATE</h1>
 
-<!-- =====================
-PRESET CARD
-===================== -->
+<!-- ================= PRESET CARD ================= -->
 
-<div id="presetCard" class="sn-card"></div>
+<div id="presetWrapper" class="sn-card preset-card">
+<div class="preset-loading">Loading preset...</div>
+</div>
 
-<!-- =====================
-CREATE AREA
-===================== -->
+<!-- ================= CREATE PANEL ================= -->
 
-<div class="sn-card">
+<div class="sn-card create-panel">
 
-<div id="engineLabel"></div>
+<div id="engineLabel" class="engine-label"></div>
 
-<input id="prompt" placeholder="Enter prompt">
+<textarea id="prompt" placeholder="Enter prompt"></textarea>
 
 <button id="createBtn" class="btn-primary">
 CREATE VIDEO
@@ -43,20 +41,22 @@ CREATE VIDEO
 <div id="progressBar"></div>
 </div>
 
-<h3 id="status">STATUS: IDLE</h3>
+<div id="status" class="status-box">
+STATUS: IDLE
+</div>
 
 </div>
 
-<div id="preview" class="sn-card"></div>
+<!-- ================= PREVIEW ================= -->
+
+<div id="preview" class="sn-card preview-card"></div>
 
 </div>
 </section>
 
 <script>
 
-/* ======================
-CONFIG
-====================== */
+/* ================= CONFIG ================= */
 
 const API =
 (window.SN_CONFIG && window.SN_CONFIG.API_BASE)
@@ -66,55 +66,63 @@ const API =
 const params = new URLSearchParams(location.search);
 const templateID = params.get("template");
 
+const presetWrapper = document.getElementById("presetWrapper");
+const engineLabel = document.getElementById("engineLabel");
 const statusBox = document.getElementById("status");
 const progressBar = document.getElementById("progressBar");
-const engineLabel = document.getElementById("engineLabel");
 
-/* ======================
-LOAD PRESET CARD
-====================== */
+/* ================= LOAD PRESET ================= */
 
 async function loadPreset(){
 
-if(!templateID) return;
+if(!templateID){
+presetWrapper.innerHTML="Preset not found";
+return;
+}
+
+try{
 
 const res = await fetch(API+"/api/templates/"+templateID);
 const data = await res.json();
 
 engineLabel.innerText="ENGINE: "+data.engine;
 
-document.getElementById("presetCard").innerHTML=`
+presetWrapper.innerHTML=`
 
-<img src="${data.image}" class="card-img">
+<img src="${data.image}" class="preset-image">
+
+<div class="preset-content">
 
 <h3>${data.title}</h3>
-
 <p>${data.description}</p>
 
-<div class="tag-row">
-${data.tags.map(t=>`<span>${t}</span>`).join("")}
+<div class="preset-tags">
+${data.tags.map(tag=>`<span class="tag">${tag}</span>`).join("")}
+</div>
+
 </div>
 
 `;
+
+}catch(e){
+
+presetWrapper.innerHTML="Error loading preset";
+
+}
 
 }
 
 loadPreset();
 
-/* ======================
-CREATE VIDEO
-====================== */
+/* ================= CREATE ================= */
 
 document.getElementById("createBtn").onclick=async()=>{
 
 const prompt = document.getElementById("prompt").value;
 
 if(!prompt.trim()){
-
 alert("Enter prompt");
-
 return;
-
 }
 
 statusBox.innerText="STATUS: SENDING";
@@ -123,15 +131,10 @@ progressBar.style.width="20%";
 const res = await fetch(API+"/api/render",{
 
 method:"POST",
-
 headers:{ "Content-Type":"application/json" },
-
 body:JSON.stringify({
-
-templateID:templateID,
-
+templateID,
 input:{ prompt }
-
 })
 
 });
@@ -142,22 +145,17 @@ startPolling(data.jobID);
 
 };
 
-/* ======================
-POLLING
-====================== */
+/* ================= POLLING ================= */
 
 function startPolling(jobID){
 
 const loop=setInterval(async()=>{
 
 const res = await fetch(API+"/api/status/"+jobID);
-
 const data = await res.json();
 
 if(data.progress){
-
 progressBar.style.width=data.progress+"%";
-
 }
 
 if(data.status==="complete"){
@@ -167,8 +165,14 @@ clearInterval(loop);
 statusBox.innerText="STATUS: COMPLETE";
 
 document.getElementById("preview").innerHTML=
-
 `<video controls autoplay src="${data.url}"></video>`;
+
+}
+
+if(data.status==="error"){
+
+clearInterval(loop);
+statusBox.innerText="STATUS: ERROR";
 
 }
 
