@@ -20,23 +20,22 @@
 <div id="presetContainer"></div>
 
 </div>
-
 <script>
 
 const API="https://sn-design-api.onrender.com";
 
 /*
 =====================================
-AUTO LOAD PRESET
+ULTRA AUTO PRESET SYSTEM
+scan preset -> generate UI auto
 =====================================
 */
 
 async function loadAllPresets(){
-async function loadAllPresets(){
 
 try{
 
-const res = await fetch(API+"/api/template");
+const res = await fetch(API+"/api/templates");
 
 if(!res.ok){
    console.log("API FAIL",res.status);
@@ -47,16 +46,52 @@ const data = await res.json();
 
 console.log("PRESET DATA:",data);
 
+renderPresets(data);
+
 }catch(e){
    console.log("LOAD PRESET ERROR",e);
 }
 
 }
+
+/* ================= UI AUTO GENERATE ================= */
+
+function renderPresets(list){
+
+const container=document.getElementById("presetContainer");
+
+container.innerHTML="";
+
+Object.keys(list).forEach(slug=>{
+
+const preset=list[slug];
+
+const card=document.createElement("div");
+
+card.className="preset-card";
+
+card.innerHTML=`
+<h3>${preset.engine || slug}</h3>
+<p>Provider: ${preset.provider}</p>
+<p>Credit: ${preset.creditCost || "-"}</p>
+<button onclick="openCreate('${slug}')">OPEN</button>
+`;
+
+container.appendChild(card);
+
+});
+
+}
+
+/* ================= OPEN CREATE ================= */
+
 function openCreate(slug){
 
 location.href="/create.html?template="+slug;
 
 }
+
+/* START */
 
 loadAllPresets();
 
