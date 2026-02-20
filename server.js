@@ -7,18 +7,6 @@ app.use(express.json());
 
 /*
 =====================================
-STATIC FILE
-=====================================
-*/
-
-app.use(express.static(__dirname));
-
-app.get("/",(req,res)=>{
-   res.sendFile(path.join(__dirname,"index.html"));
-});
-
-/*
-=====================================
 ROUTES
 =====================================
 */
@@ -31,9 +19,15 @@ app.use("/api/templates", templatesRoute);
 
 /*
 =====================================
-SERVER START
+STATIC FILES (ต้องอยู่ล่างสุด)
 =====================================
 */
+
+app.use("/", express.static(__dirname));
+
+app.get("/",(req,res)=>{
+   res.sendFile(path.join(__dirname,"index.html"));
+});
 
 const PORT = process.env.PORT || 10000;
 
