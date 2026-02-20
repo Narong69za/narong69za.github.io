@@ -275,3 +275,65 @@ height:100%;
 background:#ff003c;
 transition:width .3s;
   }
+.create-wrapper{
+max-width:700px;
+margin:auto;
+padding:20px;
+}
+
+.create-title{
+font-size:28px;
+margin-bottom:20px;
+}
+
+.engine-card{
+border:1px solid #333;
+padding:20px;
+margin-bottom:20px;
+background:#050505;
+}
+
+#uploadBtn{
+margin-top:10px;
+padding:10px 15px;
+background:#111;
+border:1px solid #444;
+color:#fff;
+}
+
+#prompt{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#111;
+border:1px solid #333;
+color:#fff;
+}
+
+#createBtn{
+margin-top:10px;
+padding:14px;
+width:100%;
+background:#ff0033;
+border:none;
+color:#fff;
+font-weight:bold;
+}
+
+.progress-wrap{
+height:6px;
+background:#111;
+margin-top:10px;
+}
+
+#progressBar{
+height:6px;
+width:0%;
+background:#ff0033;
+transition:0.3s;
+}
+
+#preview video{
+width:100%;
+margin-top:20px;
+}
