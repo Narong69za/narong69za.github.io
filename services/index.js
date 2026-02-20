@@ -1,15 +1,19 @@
 /*
 =====================================
 SN DESIGN ULTRA ENGINE API
-FULL FIX VERSION (RENDER SAFE)
+FULL FIX VERSION (ULTRA GOD FINAL)
 =====================================
 */
 
 const express = require("express");
 const cors = require("cors");
 const { v4: uuidv4 } = require("uuid");
-const { runEngine } =
-require("../engine/motionEngine");
+const path = require("path");
+
+const { runEngine } = require("../engine/motionEngine");
+
+/* LOAD PRESET MAP */
+const presetMap = require("./preset.map");
 
 const app = express();
 
@@ -17,10 +21,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-const path = require("path");
 
 /* STATIC FRONTEND ROOT (ULTRA SAFE) */
 app.use(express.static(path.join(__dirname,"../")));
+
 /* ================= HEALTH CHECK ================= */
 
 app.get("/", (req,res)=>{
@@ -30,6 +34,38 @@ app.get("/", (req,res)=>{
 /* ================= MEMORY STORE (TEMP DB) ================= */
 
 const jobs = {};
+
+/* ================= TEMPLATE ROUTE (FIX ERROR LOADING PRESET) ================= */
+
+app.get("/api/template/:slug",(req,res)=>{
+
+   try{
+
+      const { slug } = req.params;
+
+      const preset = presetMap[slug];
+
+      if(!preset){
+
+         return res.status(404).json({
+            error:"Preset not found"
+         });
+
+      }
+
+      res.json(preset);
+
+   }catch(e){
+
+      console.log(e);
+
+      res.status(500).json({
+         error:"TEMPLATE LOAD FAIL"
+      });
+
+   }
+
+});
 
 /* ================= RENDER ROUTE ================= */
 
