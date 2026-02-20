@@ -7,144 +7,143 @@
 
 <title>Create | SN Design Studio</title>
 
-<!-- MASTER CSS ONLY (LOCK) -->
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
+<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
 </head>
+
 <body>
 
 <div class="create-wrapper">
 
-<!-- =========================================
-ULTRA HEADER PANEL
-========================================= -->
+<!-- ================= TOP PANEL ================= -->
 
-<div class="create-header">
-
-<div class="job-info">
+<div class="create-top">
 
 <h1 class="create-title">ULTRA GOD CREATE</h1>
 
-<div class="meta-line">
-<span id="engineLabel"></span>
-<span class="divider">|</span>
-<span id="durationLimit">LIMIT: 30s</span>
-</div>
+<div id="engineLabel"></div>
 
-</div>
+<div class="create-info">
 
-<div class="user-panel">
-
-<div>STATUS: <span id="statusTop">IDLE</span></div>
-<div>USER CREDIT: <span id="userCredit">--</span></div>
+<div>MAX LENGTH: 30 sec</div>
+<div>MODE: AI ENGINE</div>
+<div>STATUS: READY</div>
 
 </div>
 
 </div>
 
-<!-- =========================================
-UPLOAD PANEL
-========================================= -->
+<!-- ================= INPUT ================= -->
 
-<div class="upload-panel">
+<textarea id="prompt" placeholder="Enter prompt"></textarea>
 
-<input type="file" id="uploadMedia" accept="video/*,image/*">
+<!-- ================= UPLOAD ================= -->
 
-<button id="uploadBtn" class="cta-upload">
-ADD FILE
-</button>
+<input type="file" id="uploadMedia" accept="video/*,image/*" hidden>
 
-</div>
+<button id="uploadBtn">ADD MEDIA</button>
 
-<!-- =========================================
-PROGRESS BAR
-========================================= -->
+<!-- ================= CTA ================= -->
 
-<div class="progress-wrapper">
+<button id="createBtn">CREATE VIDEO</button>
+
+<!-- ================= STATUS ================= -->
+
+<div id="statusTop">STATUS: IDLE</div>
+
+<div class="progress-wrap">
 <div id="progressBar"></div>
 </div>
 
-<!-- =========================================
-MAIN CREATE
-========================================= -->
+<!-- ================= PREVIEW ================= -->
 
-<input id="prompt" class="create-input" placeholder="Enter prompt">
-
-<button id="createBtn" class="create-btn">
-CREATE VIDEO
-</button>
-
-<h3 id="status">STATUS: IDLE</h3>
-
-<div id="preview" class="preview-box"></div>
+<div id="preview"></div>
 
 </div>
 
+
 <script>
 
-/* =================================================
-CONFIG
-================================================= */
+/* ================= CONFIG ================= */
 
 const API =
 (window.SN_CONFIG && window.SN_CONFIG.API_BASE)
 ? window.SN_CONFIG.API_BASE
 : "https://api.sn-designstudio.dev";
 
-/* =================================================
-ELEMENTS
-================================================= */
+
+/* ================= ELEMENTS ================= */
 
 const params = new URLSearchParams(location.search);
 const templateID = params.get("template");
 
 const promptInput = document.getElementById("prompt");
 const createBtn = document.getElementById("createBtn");
-const statusBox = document.getElementById("status");
 const engineLabel = document.getElementById("engineLabel");
+const statusTop = document.getElementById("statusTop");
+const progressBar = document.getElementById("progressBar");
 const previewBox = document.getElementById("preview");
 
-/* =================================================
-INIT CHECK
-================================================= */
+
+/* ================= INIT CHECK ================= */
 
 if(!templateID){
 
-statusBox.textContent="STATUS: TEMPLATE MISSING";
-throw new Error("Template not found");
+statusTop.textContent="STATUS: TEMPLATE MISSING";
+throw new Error("Template missing");
 
 }
 
-engineLabel.textContent = "ENGINE: " + templateID;
+engineLabel.textContent = "ENGINE: "+templateID;
 
-/* =================================================
-CREATE BUTTON
-================================================= */
 
-createBtn.addEventListener("click", async ()=>{
+/* ================= UPLOAD ================= */
 
-const prompt = promptInput.value.trim();
+document.getElementById("uploadBtn").onclick = ()=>{
 
-if(!prompt){
+document.getElementById("uploadMedia").click();
+
+};
+
+
+/* ================= PROGRESS ================= */
+
+function setProgress(val){
+
+progressBar.style.width = val+"%";
+
+}
+
+
+/* ================= CREATE ================= */
+
+createBtn.onclick = async ()=>{
+
+const prompt = promptInput.value || "";
+
+if(!prompt.trim()){
+
 alert("Enter prompt first");
 return;
+
 }
 
-statusBox.textContent="STATUS: SENDING...";
+statusTop.textContent="STATUS: SENDING";
+setProgress(10);
 
 try{
 
-const res = await fetch(API + "/api/render", {
+const res = await fetch(API+"/api/render",{
 
 method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
+headers:{ "Content-Type":"application/json" },
 
 body:JSON.stringify({
-templateID:templateID,
-input:{prompt:prompt}
+
+templateID: templateID,
+input:{ prompt:prompt }
+
 })
 
 });
@@ -153,43 +152,50 @@ const data = await res.json();
 
 if(!data.jobID){
 
-statusBox.textContent="STATUS: ERROR";
-console.error("Missing jobID",data);
+statusTop.textContent="STATUS: ERROR";
+console.error(data);
 return;
 
 }
 
-statusBox.textContent="STATUS: PROCESSING";
+statusTop.textContent="STATUS: PROCESSING";
+setProgress(30);
 
 startPolling(data.jobID);
 
 }catch(err){
 
 console.error(err);
-statusBox.textContent="STATUS: ERROR";
+statusTop.textContent="STATUS: ERROR";
 
 }
 
-});
+};
 
-/* =================================================
-POLLING
-================================================= */
+
+/* ================= POLLING ================= */
 
 function startPolling(jobID){
 
-const interval = setInterval(async()=>{
+const loop = setInterval(async ()=>{
 
 try{
 
-const res = await fetch(API + "/api/status/" + jobID);
+const res = await fetch(API+"/api/status/"+jobID);
 const data = await res.json();
+
+if(data.progress){
+
+setProgress(data.progress);
+
+}
 
 if(data.status === "complete"){
 
-clearInterval(interval);
+clearInterval(loop);
 
-statusBox.textContent="STATUS: COMPLETE";
+statusTop.textContent="STATUS: COMPLETE";
+setProgress(100);
 
 if(data.url){
 
@@ -202,8 +208,8 @@ previewBox.innerHTML =
 
 if(data.status === "error"){
 
-clearInterval(interval);
-statusBox.textContent="STATUS: ERROR";
+clearInterval(loop);
+statusTop.textContent="STATUS: ERROR";
 
 }
 
