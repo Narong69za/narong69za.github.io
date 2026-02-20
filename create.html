@@ -23,73 +23,41 @@
 
 const API="https://sn-design-api.onrender.com";
 
-function log(msg){
-   const div=document.getElementById("traceLog");
-   div.innerHTML += "<div>"+msg+"</div>";
-}
-
-log("STEP 1: SCRIPT LOADED");
-
 async function loadAllPresets(){
 
-   log("STEP 2: loadAllPresets CALLED");
+   console.log("STEP 1: loadAllPresets CALLED");
 
    try{
 
-      log("STEP 3: FETCH START");
-
       const res = await fetch(API+"/api/templates");
 
-      log("STEP 4: STATUS "+res.status);
-
-      if(!res.ok){
-         log("FAIL: API NOT OK");
-         return;
-      }
+      console.log("STEP 2: STATUS",res.status);
 
       const data = await res.json();
 
-      log("STEP 5: DATA RECEIVED");
+      console.log("PRESET DATA:",data);
 
-      renderPresets(data);
+      const container=document.getElementById("presetContainer");
+
+      Object.values(data).forEach(p=>{
+
+         const card=document.createElement("div");
+
+         card.innerHTML=`
+            <h3>${p.name}</h3>
+            <p>${p.provider}</p>
+            <button onclick="openCreate('${p.id}')">CREATE</button>
+         `;
+
+         container.appendChild(card);
+
+      });
 
    }catch(e){
 
-      log("ERROR: "+e.message);
+      console.log("LOAD PRESET ERROR",e);
 
    }
-
-}
-
-function renderPresets(list){
-
-   log("STEP 6: renderPresets");
-
-   const container=document.getElementById("presetContainer");
-
-   if(!container){
-      log("FAIL: presetContainer NOT FOUND");
-      return;
-   }
-
-   Object.values(list).forEach(preset=>{
-
-      log("CARD: "+preset.id);
-
-      const card=document.createElement("div");
-
-      card.style.border="1px solid #0f0";
-      card.style.margin="10px";
-      card.style.padding="10px";
-
-      card.innerHTML=`
-         <h3>${preset.name || preset.id}</h3>
-         <button onclick="openCreate('${preset.id}')">OPEN</button>
-      `;
-
-      container.appendChild(card);
-
-   });
 
 }
 
@@ -100,6 +68,5 @@ function openCreate(slug){
 loadAllPresets();
 
 </script>
-
 </body>
 </html>
