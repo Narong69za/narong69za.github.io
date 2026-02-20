@@ -1,84 +1,239 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ULTRA GOD CREATE — SN DESIGN STUDIO</title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
 
-<title>SN DESIGN STUDIO — CREATE</title>
-<link rel="stylesheet" href="./assets/css/app-create-premium.css">
-<script src="https://sn-designstudio.dev/assets/js/create-premium.js"></script>
+/* =========================
+   SN DESIGN LOCK STYLE
+========================= */
 
+:root{
+  --bg:#000;
+  --card:#111;
+  --border:#222;
+  --accent:#ff0033;
+  --accent-glow:rgba(255,0,51,.6);
+  --text:#fff;
+  --muted:#777;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  font-family:Montserrat, sans-serif;
+  color:var(--text);
+}
+
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:40px 20px;
+}
+
+h1{
+  font-size:40px;
+  letter-spacing:2px;
+}
+
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  padding:30px;
+  margin-top:30px;
+}
+
+.status{
+  margin-top:15px;
+  font-size:18px;
+  color:var(--muted);
+}
+
+input,textarea{
+  width:100%;
+  padding:14px;
+  background:#0d0d0d;
+  border:1px solid #222;
+  color:#fff;
+  margin-top:15px;
+}
+
+button{
+  background:var(--accent);
+  color:#fff;
+  border:none;
+  padding:16px;
+  margin-top:20px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:.3s;
+}
+
+button:hover{
+  box-shadow:0 0 20px var(--accent-glow);
+}
+
+.progress{
+  height:6px;
+  background:#111;
+  margin-top:15px;
+  overflow:hidden;
+}
+
+.bar{
+  height:100%;
+  width:0%;
+  background:var(--accent);
+  transition:.3s;
+}
+
+.error{
+  color:var(--accent);
+}
+
+</style>
 </head>
 
 <body>
 
-<div class="hero">
-    <div class="hero-overlay"></div>
-    <div class="hero-content">
-        <h1 id="engineName">ENGINE: LOADING...</h1>
-        <p id="engineDesc">AI Rendering System</p>
-    </div>
-</div>
-
 <div class="container">
 
-    <div class="glass-card status-card">
+<h1>ULTRA GOD CREATE</h1>
 
-        <div class="status-row">
-            <span>User</span>
-            <span id="userName">Guest</span>
-        </div>
+<div class="card">
 
-        <div class="status-row">
-            <span>Credit</span>
-            <span id="userCredit">--</span>
-        </div>
+<div id="engineBlock">Loading preset...</div>
 
-        <div class="status-row">
-            <span>Limit</span>
-            <span id="userLimit">--</span>
-        </div>
+<div id="autoInputs"></div>
 
-        <div class="status-row">
-            <span>Free Daily</span>
-            <span>3 ครั้ง</span>
-        </div>
+<button id="cta">CREATE VIDEO</button>
 
-        <select id="modelSelect" class="model-select"></select>
+<div class="progress"><div class="bar" id="bar"></div></div>
 
-    </div>
-
-
-    <div id="uploadVideo" class="glass-card upload-card hidden">
-        <div class="upload-title">Upload Video Source</div>
-        <input type="file" id="videoInput" accept="video/*">
-    </div>
-
-    <div id="uploadImage" class="glass-card upload-card hidden">
-        <div class="upload-title">Upload Image Animation</div>
-        <input type="file" id="imageInput" accept="image/*">
-    </div>
-
-    <div id="promptBox" class="glass-card upload-card hidden">
-        <textarea id="prompt" placeholder="Enter prompt..."></textarea>
-    </div>
-
-    <button id="generateBtn" class="generate-btn">
-        GENERATE
-    </button>
-
-    <div class="progress-container">
-        <div id="progressBar" class="progress-bar"></div>
-    </div>
-
-    <div id="statusText" class="status-text">
-        STATUS: IDLE
-    </div>
+<div class="status" id="status">STATUS: IDLE</div>
 
 </div>
 
-<script src="/assets/js/create-premium.js"></script>
+</div>
+
+<script>
+
+const API_BASE = "https://api.sn-designstudio.dev/api";
+const PRESET_ID = "motion-control"; // เปลี่ยนได้ตามหน้า
+
+const engineBlock = document.getElementById("engineBlock");
+const autoInputs = document.getElementById("autoInputs");
+const statusEl = document.getElementById("status");
+const bar = document.getElementById("bar");
+
+let currentPreset = null;
+
+/* =========================
+   LOAD PRESET AUTO
+========================= */
+
+async function loadPreset(){
+
+  try{
+
+    const res = await fetch(`${API_BASE}/templates/${PRESET_ID}`);
+    const data = await res.json();
+
+    if(data.error){
+      engineBlock.innerHTML = `<div class="error">Error loading preset</div>`;
+      return;
+    }
+
+    currentPreset = data;
+
+    engineBlock.innerHTML = `
+      <strong>ENGINE:</strong> ${data.engine}<br/>
+      Credit: ${data.creditCost || "--"}<br/>
+      Limit: ${data.limits?.maxDuration || "--"}s
+    `;
+
+    buildInputs(data.input);
+
+  }catch(e){
+    engineBlock.innerHTML = `<div class="error">Preset Load Failed</div>`;
+  }
+
+}
+
+/* =========================
+   AUTO BUILD UI
+========================= */
+
+function buildInputs(inputConfig){
+
+  autoInputs.innerHTML = "";
+
+  if(!inputConfig) return;
+
+  if(inputConfig.prompt){
+    autoInputs.innerHTML += `<textarea id="prompt" placeholder="Enter prompt..."></textarea>`;
+  }
+
+  if(inputConfig.image){
+    autoInputs.innerHTML += `<input type="file" id="imageInput" />`;
+  }
+
+  if(inputConfig.video){
+    autoInputs.innerHTML += `<input type="file" id="videoInput" />`;
+  }
+
+}
+
+/* =========================
+   RENDER
+========================= */
+
+document.getElementById("cta").addEventListener("click", async ()=>{
+
+  if(!currentPreset){
+    statusEl.innerText = "STATUS: PRESET ERROR";
+    return;
+  }
+
+  statusEl.innerText = "STATUS: PROCESSING";
+  bar.style.width = "20%";
+
+  const payload = {
+    preset: PRESET_ID,
+    prompt: document.getElementById("prompt")?.value || null
+  };
+
+  try{
+
+    const res = await fetch(`${API_BASE}/render`,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify(payload)
+    });
+
+    const result = await res.json();
+
+    if(result.success){
+      bar.style.width = "100%";
+      statusEl.innerText = "STATUS: SUCCESS";
+    }else{
+      statusEl.innerText = "STATUS: ERROR";
+    }
+
+  }catch(e){
+    statusEl.innerText = "STATUS: SERVER ERROR";
+  }
+
+});
+
+/* ========================= */
+
+loadPreset();
+
+</script>
 
 </body>
 </html>
