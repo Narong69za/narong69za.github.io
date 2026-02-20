@@ -7,19 +7,19 @@ app.use(express.json());
 
 /*
 =====================================
-ROUTES
+ROUTES (เรียงเฉพาะก่อน)
 =====================================
 */
 
-const renderRoute = require("./api/render.route");
 const templatesRoute = require("./routes/templates.route");
+const renderRoute = require("./api/render.route");
 
-app.use("/api", renderRoute);
 app.use("/api/templates", templatesRoute);
+app.use("/api/render", renderRoute);
 
 /*
 =====================================
-STATIC FILES (ต้องอยู่ล่างสุด)
+STATIC
 =====================================
 */
 
