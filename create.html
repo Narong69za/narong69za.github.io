@@ -5,289 +5,61 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>CREATE — SN DESIGN STUDIO</title>
-<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/app-create.css">
+<title>SN DESIGN CREATE</title>
 
-<style>
-
-/* ===============================
-ULTRA GOD PREMIUM UI (APP LAYER)
-=============================== */
-
-body{
-background:#0b0b0b;
-color:#fff;
-font-family:sans-serif;
-}
-
-.create-app{
-max-width:1100px;
-margin:auto;
-padding:20px;
-}
-
-/* TOP ENGINE CARD */
-
-.engine-box{
-background:#111;
-border:1px solid #222;
-padding:20px;
-margin-bottom:20px;
-border-radius:10px;
-}
-
-.engine-title{
-color:#ff0033;
-font-size:22px;
-margin-bottom:10px;
-}
-
-.engine-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-gap:10px;
-font-size:14px;
-}
-
-/* MEDIA ZONES */
-
-.media-zone{
-background:#151515;
-border:1px dashed #333;
-padding:15px;
-margin-bottom:15px;
-border-radius:8px;
-}
-
-.upload-btn{
-background:#ff0033;
-border:none;
-color:white;
-padding:12px;
-width:100%;
-cursor:pointer;
-}
-
-/* PROMPT */
-
-.prompt{
-width:100%;
-padding:12px;
-margin-top:10px;
-background:#000;
-color:#fff;
-border:1px solid #333;
-}
-
-/* CTA */
-
-.create-btn{
-margin-top:15px;
-background:#ff0033;
-color:white;
-border:none;
-padding:15px;
-width:100%;
-font-weight:bold;
-cursor:pointer;
-}
-
-/* PROGRESS */
-
-.progress-wrap{
-height:10px;
-background:#111;
-margin-top:15px;
-}
-
-#progressBar{
-height:100%;
-background:#ff0033;
-width:0%;
-transition:0.4s;
-}
-
-.status{
-margin-top:10px;
-}
-
-video{
-width:100%;
-margin-top:20px;
-}
-
-</style>
+<link rel="stylesheet" href="/assets/css/app-create.css">
 
 </head>
+
 <body>
 
-<div class="create-app">
+<div class="app">
 
-<!-- ===============================
-TOP ENGINE INFO
-=============================== -->
+    <!-- HEADER STATUS -->
+    <div class="statusBox">
 
-<div class="engine-box">
+        <div id="engineName">ENGINE: loading...</div>
 
-<div class="engine-title" id="engineName">
-LOADING PRESET...
-</div>
+        <div>User: Guest</div>
+        <div>Credit: --</div>
+        <div>Limit: --</div>
+        <div>Free Daily: 3 ครั้ง</div>
 
-<div class="engine-grid">
+        <select id="modelSelect"></select>
 
-<div>User: <span id="userLabel">Guest</span></div>
-<div>Credit: <span id="creditLabel">--</span></div>
-<div>Limit: <span id="limitLabel">--</span></div>
-<div>Free Daily: 3 ครั้ง</div>
+    </div>
 
-</div>
 
-</div>
+    <!-- SOURCE BLOCK -->
 
-<!-- ===============================
-MEDIA INPUT
-=============================== -->
+    <div id="uploadVideo" class="block hidden">
+        <button class="cta">Upload Video Source</button>
+    </div>
 
-<div class="media-zone">
-<button class="upload-btn" id="uploadVideoBtn">
-Upload Video Source
-</button>
-<input type="file" id="videoInput" hidden>
-</div>
+    <div id="uploadImage" class="block hidden">
+        <button class="cta">Upload Image Animation</button>
+    </div>
 
-<div class="media-zone">
-<button class="upload-btn" id="uploadImageBtn">
-Upload Image Animation
-</button>
-<input type="file" id="imageInput" hidden>
-</div>
+    <div id="promptBox" class="block hidden">
+        <textarea id="prompt" placeholder="Enter prompt..."></textarea>
+    </div>
 
-<textarea class="prompt" id="prompt" placeholder="Enter prompt..."></textarea>
 
-<button class="create-btn" id="createBtn">
-GENERATE VIDEO
-</button>
+    <!-- CTA -->
 
-<div class="progress-wrap">
-<div id="progressBar"></div>
-</div>
+    <button id="generateBtn" class="generateBtn">
+        GENERATE VIDEO
+    </button>
 
-<div class="status" id="statusTop">
-STATUS: IDLE
-</div>
 
-<div id="preview"></div>
+    <div id="statusBar">
+        STATUS: IDLE
+    </div>
 
 </div>
 
-<script>
 
-/* ===============================
-CONFIG
-=============================== */
-
-const API="https://api.sn-designstudio.dev";
-const API="https://api.sn-designstudio.dev";
-
-const params = new URLSearchParams(location.search);
-
-const templateID = params.get("template");
-
-async function loadPreset(){
-
-   if(!templateID){
-      console.log("NO TEMPLATE PARAM");
-      return;
-   }
-
-   const res = await fetch(API+"/api/templates/"+templateID);
-
-   if(!res.ok){
-      console.log("PRESET FETCH FAIL",res.status);
-      return;
-   }
-
-   const preset = await res.json();
-
-   console.log("PRESET LOADED:",preset);
-}
-
-loadPreset();
-
-/* ===============================
-UPLOAD
-=============================== */
-
-uploadVideoBtn.onclick=()=>videoInput.click();
-uploadImageBtn.onclick=()=>imageInput.click();
-
-/* ===============================
-CREATE
-=============================== */
-
-const progressBar=document.getElementById("progressBar");
-const statusTop=document.getElementById("statusTop");
-
-createBtn.onclick=async()=>{
-
-statusTop.innerText="STATUS: SENDING";
-
-const prompt=document.getElementById("prompt").value;
-
-const res=await fetch(API+"/api/render",{
-
-method:"POST",
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({
-
-templateID:templateID,
-prompt:prompt
-
-})
-
-});
-
-const data=await res.json();
-
-startPolling(data.jobID);
-
-};
-
-function startPolling(id){
-
-let progress=10;
-
-const loop=setInterval(async()=>{
-
-progress+=10;
-if(progress>90) progress=90;
-
-progressBar.style.width=progress+"%";
-
-const res=await fetch(API+"/api/status/"+id);
-const data=await res.json();
-
-if(data.status==="complete"){
-
-clearInterval(loop);
-
-progressBar.style.width="100%";
-statusTop.innerText="STATUS: COMPLETE";
-
-if(data.url){
-
-preview.innerHTML=
-'<video controls autoplay src="'+data.url+'"></video>';
-
-}
-
-}
-
-},3000);
-
-}
-
-</script>
+<script src="/assets/js/create.js"></script>
 
 </body>
 </html>
