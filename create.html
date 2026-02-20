@@ -32,43 +32,26 @@ AUTO LOAD PRESET
 */
 
 async function loadAllPresets(){
+async function loadAllPresets(){
+
+try{
 
 const res = await fetch(API+"/api/template");
 
-const data = await res.json();
-
-const container = document.getElementById("presetContainer");
-
-container.innerHTML="";
-
-Object.entries(data.presets).forEach(([slug,preset])=>{
-
-const card=document.createElement("div");
-
-card.className="engine-card";
-
-card.innerHTML=`
-
-<h3>ENGINE: ${preset.engine}</h3>
-
-<p>Provider: ${preset.provider}</p>
-
-<p>Credit: ${preset.creditCost || "--"}</p>
-
-<p>Limit: Max ${preset.limits?.maxDuration || "--"}s</p>
-
-<button onclick="openCreate('${slug}')">
-CREATE
-</button>
-
-`;
-
-container.appendChild(card);
-
-});
-
+if(!res.ok){
+   console.log("API FAIL",res.status);
+   return;
 }
 
+const data = await res.json();
+
+console.log("PRESET DATA:",data);
+
+}catch(e){
+   console.log("LOAD PRESET ERROR",e);
+}
+
+}
 function openCreate(slug){
 
 location.href="/create.html?template="+slug;
