@@ -3,49 +3,68 @@ const path = require("path");
 
 console.log("=== PRESET LOADER START ===");
 
-const presetDir = path.resolve(process.cwd(),"presets");
+/*
+====================================================
+USE STABLE PATH (NO process.cwd())
+====================================================
+*/
 
-console.log("PRESET DIR PATH:",presetDir);
+const presetDir = path.join(__dirname, "../presets");
+
+console.log("PRESET DIR PATH:", presetDir);
 
 const presets = {};
 
-try{
+try {
 
-   const files = fs.readdirSync(presetDir);
+   if (!fs.existsSync(presetDir)) {
+      console.log("PRESET DIR NOT FOUND");
+   } else {
 
-   console.log("FILES FOUND:",files);
+      const files = fs.readdirSync(presetDir);
 
-   files.forEach(file => {
+      console.log("FILES FOUND:", files);
 
-      if(!file.endsWith(".js")) return;
+      files.forEach(file => {
 
-      try{
+         if (!file.endsWith(".js")) return;
 
-         const fullPath = path.join(presetDir,file);
+         try {
 
-         console.log("LOADING FILE:",fullPath);
+            const fullPath = path.join(presetDir, file);
 
-         const preset = require(fullPath);
+            console.log("LOADING FILE:", fullPath);
 
-         if(preset && preset.id){
+            const preset = require(fullPath);
 
-            presets[preset.id] = preset;
+            if (preset && preset.id) {
 
-            console.log("LOADED PRESET:",preset.id);
+               presets[preset.id] = preset;
+
+               console.log("LOADED PRESET:", preset.id);
+
+            } else {
+
+               console.log("INVALID PRESET FORMAT:", file);
+
+            }
+
+         } catch (e) {
+
+            console.log("PRESET LOAD ERROR:", file, e.message);
+
          }
 
-      }catch(e){
-         console.log("PRESET LOAD ERROR:",file,e.message);
-      }
+      });
 
-   });
+   }
 
-}catch(e){
+} catch (e) {
 
-   console.log("PRESET DIR ERROR:",e.message);
+   console.log("PRESET DIR ERROR:", e.message);
 
 }
 
-console.log("FINAL PRESETS OBJECT:",presets);
+console.log("FINAL PRESETS OBJECT:", presets);
 
 module.exports = presets;
