@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const presetDir = path.join(__dirname,"../presets");
+const presetDir = path.resolve(process.cwd(),"presets");
 
 const presets = {};
 
