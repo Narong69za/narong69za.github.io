@@ -5,7 +5,12 @@ const app = express();
 
 app.use(express.json());
 
-// serve root folder
+/*
+=====================================
+STATIC FILE
+=====================================
+*/
+
 app.use(express.static(__dirname));
 
 app.get("/",(req,res)=>{
@@ -23,6 +28,12 @@ const templatesRoute = require("./routes/templates.route");
 
 app.use("/api", renderRoute);
 app.use("/api/templates", templatesRoute);
+
+/*
+=====================================
+SERVER START
+=====================================
+*/
 
 const PORT = process.env.PORT || 10000;
 
