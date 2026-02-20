@@ -1,120 +1,36 @@
 /*
-====================================
-SN DESIGN — ULTRA PRESET MAP
-MASTER ENGINE CONFIG
-====================================
+================================
+ULTRA AUTO MODEL ROUTER
+SN DESIGN STUDIO
+================================
 */
 
-module.exports = {
+const MODEL_ROUTER = {
 
-  "dark-viral": {
+   /* ================= REPLICATE ================= */
 
-    provider : "replicate",
+   "image-gen": {
+      provider:"replicate",
+      model:"stability-ai/sdxl"
+   },
 
-    engine : "image-gen",
+   "face-clone": {
+      provider:"replicate",
+      model:"lucataco/face-swap"
+   },
 
-    model : {
-      id : "black-forest-labs/flux-2-pro",
-      version : "latest"
-    },
+   "motion-control": {
+      provider:"replicate",
+      model:"cjwbw/animate-anything"
+   },
 
-    limits : {
-      maxDuration : 30
-    },
+   /* ================= RUNWAY ================= */
 
-    creditCost : 3.5,
-
-    input : {
-      prompt : true,
-      image : false,
-      video : false
-    },
-
-    description : "Cinematic viral style preset"
-
-  },
-
-
-  "cinematic-pro": {
-
-    provider : "runway",
-
-    engine : "video-gen",
-
-    model : {
-      id : "gen-3",
-      version : "latest"
-    },
-
-    limits : {
-      maxDuration : 30
-    },
-
-    creditCost : 4,
-
-    input : {
-      prompt : true,
-      image : true,
-      video : false
-    }
-
-  },
-
-
-  "face-clone": {
-
-    provider : "replicate",
-
-    engine : "face-clone",
-
-    model : {
-      id : "face-swap-model",
-      version : "latest"
-    },
-
-    input : {
-      prompt : false,
-      image : true,
-      video : true
-    }
-
-  },
-
-
-  "dance-motion": {
-
-    provider : "runway",
-
-    engine : "motion-control",
-
-    model : {
-      id : "motion-control",
-      version : "latest"
-    },
-
-    input : {
-      prompt : true,
-      video : true
-    }
-
-  },
-
-
-  "hyper-real": {
-
-    provider : "replicate",
-
-    engine : "image-realism",
-
-    model : {
-      id : "realistic-engine",
-      version : "latest"
-    },
-
-    input : {
-      prompt : true
-    }
-
-  }
+   "gen4-video": {
+      provider:"runway",
+      model:"gen4_image_to_video"
+   }
 
 };
+
+module.exports = MODEL_ROUTER;
