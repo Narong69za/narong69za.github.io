@@ -1,4 +1,4 @@
-const API="https://sn-designstudio.dev";
+const API="https://sn-design-api.onrender.com";
 
 let CURRENT_PRESET=null;
 
