@@ -1,39 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-/*
-=====================================
-LOAD PRESETS
-=====================================
-*/
-
 const presets = require("../services/preset.loader");
-
-console.log("PRESETS ROUTE DATA:", presets);
-
-/*
-=====================================
-GET ALL PRESETS
-=====================================
-*/
 
 router.get("/", (req,res)=>{
 
-   if(!presets){
-      return res.status(500).json({
-         error:"PRESET LOAD FAIL"
-      });
-   }
+   console.log("API HIT /api/templates");
+   console.log("PRESETS VALUE:", presets);
 
-   res.json(presets);
+   res.setHeader("Content-Type","application/json");
+
+   res.send(JSON.stringify(presets));
 
 });
-
-/*
-=====================================
-GET SINGLE PRESET
-=====================================
-*/
 
 router.get("/:slug",(req,res)=>{
 
