@@ -24,7 +24,7 @@ app.use(express.static(path.join(__dirname, "../")));
 
 // IMPORTANT: ensure these paths match your real folder structure
 const templateRoute = require("../routes/templates.route");
-const webhookRoute = require("../routes/webhook.route");
+const webhookRoute = require("../routes/webhook");
 
 /* ================= ROUTE REGISTER ================= */
 
