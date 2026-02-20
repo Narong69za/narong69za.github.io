@@ -234,3 +234,44 @@ min-height:180px;
 }
 
 }
+/* ===================================
+CREATE ULTRA HEADER
+=================================== */
+
+.create-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.meta-line{
+opacity:.7;
+font-size:14px;
+}
+
+.upload-panel{
+display:flex;
+gap:10px;
+margin-bottom:15px;
+}
+
+.cta-upload{
+background:#ff003c;
+color:#fff;
+border:none;
+padding:10px 16px;
+}
+
+.progress-wrapper{
+height:4px;
+background:#111;
+margin:10px 0;
+}
+
+#progressBar{
+width:0%;
+height:100%;
+background:#ff003c;
+transition:width .3s;
+  }
