@@ -1,9 +1,13 @@
 /*
 =====================================
 SN DESIGN MOTION ENGINE
-COMMONJS SAFE VERSION
+ULTRA PRODUCTION VERSION
 =====================================
 */
+
+const presetMap = require("../services/preset.map");
+const replicateService = require("../services/replicate/replicate.service");
+const runwayService = require("../services/runway/runway.service");
 
 async function runEngine(data){
 
@@ -17,13 +21,32 @@ async function runEngine(data){
       throw new Error("JOB ID MISSING");
    }
 
-   // ตัวอย่างจำลองการทำงาน
+   const preset = presetMap[templateID];
+
+   if(!preset){
+      throw new Error("PRESET NOT FOUND");
+   }
+
    console.log("RUN ENGINE:", templateID);
+   console.log("PROVIDER:", preset.provider);
+   console.log("MODEL:", preset.model);
    console.log("PROMPT:", prompt);
 
-   return {
-      success: true
+   const payload = {
+      model: preset.model,
+      prompt,
+      jobID
    };
+
+   if(preset.provider === "replicate"){
+      return await replicateService.run(payload);
+   }
+
+   if(preset.provider === "runway"){
+      return await runwayService.run(payload);
+   }
+
+   throw new Error("UNKNOWN PROVIDER");
 
 }
 
