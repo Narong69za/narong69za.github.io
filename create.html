@@ -24,34 +24,52 @@
 
 const API="https://sn-design-api.onrender.com";
 
+/*
+=====================================
+AUTO LOAD PRESET
+=====================================
+*/
+
 async function loadAllPresets(){
 
-   const res = await fetch(API+"/api/templates");
+   try{
 
-   if(!res.ok){
-      console.log("API FAIL",res.status);
-      return;
+      const res = await fetch(API+"/api/templates");
+
+      if(!res.ok){
+         console.log("API FAIL",res.status);
+         return;
+      }
+
+      const data = await res.json();
+
+      console.log("PRESET DATA:",data);
+
+      renderPresets(data);
+
+   }catch(e){
+
+      console.log("LOAD PRESET ERROR",e);
+
    }
-
-   const data = await res.json();
-
-   renderPresets(data);
 
 }
 
 function renderPresets(list){
 
    const container=document.getElementById("presetContainer");
+
    container.innerHTML="";
 
    Object.values(list).forEach(preset=>{
 
       const card=document.createElement("div");
 
+      card.className="preset-card";
+
       card.innerHTML=`
-         <h3>${preset.name}</h3>
-         <p>Provider: ${preset.provider}</p>
-         <p>Credit: ${preset.creditCost}</p>
+         <h3>${preset.name || preset.id}</h3>
+         <p>${preset.provider}</p>
          <button onclick="openCreate('${preset.id}')">OPEN</button>
       `;
 
@@ -62,7 +80,9 @@ function renderPresets(list){
 }
 
 function openCreate(slug){
+
    location.href="/create.html?template="+slug;
+
 }
 
 loadAllPresets();
