@@ -10,129 +10,157 @@
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
-</head>
+<style>
 
+/* ===============================
+ULTRA GOD V3 ADDON UI
+===============================*/
+
+.top-panel{
+background:#0a0a0a;
+border:1px solid #222;
+padding:14px;
+margin-bottom:20px;
+}
+
+.progress-wrap{
+width:100%;
+height:6px;
+background:#111;
+margin-top:10px;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:#ff003c;
+transition:.3s;
+}
+
+.upload-btn{
+background:#111;
+border:1px solid #333;
+padding:8px 12px;
+cursor:pointer;
+margin-top:10px;
+}
+
+</style>
+
+</head>
 <body>
 
 <div class="create-wrapper">
 
-<!-- ================= TOP PANEL ================= -->
+<h1 class="create-title">ULTRA GOD CREATE V3</h1>
 
-<div class="create-top">
+<!-- ===============================
+TOP CONTROL PANEL
+===============================-->
 
-<h1 class="create-title">ULTRA GOD CREATE</h1>
+<div class="top-panel">
 
 <div id="engineLabel"></div>
 
-<div class="create-info">
+<div>User: <span id="userName">SN USER</span></div>
+<div>Credit: <span id="credit">--</span></div>
+<div>Limit: <span id="duration">Max 30s</span></div>
 
-<div>MAX LENGTH: 30 sec</div>
-<div>MODE: AI ENGINE</div>
-<div>STATUS: READY</div>
-
-</div>
-
-</div>
-
-<!-- ================= INPUT ================= -->
-
-<textarea id="prompt" placeholder="Enter prompt"></textarea>
-
-<!-- ================= UPLOAD ================= -->
-
-<input type="file" id="uploadMedia" accept="video/*,image/*" hidden>
-
-<button id="uploadBtn">ADD MEDIA</button>
-
-<!-- ================= CTA ================= -->
-
-<button id="createBtn">CREATE VIDEO</button>
-
-<!-- ================= STATUS ================= -->
+<button class="upload-btn" id="uploadBtn">UPLOAD MEDIA</button>
+<input type="file" id="uploadMedia" hidden>
 
 <div id="statusTop">STATUS: IDLE</div>
 
 <div class="progress-wrap">
-<div id="progressBar"></div>
+<div id="progressBar" class="progress-bar"></div>
 </div>
 
-<!-- ================= PREVIEW ================= -->
+</div>
+
+<input id="prompt" placeholder="Enter prompt">
+
+<button id="createBtn">CREATE VIDEO</button>
+
+<h3 id="status">STATUS: IDLE</h3>
 
 <div id="preview"></div>
 
 </div>
 
-
 <script>
 
-/* ================= CONFIG ================= */
+/* ===============================
+STATE MANAGER (ลด lag)
+===============================*/
+
+const STATE = {
+status:"idle",
+job:null,
+progress:0,
+engine:null
+};
+
+/* ===============================
+CONFIG
+===============================*/
 
 const API =
 (window.SN_CONFIG && window.SN_CONFIG.API_BASE)
 ? window.SN_CONFIG.API_BASE
 : "https://api.sn-designstudio.dev";
 
-
-/* ================= ELEMENTS ================= */
+/* ===============================
+ELEMENTS
+===============================*/
 
 const params = new URLSearchParams(location.search);
 const templateID = params.get("template");
 
 const promptInput = document.getElementById("prompt");
 const createBtn = document.getElementById("createBtn");
-const engineLabel = document.getElementById("engineLabel");
-const statusTop = document.getElementById("statusTop");
+
 const progressBar = document.getElementById("progressBar");
-const previewBox = document.getElementById("preview");
+const statusTop = document.getElementById("statusTop");
+const statusBox = document.getElementById("status");
+const engineLabel = document.getElementById("engineLabel");
 
+/* ===============================
+UPLOAD MEDIA
+===============================*/
 
-/* ================= INIT CHECK ================= */
-
-if(!templateID){
-
-statusTop.textContent="STATUS: TEMPLATE MISSING";
-throw new Error("Template missing");
-
-}
-
-engineLabel.textContent = "ENGINE: "+templateID;
-
-
-/* ================= UPLOAD ================= */
-
-document.getElementById("uploadBtn").onclick = ()=>{
-
+document.getElementById("uploadBtn").onclick=()=>{
 document.getElementById("uploadMedia").click();
-
 };
 
+/* ===============================
+UI UPDATE
+===============================*/
 
-/* ================= PROGRESS ================= */
+function renderUI(){
 
-function setProgress(val){
+statusBox.textContent="STATUS: "+STATE.status.toUpperCase();
+statusTop.textContent="STATUS: "+STATE.status.toUpperCase();
 
-progressBar.style.width = val+"%";
+progressBar.style.width=STATE.progress+"%";
 
 }
 
+/* ===============================
+CREATE BUTTON
+===============================*/
 
-/* ================= CREATE ================= */
-
-createBtn.onclick = async ()=>{
+createBtn.addEventListener("click", async ()=>{
 
 const prompt = promptInput.value || "";
 
 if(!prompt.trim()){
-
-alert("Enter prompt first");
+alert("Enter prompt");
 return;
-
 }
 
-statusTop.textContent="STATUS: SENDING";
-setProgress(10);
-
-try{
+STATE.status="sending";
+STATE.progress=10;
+renderUI();
 
 const res = await fetch(API+"/api/render",{
 
@@ -140,10 +168,8 @@ method:"POST",
 headers:{ "Content-Type":"application/json" },
 
 body:JSON.stringify({
-
-templateID: templateID,
+templateID:templateID,
 input:{ prompt:prompt }
-
 })
 
 });
@@ -151,77 +177,72 @@ input:{ prompt:prompt }
 const data = await res.json();
 
 if(!data.jobID){
-
-statusTop.textContent="STATUS: ERROR";
-console.error(data);
+STATE.status="error";
+renderUI();
 return;
-
 }
 
-statusTop.textContent="STATUS: PROCESSING";
-setProgress(30);
+STATE.job=data.jobID;
+STATE.status="processing";
+STATE.progress=30;
+renderUI();
 
 startPolling(data.jobID);
 
-}catch(err){
+});
 
-console.error(err);
-statusTop.textContent="STATUS: ERROR";
+/* ===============================
+POLLING SYSTEM
+===============================*/
 
-}
+function startPolling(id){
 
-};
+const loop=setInterval(async()=>{
 
-
-/* ================= POLLING ================= */
-
-function startPolling(jobID){
-
-const loop = setInterval(async ()=>{
-
-try{
-
-const res = await fetch(API+"/api/status/"+jobID);
+const res = await fetch(API+"/api/status/"+id);
 const data = await res.json();
 
 if(data.progress){
-
-setProgress(data.progress);
-
+STATE.progress=data.progress;
 }
 
-if(data.status === "complete"){
+if(data.status==="complete"){
 
 clearInterval(loop);
 
-statusTop.textContent="STATUS: COMPLETE";
-setProgress(100);
+STATE.status="complete";
+STATE.progress=100;
+renderUI();
 
-if(data.url){
-
-previewBox.innerHTML =
+document.getElementById("preview").innerHTML=
 '<video controls autoplay src="'+data.url+'"></video>';
 
 }
 
-}
-
-if(data.status === "error"){
+if(data.status==="error"){
 
 clearInterval(loop);
-statusTop.textContent="STATUS: ERROR";
-
-}
-
-}catch(e){
-
-console.error(e);
+STATE.status="error";
+renderUI();
 
 }
 
 },3000);
 
 }
+
+/* ===============================
+INIT
+===============================*/
+
+if(templateID){
+
+STATE.engine=templateID;
+engineLabel.textContent="ENGINE: "+templateID;
+
+}
+
+renderUI();
 
 </script>
 
