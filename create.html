@@ -7,10 +7,6 @@
 
 <style>
 
-/* =========================
-   SN DESIGN LOCK STYLE
-========================= */
-
 :root{
   --bg:#000;
   --card:#111;
@@ -24,7 +20,7 @@
 body{
   margin:0;
   background:var(--bg);
-  font-family:Montserrat, sans-serif;
+  font-family:Montserrat,sans-serif;
   color:var(--text);
 }
 
@@ -34,65 +30,34 @@ body{
   padding:40px 20px;
 }
 
-h1{
-  font-size:40px;
-  letter-spacing:2px;
-}
-
 .card{
   background:var(--card);
   border:1px solid var(--border);
   padding:30px;
-  margin-top:30px;
-}
-
-.status{
-  margin-top:15px;
-  font-size:18px;
-  color:var(--muted);
-}
-
-input,textarea{
-  width:100%;
-  padding:14px;
-  background:#0d0d0d;
-  border:1px solid #222;
-  color:#fff;
-  margin-top:15px;
 }
 
 button{
   background:var(--accent);
-  color:#fff;
   border:none;
+  color:#fff;
   padding:16px;
   margin-top:20px;
-  font-weight:bold;
   cursor:pointer;
-  transition:.3s;
-}
-
-button:hover{
-  box-shadow:0 0 20px var(--accent-glow);
 }
 
 .progress{
   height:6px;
   background:#111;
   margin-top:15px;
-  overflow:hidden;
 }
 
 .bar{
   height:100%;
   width:0%;
   background:var(--accent);
-  transition:.3s;
 }
 
-.error{
-  color:var(--accent);
-}
+.error{ color:#ff0033 }
 
 </style>
 </head>
@@ -113,7 +78,7 @@ button:hover{
 
 <div class="progress"><div class="bar" id="bar"></div></div>
 
-<div class="status" id="status">STATUS: IDLE</div>
+<div id="status">STATUS: IDLE</div>
 
 </div>
 
@@ -121,113 +86,130 @@ button:hover{
 
 <script>
 
-const API_BASE = "https://api.sn-designstudio.dev/api";
-const PRESET_ID = "motion-control"; // เปลี่ยนได้ตามหน้า
+/* =========================
+   🔥 FIXED API BASE
+========================= */
 
-const engineBlock = document.getElementById("engineBlock");
-const autoInputs = document.getElementById("autoInputs");
-const statusEl = document.getElementById("status");
-const bar = document.getElementById("bar");
+const API_BASE = "https://sn-design-api.onrender.com/api";
 
-let currentPreset = null;
+const PRESET_ID="motion-control";
+
+const engineBlock=document.getElementById("engineBlock");
+const autoInputs=document.getElementById("autoInputs");
+const statusEl=document.getElementById("status");
+const bar=document.getElementById("bar");
+
+let currentPreset=null;
+
 
 /* =========================
-   LOAD PRESET AUTO
+   LOAD PRESET
 ========================= */
 
 async function loadPreset(){
 
-  try{
+ try{
 
-    const res = await fetch(`${API_BASE}/templates/${PRESET_ID}`);
-    const data = await res.json();
+   const res=await fetch(`${API_BASE}/templates/${PRESET_ID}`);
 
-    if(data.error){
-      engineBlock.innerHTML = `<div class="error">Error loading preset</div>`;
+   const data=await res.json();
+
+   if(!data || data.error){
+
+      engineBlock.innerHTML=`<div class="error">Error loading preset</div>`;
       return;
-    }
+   }
 
-    currentPreset = data;
+   currentPreset=data;
 
-    engineBlock.innerHTML = `
-      <strong>ENGINE:</strong> ${data.engine}<br/>
-      Credit: ${data.creditCost || "--"}<br/>
-      Limit: ${data.limits?.maxDuration || "--"}s
-    `;
+   engineBlock.innerHTML=`
+      <strong>ENGINE:</strong> ${data.id}<br>
+      Credit:${data.creditCost ?? "--"}<br>
+      Limit:${data.limits?.maxDuration ?? "--"}s
+   `;
 
-    buildInputs(data.input);
+   buildInputs(data.input);
 
-  }catch(e){
-    engineBlock.innerHTML = `<div class="error">Preset Load Failed</div>`;
-  }
+ }catch(e){
 
-}
+   engineBlock.innerHTML=`<div class="error">Preset Load Failed</div>`;
 
-/* =========================
-   AUTO BUILD UI
-========================= */
-
-function buildInputs(inputConfig){
-
-  autoInputs.innerHTML = "";
-
-  if(!inputConfig) return;
-
-  if(inputConfig.prompt){
-    autoInputs.innerHTML += `<textarea id="prompt" placeholder="Enter prompt..."></textarea>`;
-  }
-
-  if(inputConfig.image){
-    autoInputs.innerHTML += `<input type="file" id="imageInput" />`;
-  }
-
-  if(inputConfig.video){
-    autoInputs.innerHTML += `<input type="file" id="videoInput" />`;
-  }
+ }
 
 }
 
+
 /* =========================
-   RENDER
+   AUTO INPUT UI
 ========================= */
 
-document.getElementById("cta").addEventListener("click", async ()=>{
+function buildInputs(input){
 
-  if(!currentPreset){
-    statusEl.innerText = "STATUS: PRESET ERROR";
-    return;
-  }
+ autoInputs.innerHTML="";
 
-  statusEl.innerText = "STATUS: PROCESSING";
-  bar.style.width = "20%";
+ if(!input) return;
 
-  const payload = {
-    preset: PRESET_ID,
-    prompt: document.getElementById("prompt")?.value || null
-  };
+ if(input.prompt)
+   autoInputs.innerHTML+=`<textarea id="prompt" placeholder="Enter prompt"></textarea>`;
 
-  try{
+ if(input.image)
+   autoInputs.innerHTML+=`<input type="file" id="imageInput">`;
 
-    const res = await fetch(`${API_BASE}/render`,{
+ if(input.video)
+   autoInputs.innerHTML+=`<input type="file" id="videoInput">`;
+
+}
+
+
+/* =========================
+   CTA
+========================= */
+
+document.getElementById("cta").onclick=async ()=>{
+
+ if(!currentPreset){
+
+   statusEl.innerText="STATUS: PRESET ERROR";
+   return;
+ }
+
+ statusEl.innerText="STATUS: PROCESSING";
+ bar.style.width="30%";
+
+ try{
+
+   const res=await fetch(`${API_BASE}/render`,{
+
       method:"POST",
       headers:{ "Content-Type":"application/json" },
-      body:JSON.stringify(payload)
-    });
+      body:JSON.stringify({
 
-    const result = await res.json();
+         preset:PRESET_ID,
+         prompt:document.getElementById("prompt")?.value || null
 
-    if(result.success){
-      bar.style.width = "100%";
-      statusEl.innerText = "STATUS: SUCCESS";
-    }else{
-      statusEl.innerText = "STATUS: ERROR";
-    }
+      })
 
-  }catch(e){
-    statusEl.innerText = "STATUS: SERVER ERROR";
-  }
+   });
 
-});
+   const result=await res.json();
+
+   if(result.success){
+
+      bar.style.width="100%";
+      statusEl.innerText="STATUS: SUCCESS";
+
+   }else{
+
+      statusEl.innerText="STATUS: ERROR";
+   }
+
+ }catch(e){
+
+   statusEl.innerText="STATUS: SERVER ERROR";
+ }
+
+};
+
 
 /* ========================= */
 
