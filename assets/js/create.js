@@ -1,127 +1,168 @@
-const API="https://api.sn-designstudio.dev";
+/*
+=====================================
+ULTRA AUTO UI FINAL
+SN DESIGN STUDIO
+AUTO TEMPLATE BUILDER
+=====================================
+*/
 
-let CURRENT_PRESET=null;
+console.log("ULTRA AUTO UI START");
 
-init();
+const API_BASE = "https://sn-design-api.onrender.com";
 
-async function init(){
+const container = document.getElementById("auto-template-container");
 
- await loadPreset();
+if(!container){
+
+   console.error("AUTO UI ERROR: container not found");
+}
+
+/*
+=====================================
+FETCH PRESETS AUTO
+=====================================
+*/
+
+async function loadTemplates(){
+
+   try{
+
+      console.log("LOADING PRESETS...");
+
+      const res = await fetch(`${API_BASE}/api/templates`);
+
+      if(!res.ok){
+         throw new Error("API FAILED");
+      }
+
+      const presets = await res.json();
+
+      console.log("PRESETS RECEIVED:",presets);
+
+      buildUI(presets);
+
+   }catch(err){
+
+      console.error("LOAD TEMPLATE ERROR:",err);
+
+      container.innerHTML = `
+         <div class="preset-error">
+            PRESET LOAD FAILED
+         </div>
+      `;
+   }
 
 }
 
+/*
+=====================================
+AUTO CARD BUILDER
+=====================================
+*/
 
-async function loadPreset(){
+function buildUI(presets){
 
- const params=new URLSearchParams(location.search);
+   container.innerHTML = "";
 
- const id=params.get("template");
+   Object.keys(presets).forEach(key => {
 
- if(!id){
+      const preset = presets[key];
 
-   setEngineName("unknown");
-   return;
+      const card = document.createElement("div");
 
- }
+      card.className = "auto-card";
 
- try{
+      card.innerHTML = `
 
-   const res=await fetch(API+"/api/templates/"+id);
+         <div class="engine">
+            ENGINE: ${preset.id || key}
+         </div>
 
-   if(!res.ok) throw "preset not found";
+         <div>User: SN USER</div>
+         <div>Credit: ${preset.credit || "--"}</div>
+         <div>Limit: ${preset.limit || "--"}</div>
 
-   const preset=await res.json();
+         <input class="prompt-input" placeholder="Enter prompt..." />
 
-   CURRENT_PRESET=preset;
+         <button class="cta-btn">
+            CREATE VIDEO
+         </button>
 
-   buildUI(preset);
+         <div class="status">
+            STATUS: IDLE
+         </div>
 
- }catch(e){
+      `;
 
-   setEngineName("unknown");
+      const button = card.querySelector(".cta-btn");
 
- }
+      const input = card.querySelector(".prompt-input");
 
-}
+      const status = card.querySelector(".status");
 
+      button.addEventListener("click", async ()=>{
 
-function buildUI(p){
+         const prompt = input.value;
 
- setEngineName(p.name || "unknown");
+         status.innerText = "STATUS: SENDING...";
 
- renderModelDropdown(p.models || []);
+         try{
 
- toggle("uploadVideo",p.ui?.needVideo);
- toggle("uploadImage",p.ui?.needImage);
- toggle("promptBox",p.ui?.needPrompt);
+            const res = await fetch(`${API_BASE}/api/render`,{
 
-}
+               method:"POST",
+               headers:{
+                  "Content-Type":"application/json"
+               },
+               body:JSON.stringify({
 
+                  preset: preset.id || key,
+                  prompt: prompt
 
-function setEngineName(name){
+               })
 
- document.getElementById("engineName").innerText="ENGINE: "+name;
+            });
 
-}
+            const data = await res.json();
 
+            console.log("RENDER RESPONSE:",data);
 
-function renderModelDropdown(models){
+            if(data.success){
 
- const select=document.getElementById("modelSelect");
+               status.innerText = "STATUS: SUCCESS";
 
- select.innerHTML="";
+            }else{
 
- models.forEach(m=>{
+               status.innerText = "STATUS: FAILED";
 
-   const opt=document.createElement("option");
+            }
 
-   opt.value=m.name;
-   opt.innerText=m.name;
+         }catch(e){
 
-   select.appendChild(opt);
+            console.error(e);
 
- });
+            status.innerText = "STATUS: ERROR";
 
-}
+         }
 
+      });
 
-function toggle(id,state){
-
- const el=document.getElementById(id);
-
- if(state) el.classList.remove("hidden");
- else el.classList.add("hidden");
-
-}
-
-
-document.getElementById("generateBtn").onclick=async()=>{
-
- if(!CURRENT_PRESET) return;
-
- document.getElementById("statusBar").innerText="STATUS: PROCESSING";
-
- try{
-
-   const res=await fetch(API+"/api",{
-
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-
-      body:JSON.stringify({
-         preset:CURRENT_PRESET.id
-      })
+      container.appendChild(card);
 
    });
 
-   await res.json();
+}
 
-   document.getElementById("statusBar").innerText="STATUS: COMPLETE";
+/*
+=====================================
+START
+=====================================
+*/
 
- }catch(e){
+document.addEventListener("DOMContentLoaded",()=>{
 
-   document.getElementById("statusBar").innerText="STATUS: ERROR";
+   console.log("DOM READY → LOAD AUTO UI");
 
- }
+   loadTemplates();
 
-};
+});
