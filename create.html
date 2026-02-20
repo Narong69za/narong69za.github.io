@@ -11,45 +11,51 @@
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
 </head>
-<body>
+<body style="background:#000;color:#0f0;font-family:monospace">
 
-<div class="create-wrapper">
+<h2>ULTRA TRACE MODE</h2>
 
-<h1 class="create-title">ULTRA AUTO PRESET SYSTEM</h1>
-
+<div id="traceLog"></div>
+<hr>
 <div id="presetContainer"></div>
 
-</div>
 <script>
 
 const API="https://sn-design-api.onrender.com";
 
-/*
-=====================================
-AUTO LOAD PRESET
-=====================================
-*/
+function log(msg){
+   const div=document.getElementById("traceLog");
+   div.innerHTML += "<div>"+msg+"</div>";
+}
+
+log("STEP 1: SCRIPT LOADED");
 
 async function loadAllPresets(){
 
+   log("STEP 2: loadAllPresets CALLED");
+
    try{
+
+      log("STEP 3: FETCH START");
 
       const res = await fetch(API+"/api/templates");
 
+      log("STEP 4: STATUS "+res.status);
+
       if(!res.ok){
-         console.log("API FAIL",res.status);
+         log("FAIL: API NOT OK");
          return;
       }
 
       const data = await res.json();
 
-      console.log("PRESET DATA:",data);
+      log("STEP 5: DATA RECEIVED");
 
       renderPresets(data);
 
    }catch(e){
 
-      console.log("LOAD PRESET ERROR",e);
+      log("ERROR: "+e.message);
 
    }
 
@@ -57,19 +63,27 @@ async function loadAllPresets(){
 
 function renderPresets(list){
 
+   log("STEP 6: renderPresets");
+
    const container=document.getElementById("presetContainer");
 
-   container.innerHTML="";
+   if(!container){
+      log("FAIL: presetContainer NOT FOUND");
+      return;
+   }
 
    Object.values(list).forEach(preset=>{
 
+      log("CARD: "+preset.id);
+
       const card=document.createElement("div");
 
-      card.className="preset-card";
+      card.style.border="1px solid #0f0";
+      card.style.margin="10px";
+      card.style.padding="10px";
 
       card.innerHTML=`
          <h3>${preset.name || preset.id}</h3>
-         <p>${preset.provider}</p>
          <button onclick="openCreate('${preset.id}')">OPEN</button>
       `;
 
@@ -80,9 +94,7 @@ function renderPresets(list){
 }
 
 function openCreate(slug){
-
    location.href="/create.html?template="+slug;
-
 }
 
 loadAllPresets();
