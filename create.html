@@ -35,7 +35,7 @@ async function loadAllPresets(){
 
 try{
 
-const res = await fetch(API+"/api/templates");
+const res = await fetch(API+"/api/template");
 
 if(!res.ok){
    console.log("API FAIL",res.status);
