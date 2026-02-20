@@ -15,15 +15,66 @@
 
 <div class="create-wrapper">
 
+<!-- =========================================
+ULTRA HEADER PANEL
+========================================= -->
+
+<div class="create-header">
+
+<div class="job-info">
+
 <h1 class="create-title">ULTRA GOD CREATE</h1>
 
-<h3 id="engineLabel"></h3>
+<div class="meta-line">
+<span id="engineLabel"></span>
+<span class="divider">|</span>
+<span id="durationLimit">LIMIT: 30s</span>
+</div>
+
+</div>
+
+<div class="user-panel">
+
+<div>STATUS: <span id="statusTop">IDLE</span></div>
+<div>USER CREDIT: <span id="userCredit">--</span></div>
+
+</div>
+
+</div>
+
+<!-- =========================================
+UPLOAD PANEL
+========================================= -->
+
+<div class="upload-panel">
+
+<input type="file" id="uploadMedia" accept="video/*,image/*">
+
+<button id="uploadBtn" class="cta-upload">
+ADD FILE
+</button>
+
+</div>
+
+<!-- =========================================
+PROGRESS BAR
+========================================= -->
+
+<div class="progress-wrapper">
+<div id="progressBar"></div>
+</div>
+
+<!-- =========================================
+MAIN CREATE
+========================================= -->
 
 <input id="prompt" class="create-input" placeholder="Enter prompt">
 
-<button id="createBtn" class="create-btn">CREATE VIDEO</button>
+<button id="createBtn" class="create-btn">
+CREATE VIDEO
+</button>
 
-<h3 id="status" class="status-box">STATUS: IDLE</h3>
+<h3 id="status">STATUS: IDLE</h3>
 
 <div id="preview" class="preview-box"></div>
 
