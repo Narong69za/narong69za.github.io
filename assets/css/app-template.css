@@ -1,0 +1,58 @@
+/* =====================================
+ULTRA APP TEMPLATE CSS
+SN DESIGN STUDIO
+===================================== */
+
+body{
+ background:#0b0b0b;
+ margin:0;
+ font-family:Arial, sans-serif;
+ color:#fff;
+}
+
+/* container */
+
+.template-wrapper{
+ max-width:1200px;
+ margin:auto;
+ padding:40px 20px;
+}
+
+.template-title{
+ font-size:28px;
+ margin-bottom:30px;
+}
+
+/* grid */
+
+.template-grid{
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+ gap:20px;
+}
+
+/* card */
+
+.template-card{
+ background:#111;
+ border-radius:12px;
+ overflow:hidden;
+ cursor:pointer;
+ transition:.3s;
+ border:1px solid #1e1e1e;
+}
+
+.template-card:hover{
+ transform:translateY(-5px);
+ border-color:#ff0033;
+}
+
+.template-card img{
+ width:100%;
+ display:block;
+}
+
+.template-card h3{
+ padding:15px;
+ font-size:16px;
+  }
