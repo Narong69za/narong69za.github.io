@@ -1,37 +1,40 @@
 /*
 =====================================
 ULTRA AUTO MODEL ROUTER
-SN DESIGN STUDIO CORE ENGINE
+SN DESIGN STUDIO FINAL
 =====================================
 */
 
-const presets = require("../services/preset.loader");
+const presets = require("./preset.loader");
+
+const replicateService = require("./replicate");
+const runwayService = require("./runway");
 
 console.log("=== MODEL ROUTER START ===");
+
+/*
+=====================================
+AUTO UI BUILDER
+=====================================
+*/
 
 function buildUI(preset){
 
    if(!preset) return null;
 
-   let ui = {
+   const ui = {
       engine: preset.id,
       provider: preset.provider,
       credit: preset.creditCost || 0,
       limit: preset.limits?.maxDuration || 0,
-      fields: []
+      fields:[]
    };
-
-   /*
-   =========================
-   AUTO UI BY PROVIDER
-   =========================
-   */
 
    if(preset.provider === "runwayml"){
 
       ui.fields = [
-         {type:"file", name:"media", label:"Upload Media"},
-         {type:"text", name:"prompt", label:"Prompt"}
+         {type:"file", name:"media"},
+         {type:"text", name:"prompt"}
       ];
 
    }
@@ -39,8 +42,8 @@ function buildUI(preset){
    if(preset.provider === "replicate"){
 
       ui.fields = [
-         {type:"file", name:"image", label:"Upload Image"},
-         {type:"text", name:"prompt", label:"Prompt"}
+         {type:"file", name:"image"},
+         {type:"text", name:"prompt"}
       ];
 
    }
@@ -50,52 +53,64 @@ function buildUI(preset){
 
 /*
 =====================================
-GET MODEL BY ID
+GET MODEL CONFIG
 =====================================
 */
 
-function getModel(modelId){
+function getModel(id){
 
-   const preset = presets[modelId];
+   const preset = presets[id];
 
    if(!preset){
+      console.log("MODEL NOT FOUND:", id);
       return null;
    }
 
-   const ui = buildUI(preset);
-
    return {
       preset,
-      ui
+      ui: buildUI(preset)
    };
 }
 
 /*
 =====================================
-GET ALL MODELS
+RUN MODEL (CORE FIX)
 =====================================
 */
 
-function getAll(){
+async function runModel(data){
 
-   let list = [];
+   const preset = presets[data.preset];
 
-   Object.keys(presets).forEach(id => {
+   if(!preset){
+      throw new Error("Preset not found");
+   }
 
-      const preset = presets[id];
+   console.log("RUN MODEL:", preset.id, "provider:", preset.provider);
 
-      list.push({
-         id: preset.id,
-         name: preset.name,
-         provider: preset.provider
-      });
+   /*
+   ======================
+   AUTO ROUTE BY PROVIDER
+   ======================
+   */
 
-   });
+   if(preset.provider === "replicate"){
 
-   return list;
+      return replicateService.run(preset,data);
+
+   }
+
+   if(preset.provider === "runwayml"){
+
+      return runwayService.run(preset,data);
+
+   }
+
+   throw new Error("Provider not supported");
+
 }
 
 module.exports = {
    getModel,
-   getAll
+   runModel
 };
