@@ -5,61 +5,80 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>SN DESIGN CREATE</title>
+<title>SN DESIGN STUDIO — CREATE</title>
 
-<link rel="stylesheet" href="/assets/css/app-create.css">
+<link rel="stylesheet" href="/assets/css/app-create-premium.css">
 
 </head>
 
 <body>
 
-<div class="app">
+<div class="hero">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+        <h1 id="engineName">ENGINE: LOADING...</h1>
+        <p id="engineDesc">AI Rendering System</p>
+    </div>
+</div>
 
-    <!-- HEADER STATUS -->
-    <div class="statusBox">
+<div class="container">
 
-        <div id="engineName">ENGINE: loading...</div>
+    <div class="glass-card status-card">
 
-        <div>User: Guest</div>
-        <div>Credit: --</div>
-        <div>Limit: --</div>
-        <div>Free Daily: 3 ครั้ง</div>
+        <div class="status-row">
+            <span>User</span>
+            <span id="userName">Guest</span>
+        </div>
 
-        <select id="modelSelect"></select>
+        <div class="status-row">
+            <span>Credit</span>
+            <span id="userCredit">--</span>
+        </div>
+
+        <div class="status-row">
+            <span>Limit</span>
+            <span id="userLimit">--</span>
+        </div>
+
+        <div class="status-row">
+            <span>Free Daily</span>
+            <span>3 ครั้ง</span>
+        </div>
+
+        <select id="modelSelect" class="model-select"></select>
 
     </div>
 
 
-    <!-- SOURCE BLOCK -->
-
-    <div id="uploadVideo" class="block hidden">
-        <button class="cta">Upload Video Source</button>
+    <div id="uploadVideo" class="glass-card upload-card hidden">
+        <div class="upload-title">Upload Video Source</div>
+        <input type="file" id="videoInput" accept="video/*">
     </div>
 
-    <div id="uploadImage" class="block hidden">
-        <button class="cta">Upload Image Animation</button>
+    <div id="uploadImage" class="glass-card upload-card hidden">
+        <div class="upload-title">Upload Image Animation</div>
+        <input type="file" id="imageInput" accept="image/*">
     </div>
 
-    <div id="promptBox" class="block hidden">
+    <div id="promptBox" class="glass-card upload-card hidden">
         <textarea id="prompt" placeholder="Enter prompt..."></textarea>
     </div>
 
-
-    <!-- CTA -->
-
-    <button id="generateBtn" class="generateBtn">
-        GENERATE VIDEO
+    <button id="generateBtn" class="generate-btn">
+        GENERATE
     </button>
 
+    <div class="progress-container">
+        <div id="progressBar" class="progress-bar"></div>
+    </div>
 
-    <div id="statusBar">
+    <div id="statusText" class="status-text">
         STATUS: IDLE
     </div>
 
 </div>
 
-
-<script src="/assets/js/create.js"></script>
+<script src="/assets/js/create-premium.js"></script>
 
 </body>
 </html>
