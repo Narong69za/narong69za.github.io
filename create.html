@@ -1,71 +1,303 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>ULTRA AUTO CREATE</title>
+<title>CREATE — SN DESIGN STUDIO</title>
 
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
 
+<style>
+
+/* ===============================
+ULTRA GOD PREMIUM UI (APP LAYER)
+=============================== */
+
+body{
+background:#0b0b0b;
+color:#fff;
+font-family:sans-serif;
+}
+
+.create-app{
+max-width:1100px;
+margin:auto;
+padding:20px;
+}
+
+/* TOP ENGINE CARD */
+
+.engine-box{
+background:#111;
+border:1px solid #222;
+padding:20px;
+margin-bottom:20px;
+border-radius:10px;
+}
+
+.engine-title{
+color:#ff0033;
+font-size:22px;
+margin-bottom:10px;
+}
+
+.engine-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:10px;
+font-size:14px;
+}
+
+/* MEDIA ZONES */
+
+.media-zone{
+background:#151515;
+border:1px dashed #333;
+padding:15px;
+margin-bottom:15px;
+border-radius:8px;
+}
+
+.upload-btn{
+background:#ff0033;
+border:none;
+color:white;
+padding:12px;
+width:100%;
+cursor:pointer;
+}
+
+/* PROMPT */
+
+.prompt{
+width:100%;
+padding:12px;
+margin-top:10px;
+background:#000;
+color:#fff;
+border:1px solid #333;
+}
+
+/* CTA */
+
+.create-btn{
+margin-top:15px;
+background:#ff0033;
+color:white;
+border:none;
+padding:15px;
+width:100%;
+font-weight:bold;
+cursor:pointer;
+}
+
+/* PROGRESS */
+
+.progress-wrap{
+height:10px;
+background:#111;
+margin-top:15px;
+}
+
+#progressBar{
+height:100%;
+background:#ff0033;
+width:0%;
+transition:0.4s;
+}
+
+.status{
+margin-top:10px;
+}
+
+video{
+width:100%;
+margin-top:20px;
+}
+
+</style>
+
 </head>
-<body style="background:#000;color:#0f0;font-family:monospace">
+<body>
 
-<h2>ULTRA TRACE MODE</h2>
+<div class="create-app">
 
-<div id="traceLog"></div>
-<hr>
-<div id="presetContainer"></div>
+<!-- ===============================
+TOP ENGINE INFO
+=============================== -->
+
+<div class="engine-box">
+
+<div class="engine-title" id="engineName">
+LOADING PRESET...
+</div>
+
+<div class="engine-grid">
+
+<div>User: <span id="userLabel">Guest</span></div>
+<div>Credit: <span id="creditLabel">--</span></div>
+<div>Limit: <span id="limitLabel">--</span></div>
+<div>Free Daily: 3 ครั้ง</div>
+
+</div>
+
+</div>
+
+<!-- ===============================
+MEDIA INPUT
+=============================== -->
+
+<div class="media-zone">
+<button class="upload-btn" id="uploadVideoBtn">
+Upload Video Source
+</button>
+<input type="file" id="videoInput" hidden>
+</div>
+
+<div class="media-zone">
+<button class="upload-btn" id="uploadImageBtn">
+Upload Image Animation
+</button>
+<input type="file" id="imageInput" hidden>
+</div>
+
+<textarea class="prompt" id="prompt" placeholder="Enter prompt..."></textarea>
+
+<button class="create-btn" id="createBtn">
+GENERATE VIDEO
+</button>
+
+<div class="progress-wrap">
+<div id="progressBar"></div>
+</div>
+
+<div class="status" id="statusTop">
+STATUS: IDLE
+</div>
+
+<div id="preview"></div>
+
+</div>
 
 <script>
 
-const API="https://sn-design-api.onrender.com";
+/* ===============================
+CONFIG
+=============================== */
 
-async function loadAllPresets(){
+const API="https://api.sn-designstudio.dev";
 
-   console.log("STEP 1: loadAllPresets CALLED");
+const params=new URLSearchParams(location.search);
+const templateID=params.get("template");
 
-   try{
+/* ===============================
+LOAD PRESET AUTO
+=============================== */
 
-      const res = await fetch(API+"/api/templates");
+async function loadPreset(){
 
-      console.log("STEP 2: STATUS",res.status);
+try{
 
-      const data = await res.json();
+const res=await fetch(API+"/api/templates/"+templateID);
 
-      console.log("PRESET DATA:",data);
+const preset=await res.json();
 
-      const container=document.getElementById("presetContainer");
+document.getElementById("engineName").innerText=
+preset.name+" ("+preset.provider+")";
 
-      Object.values(data).forEach(p=>{
+document.getElementById("limitLabel").innerText=
+"Max "+(preset.limits?.maxDuration||"--")+" sec";
 
-         const card=document.createElement("div");
+document.getElementById("creditLabel").innerText=
+preset.creditCost;
 
-         card.innerHTML=`
-            <h3>${p.name}</h3>
-            <p>${p.provider}</p>
-            <button onclick="openCreate('${p.id}')">CREATE</button>
-         `;
+}catch(e){
 
-         container.appendChild(card);
-
-      });
-
-   }catch(e){
-
-      console.log("LOAD PRESET ERROR",e);
-
-   }
+document.getElementById("engineName").innerText=
+"PRESET ERROR";
 
 }
 
-function openCreate(slug){
-   location.href="/create.html?template="+slug;
 }
 
-loadAllPresets();
+loadPreset();
+
+/* ===============================
+UPLOAD
+=============================== */
+
+uploadVideoBtn.onclick=()=>videoInput.click();
+uploadImageBtn.onclick=()=>imageInput.click();
+
+/* ===============================
+CREATE
+=============================== */
+
+const progressBar=document.getElementById("progressBar");
+const statusTop=document.getElementById("statusTop");
+
+createBtn.onclick=async()=>{
+
+statusTop.innerText="STATUS: SENDING";
+
+const prompt=document.getElementById("prompt").value;
+
+const res=await fetch(API+"/api/render",{
+
+method:"POST",
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+
+templateID:templateID,
+prompt:prompt
+
+})
+
+});
+
+const data=await res.json();
+
+startPolling(data.jobID);
+
+};
+
+function startPolling(id){
+
+let progress=10;
+
+const loop=setInterval(async()=>{
+
+progress+=10;
+if(progress>90) progress=90;
+
+progressBar.style.width=progress+"%";
+
+const res=await fetch(API+"/api/status/"+id);
+const data=await res.json();
+
+if(data.status==="complete"){
+
+clearInterval(loop);
+
+progressBar.style.width="100%";
+statusTop.innerText="STATUS: COMPLETE";
+
+if(data.url){
+
+preview.innerHTML=
+'<video controls autoplay src="'+data.url+'"></video>';
+
+}
+
+}
+
+},3000);
+
+}
 
 </script>
+
 </body>
 </html>
