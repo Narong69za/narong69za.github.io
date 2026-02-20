@@ -1,11 +1,11 @@
 /*
 =====================================
 SN DESIGN MOTION ENGINE
-ULTRA PRODUCTION VERSION
+ULTRA AUTO PRESET VERSION
 =====================================
 */
 
-const presetMap = require("../services/preset.map");
+const presets = require("../services/preset.loader");
 const replicateService = require("../services/replicate/replicate.service");
 const runwayService = require("../services/runway/runway.service");
 
@@ -21,16 +21,11 @@ async function runEngine(data){
       throw new Error("JOB ID MISSING");
    }
 
-   const preset = presetMap[templateID];
+   const preset = presets[templateID];
 
    if(!preset){
-      throw new Error("PRESET NOT FOUND");
+      throw new Error("PRESET NOT FOUND: "+templateID);
    }
-
-   console.log("RUN ENGINE:", templateID);
-   console.log("PROVIDER:", preset.provider);
-   console.log("MODEL:", preset.model);
-   console.log("PROMPT:", prompt);
 
    const payload = {
       model: preset.model,
