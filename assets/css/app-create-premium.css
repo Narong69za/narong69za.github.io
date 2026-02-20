@@ -1,153 +1,159 @@
+/* =====================================
+   ULTRA CREATE PREMIUM UI
+   SN DESIGN STUDIO
+===================================== */
 
-const API="https://sn-designstudio.dev";
-
-let CURRENT_PRESET=null;
-
-init();
-
-async function init(){
-
- await loadPreset();
-
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family: "Segoe UI", sans-serif;
 }
 
-
-async function loadPreset(){
-
- const params=new URLSearchParams(location.search);
-
- const id=params.get("template");
-
- if(!id){
-   setEngine("UNKNOWN");
-   return;
- }
-
- try{
-
-   const res=await fetch(API+"/api/templates/"+id);
-
-   if(!res.ok) throw "preset error";
-
-   const preset=await res.json();
-
-   CURRENT_PRESET=preset;
-
-   buildUI(preset);
-
- }catch(e){
-
-   setEngine("UNKNOWN");
-
- }
-
+body{
+  background:#0d0d0f;
+  color:#fff;
+  min-height:100vh;
 }
 
+/* =============================
+   LAYOUT
+============================= */
 
-function buildUI(p){
-
- setEngine(p.name||"UNKNOWN");
-
- renderModels(p.models||[]);
-
- toggle("uploadVideo",p.ui?.needVideo);
- toggle("uploadImage",p.ui?.needImage);
- toggle("promptBox",p.ui?.needPrompt);
-
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:40px 20px;
 }
 
-
-function setEngine(name){
-
- document.getElementById("engineName").innerText="ENGINE: "+name;
-
+.card{
+  background:#15151a;
+  border-radius:14px;
+  padding:30px;
+  box-shadow:0 0 40px rgba(0,0,0,0.4);
+  border:1px solid rgba(255,255,255,0.05);
 }
 
+/* =============================
+   ENGINE TITLE
+============================= */
 
-function renderModels(models){
-
- const select=document.getElementById("modelSelect");
-
- select.innerHTML="";
-
- models.forEach(m=>{
-
-   const opt=document.createElement("option");
-   opt.value=m.name;
-   opt.innerText=m.name;
-
-   select.appendChild(opt);
-
- });
-
+.engine-title{
+  font-size:22px;
+  font-weight:600;
+  margin-bottom:20px;
+  letter-spacing:1px;
+  color:#00f0ff;
 }
 
+/* =============================
+   FORM ELEMENTS
+============================= */
 
-function toggle(id,state){
-
- const el=document.getElementById(id);
-
- if(state) el.classList.remove("hidden");
- else el.classList.add("hidden");
-
+label{
+  display:block;
+  margin-top:18px;
+  margin-bottom:6px;
+  font-size:14px;
+  opacity:0.8;
 }
 
-
-document.getElementById("generateBtn").onclick=async()=>{
-
- if(!CURRENT_PRESET) return;
-
- document.getElementById("statusText").innerText="STATUS: PROCESSING";
-
- simulateProgress();
-
- try{
-
-   const res=await fetch(API+"/api",{
-
-     method:"POST",
-     headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({
-       preset:CURRENT_PRESET.id
-     })
-
-   });
-
-   await res.json();
-
-   document.getElementById("statusText").innerText="STATUS: COMPLETE";
-   setProgress(100);
-
- }catch(e){
-
-   document.getElementById("statusText").innerText="STATUS: ERROR";
-
- }
-
-};
-
-
-function simulateProgress(){
-
- let progress=0;
-
- const interval=setInterval(()=>{
-
-   progress+=10;
-
-   if(progress>=90){
-     clearInterval(interval);
-   }
-
-   setProgress(progress);
-
- },300);
-
+select,
+input[type="file"],
+textarea{
+  width:100%;
+  background:#0f0f13;
+  border:1px solid rgba(255,255,255,0.08);
+  color:#fff;
+  padding:12px;
+  border-radius:8px;
+  outline:none;
+  transition:0.2s ease;
 }
 
+textarea{
+  resize:none;
+  min-height:100px;
+}
 
-function setProgress(val){
+select:focus,
+textarea:focus{
+  border-color:#00f0ff;
+}
 
- document.getElementById("progressBar").style.width=val+"%";
+/* =============================
+   BUTTON
+============================= */
 
-   }
+button{
+  margin-top:20px;
+  padding:14px;
+  width:100%;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(45deg,#00f0ff,#00b8ff);
+  color:#000;
+  font-weight:600;
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+button:hover{
+  transform:scale(1.02);
+  box-shadow:0 0 20px rgba(0,240,255,0.5);
+}
+
+/* =============================
+   STATUS
+============================= */
+
+.status{
+  margin-top:20px;
+  font-size:14px;
+  letter-spacing:1px;
+  opacity:0.8;
+}
+
+/* =============================
+   PROGRESS BAR
+============================= */
+
+.progress-wrapper{
+  margin-top:15px;
+  width:100%;
+  height:10px;
+  background:#1a1a22;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  width:0%;
+  height:100%;
+  background:linear-gradient(90deg,#00f0ff,#00ff99);
+  transition:width 0.3s ease;
+}
+
+/* =============================
+   HIDDEN TOGGLE
+============================= */
+
+.hidden{
+  display:none !important;
+}
+
+/* =============================
+   RESPONSIVE
+============================= */
+
+@media(max-width:768px){
+
+  .container{
+    padding:20px;
+  }
+
+  .card{
+    padding:20px;
+  }
+
+}
