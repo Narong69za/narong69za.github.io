@@ -187,38 +187,29 @@ CONFIG
 =============================== */
 
 const API="https://api.sn-designstudio.dev";
+const API="https://api.sn-designstudio.dev";
 
-const params=new URLSearchParams(location.search);
-const templateID=params.get("template");
+const params = new URLSearchParams(location.search);
 
-/* ===============================
-LOAD PRESET AUTO
-=============================== */
+const templateID = params.get("template");
 
 async function loadPreset(){
 
-try{
+   if(!templateID){
+      console.log("NO TEMPLATE PARAM");
+      return;
+   }
 
-const res=await fetch(API+"/api/templates/"+templateID);
+   const res = await fetch(API+"/api/templates/"+templateID);
 
-const preset=await res.json();
+   if(!res.ok){
+      console.log("PRESET FETCH FAIL",res.status);
+      return;
+   }
 
-document.getElementById("engineName").innerText=
-preset.name+" ("+preset.provider+")";
+   const preset = await res.json();
 
-document.getElementById("limitLabel").innerText=
-"Max "+(preset.limits?.maxDuration||"--")+" sec";
-
-document.getElementById("creditLabel").innerText=
-preset.creditCost;
-
-}catch(e){
-
-document.getElementById("engineName").innerText=
-"PRESET ERROR";
-
-}
-
+   console.log("PRESET LOADED:",preset);
 }
 
 loadPreset();
