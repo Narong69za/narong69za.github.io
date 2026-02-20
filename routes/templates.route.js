@@ -1,31 +1,26 @@
-/*
-=====================================
-ULTRA ROUTER MASTER FIX
-SN DESIGN TEMPLATE ROUTER
-=====================================
-*/
-
 const express = require("express");
 const router = express.Router();
 
 const presetMap = require("../services/preset.map");
 
-/* =====================================
-LOAD ALL PRESETS (MASTER MODE)
-===================================== */
+/*
+=====================================
+ULTRA AUTO PRESET SYSTEM
+=====================================
+*/
 
-router.get("/", (req,res)=>{
+/* GET ALL PRESETS (AUTO SCAN) */
+
+router.get("/",(req,res)=>{
 
     res.json({
         success:true,
-        presets: presetMap
+        presets:presetMap
     });
 
 });
 
-/* =====================================
-LOAD SINGLE PRESET
-===================================== */
+/* GET SINGLE PRESET */
 
 router.get("/:slug",(req,res)=>{
 
@@ -36,8 +31,7 @@ router.get("/:slug",(req,res)=>{
     if(!preset){
 
         return res.status(404).json({
-            error:"preset not found",
-            available:Object.keys(presetMap)
+            error:"preset not found"
         });
 
     }
