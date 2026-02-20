@@ -3,16 +3,21 @@ const router = express.Router();
 
 const presets = require("../services/preset.loader");
 
+/*
+=====================================
+GET ALL PRESETS
+=====================================
+*/
+
 router.get("/", (req,res)=>{
-
-   console.log("API HIT /api/templates");
-   console.log("PRESETS VALUE:", presets);
-
-   res.setHeader("Content-Type","application/json");
-
-   res.send(JSON.stringify(presets));
-
+   res.json(presets);
 });
+
+/*
+=====================================
+GET SINGLE PRESET
+=====================================
+*/
 
 router.get("/:slug",(req,res)=>{
 
