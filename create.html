@@ -17,23 +17,17 @@
 
 <h1 class="create-title">ULTRA GOD CREATE</h1>
 
-<!-- ================= TOP ENGINE CARD ================= -->
-
 <div class="engine-card">
 
 <img id="templatePreview" class="template-preview">
 
 <h3 id="engineLabel">ENGINE: --</h3>
-
-<p>User: SN USER</p>
-
 <p id="creditLabel">Credit: --</p>
-
 <p id="limitLabel">Limit: --</p>
 
-<button id="uploadBtn">UPLOAD MEDIA</button>
+<div id="dynamicInputs"></div>
 
-<input type="file" id="uploadMedia" hidden>
+<button id="createBtn">CREATE</button>
 
 <h3 id="statusTop">STATUS: IDLE</h3>
 
@@ -43,214 +37,157 @@
 
 </div>
 
-
-<!-- ================= INPUT ================= -->
-
-<input id="prompt" placeholder="Enter prompt">
-
-<button id="createBtn">CREATE VIDEO</button>
-
-<h3 id="status">STATUS: IDLE</h3>
-
 <div id="preview"></div>
 
 </div>
 
-
 <script>
 
 /*
-====================================
-ULTRA GOD CREATE CORE
-FINAL PRODUCTION VERSION
-====================================
+==========================================
+ULTRA GOD CREATE V4 — AUTO SYNC EDITION
+==========================================
 */
 
 const API = "https://api.sn-designstudio.dev";
-
 const params = new URLSearchParams(location.search);
 const templateID = params.get("template");
 
 const engineLabel = document.getElementById("engineLabel");
 const creditLabel = document.getElementById("creditLabel");
 const limitLabel = document.getElementById("limitLabel");
-const templatePreview = document.getElementById("templatePreview");
-
-const promptInput = document.getElementById("prompt");
-const createBtn = document.getElementById("createBtn");
-
+const dynamicInputs = document.getElementById("dynamicInputs");
 const progressBar = document.getElementById("progressBar");
 const statusTop = document.getElementById("statusTop");
 
-const uploadBtn = document.getElementById("uploadBtn");
-const uploadMedia = document.getElementById("uploadMedia");
+let presetData = null;
 
 if(!templateID){
-
-document.body.innerHTML="TEMPLATE PARAM MISSING";
-
-throw new Error("Template missing");
-
+   document.body.innerHTML="TEMPLATE PARAM MISSING";
+   throw new Error("Template missing");
 }
 
 /* ================= LOAD PRESET ================= */
 
 async function loadPreset(){
 
-try{
+   const res = await fetch(API+"/api/template/"+templateID);
+   const preset = await res.json();
 
-const res = await fetch(API+"/api/template/"+templateID);
+   presetData = preset;
 
-const preset = await res.json();
+   engineLabel.textContent = "ENGINE: "+preset.engine;
+   creditLabel.textContent = "Credit: "+(preset.creditCost || "--");
+   limitLabel.textContent =
+   "Limit: Max "+(preset.limits?.maxDuration || "--")+"s";
 
-engineLabel.textContent = "ENGINE: "+preset.engine;
+   document.getElementById("templatePreview").src =
+   API+"/assets/images/template-"+templateID+".jpg";
 
-limitLabel.textContent =
-"Limit: Max "+(preset.limits?.maxDuration || "--")+"s";
-
-creditLabel.textContent =
-"Credit: "+(preset.creditCost || "--");
-
-/* preview image from template */
-
-templatePreview.src =
-API+"/assets/images/template-"+templateID+".jpg";
-
-}catch(e){
-
-engineLabel.textContent="PRESET LOAD ERROR";
-
-}
-
+   buildDynamicUI(preset.input);
 }
 
 loadPreset();
 
+/* ================= BUILD DYNAMIC UI ================= */
 
-/* ================= UPLOAD ================= */
+function buildDynamicUI(inputConfig){
 
-uploadBtn.onclick = ()=>{
+   dynamicInputs.innerHTML="";
 
-uploadMedia.click();
+   if(inputConfig.prompt){
+      dynamicInputs.innerHTML +=
+      `<input id="promptInput" placeholder="Enter prompt">`;
+   }
 
-};
+   if(inputConfig.image){
+      dynamicInputs.innerHTML +=
+      `<input type="file" id="imageInput" accept="image/*">`;
+   }
 
-
-/* ================= PROGRESS ================= */
-
-function setProgress(val){
-
-progressBar.style.width = val+"%";
+   if(inputConfig.video){
+      dynamicInputs.innerHTML +=
+      `<input type="file" id="videoInput" accept="video/*">`;
+   }
 
 }
-
 
 /* ================= CREATE ================= */
 
-createBtn.addEventListener("click", async ()=>{
+document.getElementById("createBtn")
+.addEventListener("click", async ()=>{
 
-const prompt = promptInput.value || "";
+   if(!presetData) return;
 
-if(!prompt.trim()){
+   const payload = {
+      templateID: templateID
+   };
 
-alert("Enter prompt first");
-return;
+   if(presetData.input.prompt){
+      const prompt =
+      document.getElementById("promptInput")?.value || "";
+      if(!prompt.trim()){
+         alert("Prompt required");
+         return;
+      }
+      payload.prompt = prompt;
+   }
 
-}
+   statusTop.textContent="STATUS: SENDING";
 
-document.getElementById("status").textContent="STATUS: SENDING";
-statusTop.textContent="STATUS: SENDING";
+   const res = await fetch(API+"/api/render",{
+      method:"POST",
+      headers:{
+         "Content-Type":"application/json"
+      },
+      body:JSON.stringify(payload)
+   });
 
-try{
+   const data = await res.json();
 
-const res = await fetch(API+"/api/render",{
+   if(!data.jobID){
+      statusTop.textContent="STATUS: ERROR";
+      return;
+   }
 
-method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
-body:JSON.stringify({
-
-templateID:templateID,
-prompt:prompt   // ⭐ FIX สำคัญ
-
-})
-
+   startPolling(data.jobID);
 });
-
-const data = await res.json();
-
-if(!data.jobID) throw new Error("NO JOB ID");
-
-startPolling(data.jobID);
-
-}catch(e){
-
-document.getElementById("status").textContent="STATUS: ERROR";
-statusTop.textContent="STATUS: ERROR";
-
-}
-
-});
-
 
 /* ================= POLLING ================= */
 
 function startPolling(jobID){
 
-let progress = 5;
+   let progress=5;
+   progressBar.style.width="5%";
 
-setProgress(progress);
+   const loop = setInterval(async ()=>{
 
-const loop = setInterval(async ()=>{
+      const res = await fetch(API+"/api/status/"+jobID);
+      const data = await res.json();
 
-try{
+      progress+=10;
+      if(progress>95) progress=95;
+      progressBar.style.width=progress+"%";
 
-const res = await fetch(API+"/api/status/"+jobID);
+      if(data.status==="complete"){
 
-const data = await res.json();
+         clearInterval(loop);
+         progressBar.style.width="100%";
+         statusTop.textContent="STATUS: COMPLETE";
 
-progress += 10;
+         if(data.url){
+            document.getElementById("preview").innerHTML=
+            '<video controls autoplay src="'+data.url+'"></video>';
+         }
 
-if(progress>95) progress=95;
+      }
 
-setProgress(progress);
+      if(data.status==="error"){
+         clearInterval(loop);
+         statusTop.textContent="STATUS: ERROR";
+      }
 
-if(data.status==="complete"){
-
-clearInterval(loop);
-
-setProgress(100);
-
-document.getElementById("status").textContent="STATUS: COMPLETE";
-
-statusTop.textContent="STATUS: COMPLETE";
-
-if(data.url){
-
-document.getElementById("preview").innerHTML =
-'<video controls autoplay src="'+data.url+'"></video>';
-
-}
-
-}
-
-if(data.status==="error"){
-
-clearInterval(loop);
-
-document.getElementById("status").textContent="STATUS: ERROR";
-
-statusTop.textContent="STATUS: ERROR";
-
-}
-
-}catch(e){}
-
-},3000);
-
+   },3000);
 }
 
 </script>
