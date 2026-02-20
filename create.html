@@ -22,76 +22,48 @@
 </div>
 <script>
 
-const API="https://api.sn-designstudio.dev/";
-
-/*
-=====================================
-ULTRA AUTO PRESET SYSTEM
-scan preset -> generate UI auto
-=====================================
-*/
+const API="https://sn-design-api.onrender.com";
 
 async function loadAllPresets(){
 
-try{
+   const res = await fetch(API+"/api/templates");
 
-const res = await fetch(API+"/api/template");
+   if(!res.ok){
+      console.log("API FAIL",res.status);
+      return;
+   }
 
-if(!res.ok){
-   console.log("API FAIL",res.status);
-   return;
-}
+   const data = await res.json();
 
-const data = await res.json();
-
-console.log("PRESET DATA:",data);
-
-renderPresets(data);
-
-}catch(e){
-   console.log("LOAD PRESET ERROR",e);
-}
+   renderPresets(data);
 
 }
-
-/* ================= UI AUTO GENERATE ================= */
 
 function renderPresets(list){
 
-const container=document.getElementById("presetContainer");
+   const container=document.getElementById("presetContainer");
+   container.innerHTML="";
 
-container.innerHTML="";
+   Object.values(list).forEach(preset=>{
 
-Object.keys(list).forEach(slug=>{
+      const card=document.createElement("div");
 
-const preset=list[slug];
+      card.innerHTML=`
+         <h3>${preset.name}</h3>
+         <p>Provider: ${preset.provider}</p>
+         <p>Credit: ${preset.creditCost}</p>
+         <button onclick="openCreate('${preset.id}')">OPEN</button>
+      `;
 
-const card=document.createElement("div");
+      container.appendChild(card);
 
-card.className="preset-card";
-
-card.innerHTML=`
-<h3>${preset.engine || slug}</h3>
-<p>Provider: ${preset.provider}</p>
-<p>Credit: ${preset.creditCost || "-"}</p>
-<button onclick="openCreate('${slug}')">OPEN</button>
-`;
-
-container.appendChild(card);
-
-});
+   });
 
 }
-
-/* ================= OPEN CREATE ================= */
 
 function openCreate(slug){
-
-location.href="/create.html?templates="+slug;
-
+   location.href="/create.html?template="+slug;
 }
-
-/* START */
 
 loadAllPresets();
 
