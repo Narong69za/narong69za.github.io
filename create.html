@@ -10,239 +10,171 @@
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/master.css">
 <link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/create.css">
 
-<style>
-
-/* ===============================
-ULTRA GOD V3 ADDON UI
-===============================*/
-
-.top-panel{
-background:#0a0a0a;
-border:1px solid #222;
-padding:14px;
-margin-bottom:20px;
-}
-
-.progress-wrap{
-width:100%;
-height:6px;
-background:#111;
-margin-top:10px;
-}
-
-.progress-bar{
-height:100%;
-width:0%;
-background:#ff003c;
-transition:.3s;
-}
-
-.upload-btn{
-background:#111;
-border:1px solid #333;
-padding:8px 12px;
-cursor:pointer;
-margin-top:10px;
-}
-
-</style>
-
 </head>
-<body>
+<body class="create-page">
 
-<div class="create-wrapper">
+<section class="section">
 
-<h1 class="create-title">ULTRA GOD CREATE V3</h1>
+<div class="container">
 
-<!-- ===============================
-TOP CONTROL PANEL
-===============================-->
+<h1 class="section-title">ULTRA GOD CREATE</h1>
 
-<div class="top-panel">
+<!-- =====================
+PRESET CARD
+===================== -->
+
+<div id="presetCard" class="sn-card"></div>
+
+<!-- =====================
+CREATE AREA
+===================== -->
+
+<div class="sn-card">
 
 <div id="engineLabel"></div>
 
-<div>User: <span id="userName">SN USER</span></div>
-<div>Credit: <span id="credit">--</span></div>
-<div>Limit: <span id="duration">Max 30s</span></div>
-
-<button class="upload-btn" id="uploadBtn">UPLOAD MEDIA</button>
-<input type="file" id="uploadMedia" hidden>
-
-<div id="statusTop">STATUS: IDLE</div>
-
-<div class="progress-wrap">
-<div id="progressBar" class="progress-bar"></div>
-</div>
-
-</div>
-
 <input id="prompt" placeholder="Enter prompt">
 
-<button id="createBtn">CREATE VIDEO</button>
+<button id="createBtn" class="btn-primary">
+CREATE VIDEO
+</button>
+
+<div class="progress-wrap">
+<div id="progressBar"></div>
+</div>
 
 <h3 id="status">STATUS: IDLE</h3>
 
-<div id="preview"></div>
+</div>
+
+<div id="preview" class="sn-card"></div>
 
 </div>
+</section>
 
 <script>
 
-/* ===============================
-STATE MANAGER (ลด lag)
-===============================*/
-
-const STATE = {
-status:"idle",
-job:null,
-progress:0,
-engine:null
-};
-
-/* ===============================
+/* ======================
 CONFIG
-===============================*/
+====================== */
 
 const API =
 (window.SN_CONFIG && window.SN_CONFIG.API_BASE)
 ? window.SN_CONFIG.API_BASE
 : "https://api.sn-designstudio.dev";
 
-/* ===============================
-ELEMENTS
-===============================*/
-
 const params = new URLSearchParams(location.search);
 const templateID = params.get("template");
 
-const promptInput = document.getElementById("prompt");
-const createBtn = document.getElementById("createBtn");
-
-const progressBar = document.getElementById("progressBar");
-const statusTop = document.getElementById("statusTop");
 const statusBox = document.getElementById("status");
+const progressBar = document.getElementById("progressBar");
 const engineLabel = document.getElementById("engineLabel");
 
-/* ===============================
-UPLOAD MEDIA
-===============================*/
+/* ======================
+LOAD PRESET CARD
+====================== */
 
-document.getElementById("uploadBtn").onclick=()=>{
-document.getElementById("uploadMedia").click();
-};
+async function loadPreset(){
 
-/* ===============================
-UI UPDATE
-===============================*/
+if(!templateID) return;
 
-function renderUI(){
+const res = await fetch(API+"/api/templates/"+templateID);
+const data = await res.json();
 
-statusBox.textContent="STATUS: "+STATE.status.toUpperCase();
-statusTop.textContent="STATUS: "+STATE.status.toUpperCase();
+engineLabel.innerText="ENGINE: "+data.engine;
 
-progressBar.style.width=STATE.progress+"%";
+document.getElementById("presetCard").innerHTML=`
+
+<img src="${data.image}" class="card-img">
+
+<h3>${data.title}</h3>
+
+<p>${data.description}</p>
+
+<div class="tag-row">
+${data.tags.map(t=>`<span>${t}</span>`).join("")}
+</div>
+
+`;
 
 }
 
-/* ===============================
-CREATE BUTTON
-===============================*/
+loadPreset();
 
-createBtn.addEventListener("click", async ()=>{
+/* ======================
+CREATE VIDEO
+====================== */
 
-const prompt = promptInput.value || "";
+document.getElementById("createBtn").onclick=async()=>{
+
+const prompt = document.getElementById("prompt").value;
 
 if(!prompt.trim()){
+
 alert("Enter prompt");
+
 return;
+
 }
 
-STATE.status="sending";
-STATE.progress=10;
-renderUI();
+statusBox.innerText="STATUS: SENDING";
+progressBar.style.width="20%";
 
 const res = await fetch(API+"/api/render",{
 
 method:"POST",
+
 headers:{ "Content-Type":"application/json" },
 
 body:JSON.stringify({
+
 templateID:templateID,
-input:{ prompt:prompt }
+
+input:{ prompt }
+
 })
 
 });
 
 const data = await res.json();
 
-if(!data.jobID){
-STATE.status="error";
-renderUI();
-return;
-}
-
-STATE.job=data.jobID;
-STATE.status="processing";
-STATE.progress=30;
-renderUI();
-
 startPolling(data.jobID);
 
-});
+};
 
-/* ===============================
-POLLING SYSTEM
-===============================*/
+/* ======================
+POLLING
+====================== */
 
-function startPolling(id){
+function startPolling(jobID){
 
 const loop=setInterval(async()=>{
 
-const res = await fetch(API+"/api/status/"+id);
+const res = await fetch(API+"/api/status/"+jobID);
+
 const data = await res.json();
 
 if(data.progress){
-STATE.progress=data.progress;
+
+progressBar.style.width=data.progress+"%";
+
 }
 
 if(data.status==="complete"){
 
 clearInterval(loop);
 
-STATE.status="complete";
-STATE.progress=100;
-renderUI();
+statusBox.innerText="STATUS: COMPLETE";
 
 document.getElementById("preview").innerHTML=
-'<video controls autoplay src="'+data.url+'"></video>';
 
-}
-
-if(data.status==="error"){
-
-clearInterval(loop);
-STATE.status="error";
-renderUI();
+`<video controls autoplay src="${data.url}"></video>`;
 
 }
 
 },3000);
 
 }
-
-/* ===============================
-INIT
-===============================*/
-
-if(templateID){
-
-STATE.engine=templateID;
-engineLabel.textContent="ENGINE: "+templateID;
-
-}
-
-renderUI();
 
 </script>
 
