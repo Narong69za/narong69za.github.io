@@ -5,20 +5,34 @@ const presetDir = path.join(__dirname,"../presets");
 
 const presets = {};
 
-fs.readdirSync(presetDir).forEach(file => {
+try{
 
-   if(file.endsWith(".js")){
+   const files = fs.readdirSync(presetDir);
 
-      const preset = require(path.join(presetDir,file));
+   files.forEach(file => {
 
-      if(!preset.id){
-         throw new Error("PRESET ID MISSING IN "+file);
+      if(!file.endsWith(".js")) return;
+
+      try{
+
+         const fullPath = path.join(presetDir,file);
+
+         const preset = require(fullPath);
+
+         if(preset && preset.id){
+            presets[preset.id] = preset;
+         }
+
+      }catch(e){
+         console.log("PRESET LOAD ERROR:",file,e.message);
       }
 
-      presets[preset.id] = preset;
+   });
 
-   }
+}catch(e){
 
-});
+   console.log("PRESET DIR ERROR:",e.message);
+
+}
 
 module.exports = presets;
