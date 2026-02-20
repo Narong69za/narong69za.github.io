@@ -1,70 +1,33 @@
 const fs = require("fs");
 const path = require("path");
+const MODEL_ROUTER = require("./preset.map");
 
-console.log("=== PRESET LOADER START ===");
-
-/*
-====================================================
-USE STABLE PATH (NO process.cwd())
-====================================================
-*/
-
-const presetDir = path.join(__dirname, "../presets");
-
-console.log("PRESET DIR PATH:", presetDir);
+const presetDir = path.resolve(process.cwd(),"presets");
 
 const presets = {};
 
-try {
+fs.readdirSync(presetDir).forEach(file=>{
 
-   if (!fs.existsSync(presetDir)) {
-      console.log("PRESET DIR NOT FOUND");
-   } else {
+   if(!file.endsWith(".js")) return;
 
-      const files = fs.readdirSync(presetDir);
+   const preset = require(path.join(presetDir,file));
 
-      console.log("FILES FOUND:", files);
+   if(!preset || !preset.id) return;
 
-      files.forEach(file => {
+   const modelConfig = MODEL_ROUTER[preset.id];
 
-         if (!file.endsWith(".js")) return;
-
-         try {
-
-            const fullPath = path.join(presetDir, file);
-
-            console.log("LOADING FILE:", fullPath);
-
-            const preset = require(fullPath);
-
-            if (preset && preset.id) {
-
-               presets[preset.id] = preset;
-
-               console.log("LOADED PRESET:", preset.id);
-
-            } else {
-
-               console.log("INVALID PRESET FORMAT:", file);
-
-            }
-
-         } catch (e) {
-
-            console.log("PRESET LOAD ERROR:", file, e.message);
-
-         }
-
-      });
-
+   if(!modelConfig){
+      console.log("MODEL NOT FOUND:",preset.id);
+      return;
    }
 
-} catch (e) {
+   presets[preset.id] = {
+      ...preset,
+      ...modelConfig
+   };
 
-   console.log("PRESET DIR ERROR:", e.message);
+   console.log("PRESET LOADED:",preset.id);
 
-}
-
-console.log("FINAL PRESETS OBJECT:", presets);
+});
 
 module.exports = presets;
