@@ -1,57 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
-<title>SN DESIGN CREATE</title>
-<style>
-body{background:#000;color:#fff;font-family:sans-serif}
-.box{max-width:600px;margin:auto;padding:30px}
-button{background:red;color:#fff;padding:15px;border:0}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Create | SN Design Studio</title>
+
+<!-- MASTER LOCK -->
+<link rel="stylesheet" href="/assets/css/master.css">
+
+<!-- CREATE ONLY CSS -->
+<link rel="stylesheet" href="/assets/css/create.css">
+
 </head>
 
-<body>
+<body class="create-page">
 
-<div class="box">
+<div class="container">
 
-<h1>ULTRA CREATE</h1>
+<h1 id="engineName">ENGINE: LOADING...</h1>
 
-<textarea id="prompt"></textarea>
+<select id="modelSelect"></select>
 
-<button onclick="run()">CREATE</button>
+<input id="promptBox" placeholder="Enter prompt">
 
-<pre id="result"></pre>
+<button id="generateBtn">GENERATE</button>
+
+<div class="progress">
+<div id="progressBar"></div>
+</div>
+
+<div id="statusText">STATUS: IDLE</div>
 
 </div>
 
-<script>
-
-const API="https://sn-design-api.onrender.com";
-
-const params=new URLSearchParams(location.search);
-const preset=params.get("template")||"image-gen";
-
-async function run(){
-
- const res=await fetch(API+"/api/render",{
-
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-
-   body:JSON.stringify({
-     preset:preset,
-     prompt:document.getElementById("prompt").value
-   })
-
- });
-
- const data=await res.json();
-
- document.getElementById("result").innerText=JSON.stringify(data,null,2);
-
-}
-
-</script>
+<script src="/assets/js/create-premium.js"></script>
 
 </body>
 </html>
