@@ -14,13 +14,13 @@
 
 <body class="template-page">
 
-<!-- GLOBAL NAV INJECT (ADD ONLY) -->
+<!-- GLOBAL NAV INJECT -->
 <div id="nav" class="global-nav"></div>
 
 <section class="hero-master">
 
 <img 
-src="https://sn-designstudio.dev/assets/images/hero.png"
+src="/assets/images/hero.png"
 alt="SN Design Studio Template Collection"
 loading="eager"
 >
@@ -38,22 +38,22 @@ loading="eager"
 <div class="template-grid">
 
 <div class="template-card" data-template="dark-viral">
-<img src="assets/images/template-dark-viral.jpg">
+<img src="/assets/images/template-dark-viral.jpg" alt="Dark Viral Style">
 <h3>Dark Viral Style</h3>
 </div>
 
 <div class="template-card" data-template="lipsync">
-<img src="assets/images/template-lipsync.jpg">
+<img src="/assets/images/template-lipsync.jpg" alt="AI LipSync">
 <h3>AI LipSync</h3>
 </div>
 
 <div class="template-card" data-template="dance-motion">
-<img src="assets/images/template-dance.jpg">
+<img src="/assets/images/template-dance.jpg" alt="Dance Motion">
 <h3>Dance Motion</h3>
 </div>
 
 <div class="template-card" data-template="face-swap">
-<img src="assets/images/template-face-swap.jpg">
+<img src="/assets/images/template-face-swap.jpg" alt="Face Swap">
 <h3>Face Swap</h3>
 </div>
 
@@ -66,20 +66,24 @@ loading="eager"
 © SN Design Studio, 2026 · All rights reserved.
 </footer>
 
-<!-- NAV AUTO INJECT (UNCHANGED SYSTEM) -->
+<!-- NAV AUTO INJECT -->
 <script src="/assets/js/nav.js"></script>
 
-<!-- TEMPLATE CLICK -->
+<!-- TEMPLATE CLICK SAFE BIND -->
 <script>
-document.querySelectorAll("[data-template]").forEach(el=>{
-   el.addEventListener("click",()=>{
-      const model = el.dataset.template;
-      if(model){
-         window.location.href = "create.html?template="+model;
-      }
+document.addEventListener("DOMContentLoaded", function(){
+
+   document.querySelectorAll("[data-template]").forEach(el=>{
+      el.addEventListener("click",()=>{
+         const model = el.dataset.template;
+         if(model){
+            window.location.href = "create.html?template=" + model;
+         }
+      });
    });
+
 });
 </script>
 
 </body>
-  </html>
+</html>
