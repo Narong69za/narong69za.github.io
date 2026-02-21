@@ -1,34 +1,25 @@
-/*
-=====================================
-RUNWAY GEN4 VIDEO
-=====================================
-*/
-
 const fetch = require("node-fetch");
-
-const TOKEN = process.env.RUNWAY_API_TOKEN;
 
 async function run(data){
 
-   const response = await fetch(
+   const res = await fetch(
       "https://api.runwayml.com/v1/generate",
       {
          method:"POST",
          headers:{
-            "Authorization":`Bearer ${TOKEN}`,
+            "Authorization":`Bearer ${process.env.RUNWAY_API_TOKEN}`,
             "Content-Type":"application/json"
          },
          body:JSON.stringify({
             model:"gen4_image_to_video",
             input:{
-               prompt:data.prompt
+               prompt:data.prompt || ""
             }
          })
       }
    );
 
-   return response.json();
-
+   return await res.json();
 }
 
 module.exports = { run };
