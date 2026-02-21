@@ -337,3 +337,29 @@ transition:0.3s;
 width:100%;
 margin-top:20px;
 }
+/* ===================================================
+ULTRA GLOBAL CENTER LOCK
+SN DESIGN STUDIO FINAL
+=================================================== */
+
+.container,
+.section,
+.hero-content-bottom,
+.intro-cinematic,
+.intro-text,
+.section-title{
+margin-left:auto;
+margin-right:auto;
+text-align:center;
+}
+
+.hero-master{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+}
+
+footer{
+text-align:center;
+}
