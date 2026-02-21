@@ -1,24 +1,20 @@
 /*
 =====================================
 REPLICATE SERVICE ENTRY
-SN DESIGN STUDIO FINAL
+SN DESIGN STUDIO FINAL FIX
 =====================================
 */
 
 const faceClone = require("./replicate-face-clone");
-const imageGen = require("./replicate-image-gen");
 
-async function run(preset,data){
+async function run(preset, data){
 
    console.log("REPLICATE RUN:", preset.id);
 
    switch(preset.id){
 
-      case "face-clone":
-         return faceClone.run(preset,data);
-
-      case "image-gen":
-         return imageGen.run(preset,data);
+      case "replicate-face-clone":
+         return faceClone.run(data);
 
       default:
          throw new Error("Replicate model not implemented: " + preset.id);
