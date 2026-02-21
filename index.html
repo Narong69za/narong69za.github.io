@@ -37,24 +37,42 @@ justify-content:center;
 align-items:center;
 }
 
-/* ===== MARQUEE RESTORE ===== */
+/* ===== ULTRA MASTER RESTORE BIND ===== */
 
-.marquee-wrap{
-width:100%;
-overflow:hidden;
-background:#000;
+.gui-status{
+display:flex;
+flex-direction:column;
+align-items:center;
+text-align:center;
+gap:6px;
 }
 
+.status-item{
+opacity:0.4;
+transition:0.3s;
+}
+
+.status-item.active{
+opacity:1;
+transform:scale(1.05);
+}
+
+/* restore CTA row */
+.ultra-cta-status{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
+
+/* restore marquee animation */
 .marquee-text{
-display:inline-block;
-white-space:nowrap;
-padding-left:100%;
-animation:ultraMarquee 20s linear infinite;
+animation: marqueeMove 15s linear infinite;
 }
 
-@keyframes ultraMarquee{
-0%{transform:translateX(0);}
-100%{transform:translateX(-100%);}
+@keyframes marqueeMove{
+0%{transform:translateX(100%)}
+100%{transform:translateX(-100%)}
 }
 
 </style>
@@ -95,20 +113,15 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 </div>
 
 <div class="gui-screen">
-
 <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
-
 <div class="scan-line"></div>
-
 </div>
 
 <div class="gui-status">
-
 <div id="step-ready" class="status-item">System Ready</div>
 <div id="step-analyze" class="status-item">AI Analyze</div>
 <div id="step-motion" class="status-item">Motion Sync</div>
 <div id="step-render" class="status-item">Render Output</div>
-
 </div>
 
 <button class="gui-btn">Start Preview</button>
@@ -134,10 +147,8 @@ AI CONNECT<br><span id="ai-status">CONNECTED</span>
 <div class="network-title">NETWORK TRAFFIC</div>
 
 <div class="network-screen">
-
 <div class="ultra-graph"></div>
 <div class="ultra-graph-glow"></div>
-
 </div>
 
 </div>
@@ -151,7 +162,6 @@ AI CONNECT<br><span id="ai-status">CONNECTED</span>
 <div class="container">
 
 <div class="intro-cinematic">
-
 <h2 class="intro-title">
 SN Design Studio — AI Creator Power System
 </h2>
@@ -159,22 +169,18 @@ SN Design Studio — AI Creator Power System
 <p class="intro-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
 </p>
-
 </div>
 
 <div class="intro-video">
-
 <iframe 
 src="https://www.youtube.com/embed/NI7WALIXStU"
 title="YouTube Shorts"
 frameborder="0"
 allowfullscreen>
 </iframe>
-
 </div>
 
 </div>
-
 </section>
 
 <footer>
@@ -197,19 +203,19 @@ async function updateStatus(){
       .forEach(el=>el.classList.remove("active"));
 
       if(server.server === "online"){
-         document.getElementById("step-ready").classList.add("active");
+         document.getElementById("step-ready")?.classList.add("active");
       }
 
       if(ai.ai === true){
-         document.getElementById("step-analyze").classList.add("active");
+         document.getElementById("step-analyze")?.classList.add("active");
       }
 
       if(net.traffic > 0){
-         document.getElementById("step-motion").classList.add("active");
+         document.getElementById("step-motion")?.classList.add("active");
       }
 
       if(server.server === "online" && ai.ai === true){
-         document.getElementById("step-render").classList.add("active");
+         document.getElementById("step-render")?.classList.add("active");
       }
 
       document.getElementById("server-status").innerText =
