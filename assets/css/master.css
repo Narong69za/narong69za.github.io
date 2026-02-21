@@ -516,3 +516,34 @@ opacity:0.9;
 0%{ transform:translateX(100%); }
 100%{ transform:translateX(-100%); }
 }
+/* ==============================
+ULTRA MARQUEE FORCE RUN (FINAL)
+============================== */
+
+.marquee-wrap{
+width:100%;
+overflow:hidden;
+background:#000;
+position:relative;
+z-index:5;
+}
+
+.marquee-text{
+display:inline-block;
+white-space:nowrap;
+padding-left:100%;
+animation-name: ultraMarquee;
+animation-duration: 18s;
+animation-timing-function: linear;
+animation-iteration-count: infinite;
+will-change: transform;
+}
+
+@keyframes ultraMarquee{
+0%{
+transform: translateX(0);
+}
+100%{
+transform: translateX(-100%);
+}
+}
