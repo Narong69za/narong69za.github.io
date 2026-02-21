@@ -1,10 +1,7 @@
 module.exports = {
 
-   id:"motion-control",
-   name:"Motion Control Engine",
-   creditCost:20,
-   limits:{
-      maxDuration:30
-   }
+   id: "motion-control",
+   creditCost: 15,
+   limits:{ maxDuration:10 }
 
 };
