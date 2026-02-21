@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Templates | SN Design Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Official Website — SN DESIGN STUDIO</title>
 
 <!-- ULTRA CSS LOCK -->
 <link rel="stylesheet" href="/assets/css/master.css">
-
-<!-- EXISTING CSS (unchanged) -->
-<link rel="stylesheet" href="/assets/css/app-template.css">
 
 </head>
 
 <body class="template-page">
 
+<!-- GLOBAL NAV INJECT (ADD ONLY) -->
+<div id="nav" class="global-nav"></div>
+
 <section class="hero-master">
 
-<img src="https://api.sn-designstudio.dev/assets/images/landing.png">
+<img 
+src="https://api.sn-designstudio.dev/assets/images/hero.png"
+alt="SN Design Studio Template Collection"
+loading="eager"
+>
 
 <div class="hero-content-bottom fade-up">
 <h1>Template Collection</h1>
@@ -33,47 +37,48 @@
 
 <div class="template-grid">
 
-<a class="template-card" data-template="dark-viral">
-<img src="https://api.sn-designstudio.dev/assets/images/template-dark-viral.jpg">
+<div class="template-card" data-template="dark-viral">
+<img src="assets/images/template-dark-viral.jpg">
 <h3>Dark Viral Style</h3>
-</a>
+</div>
 
-<a class="template-card" data-template="ai-lipsync">
-<img src="https://api.sn-designstudio.dev/assets/images/template-ai-lipsync.jpg">
+<div class="template-card" data-template="lipsync">
+<img src="assets/images/template-lipsync.jpg">
 <h3>AI LipSync</h3>
-</a>
+</div>
 
-<a class="template-card" data-template="dance-motion">
-<img src="https://api.sn-designstudio.dev/assets/images/template-dance-motion.jpg">
+<div class="template-card" data-template="dance-motion">
+<img src="assets/images/template-dance.jpg">
 <h3>Dance Motion</h3>
-</a>
+</div>
 
-<a class="template-card" data-template="face-swap">
-<img src="https://api.sn-designstudio.dev/assets/images/template-face-swap.jpg">
+<div class="template-card" data-template="face-swap">
+<img src="assets/images/template-face-swap.jpg">
 <h3>Face Swap</h3>
-</a>
+</div>
 
 </div>
+
 </div>
 </section>
 
+<footer>
+© SN Design Studio, 2026 · All rights reserved.
+</footer>
+
+<!-- NAV AUTO INJECT (UNCHANGED SYSTEM) -->
+<script src="/assets/js/nav.js"></script>
+
+<!-- TEMPLATE CLICK -->
 <script>
-
-document.querySelectorAll("[data-template]").forEach(card=>{
-
-card.addEventListener("click",(e)=>{
-
-e.preventDefault();
-
-const template = card.dataset.template;
-
-window.location.href =
-"/create.html?template=" + encodeURIComponent(template);
-
+document.querySelectorAll("[data-template]").forEach(el=>{
+   el.addEventListener("click",()=>{
+      const model = el.dataset.template;
+      if(model){
+         window.location.href = "create.html?template="+model;
+      }
+   });
 });
-
-});
-
 </script>
 
 </body>
