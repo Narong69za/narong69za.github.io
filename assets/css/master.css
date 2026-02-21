@@ -506,3 +506,13 @@ margin-right:auto;
 footer{
 text-align:center;
 }
+.status-item{
+opacity:0.4;
+transition:all .3s ease;
+}
+
+.status-item.active{
+opacity:1;
+color:#00ffc8;
+text-shadow:0 0 8px #00ffc8;
+}
