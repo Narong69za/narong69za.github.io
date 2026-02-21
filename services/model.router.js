@@ -1,6 +1,6 @@
 /*
 =====================================
-ULTRA AUTO MODEL ROUTER
+ULTRA CLEAN MODEL ROUTER
 SN DESIGN STUDIO FINAL
 =====================================
 */
@@ -14,46 +14,7 @@ console.log("=== MODEL ROUTER START ===");
 
 /*
 =====================================
-AUTO UI BUILDER
-=====================================
-*/
-
-function buildUI(preset){
-
-   if(!preset) return null;
-
-   const ui = {
-      engine: preset.id,
-      provider: preset.provider,
-      credit: preset.creditCost || 0,
-      limit: preset.limits?.maxDuration || 0,
-      fields:[]
-   };
-
-   if(preset.provider === "runway"){   // 🔥 FIX
-
-      ui.fields = [
-         {type:"file", name:"media"},
-         {type:"text", name:"prompt"}
-      ];
-
-   }
-
-   if(preset.provider === "replicate"){
-
-      ui.fields = [
-         {type:"file", name:"image"},
-         {type:"text", name:"prompt"}
-      ];
-
-   }
-
-   return ui;
-}
-
-/*
-=====================================
-GET MODEL CONFIG
+GET MODEL
 =====================================
 */
 
@@ -66,15 +27,12 @@ function getModel(id){
       return null;
    }
 
-   return {
-      preset,
-      ui: buildUI(preset)
-   };
+   return preset;
 }
 
 /*
 =====================================
-RUN MODEL (CORE FIX)
+RUN MODEL (CORE ENGINE)
 =====================================
 */
 
@@ -83,16 +41,10 @@ async function runModel(data){
    const preset = presets[data.preset];
 
    if(!preset){
-      throw new Error("Preset not found");
+      throw new Error("Preset not found: " + data.preset);
    }
 
    console.log("RUN MODEL:", preset.id, "provider:", preset.provider);
-
-   /*
-   ======================
-   AUTO ROUTE BY PROVIDER
-   ======================
-   */
 
    if(preset.provider === "replicate"){
 
@@ -100,13 +52,13 @@ async function runModel(data){
 
    }
 
-   if(preset.provider === "runway"){   // 🔥 FIX
+   if(preset.provider === "runway"){
 
       return runwayService.run(preset,data);
 
    }
 
-   throw new Error("Provider not supported");
+   throw new Error("Provider not supported: " + preset.provider);
 
 }
 
