@@ -1,15 +1,11 @@
 module.exports = {
-   id:"replicate-face-clone",
-   name:"Replicate Face Clone",
-   provider:"replicate",
-   model:"lucataco/face-swap",
-   creditCost:15,
-   type:"image",
-   inputs:{
-      source:true,
-      target:true
-   },
+
+   id: "face-clone",
+   provider: "replicate",
+   creditCost: 10,
+
    limits:{
       maxDuration:10
    }
+
 };
