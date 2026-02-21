@@ -21,45 +21,9 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 <link rel="preload" as="image" href="assets/images/hero.png">
 <link rel="stylesheet" href="assets/css/master.css">
 
-<!-- ======================================================
-ULTRA FINAL PREMIUM PATCH — SAFE VERSION
-====================================================== -->
-
 <style>
 
-/* ===== STATUS COLORS ===== */
-
-.server-online{
-background:rgba(0,255,120,0.08);
-border:1px solid rgba(0,255,120,0.5);
-box-shadow:0 0 20px rgba(0,255,120,0.35);
-color:#00ffa2;
-}
-
-.payment-off{
-background:rgba(255,140,0,0.08);
-border:1px solid rgba(255,140,0,0.5);
-box-shadow:0 0 20px rgba(255,140,0,0.35);
-color:#ff9500;
-}
-
-.ai-connected{
-background:rgba(0,180,255,0.08);
-border:1px solid rgba(0,180,255,0.4);
-box-shadow:0 0 20px rgba(0,180,255,0.35);
-color:#00c3ff;
-}
-
-/* ===== PREMIUM TEXT GLOW ===== */
-
-h1,h2,.section-title{
-text-shadow:
-0 0 8px rgba(255,255,255,0.3),
-0 0 18px rgba(255,0,80,0.35),
-0 0 30px rgba(0,150,255,0.2);
-}
-
-/* ===== SAFE NAV CENTER FIX (NO FORCE FLEX) ===== */
+/* ===== SAFE NAV CENTER FIX ===== */
 
 #nav{
 width:100%;
@@ -73,48 +37,24 @@ justify-content:center;
 align-items:center;
 }
 
-/* ======================================================
-ULTRA ANIME NETWORK GRAPH
-====================================================== */
+/* ===== MARQUEE RESTORE ===== */
 
-.network-screen{
-position:relative;
+.marquee-wrap{
+width:100%;
 overflow:hidden;
-background:#020202;
-border-radius:14px;
-border:1px solid rgba(255,255,255,0.08);
+background:#000;
 }
 
-.ultra-graph{
-position:absolute;
-bottom:0;
-width:300%;
-height:100%;
-background:
-linear-gradient(180deg,transparent 60%,rgba(0,255,180,0.4)),
-repeating-linear-gradient(
-90deg,
-rgba(0,255,255,0.2) 0px,
-rgba(0,255,255,0.2) 2px,
-transparent 2px,
-transparent 12px
-);
-animation:animeGraphMove 5s linear infinite;
+.marquee-text{
+display:inline-block;
+white-space:nowrap;
+padding-left:100%;
+animation:ultraMarquee 20s linear infinite;
 }
 
-.ultra-graph-glow{
-position:absolute;
-bottom:0;
-width:300%;
-height:100%;
-background:linear-gradient(to top,rgba(0,255,255,0.35),transparent);
-animation:animeGraphMove 5s linear infinite;
-mix-blend-mode:screen;
-}
-
-@keyframes animeGraphMove{
+@keyframes ultraMarquee{
 0%{transform:translateX(0);}
-100%{transform:translateX(-50%);}
+100%{transform:translateX(-100%);}
 }
 
 </style>
@@ -164,10 +104,10 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 
 <div class="gui-status">
 
-<div class="status-item active">System Ready</div>
-<div class="status-item">AI Analyze</div>
-<div class="status-item">Motion Sync</div>
-<div class="status-item">Render Output</div>
+<div id="step-ready" class="status-item">System Ready</div>
+<div id="step-analyze" class="status-item">AI Analyze</div>
+<div id="step-motion" class="status-item">Motion Sync</div>
+<div id="step-render" class="status-item">Render Output</div>
 
 </div>
 
@@ -244,22 +184,33 @@ allowfullscreen>
 <script src="assets/js/nav.js"></script>
 
 <script>
-document.querySelectorAll("[data-template]").forEach(el=>{
-   el.addEventListener("click",()=>{
-      const model = el.dataset.template;
-      if(model){
-         window.location.href = "create.html?template="+model;
-      }
-   });
-});
-</script>
 
-<script>
 async function updateStatus(){
+
    try{
+
       const server = await fetch("/api/status/server").then(r=>r.json());
       const ai = await fetch("/api/status/ai").then(r=>r.json());
       const net = await fetch("/api/status/network").then(r=>r.json());
+
+      document.querySelectorAll(".status-item")
+      .forEach(el=>el.classList.remove("active"));
+
+      if(server.server === "online"){
+         document.getElementById("step-ready").classList.add("active");
+      }
+
+      if(ai.ai === true){
+         document.getElementById("step-analyze").classList.add("active");
+      }
+
+      if(net.traffic > 0){
+         document.getElementById("step-motion").classList.add("active");
+      }
+
+      if(server.server === "online" && ai.ai === true){
+         document.getElementById("step-render").classList.add("active");
+      }
 
       document.getElementById("server-status").innerText =
          server.server.toUpperCase();
@@ -267,31 +218,16 @@ async function updateStatus(){
       document.getElementById("ai-status").innerText =
          ai.ai ? "CONNECTED":"OFFLINE";
 
-      console.log("TRAFFIC:", net.traffic);
-
    }catch(e){
       console.log("STATUS ERROR",e);
    }
+
 }
+
 setInterval(updateStatus,5000);
 updateStatus();
+
 </script>
 
-<script>
-async function updateLiveUsers(){
-   try{
-      const res = await fetch("/api/live-users");
-      const data = await res.json();
-      const el = document.getElementById("server-status");
-      if(el){
-         el.innerText = "ONLINE ("+data.online+" USERS)";
-      }
-   }catch(e){
-      console.log("LIVE USER ERROR");
-   }
-}
-setInterval(updateLiveUsers,5000);
-</script>
-   
 </body>
-   </html>
+</html>
