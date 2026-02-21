@@ -1,5 +1,234 @@
-<div id="auto-template-container"></div>
-<div id="engineBlock"></div>
-<div id="autoInputs"></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script src="/assets/js/ultra-auto-ui.js"></script>
+<title>CREATE — SN DESIGN STUDIO</title>
+
+<link rel="stylesheet" href="/assets/css/master.css">
+
+<style>
+
+body{
+   background:#0e0e0e;
+   color:#fff;
+   font-family:Montserrat, sans-serif;
+}
+
+.container{
+   max-width:1200px;
+   margin:auto;
+   padding:40px 20px;
+}
+
+.header{
+   font-size:28px;
+   font-weight:700;
+   margin-bottom:30px;
+}
+
+.engine-grid{
+   display:grid;
+   grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+   gap:20px;
+   margin-bottom:40px;
+}
+
+.engine-card{
+   background:#1a1a1a;
+   padding:20px;
+   border-radius:12px;
+   cursor:pointer;
+   transition:0.3s;
+   border:1px solid #222;
+}
+
+.engine-card:hover{
+   border:1px solid #e50914;
+}
+
+.engine-card.active{
+   border:1px solid #e50914;
+   background:#151515;
+}
+
+.form-section{
+   background:#141414;
+   padding:30px;
+   border-radius:12px;
+   border:1px solid #222;
+}
+
+input,textarea{
+   width:100%;
+   padding:12px;
+   background:#1f1f1f;
+   border:1px solid #333;
+   color:#fff;
+   border-radius:8px;
+   margin-bottom:15px;
+}
+
+button{
+   background:#e50914;
+   border:none;
+   padding:12px 20px;
+   border-radius:8px;
+   color:#fff;
+   font-weight:600;
+   cursor:pointer;
+}
+
+button:hover{
+   opacity:0.9;
+}
+
+.result{
+   margin-top:30px;
+   padding:20px;
+   background:#111;
+   border-radius:10px;
+   border:1px solid #222;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<div class="header">
+CREATE PROJECT — SN DESIGN STUDIO
+</div>
+
+<div class="engine-grid" id="engineGrid"></div>
+
+<div class="form-section">
+
+<textarea id="prompt" placeholder="Enter prompt..."></textarea>
+
+<input type="file" id="fileInput">
+
+<button onclick="runEngine()">GENERATE</button>
+
+<div class="result" id="result"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const API_BASE = "https://sn-design-api.onrender.com";
+
+let selectedEngine = null;
+
+/*
+=====================================
+LOAD TEMPLATES (LOCK ENGINE LIST)
+=====================================
+*/
+
+async function loadTemplates(){
+
+   try{
+
+      const res = await fetch(API_BASE + "/api/templates");
+      const templates = await res.json();
+
+      const grid = document.getElementById("engineGrid");
+      grid.innerHTML = "";
+
+      templates.forEach(t=>{
+
+         if(!["flux2pro","face-clone","gen4-video"].includes(t.id)) return;
+
+         const card = document.createElement("div");
+         card.className = "engine-card";
+         card.innerHTML = `
+            <strong>${t.name}</strong><br>
+            <small>${t.provider}</small>
+         `;
+
+         card.onclick = ()=> selectEngine(t.id,card);
+
+         grid.appendChild(card);
+
+      });
+
+   }catch(err){
+
+      console.log(err);
+
+   }
+
+}
+
+/*
+=====================================
+SELECT ENGINE
+=====================================
+*/
+
+function selectEngine(id,element){
+
+   selectedEngine = id;
+
+   document.querySelectorAll(".engine-card").forEach(c=>{
+      c.classList.remove("active");
+   });
+
+   element.classList.add("active");
+
+}
+
+/*
+=====================================
+RUN ENGINE
+=====================================
+*/
+
+async function runEngine(){
+
+   if(!selectedEngine){
+      alert("Select engine first");
+      return;
+   }
+
+   const prompt = document.getElementById("prompt").value;
+   const file = document.getElementById("fileInput").files[0];
+
+   const formData = new FormData();
+   formData.append("preset", selectedEngine);
+   formData.append("prompt", prompt);
+
+   if(file){
+      formData.append("file", file);
+   }
+
+   const res = await fetch(API_BASE + "/render",{
+      method:"POST",
+      body:formData
+   });
+
+   const data = await res.json();
+
+   document.getElementById("result").innerHTML = `
+      <pre>${JSON.stringify(data,null,2)}</pre>
+   `;
+
+}
+
+/*
+=====================================
+INIT
+=====================================
+*/
+
+loadTemplates();
+
+</script>
+
+</body>
+  </html>
