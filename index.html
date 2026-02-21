@@ -22,7 +22,7 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 <link rel="stylesheet" href="assets/css/master.css">
 
 <!-- ======================================================
-ULTRA FINAL PREMIUM PATCH — ADD ONLY (LOCK TAG)
+ULTRA FINAL PREMIUM PATCH — SAFE VERSION
 ====================================================== -->
 
 <style>
@@ -59,40 +59,16 @@ text-shadow:
 0 0 30px rgba(0,150,255,0.2);
 }
 
-/* ======================================================
-ULTRA NAV CENTER FIX (ADD ONLY FINAL)
-แก้ nav.js inject menu ให้ center จริง
-====================================================== */
+/* ===== SAFE NAV CENTER FIX (NO FORCE FLEX) ===== */
 
 #nav{
 width:100%;
-display:block;
 }
 
-/* force container center */
-#nav > *{
-display:flex !important;
-justify-content:center !important;
-align-items:center;
-width:100%;
-margin:0 auto;
-}
-
-/* force menu center */
-#nav nav,
-#nav .navbar,
-#nav ul{
-display:flex !important;
-justify-content:center !important;
-align-items:center;
-gap:30px;
+#nav nav{
+max-width:1200px;
 margin:auto;
-width:100%;
-}
-
-/* menu link */
-#nav a{
-display:inline-flex;
+display:flex;
 justify-content:center;
 align-items:center;
 }
@@ -277,12 +253,10 @@ document.querySelectorAll("[data-template]").forEach(el=>{
    });
 });
 </script>
+
 <script>
-
 async function updateStatus(){
-
    try{
-
       const server = await fetch("/api/status/server").then(r=>r.json());
       const ai = await fetch("/api/status/ai").then(r=>r.json());
       const net = await fetch("/api/status/network").then(r=>r.json());
@@ -298,40 +272,25 @@ async function updateStatus(){
    }catch(e){
       console.log("STATUS ERROR",e);
    }
-
 }
-
 setInterval(updateStatus,5000);
 updateStatus();
-
 </script>
+
 <script>
-
 async function updateLiveUsers(){
-
    try{
-
       const res = await fetch("/api/live-users");
       const data = await res.json();
-
       const el = document.getElementById("server-status");
-
       if(el){
-
          el.innerText = "ONLINE ("+data.online+" USERS)";
-
       }
-
    }catch(e){
-
       console.log("LIVE USER ERROR");
-
    }
-
 }
-
 setInterval(updateLiveUsers,5000);
-
 </script>
    
 </body>
