@@ -30,7 +30,7 @@ function buildUI(preset){
       fields:[]
    };
 
-   if(preset.provider === "runwayml"){
+   if(preset.provider === "runway"){   // 🔥 FIX
 
       ui.fields = [
          {type:"file", name:"media"},
@@ -100,7 +100,7 @@ async function runModel(data){
 
    }
 
-   if(preset.provider === "runwayml"){
+   if(preset.provider === "runway"){   // 🔥 FIX
 
       return runwayService.run(preset,data);
 
