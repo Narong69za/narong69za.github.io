@@ -1,21 +1,20 @@
 /*
 =====================================
-REPLICATE SERVICE
-LOCK ROUTER
+REPLICATE SERVICE ENTRY
 =====================================
 */
 
-const faceClone = require("./replicate-face-clone.js");
+const flux2pro = require("./flux2pro");
 
-async function run(preset,data){
+async function run(id,data){
 
-   switch(preset.id){
+   switch(id){
 
-      case "face-clone":
-         return faceClone.run(data);
+      case "flux2pro":
+         return flux2pro.run(data);
 
       default:
-         throw new Error("Replicate model not found");
+         throw new Error("Replicate model not implemented: "+id);
    }
 
 }
