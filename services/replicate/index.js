@@ -1,18 +1,23 @@
+/*
+=====================================
+REPLICATE SERVICE ENTRY
+=====================================
+*/
+
 const faceClone = require("./replicate-face-clone");
 const imageGen = require("./replicate-image-gen");
 
 async function run(preset,data){
 
+   console.log("REPLICATE RUN:", preset.id);
+
    switch(preset.id){
 
       case "face-clone":
-         return faceClone.run(preset,data);
+         return faceClone.run(data);
 
       case "image-gen":
-         return imageGen.run(preset,data);
-
-      case "motion-control":
-         return faceClone.run(preset,data); // ถ้า motion-control ใช้ replicate
+         return imageGen.run(data);
 
       default:
          throw new Error("Replicate model not implemented: " + preset.id);
