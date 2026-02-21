@@ -490,3 +490,29 @@ animation:pulseDot 2s ease-in-out infinite;
 50%{opacity:1;transform:scale(1.1);}
 100%{opacity:0.4;transform:scale(0.9);}
 }
+/* =========================================
+ULTRA MARQUEE RESTORE (FINAL)
+========================================= */
+
+.marquee-wrap{
+width:100%;
+overflow:hidden;
+background:#000;
+border-top:1px solid rgba(255,255,255,0.05);
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.marquee-text{
+white-space:nowrap;
+display:inline-block;
+padding:10px 0;
+animation: ultraMarqueeMove 18s linear infinite;
+font-size:14px;
+letter-spacing:1px;
+opacity:0.9;
+}
+
+@keyframes ultraMarqueeMove{
+0%{ transform:translateX(100%); }
+100%{ transform:translateX(-100%); }
+}
