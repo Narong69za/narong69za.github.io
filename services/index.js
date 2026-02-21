@@ -1,29 +1,17 @@
-/*
-=====================================
-REPLICATE SERVICE ENTRY
-SN DESIGN STUDIO
-=====================================
-*/
+const express = require("express");
+const cors = require("cors");
 
-const faceClone = require("./replicate-face-clone");
-const imageGen = require("./replicate-image-gen");
+const { create } = require("../controllers/create.controller");
 
-async function run(preset,data){
+const app = express();
 
-   console.log("REPLICATE RUN:", preset.id);
+app.use(cors());
+app.use(express.json());
 
-   switch(preset.id){
+app.post("/api/render", create);
 
-      case "face-clone":
-         return faceClone.run(data);
+const PORT = process.env.PORT || 4000;
 
-      case "image-gen":
-         return imageGen.run(data);
-
-      default:
-         throw new Error("Replicate model not implemented: " + preset.id);
-   }
-
-}
-
-module.exports = { run };
+app.listen(PORT,()=>{
+   console.log("ULTRA ENGINE RUNNING:",PORT);
+});
