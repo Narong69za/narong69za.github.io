@@ -1,20 +1,18 @@
-/*
-=====================================
-REPLICATE SERVICE ENTRY
-=====================================
-*/
-
 const flux2pro = require("./flux2pro");
 
-async function run(id,data){
+async function run(data){
 
-   switch(id){
+   switch(data.preset){
 
-      case "flux2pro":
+      case "image-gen":
+      case "motion-control":
+      case "face-clone":
+
          return flux2pro.run(data);
 
       default:
-         throw new Error("Replicate model not implemented: "+id);
+         throw new Error("REPLICATE MODEL NOT FOUND");
+
    }
 
 }
