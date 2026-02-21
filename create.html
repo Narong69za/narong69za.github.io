@@ -1,119 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html>
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>CREATE — SN DESIGN STUDIO</title>
-
-<!-- ✅ ใช้ CSS แยก -->
-<link rel="stylesheet" href="/assets/css/app-create-premium.css">
-
+<title>SN DESIGN CREATE</title>
+<style>
+body{background:#000;color:#fff;font-family:sans-serif}
+.box{max-width:600px;margin:auto;padding:30px}
+button{background:red;color:#fff;padding:15px;border:0}
+</style>
 </head>
 
 <body>
 
-<div class="create-wrapper">
+<div class="box">
 
-<h1 class="create-title">
-CREATE PROJECT
-</h1>
+<h1>ULTRA CREATE</h1>
 
-<!-- ================= ENGINE SELECT ================= -->
+<textarea id="prompt"></textarea>
 
-<div id="engineGrid" class="engine-grid"></div>
+<button onclick="run()">CREATE</button>
 
-<!-- ================= FORM ================= -->
-
-<div class="create-form">
-
-<textarea id="prompt" placeholder="Enter prompt..."></textarea>
-
-<input type="file" id="fileInput">
-
-<button id="runBtn">GENERATE</button>
+<pre id="result"></pre>
 
 </div>
-
-<div id="result" class="result-box"></div>
-
-</div>
-
 
 <script>
 
-const API = "https://sn-design-api.onrender.com";
+const API="https://sn-design-api.onrender.com";
 
-let CURRENT_ENGINE = null;
+const params=new URLSearchParams(location.search);
+const preset=params.get("template")||"image-gen";
 
+async function run(){
 
-/* ================= LOAD TEMPLATE ================= */
+ const res=await fetch(API+"/api/render",{
 
-async function loadTemplates(){
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
 
-   const res = await fetch(API + "/api/templates");
-   const templates = await res.json();
+   body:JSON.stringify({
+     preset:preset,
+     prompt:document.getElementById("prompt").value
+   })
 
-   const grid = document.getElementById("engineGrid");
-   grid.innerHTML="";
+ });
 
-   templates.forEach(t=>{
+ const data=await res.json();
 
-      const el=document.createElement("div");
-      el.className="engine-card";
-
-      el.innerHTML=`
-         <div class="engine-name">${t.id}</div>
-         <div class="engine-provider">${t.provider}</div>
-      `;
-
-      el.onclick=()=>{
-         CURRENT_ENGINE=t.id;
-
-         document.querySelectorAll(".engine-card")
-         .forEach(c=>c.classList.remove("active"));
-
-         el.classList.add("active");
-      };
-
-      grid.appendChild(el);
-
-   });
+ document.getElementById("result").innerText=JSON.stringify(data,null,2);
 
 }
-
-
-/* ================= RUN ================= */
-
-document.getElementById("runBtn").onclick=async()=>{
-
-   if(!CURRENT_ENGINE){
-      alert("Select engine");
-      return;
-   }
-
-   const prompt=document.getElementById("prompt").value;
-
-   const body={
-      preset:CURRENT_ENGINE,
-      prompt
-   };
-
-   const res=await fetch(API+"/api/render",{
-      method:"POST",
-      headers:{ "Content-Type":"application/json"},
-      body:JSON.stringify(body)
-   });
-
-   const data=await res.json();
-
-   document.getElementById("result").innerHTML=
-      "<pre>"+JSON.stringify(data,null,2)+"</pre>";
-
-};
-
-loadTemplates();
 
 </script>
 
