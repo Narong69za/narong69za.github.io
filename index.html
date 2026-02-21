@@ -21,74 +21,20 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 <link rel="preload" as="image" href="assets/images/hero.png">
 <link rel="stylesheet" href="assets/css/master.css">
 
-<style>
-
-/* ===== SAFE NAV CENTER FIX ===== */
-
-#nav{
-width:100%;
-}
-
-#nav nav{
-max-width:1200px;
-margin:auto;
-display:flex;
-justify-content:center;
-align-items:center;
-}
-
-/* ===== ULTRA MASTER RESTORE BIND ===== */
-
-.gui-status{
-display:flex;
-flex-direction:column;
-align-items:center;
-text-align:center;
-gap:6px;
-}
-
-.status-item{
-opacity:0.4;
-transition:0.3s;
-}
-
-.status-item.active{
-opacity:1;
-transform:scale(1.05);
-}
-
-/* restore CTA row */
-.ultra-cta-status{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-}
-
-/* restore marquee animation */
-.marquee-text{
-animation: marqueeMove 15s linear infinite;
-}
-
-@keyframes marqueeMove{
-0%{transform:translateX(100%)}
-100%{transform:translateX(-100%)}
-}
-
-</style>
-
 </head>
 
 <body class="index-page">
 
 <div id="nav"></div>
 
+<!-- MARQUEE -->
 <section class="marquee-wrap">
 <div class="marquee-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
 </div>
 </section>
 
+<!-- HERO -->
 <section class="hero-master">
 
 <img 
@@ -104,6 +50,7 @@ loading="eager"
 
 </section>
 
+<!-- AI PREVIEW -->
 <section class="ultra-gui-preview ultra-dashboard">
 
 <div class="gui-container">
@@ -117,15 +64,19 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 <div class="scan-line"></div>
 </div>
 
+<!-- STATUS STEP -->
 <div class="gui-status">
+
 <div id="step-ready" class="status-item">System Ready</div>
 <div id="step-analyze" class="status-item">AI Analyze</div>
 <div id="step-motion" class="status-item">Motion Sync</div>
 <div id="step-render" class="status-item">Render Output</div>
+
 </div>
 
 <button class="gui-btn">Start Preview</button>
 
+<!-- CTA STATUS -->
 <div class="ultra-cta-status">
 
 <div class="cta-box server-online">
@@ -142,6 +93,7 @@ AI CONNECT<br><span id="ai-status">CONNECTED</span>
 
 </div>
 
+<!-- NETWORK -->
 <div class="ultra-network-panel">
 
 <div class="network-title">NETWORK TRAFFIC</div>
@@ -157,11 +109,13 @@ AI CONNECT<br><span id="ai-status">CONNECTED</span>
 
 </section>
 
+<!-- INTRO -->
 <section class="ultra-intro-zone">
 
 <div class="container">
 
 <div class="intro-cinematic">
+
 <h2 class="intro-title">
 SN Design Studio — AI Creator Power System
 </h2>
@@ -169,18 +123,22 @@ SN Design Studio — AI Creator Power System
 <p class="intro-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
 </p>
+
 </div>
 
 <div class="intro-video">
+
 <iframe 
 src="https://www.youtube.com/embed/NI7WALIXStU"
 title="YouTube Shorts"
 frameborder="0"
 allowfullscreen>
 </iframe>
+
 </div>
 
 </div>
+
 </section>
 
 <footer>
@@ -189,6 +147,19 @@ allowfullscreen>
 
 <script src="assets/js/nav.js"></script>
 
+<!-- TEMPLATE CLICK -->
+<script>
+document.querySelectorAll("[data-template]").forEach(el=>{
+   el.addEventListener("click",()=>{
+      const model = el.dataset.template;
+      if(model){
+         window.location.href = "create.html?template="+model;
+      }
+   });
+});
+</script>
+
+<!-- STATUS API BIND -->
 <script>
 
 async function updateStatus(){
@@ -236,4 +207,4 @@ updateStatus();
 </script>
 
 </body>
-</html>
+   </html>
