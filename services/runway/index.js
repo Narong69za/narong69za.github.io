@@ -1,20 +1,15 @@
-/*
-=====================================
-RUNWAY SERVICE ENTRY
-=====================================
-*/
+const gen4 = require("./gen4video");
 
-const gen4video = require("./gen4video");
+async function run(data){
 
-async function run(id,data){
+   switch(data.preset){
 
-   switch(id){
-
-      case "gen4video":
-         return gen4video.run(data);
+      case "gen4-video":
+         return gen4.run(data);
 
       default:
-         throw new Error("Runway model not implemented: "+id);
+         throw new Error("RUNWAY MODEL NOT FOUND");
+
    }
 
 }
