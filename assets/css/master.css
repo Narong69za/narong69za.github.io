@@ -324,3 +324,67 @@ animation: ultraMarquee 18s linear infinite;
 0%{ transform:translateX(100%); }
 100%{ transform:translateX(-100%); }
   }
+/* ======================================================
+ULTRA SYSTEM PANEL — PLATFORM STYLE
+====================================================== */
+
+.ultra-system-panel{
+max-width:500px;
+margin:40px auto;
+padding:30px;
+background:rgba(10,20,25,0.6);
+border-radius:12px;
+border:1px solid rgba(0,255,200,0.15);
+box-shadow:0 0 40px rgba(0,255,200,0.08);
+}
+
+.system-title{
+text-align:center;
+margin-bottom:20px;
+letter-spacing:2px;
+font-size:14px;
+opacity:0.7;
+}
+
+.system-row{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:10px 0;
+border-bottom:1px solid rgba(255,255,255,0.05);
+}
+
+.system-row:last-child{
+border-bottom:none;
+}
+
+.system-label{
+font-size:14px;
+opacity:0.8;
+}
+
+.system-state{
+display:flex;
+align-items:center;
+gap:8px;
+font-size:13px;
+}
+
+.system-state.online{
+color:#00ffd5;
+}
+
+.dot{
+width:8px;
+height:8px;
+border-radius:50%;
+background:#00ffd5;
+box-shadow:0 0 10px #00ffd5;
+animation:pulseDot 1.8s infinite;
+}
+
+@keyframes pulseDot{
+0%{opacity:0.4;}
+50%{opacity:1;}
+100%{opacity:0.4;}
+  }
