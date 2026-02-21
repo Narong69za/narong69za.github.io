@@ -1,10 +1,17 @@
-const MODEL_ROUTER = require("../services/model.router");
+/*
+=====================================
+CREATE CONTROLLER
+SN DESIGN STUDIO
+=====================================
+*/
+
+const modelRouter = require("../services/model.router");
 
 async function create(req,res){
 
    try{
 
-      const result = await MODEL_ROUTER.runModel(req.body);
+      const result = await modelRouter.runModel(req.body);
 
       res.json({
          success:true,
@@ -13,10 +20,11 @@ async function create(req,res){
 
    }catch(err){
 
-      console.log(err);
+      console.error("CREATE ERROR:", err);
 
       res.status(500).json({
-         error: err.message
+         success:false,
+         error:err.message
       });
 
    }
