@@ -1,64 +1,63 @@
 /*
 =====================================
-ULTRA STATIC MODEL ROUTER
-SN DESIGN STUDIO FINAL LOCK
+ULTRA FINAL CLEAN ROUTER
+SN DESIGN STUDIO
+NO AUTO LOAD
 =====================================
 */
 
-const replicate = require("./replicate");
-const runway = require("./runway");
+const replicateService = require("./replicate");
+const runwayService = require("./runway");
 
-console.log("=== STATIC MODEL ROUTER START ===");
+/*
+LOCK MODEL CONFIG
+*/
+
+const MODELS = {
+
+   "face-clone":{
+      provider:"replicate"
+   },
+
+   "image-gen":{
+      provider:"replicate"
+   },
+
+   "gen4-video":{
+      provider:"runway"
+   }
+
+};
+
+function getModel(id){
+
+   return MODELS[id] || null;
+
+}
 
 async function runModel(data){
 
-   const id = data.preset;
+   const model = MODELS[data.preset];
 
-   console.log("RUN MODEL:", id);
-
-   /*
-   =====================================
-   REPLICATE MODELS
-   =====================================
-   */
-
-   switch(id){
-
-      case "flux2pro":
-
-         return replicate.run({
-            provider:"replicate",
-            model:"black-forest-labs/flux-2-pro"
-         }, data);
-
-      case "face-clone":
-
-         return replicate.run({
-            provider:"replicate",
-            model:"lucataco/face-swap"
-         }, data);
-
-      /*
-      =====================================
-      RUNWAY MODELS
-      =====================================
-      */
-
-      case "gen4-video":
-
-         return runway.run({
-            provider:"runway",
-            model:"gen4_image_to_video"
-         }, data);
-
-      default:
-
-         throw new Error("MODEL NOT IMPLEMENTED: " + id);
-
+   if(!model){
+      throw new Error("Model not found");
    }
+
+   console.log("RUN MODEL:", data.preset);
+
+   if(model.provider === "replicate"){
+      return replicateService.run({id:data.preset},data);
+   }
+
+   if(model.provider === "runway"){
+      return runwayService.run({id:data.preset},data);
+   }
+
+   throw new Error("Provider not supported");
 
 }
 
 module.exports = {
+   getModel,
    runModel
 };
