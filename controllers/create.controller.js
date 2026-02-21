@@ -1,17 +1,26 @@
-const MODEL_ROUTER = require('../config/model.router');
-const aiService = require('../services/ai.service');
+const MODEL_ROUTER = require("../services/model.router");
 
-module.exports = async (req,res)=>{
+async function create(req,res){
 
-    const { model, input } = req.body;
+   try{
 
-    const config = MODEL_ROUTER[model];
+      const result = await MODEL_ROUTER.runModel(req.body);
 
-    if(!config){
-        return res.status(400).json({error:"Model not found"});
-    }
+      res.json({
+         success:true,
+         result
+      });
 
-    const result = await aiService.run(config.model, input);
+   }catch(err){
 
-    res.json(result);
+      console.log(err);
+
+      res.status(500).json({
+         error: err.message
+      });
+
+   }
+
 }
+
+module.exports = { create };
