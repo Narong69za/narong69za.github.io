@@ -1,25 +1,33 @@
 /*
 =====================================
-ULTRA AUTO UI FINAL
+ULTRA AUTO UI FINAL CLEAN
 SN DESIGN STUDIO
-AUTO TEMPLATE BUILDER
+STATIC MODEL FLOW
 =====================================
 */
 
-console.log("ULTRA AUTO UI START");
+console.log("ULTRA CREATE UI START");
 
 const API_BASE = "https://sn-design-api.onrender.com";
+
+/*
+=====================================
+SAFE DOM GET
+=====================================
+*/
 
 const container = document.getElementById("auto-template-container");
 
 if(!container){
 
-   console.error("AUTO UI ERROR: container not found");
+   console.error("AUTO UI ERROR: #auto-template-container NOT FOUND");
+   throw new Error("UI container missing");
+
 }
 
 /*
 =====================================
-FETCH PRESETS AUTO
+LOAD TEMPLATE LIST
 =====================================
 */
 
@@ -27,17 +35,17 @@ async function loadTemplates(){
 
    try{
 
-      console.log("LOADING PRESETS...");
+      console.log("FETCH:", API_BASE + "/api/templates");
 
       const res = await fetch(`${API_BASE}/api/templates`);
 
       if(!res.ok){
-         throw new Error("API FAILED");
+         throw new Error("API RESPONSE FAILED");
       }
 
       const presets = await res.json();
 
-      console.log("PRESETS RECEIVED:",presets);
+      console.log("TEMPLATES:", presets);
 
       buildUI(presets);
 
@@ -47,7 +55,7 @@ async function loadTemplates(){
 
       container.innerHTML = `
          <div class="preset-error">
-            PRESET LOAD FAILED
+            API LOAD FAILED
          </div>
       `;
    }
@@ -56,7 +64,7 @@ async function loadTemplates(){
 
 /*
 =====================================
-AUTO CARD BUILDER
+BUILD CARD UI
 =====================================
 */
 
@@ -64,9 +72,7 @@ function buildUI(presets){
 
    container.innerHTML = "";
 
-   Object.keys(presets).forEach(key => {
-
-      const preset = presets[key];
+   Object.values(presets).forEach(preset => {
 
       const card = document.createElement("div");
 
@@ -75,65 +81,62 @@ function buildUI(presets){
       card.innerHTML = `
 
          <div class="engine">
-            ENGINE: ${preset.id || key}
+            ENGINE : ${preset.id}
          </div>
 
-         <div>User: SN USER</div>
-         <div>Credit: ${preset.credit || "--"}</div>
-         <div>Limit: ${preset.limit || "--"}</div>
+         <div>Credit : ${preset.creditCost ?? "--"}</div>
+         <div>Limit : ${preset.limits?.maxDuration ?? "--"}</div>
 
-         <input class="prompt-input" placeholder="Enter prompt..." />
+         <textarea class="prompt-input"
+         placeholder="Enter prompt..."></textarea>
 
          <button class="cta-btn">
-            CREATE VIDEO
+            CREATE
          </button>
 
          <div class="status">
-            STATUS: IDLE
+            STATUS : IDLE
          </div>
-
       `;
 
-      const button = card.querySelector(".cta-btn");
-
+      const btn = card.querySelector(".cta-btn");
       const input = card.querySelector(".prompt-input");
-
       const status = card.querySelector(".status");
 
-      button.addEventListener("click", async ()=>{
+      btn.addEventListener("click", async ()=>{
 
-         const prompt = input.value;
-
-         status.innerText = "STATUS: SENDING...";
+         status.innerText = "STATUS : SENDING";
 
          try{
 
             const res = await fetch(`${API_BASE}/api/render`,{
 
                method:"POST",
+
                headers:{
                   "Content-Type":"application/json"
                },
+
                body:JSON.stringify({
 
-                  preset: preset.id || key,
-                  prompt: prompt
+                  preset: preset.id,
+                  prompt: input.value || ""
 
                })
 
             });
 
-            const data = await res.json();
+            const result = await res.json();
 
-            console.log("RENDER RESPONSE:",data);
+            console.log("RENDER RESULT:",result);
 
-            if(data.success){
+            if(result.success){
 
-               status.innerText = "STATUS: SUCCESS";
+               status.innerText = "STATUS : SUCCESS";
 
             }else{
 
-               status.innerText = "STATUS: FAILED";
+               status.innerText = "STATUS : FAILED";
 
             }
 
@@ -141,7 +144,7 @@ function buildUI(presets){
 
             console.error(e);
 
-            status.innerText = "STATUS: ERROR";
+            status.innerText = "STATUS : ERROR";
 
          }
 
@@ -155,13 +158,13 @@ function buildUI(presets){
 
 /*
 =====================================
-START
+START ENGINE
 =====================================
 */
 
 document.addEventListener("DOMContentLoaded",()=>{
 
-   console.log("DOM READY → LOAD AUTO UI");
+   console.log("DOM READY → START LOAD");
 
    loadTemplates();
 
