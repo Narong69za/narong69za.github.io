@@ -7,7 +7,8 @@
 
 <title>Templates | SN Design Studio</title>
 
-<link rel="stylesheet" href="https://api.sn-designstudio.dev/assets/css/app-template.css">
+<!-- FIX DOMAIN -->
+<link rel="stylesheet" href="/assets/css/app-template.css">
 
 </head>
 
@@ -15,7 +16,8 @@
 
 <section class="hero-master">
 
-<img src="https://api.sn-designstudio.dev/assets/images/landing.png">
+<!-- FIX DOMAIN -->
+<img src="/assets/images/landing.png">
 
 <div class="hero-content-bottom fade-up">
 <h1>Template Collection</h1>
@@ -30,22 +32,22 @@
 <div class="template-grid">
 
 <a class="template-card" data-template="dark-viral">
-<img src="https://api.sn-designstudio.dev/assets/images/template-dark-viral.jpg">
+<img src="/assets/images/template-dark-viral.jpg">
 <h3>Dark Viral Style</h3>
 </a>
 
 <a class="template-card" data-template="ai-lipsync">
-<img src="https://api.sn-designstudio.dev/assets/images/template-ai-lipsync.jpg">
+<img src="/assets/images/template-ai-lipsync.jpg">
 <h3>AI LipSync</h3>
 </a>
 
 <a class="template-card" data-template="dance-motion">
-<img src="https://api.sn-designstudio.dev/assets/images/template-dance-motion.jpg">
+<img src="/assets/images/template-dance-motion.jpg">
 <h3>Dance Motion</h3>
 </a>
 
 <a class="template-card" data-template="face-swap">
-<img src="https://api.sn-designstudio.dev/assets/images/template-face-swap.jpg">
+<img src="/assets/images/template-face-swap.jpg">
 <h3>Face Swap</h3>
 </a>
 
@@ -63,8 +65,9 @@ e.preventDefault();
 
 const template = card.dataset.template;
 
+/* FIX DOMAIN */
 window.location.href =
-"https://api.sn-designstudio.dev/create.html?template="
+"/create.html?template="
 +encodeURIComponent(template);
 
 });
