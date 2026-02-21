@@ -240,3 +240,87 @@ width:300%;
 height:100%;
 background:linear-gradient(to top,rgba(0,255,255,.35),transparent);
 animation:ul
+}
+
+/* ======================================================
+ULTRA PLATFORM CTA FINAL LAYOUT
+ADD ONLY — SAFE OVERRIDE
+====================================================== */
+
+.ultra-cta-status{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:20px;
+max-width:900px;
+margin:30px auto 10px auto;
+justify-items:center;
+align-items:center;
+}
+
+.cta-box{
+width:100%;
+max-width:240px;
+padding:18px 10px;
+text-align:center;
+border-radius:10px;
+font-size:14px;
+letter-spacing:1px;
+transition:0.3s;
+}
+
+/* premium glow effect */
+.cta-box:hover{
+transform:translateY(-3px);
+box-shadow:0 0 25px rgba(0,255,255,0.25);
+}
+
+/* mobile responsive */
+@media(max-width:768px){
+
+.ultra-cta-status{
+grid-template-columns:1fr;
+gap:14px;
+}
+
+}
+
+/* ======================================================
+STATUS TEXT PREMIUM CENTER
+====================================================== */
+
+.gui-status{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:8px;
+}
+
+.status-item{
+opacity:0.45;
+transition:0.3s;
+}
+
+.status-item.active{
+opacity:1;
+color:#00ffd5;
+text-shadow:0 0 12px rgba(0,255,200,0.6);
+}
+
+/* ======================================================
+MARQUEE RESTORE (ข้อความวิ่ง)
+====================================================== */
+
+.marquee-wrap{
+overflow:hidden;
+white-space:nowrap;
+}
+
+.marquee-text{
+display:inline-block;
+animation: ultraMarquee 18s linear infinite;
+}
+
+@keyframes ultraMarquee{
+0%{ transform:translateX(100%); }
+100%{ transform:translateX(-100%); }
+  }
