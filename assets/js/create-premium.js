@@ -1,3 +1,11 @@
+/*
+=====================================
+ULTRA CREATE PREMIUM FINAL
+SN DESIGN STUDIO
+STATIC LOCK FLOW
+=====================================
+*/
+
 const API="https://sn-design-api.onrender.com";
 
 let CURRENT_PRESET=null;
@@ -6,147 +14,215 @@ init();
 
 async function init(){
 
- await loadPreset();
+   await loadPreset();
 
 }
 
+/*
+=====================================
+LOAD TEMPLATE FROM URL
+=====================================
+*/
 
 async function loadPreset(){
 
- const params=new URLSearchParams(location.search);
+   const params=new URLSearchParams(location.search);
 
- const id=params.get("template");
+   const id=params.get("template");
 
- if(!id){
-   setEngine("UNKNOWN");
-   return;
- }
+   if(!id){
 
- try{
+      setEngine("UNKNOWN");
 
-   const res=await fetch(API+"/api/templates/"+id);
+      return;
 
-   if(!res.ok) throw "preset error";
+   }
 
-   const preset=await res.json();
+   try{
 
-   CURRENT_PRESET=preset;
+      const res=await fetch(API+"/api/templates/"+id);
 
-   buildUI(preset);
+      if(!res.ok) throw "preset error";
 
- }catch(e){
+      const preset=await res.json();
 
-   setEngine("UNKNOWN");
+      CURRENT_PRESET=preset;
 
- }
+      buildUI(preset);
+
+   }catch(e){
+
+      console.error(e);
+
+      setEngine("UNKNOWN");
+
+   }
 
 }
 
+/*
+=====================================
+BUILD UI
+=====================================
+*/
 
 function buildUI(p){
 
- setEngine(p.name||"UNKNOWN");
+   setEngine(p.id || "UNKNOWN");
 
- renderModels(p.models||[]);
-
- toggle("uploadVideo",p.ui?.needVideo);
- toggle("uploadImage",p.ui?.needImage);
- toggle("promptBox",p.ui?.needPrompt);
+   toggle("uploadVideo",p.ui?.needVideo);
+   toggle("uploadImage",p.ui?.needImage);
+   toggle("promptBox",p.ui?.needPrompt);
 
 }
 
+/*
+=====================================
+SET ENGINE LABEL
+=====================================
+*/
 
 function setEngine(name){
 
- document.getElementById("engineName").innerText="ENGINE: "+name;
+   const el=document.getElementById("engineName");
+
+   if(el){
+
+      el.innerText="ENGINE: "+name;
+
+   }
 
 }
 
-
-function renderModels(models){
-
- const select=document.getElementById("modelSelect");
-
- select.innerHTML="";
-
- models.forEach(m=>{
-
-   const opt=document.createElement("option");
-   opt.value=m.name;
-   opt.innerText=m.name;
-
-   select.appendChild(opt);
-
- });
-
-}
-
+/*
+=====================================
+SHOW / HIDE UI BLOCK
+=====================================
+*/
 
 function toggle(id,state){
 
- const el=document.getElementById(id);
+   const el=document.getElementById(id);
 
- if(state) el.classList.remove("hidden");
- else el.classList.add("hidden");
+   if(!el) return;
+
+   if(state) el.classList.remove("hidden");
+   else el.classList.add("hidden");
 
 }
 
+/*
+=====================================
+CTA GENERATE
+=====================================
+*/
 
-document.getElementById("generateBtn").onclick=async()=>{
+const btn=document.getElementById("generateBtn");
 
- if(!CURRENT_PRESET) return;
+if(btn){
 
- document.getElementById("statusText").innerText="STATUS: PROCESSING";
+   btn.onclick=async()=>{
 
- simulateProgress();
+      if(!CURRENT_PRESET) return;
 
- try{
+      setStatus("PROCESSING");
 
-   const res=await fetch(API+"/api",{
+      simulateProgress();
 
-     method:"POST",
-     headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({
-       preset:CURRENT_PRESET.id
-     })
+      try{
 
-   });
+         const res=await fetch(API+"/api/render",{
 
-   await res.json();
+            method:"POST",
 
-   document.getElementById("statusText").innerText="STATUS: COMPLETE";
-   setProgress(100);
+            headers:{
+               "Content-Type":"application/json"
+            },
 
- }catch(e){
+            body:JSON.stringify({
 
-   document.getElementById("statusText").innerText="STATUS: ERROR";
+               preset:CURRENT_PRESET.id,
 
- }
+               prompt:document.getElementById("promptInput")?.value || ""
 
-};
+            })
 
+         });
+
+         const data=await res.json();
+
+         console.log("RENDER RESULT:",data);
+
+         if(data.success){
+
+            setStatus("COMPLETE");
+
+            setProgress(100);
+
+         }else{
+
+            setStatus("FAILED");
+
+         }
+
+      }catch(e){
+
+         console.error(e);
+
+         setStatus("ERROR");
+
+      }
+
+   };
+
+}
+
+/*
+=====================================
+STATUS + PROGRESS
+=====================================
+*/
+
+function setStatus(text){
+
+   const el=document.getElementById("statusText");
+
+   if(el){
+
+      el.innerText="STATUS: "+text;
+
+   }
+
+}
 
 function simulateProgress(){
 
- let progress=0;
+   let progress=0;
 
- const interval=setInterval(()=>{
+   const interval=setInterval(()=>{
 
-   progress+=10;
+      progress+=10;
 
-   if(progress>=90){
-     clearInterval(interval);
-   }
+      if(progress>=90){
 
-   setProgress(progress);
+         clearInterval(interval);
 
- },300);
+      }
+
+      setProgress(progress);
+
+   },300);
 
 }
 
-
 function setProgress(val){
 
- document.getElementById("progressBar").style.width=val+"%";
+   const bar=document.getElementById("progressBar");
 
-       }
+   if(bar){
+
+      bar.style.width=val+"%";
+
+   }
+
+}
