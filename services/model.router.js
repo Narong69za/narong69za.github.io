@@ -1,63 +1,45 @@
 /*
 =====================================
-ULTRA FINAL CLEAN ROUTER
-SN DESIGN STUDIO
-NO AUTO LOAD
+STATIC MODEL ROUTER
+NO PRESET AUTO LOAD
 =====================================
 */
 
-const replicateService = require("./replicate");
-const runwayService = require("./runway");
-
-/*
-LOCK MODEL CONFIG
-*/
+const replicate = require("./replicate");
+const runway = require("./runway");
 
 const MODELS = {
 
-   "face-clone":{
+   flux2pro:{
       provider:"replicate"
    },
 
-   "image-gen":{
-      provider:"replicate"
-   },
-
-   "gen4-video":{
+   gen4video:{
       provider:"runway"
    }
 
 };
-
-function getModel(id){
-
-   return MODELS[id] || null;
-
-}
 
 async function runModel(data){
 
    const model = MODELS[data.preset];
 
    if(!model){
-      throw new Error("Model not found");
+      throw new Error("MODEL NOT FOUND: "+data.preset);
    }
 
    console.log("RUN MODEL:", data.preset);
 
    if(model.provider === "replicate"){
-      return replicateService.run({id:data.preset},data);
+      return replicate.run(data.preset,data);
    }
 
    if(model.provider === "runway"){
-      return runwayService.run({id:data.preset},data);
+      return runway.run(data.preset,data);
    }
 
    throw new Error("Provider not supported");
 
 }
 
-module.exports = {
-   getModel,
-   runModel
-};
+module.exports = { runModel };
