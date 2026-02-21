@@ -14,10 +14,10 @@ async function run(preset,data){
 
    switch(preset.id){
 
-      case "replicate-face-clone":
+      case "face-clone":
          return faceClone.run(data);
 
-      case "replicate-image-gen":
+      case "image-gen":
          return imageGen.run(data);
 
       default:
