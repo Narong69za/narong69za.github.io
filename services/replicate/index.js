@@ -1,26 +1,21 @@
 /*
 =====================================
-REPLICATE SERVICE ENTRY
+REPLICATE SERVICE
+LOCK ROUTER
 =====================================
 */
 
-const faceClone = require("./replicate-face-clone");
-const imageGen = require("./replicate-image-gen");
+const faceClone = require("./replicate-face-clone.js");
 
 async function run(preset,data){
-
-   console.log("REPLICATE RUN:", preset.id);
 
    switch(preset.id){
 
       case "face-clone":
          return faceClone.run(data);
 
-      case "image-gen":
-         return imageGen.run(data);
-
       default:
-         throw new Error("Replicate model not implemented: " + preset.id);
+         throw new Error("Replicate model not found");
    }
 
 }
