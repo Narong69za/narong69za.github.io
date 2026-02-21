@@ -1,101 +1,49 @@
 /*
 =====================================
 REPLICATE FACE CLONE SERVICE
-SN DESIGN STUDIO
+SN DESIGN STUDIO FINAL
 =====================================
 */
 
-const fetch = global.fetch || require("node-fetch");
-
-/*
-=====================================
-CONFIG
-=====================================
-*/
+const fetch = require("node-fetch");
 
 const REPLICATE_API = "https://api.replicate.com/v1/predictions";
 
-/*
-IMPORTANT:
-ใส่ model version ของ replicate ที่คุณใช้
-ตัวอย่าง:
-owner/model:version_id
-*/
-const MODEL_VERSION = process.env.REPLICATE_FACE_CLONE_MODEL || "";
+const TOKEN = process.env.REPLICATE_API_TOKEN;
 
-/*
-=====================================
-RUN
-=====================================
-*/
+async function run(preset,data){
 
-async function run(preset, data){
+   console.log("FACE CLONE START");
 
-   try{
-
-      console.log("REPLICATE FACE CLONE RUN");
-
-      if(!process.env.REPLICATE_API_TOKEN){
-         throw new Error("REPLICATE TOKEN NOT SET");
-      }
-
-      if(!MODEL_VERSION){
-         throw new Error("MODEL VERSION NOT SET");
-      }
-
-      /*
-      =====================
-      BUILD INPUT
-      =====================
-      */
-
-      const input = {
-         prompt: data.prompt || "",
-         image: data.image || null,
-         ...data
-      };
-
-      /*
-      =====================
-      CALL REPLICATE API
-      =====================
-      */
-
-      const response = await fetch(REPLICATE_API,{
-         method:"POST",
-         headers:{
-            "Authorization":`Token ${process.env.REPLICATE_API_TOKEN}`,
-            "Content-Type":"application/json"
-         },
-         body:JSON.stringify({
-            version: MODEL_VERSION,
-            input
-         })
-      });
-
-      const result = await response.json();
-
-      console.log("REPLICATE RESPONSE:", result.id);
-
-      return {
-         success:true,
-         predictionId: result.id,
-         data: result
-      };
-
-   }catch(err){
-
-      console.error("REPLICATE FACE CLONE ERROR:", err.message);
-
-      return {
-         success:false,
-         error: err.message
-      };
-
+   if(!TOKEN){
+      throw new Error("Missing REPLICATE_API_TOKEN");
    }
+
+   const body = {
+      version: preset.version, // ดึงจาก preset.map
+      input: {
+         prompt: data.prompt || "",
+         image: data.image || null
+      }
+   };
+
+   const res = await fetch(REPLICATE_API,{
+      method:"POST",
+      headers:{
+         "Authorization":`Token ${TOKEN}`,
+         "Content-Type":"application/json"
+      },
+      body:JSON.stringify(body)
+   });
+
+   const json = await res.json();
+
+   if(json.error){
+      throw new Error(json.error);
+   }
+
+   return json;
 
 }
 
-module.exports = {
-   run
-};
+module.exports = { run };
