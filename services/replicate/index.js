@@ -14,11 +14,11 @@ async function run(preset,data){
 
    switch(preset.id){
 
-      case "replicate-face-clone":
-         return faceClone.run(data);
+      case "face-clone":
+         return faceClone.run(preset,data);
 
-      case "replicate-image-gen":
-         return imageGen.run(data);
+      case "image-gen":
+         return imageGen.run(preset,data);
 
       default:
          throw new Error("Replicate model not implemented: " + preset.id);
