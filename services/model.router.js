@@ -1,68 +1,64 @@
 /*
 =====================================
-ULTRA CLEAN MODEL ROUTER
-SN DESIGN STUDIO FINAL
+ULTRA STATIC MODEL ROUTER
+SN DESIGN STUDIO FINAL LOCK
 =====================================
 */
 
-const presets = require("./preset.loader");
+const replicate = require("./replicate");
+const runway = require("./runway");
 
-const replicateService = require("./replicate");
-const runwayService = require("./runway");
-
-console.log("=== MODEL ROUTER START ===");
-
-/*
-=====================================
-GET MODEL
-=====================================
-*/
-
-function getModel(id){
-
-   const preset = presets[id];
-
-   if(!preset){
-      console.log("MODEL NOT FOUND:", id);
-      return null;
-   }
-
-   return preset;
-}
-
-/*
-=====================================
-RUN MODEL (CORE ENGINE)
-=====================================
-*/
+console.log("=== STATIC MODEL ROUTER START ===");
 
 async function runModel(data){
 
-   const preset = presets[data.preset];
+   const id = data.preset;
 
-   if(!preset){
-      throw new Error("Preset not found: " + data.preset);
+   console.log("RUN MODEL:", id);
+
+   /*
+   =====================================
+   REPLICATE MODELS
+   =====================================
+   */
+
+   switch(id){
+
+      case "flux2pro":
+
+         return replicate.run({
+            provider:"replicate",
+            model:"black-forest-labs/flux-2-pro"
+         }, data);
+
+      case "face-clone":
+
+         return replicate.run({
+            provider:"replicate",
+            model:"lucataco/face-swap"
+         }, data);
+
+      /*
+      =====================================
+      RUNWAY MODELS
+      =====================================
+      */
+
+      case "gen4-video":
+
+         return runway.run({
+            provider:"runway",
+            model:"gen4_image_to_video"
+         }, data);
+
+      default:
+
+         throw new Error("MODEL NOT IMPLEMENTED: " + id);
+
    }
-
-   console.log("RUN MODEL:", preset.id, "provider:", preset.provider);
-
-   if(preset.provider === "replicate"){
-
-      return replicateService.run(preset,data);
-
-   }
-
-   if(preset.provider === "runway"){
-
-      return runwayService.run(preset,data);
-
-   }
-
-   throw new Error("Provider not supported: " + preset.provider);
 
 }
 
 module.exports = {
-   getModel,
    runModel
 };
