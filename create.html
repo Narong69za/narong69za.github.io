@@ -29,9 +29,7 @@ text-align:center;
 margin-bottom:20px;
 }
 
-.project-type button,
-.mode-btn{
-
+.project-type button{
 width:100%;
 margin:8px 0;
 padding:14px;
@@ -41,9 +39,9 @@ color:white;
 cursor:pointer;
 }
 
-.type-active{
-background:white;
-color:black;
+.active-green{
+border:1px solid #00ff66;
+box-shadow:0 0 14px #00ff66;
 }
 
 .selected.red{
@@ -94,21 +92,17 @@ border-radius:10px;
 
 <input id="promptInput" placeholder="Enter prompt">
 
-<!-- TYPE -->
-
 <div class="project-type">
 
-<button data-type="video">Generate Video</button>
-<button data-type="image">Generate Image</button>
-<button data-type="upscale">Upscale</button>
+<button class="action-btn" data-type="video">Generate Video</button>
+<button class="action-btn" data-type="image">Generate Image</button>
+<button class="action-btn" data-type="upscale">Upscale</button>
 
 </div>
-
 
 <div class="engines">
 
 <div class="engine">
-
 <h3>RED ENGINE</h3>
 
 <button class="mode-btn red" data-platform="replicate" data-mode="dark">Dark Viral</button>
@@ -131,21 +125,17 @@ border-radius:10px;
 
 </div>
 
-
-<!-- PREVIEW MODEL -->
-
-<div class="preview-box" id="previewBox">
+<div class="preview-box">
 
 <h4>MODEL PREVIEW</h4>
 
-<input type="file" accept="video/*,image/*">
+<input id="fileInput" type="file" accept="video/*,image/*">
 
-<p id="previewInfo">No selection</p>
+<div id="previewArea"></div>
+
+<p id="previewMeta">No selection</p>
 
 </div>
-
-
-<!-- CTA -->
 
 <div class="cta-box">
 
@@ -155,11 +145,9 @@ border-radius:10px;
 
 </div>
 
-
 <div id="statusText">STATUS: IDLE</div>
 
 </div>
-
 
 <script>
 
@@ -167,74 +155,75 @@ const API="https://sn-design-api.onrender.com";
 
 let selected={type:null,platform:null,mode:null};
 
-document.querySelectorAll(".project-type button").forEach(btn=>{
-
+document.querySelectorAll(".action-btn").forEach(btn=>{
 btn.onclick=()=>{
-
-document.querySelectorAll(".project-type button").forEach(b=>b.classList.remove("type-active"));
-
-btn.classList.add("type-active");
-
+document.querySelectorAll(".action-btn").forEach(b=>b.classList.remove("active-green"));
+btn.classList.add("active-green");
 selected.type=btn.dataset.type;
-
 updatePreview();
-
 };
-
 });
 
 document.querySelectorAll(".mode-btn").forEach(btn=>{
-
 btn.onclick=()=>{
-
 document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("selected"));
-
 btn.classList.add("selected");
-
 selected.platform=btn.dataset.platform;
 selected.mode=btn.dataset.mode;
-
 updatePreview();
-
 };
-
 });
 
 function updatePreview(){
-
-document.getElementById("previewInfo").innerText=
-
-"ENGINE: "+selected.platform+
-" | MODE: "+selected.mode+
-" | TYPE: "+selected.type;
-
+document.getElementById("previewMeta").innerText=
+`ENGINE: ${selected.platform} | MODE: ${selected.mode} | TYPE: ${selected.type}`;
 document.getElementById("engineSummary").innerText=
-
-"Ready → "+selected.platform+" / "+selected.mode;
-
+`Ready → ${selected.platform} / ${selected.mode}`;
 }
+
+const fileInput=document.getElementById("fileInput");
+
+fileInput.onchange=(e)=>{
+
+const file=e.target.files[0];
+if(!file) return;
+
+const preview=document.getElementById("previewArea");
+preview.innerHTML="";
+
+const url=URL.createObjectURL(file);
+
+if(file.type.startsWith("video")){
+const v=document.createElement("video");
+v.src=url;
+v.controls=true;
+v.style.width="100%";
+preview.appendChild(v);
+}
+else{
+const img=document.createElement("img");
+img.src=url;
+img.style.width="100%";
+preview.appendChild(img);
+}
+
+};
 
 document.getElementById("generateBtn").onclick=async()=>{
 
 const res=await fetch(API+"/api/render",{
-
 method:"POST",
 headers:{ "Content-Type":"application/json" },
-
 body:JSON.stringify({
-
+alias:selected.mode,
 platform:selected.platform,
-mode:selected.mode,
-type:selected.type,
+input:{
 prompt:document.getElementById("promptInput").value
-
+}
 })
-
 });
 
-const data=await res.json();
-
-console.log(data);
+console.log(await res.json());
 
 };
 
