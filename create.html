@@ -1,6 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
 
@@ -8,116 +13,175 @@
 
 <body>
 
+<div class="container">
+
 <h1>ULTRA ENGINE CONTROL</h1>
 
-<form id="createForm" enctype="multipart/form-data">
+<input id="prompt" placeholder="Enter prompt">
 
-<input type="text" name="prompt" placeholder="Enter prompt">
+<div class="actionRow">
 
-<div class="engine-row">
-
-<div class="engine red">
-
-<h3>RED ENGINE</h3>
-
-<button type="button" data-engine="replicate" data-alias="dark-viral">Dark Viral</button>
-<button type="button" data-engine="replicate" data-alias="ai-lipsync">AI LipSync</button>
-<button type="button" data-engine="replicate" data-alias="dance-motion">Dance Motion</button>
-<button type="button" data-engine="replicate" data-alias="face-swap">Face Swap</button>
+<button data-type="video">Generate Video</button>
+<button data-type="image">Generate Image</button>
+<button data-type="upscale">Upscale</button>
 
 </div>
 
-<div class="engine blue">
 
-<h3>BLUE ENGINE</h3>
+<div class="engineGrid">
 
-<button type="button" data-engine="runway" data-alias="dark-viral">Dark Viral</button>
-<button type="button" data-engine="runway" data-alias="ai-lipsync">AI LipSync</button>
-<button type="button" data-engine="runway" data-alias="dance-motion">Dance Motion</button>
-<button type="button" data-engine="runway" data-alias="face-swap">Face Swap</button>
+<div class="engineColumn red">
+
+<h2>RED ENGINE</h2>
+
+<button data-engine="replicate" data-alias="dark-viral">Dark Viral</button>
+<button data-engine="replicate" data-alias="ai-lipsync">AI LipSync</button>
+<button data-engine="replicate" data-alias="dance-motion">Dance Motion</button>
+<button data-engine="replicate" data-alias="face-swap">Face Swap</button>
+
+</div>
+
+
+<div class="engineColumn blue">
+
+<h2>BLUE ENGINE</h2>
+
+<button data-engine="runway" data-alias="dark-viral">Dark Viral</button>
+<button data-engine="runway" data-alias="ai-lipsync">AI LipSync</button>
+<button data-engine="runway" data-alias="dance-motion">Dance Motion</button>
+<button data-engine="runway" data-alias="face-swap">Face Swap</button>
 
 </div>
 
 </div>
 
-<h3>Upload Files</h3>
 
 <div id="dynamicInputs"></div>
 
-<button type="submit">GENERATE</button>
+<button id="generateBtn">GENERATE</button>
 
-</form>
+<div id="status">STATUS: IDLE</div>
+
+</div>
+
 
 <script>
 
-let selectedEngine=null;
-let selectedAlias=null;
+const ENGINE_SCHEMA={
 
-const ENGINE_INPUTS = {
-
-   "face-swap":["source","target"],
-   "dance-motion":["source","motion"],
-   "ai-lipsync":["video","audio"],
-   "dark-viral":["image"]
+"dance-motion":["template","subject"],
+"face-swap":["source","target"],
+"dark-viral":["image"],
+"ai-lipsync":["video","voice"]
 
 };
 
-document.querySelectorAll("[data-engine]").forEach(btn=>{
+let selectedEngine=null;
+let selectedAlias=null;
+let selectedType=null;
 
-   btn.onclick=()=>{
 
-      selectedEngine=btn.dataset.engine;
-      selectedAlias=btn.dataset.alias;
+document.querySelectorAll("[data-type]").forEach(btn=>{
 
-      renderInputs(selectedAlias);
+btn.onclick=()=>{
 
-   };
+selectedType=btn.dataset.type;
+
+};
 
 });
 
+
+document.querySelectorAll("[data-engine]").forEach(btn=>{
+
+btn.onclick=()=>{
+
+selectedEngine=btn.dataset.engine;
+selectedAlias=btn.dataset.alias;
+
+renderInputs(selectedAlias);
+
+};
+
+});
+
+
 function renderInputs(alias){
 
-   const container=document.getElementById("dynamicInputs");
+const box=document.getElementById("dynamicInputs");
 
-   container.innerHTML="";
+box.innerHTML="";
 
-   ENGINE_INPUTS[alias].forEach(name=>{
+if(!ENGINE_SCHEMA[alias]) return;
 
-      const label=document.createElement("label");
+ENGINE_SCHEMA[alias].forEach(name=>{
 
-      label.innerText=name;
+const wrap=document.createElement("div");
 
-      const input=document.createElement("input");
+const label=document.createElement("div");
+label.innerText="UPLOAD "+name;
 
-      input.type="file";
-      input.name=name;
+const input=document.createElement("input");
 
-      container.appendChild(label);
-      container.appendChild(input);
+input.type="file";
+input.name=name;
+input.required=true;
 
-   });
+wrap.appendChild(label);
+wrap.appendChild(input);
+
+box.appendChild(wrap);
+
+});
 
 }
 
-document.getElementById("createForm").onsubmit=async(e)=>{
 
-   e.preventDefault();
+document.getElementById("generateBtn").onclick=async()=>{
 
-   const formData=new FormData(e.target);
+if(!selectedEngine||!selectedAlias){
 
-   formData.append("platform",selectedEngine);
-   formData.append("alias",selectedAlias);
+alert("select engine");
 
-   await fetch("/api/render",{
+return;
 
-      method:"POST",
-      body:formData
+}
 
-   });
+const form=new FormData();
+
+form.append("engine",selectedEngine);
+form.append("alias",selectedAlias);
+form.append("type",selectedType||"video");
+
+form.append("prompt",document.getElementById("prompt").value||"");
+
+document.querySelectorAll("#dynamicInputs input").forEach(input=>{
+
+if(input.files[0]){
+
+form.append(input.name,input.files[0]);
+
+}
+
+});
+
+document.getElementById("status").innerText="STATUS: QUEUED";
+
+const res=await fetch("/api/render",{
+
+method:"POST",
+body:form
+
+});
+
+const json=await res.json();
+
+document.getElementById("status").innerText="STATUS: "+json.status;
 
 };
 
 </script>
 
 </body>
+
 </html>
