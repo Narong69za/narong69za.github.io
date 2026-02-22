@@ -1,22 +1,23 @@
 const express = require("express");
 const router = express.Router();
-
 const MODEL_ROUTER = require("../services/model.router");
 
 router.post("/render", async (req,res)=>{
 
    try{
 
-      const { platform, mode, prompt } = req.body;
+      const { engine, alias, prompt } = req.body;
 
       const result = await MODEL_ROUTER.run(
-         mode,
-         platform,
-         { prompt }
+         alias,
+         engine,
+         {
+            prompt
+         }
       );
 
       res.json({
-         success:true,
+         status:"complete",
          result
       });
 
@@ -25,7 +26,7 @@ router.post("/render", async (req,res)=>{
       console.log(err);
 
       res.status(500).json({
-         success:false,
+         status:"error",
          error:err.message
       });
 
