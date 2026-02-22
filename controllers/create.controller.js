@@ -4,23 +4,12 @@ async function create(req,res){
 
    try{
 
-      const file = req.file;
-
-      const alias = req.body.alias;
-      const platform = req.body.platform;
-
-      if(!alias){
-
-         throw new Error("ALIAS NOT FOUND FROM CONTROLLER");
-
-      }
-
       const result = await MODEL_ROUTER.run(
-         alias,
-         platform,
+         req.body.alias,
+         req.body.platform,
          {
-            prompt:req.body.prompt || "",
-            file:file
+            prompt:req.body.prompt,
+            files:req.files
          }
       );
 
