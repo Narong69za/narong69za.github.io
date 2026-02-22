@@ -1,35 +1,27 @@
 const MODEL_ROUTER = require("../services/model.router");
-const path = require("path");
 
 async function create(req,res){
 
    try{
 
-      const { alias, platform, prompt } = req.body;
+      const file = req.file;
 
-      if(!alias || !platform){
+      const alias = req.body.alias;
+      const platform = req.body.platform;
 
-         throw new Error("ALIAS OR PLATFORM MISSING");
+      if(!alias){
 
-      }
-
-      let inputFile = null;
-
-      if(req.file){
-
-         inputFile = "/storage/input/"+req.file.filename;
+         throw new Error("ALIAS NOT FOUND FROM CONTROLLER");
 
       }
 
       const result = await MODEL_ROUTER.run(
-
          alias,
          platform,
          {
-            prompt: prompt || "",
-            file: inputFile
+            prompt:req.body.prompt || "",
+            file:file
          }
-
       );
 
       res.json({
