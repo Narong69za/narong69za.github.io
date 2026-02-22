@@ -14,17 +14,17 @@ init();
 
 async function init(){
 
-   await loadPreset();
+   loadPreset();
 
 }
 
 /*
 =====================================
-LOAD TEMPLATE FROM URL
+STATIC PRESET (NO API CALL)
 =====================================
 */
 
-async function loadPreset(){
+function loadPreset(){
 
    const params=new URLSearchParams(location.search);
 
@@ -38,25 +38,45 @@ async function loadPreset(){
 
    }
 
-   try{
+   /* STATIC MAP */
 
-      const res=await fetch(API+"/api/templates/"+id);
+   const STATIC_PRESETS={
 
-      if(!res.ok) throw "preset error";
+      "dark-viral":{
+         id:"dark-viral",
+         ui:{needPrompt:true}
+      },
 
-      const preset=await res.json();
+      "lipsync":{
+         id:"lipsync",
+         ui:{needPrompt:true}
+      },
 
-      CURRENT_PRESET=preset;
+      "dance-motion":{
+         id:"dance-motion",
+         ui:{needPrompt:true}
+      },
 
-      buildUI(preset);
+      "face-swap":{
+         id:"face-swap",
+         ui:{needPrompt:true}
+      }
 
-   }catch(e){
+   };
 
-      console.error(e);
+   const preset=STATIC_PRESETS[id];
+
+   if(!preset){
 
       setEngine("UNKNOWN");
 
+      return;
+
    }
+
+   CURRENT_PRESET=preset;
+
+   buildUI(preset);
 
 }
 
@@ -70,8 +90,6 @@ function buildUI(p){
 
    setEngine(p.id || "UNKNOWN");
 
-   toggle("uploadVideo",p.ui?.needVideo);
-   toggle("uploadImage",p.ui?.needImage);
    toggle("promptBox",p.ui?.needPrompt);
 
 }
@@ -143,7 +161,9 @@ if(btn){
 
                preset:CURRENT_PRESET.id,
 
-               prompt:document.getElementById("promptInput")?.value || ""
+               model: window.getSelectedModel ? window.getSelectedModel() : null,
+
+               prompt:document.getElementById("promptBox")?.value || ""
 
             })
 
