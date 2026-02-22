@@ -137,7 +137,49 @@ box.appendChild(wrap);
 }
 
 
+/* ===============================
+   ADD ONLY START (ULTRA CONTROL)
+================================= */
+
+let generating=false;
+
+/* ENGINE ACTIVE UI */
+
+document.querySelectorAll("[data-engine]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+document.querySelectorAll("[data-engine]").forEach(b=>{
+
+b.classList.remove("active-red");
+b.classList.remove("active-blue");
+
+});
+
+if(btn.dataset.engine==="replicate"){
+
+btn.classList.add("active-red");
+
+}
+
+if(btn.dataset.engine==="runway"){
+
+btn.classList.add("active-blue");
+
+}
+
+});
+
+});
+
+/* ===============================
+   ADD ONLY END
+================================= */
+
+
 document.getElementById("generateBtn").onclick=async()=>{
+
+if(generating) return;
 
 if(!selectedEngine||!selectedAlias){
 
@@ -146,6 +188,8 @@ alert("select engine");
 return;
 
 }
+
+generating=true;
 
 const form=new FormData();
 
@@ -167,6 +211,8 @@ form.append(input.name,input.files[0]);
 
 document.getElementById("status").innerText="STATUS: QUEUED";
 
+try{
+
 const res=await fetch("/api/render",{
 
 method:"POST",
@@ -176,7 +222,17 @@ body:form
 
 const json=await res.json();
 
-document.getElementById("status").innerText="STATUS: "+json.status;
+document.getElementById("status").innerText="STATUS: "+(json.status||"DONE");
+
+}catch(err){
+
+document.getElementById("status").innerText="STATUS: ERROR";
+
+console.log(err);
+
+}
+
+generating=false;
 
 };
 
