@@ -7,10 +7,7 @@
 
 <title>Create | SN Design Studio</title>
 
-<!-- MASTER LOCK -->
 <link rel="stylesheet" href="/assets/css/master.css">
-
-<!-- CREATE ONLY CSS -->
 <link rel="stylesheet" href="/assets/css/create.css">
 
 </head>
@@ -37,85 +34,49 @@
 
 <script>
 
-/* =====================================================
-   TEMPLATE → MODEL MAPPING (FINAL SYSTEM)
-===================================================== */
+/* ===============================
+   TEMPLATE → MODEL MAP
+================================ */
 
 const TEMPLATE_MODELS = {
 
-   "dark-viral": {
-      replicate:"flux2pro",
-      runway:"gen4-darkviral"
-   },
-
-   "lipsync": {
-      replicate:"flux2pro-lipsync",
-      runway:"gen4-lipsync"
-   },
-
-   "dance-motion": {
-      replicate:"flux2pro-motion",
-      runway:"gen4-motion"
-   },
-
-   "face-swap": {
-      replicate:"flux2pro-faceswap",
-      runway:"gen4-faceswap"
-   }
+   "dark-viral": ["flux2pro","gen4-darkviral"],
+   "lipsync": ["flux2pro-lipsync","gen4-lipsync"],
+   "dance-motion": ["flux2pro-motion","gen4-motion"],
+   "face-swap": ["flux2pro-faceswap","gen4-faceswap"]
 
 };
-
-
-/* =====================================================
-   GET TEMPLATE FROM URL
-===================================================== */
 
 const params = new URLSearchParams(window.location.search);
 const template = params.get("template");
 
-
-/* =====================================================
-   UI REFERENCES
-===================================================== */
-
 const modelSelect = document.getElementById("modelSelect");
 const engineName = document.getElementById("engineName");
-const statusText = document.getElementById("statusText");
-const progressBar = document.getElementById("progressBar");
-const generateBtn = document.getElementById("generateBtn");
 
-
-/* =====================================================
-   BUILD MODEL SELECT (LEFT RED = REPLICATE / RIGHT BLUE = RUNWAY)
-===================================================== */
-
-function buildModelList(){
-
-   if(!template || !TEMPLATE_MODELS[template]){
-      engineName.innerText = "ENGINE: UNKNOWN TEMPLATE";
-      return;
-   }
+if(template && TEMPLATE_MODELS[template]){
 
    const models = TEMPLATE_MODELS[template];
 
    modelSelect.innerHTML = `
-      <option value="${models.replicate}" data-engine="replicate">
-         🔴 Replicate — ${models.replicate}
+      <option value="${models[0]}" data-engine="replicate">
+         🔴 Replicate — ${models[0]}
       </option>
 
-      <option value="${models.runway}" data-engine="runway">
-         🔵 RunwayML — ${models.runway}
+      <option value="${models[1]}" data-engine="runway">
+         🔵 RunwayML — ${models[1]}
       </option>
    `;
 
-   updateEngineLabel();
-
 }
 
-function updateEngineLabel(){
+/* ===============================
+   UPDATE ENGINE LABEL
+================================ */
 
-   const selected = modelSelect.options[modelSelect.selectedIndex];
-   const engine = selected.dataset.engine;
+function updateEngine(){
+
+   const engine =
+   modelSelect.options[modelSelect.selectedIndex].dataset.engine;
 
    engineName.innerText =
       engine === "replicate"
@@ -124,64 +85,23 @@ function updateEngineLabel(){
 
 }
 
-modelSelect.addEventListener("change",updateEngineLabel);
+modelSelect.addEventListener("change",updateEngine);
+updateEngine();
 
+/* ===============================
+   IMPORTANT !!!
+   expose selected model for create-premium.js
+================================ */
 
-/* =====================================================
-   GENERATE BUTTON
-===================================================== */
+window.getSelectedModel = function(){
 
-generateBtn.addEventListener("click", async ()=>{
+   return modelSelect.value;
 
-   const model = modelSelect.value;
-   const prompt = document.getElementById("promptBox").value;
-
-   if(!model){
-      alert("No model selected");
-      return;
-   }
-
-   statusText.innerText = "STATUS: PROCESSING...";
-   progressBar.style.width = "20%";
-
-   try{
-
-      const res = await fetch("/api/render",{
-         method:"POST",
-         headers:{
-            "Content-Type":"application/json"
-         },
-         body:JSON.stringify({
-            model:model,
-            prompt:prompt
-         })
-      });
-
-      progressBar.style.width = "70%";
-
-      const data = await res.json();
-
-      progressBar.style.width = "100%";
-
-      statusText.innerText = "STATUS: COMPLETE";
-
-   }catch(e){
-
-      console.log(e);
-      statusText.innerText = "STATUS: ERROR";
-
-   }
-
-});
-
-
-/* =====================================================
-   INIT
-===================================================== */
-
-buildModelList();
+};
 
 </script>
+
+<script src="/assets/js/create-premium.js"></script>
 
 </body>
 </html>
