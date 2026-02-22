@@ -6,79 +6,8 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>Create | SN Design Studio</title>
+
 <link rel="stylesheet" href="/assets/css/create-premium.css">
-
-<style>
-
-body{
-background:black;
-color:white;
-font-family:sans-serif;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
-
-.project-type button,
-.mode-btn{
-width:100%;
-margin:8px 0;
-padding:14px;
-background:#111;
-border:none;
-color:white;
-cursor:pointer;
-}
-
-.type-active{
-background:white;
-color:black;
-}
-
-.selected.red{
-border:1px solid red;
-box-shadow:0 0 14px red;
-}
-
-.selected.blue{
-border:1px solid #00aaff;
-box-shadow:0 0 14px #00aaff;
-}
-
-.type-active{
-box-shadow:0 0 20px #00ff55;
-}
-
-.engines{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.engine{
-padding:20px;
-border-radius:12px;
-background:#050505;
-}
-
-.preview-box{
-margin-top:20px;
-padding:20px;
-background:#090909;
-border-radius:10px;
-}
-
-.cta-box{
-margin-top:20px;
-padding:20px;
-background:#111;
-border-radius:10px;
-}
-
-</style>
 
 </head>
 
@@ -88,19 +17,17 @@ border-radius:10px;
 
 <h1>ULTRA ENGINE CONTROL</h1>
 
-<input id="promptInput" placeholder="Enter prompt">
+<form id="renderForm" enctype="multipart/form-data">
 
-
-<!-- TYPE -->
+<input id="promptInput" name="prompt" placeholder="Enter prompt">
 
 <div class="project-type">
 
-<button class="action-btn" data-type="video">Generate Video</button>
-<button class="action-btn" data-type="image">Generate Image</button>
-<button class="action-btn" data-type="upscale">Upscale</button>
+<button type="button" data-type="video">Generate Video</button>
+<button type="button" data-type="image">Generate Image</button>
+<button type="button" data-type="upscale">Upscale</button>
 
 </div>
-
 
 <div class="engines">
 
@@ -108,10 +35,10 @@ border-radius:10px;
 
 <h3>RED ENGINE</h3>
 
-<button class="mode-btn red" data-platform="replicate" data-alias="dark-viral">Dark Viral</button>
-<button class="mode-btn red" data-platform="replicate" data-alias="ai-lipsync">AI LipSync</button>
-<button class="mode-btn red" data-platform="replicate" data-alias="dance-motion">Dance Motion</button>
-<button class="mode-btn red" data-platform="replicate" data-alias="face-swap">Face Swap</button>
+<button type="button" class="mode-btn red" data-platform="replicate" data-alias="dark-viral">Dark Viral</button>
+<button type="button" class="mode-btn red" data-platform="replicate" data-alias="ai-lipsync">AI LipSync</button>
+<button type="button" class="mode-btn red" data-platform="replicate" data-alias="dance-motion">Dance Motion</button>
+<button type="button" class="mode-btn red" data-platform="replicate" data-alias="face-swap">Face Swap</button>
 
 </div>
 
@@ -119,40 +46,28 @@ border-radius:10px;
 
 <h3>BLUE ENGINE</h3>
 
-<button class="mode-btn blue" data-platform="runway" data-alias="dark-viral">Dark Viral</button>
-<button class="mode-btn blue" data-platform="runway" data-alias="ai-lipsync">AI LipSync</button>
-<button class="mode-btn blue" data-platform="runway" data-alias="dance-motion">Dance Motion</button>
-<button class="mode-btn blue" data-platform="runway" data-alias="face-swap">Face Swap</button>
+<button type="button" class="mode-btn blue" data-platform="runway" data-alias="dark-viral">Dark Viral</button>
+<button type="button" class="mode-btn blue" data-platform="runway" data-alias="ai-lipsync">AI LipSync</button>
+<button type="button" class="mode-btn blue" data-platform="runway" data-alias="dance-motion">Dance Motion</button>
+<button type="button" class="mode-btn blue" data-platform="runway" data-alias="face-swap">Face Swap</button>
 
 </div>
 
 </div>
-
-
-<!-- PREVIEW -->
 
 <div class="preview-box">
 
 <h4>MODEL PREVIEW</h4>
 
-<input id="fileInput" type="file" accept="video/*,image/*">
-
-<div id="previewArea"></div>
+<input type="file" id="fileInput" name="file" accept="video/*,image/*">
 
 <p id="previewInfo">No selection</p>
 
 </div>
 
+<button type="submit">GENERATE</button>
 
-<!-- CTA -->
-
-<div class="cta-box">
-
-<p id="engineSummary">---</p>
-
-<button id="generateBtn">GENERATE</button>
-
-</div>
+</form>
 
 <div id="statusText">STATUS: IDLE</div>
 
@@ -162,138 +77,52 @@ border-radius:10px;
 
 const API="https://sn-design-api.onrender.com";
 
-let selected={
-   type:null,
-   platform:null,
-   alias:null
-};
+let selected={platform:null,alias:null,type:null};
 
-
-/*
-==============================
-TYPE SELECT
-==============================
-*/
-
-document.querySelectorAll(".action-btn").forEach(btn=>{
+document.querySelectorAll(".project-type button").forEach(btn=>{
 
 btn.onclick=()=>{
 
-document.querySelectorAll(".action-btn").forEach(b=>b.classList.remove("type-active"));
-
-btn.classList.add("type-active");
-
 selected.type=btn.dataset.type;
-
-updatePreview();
 
 };
 
 });
-
-
-/*
-==============================
-MODE SELECT
-==============================
-*/
 
 document.querySelectorAll(".mode-btn").forEach(btn=>{
 
 btn.onclick=()=>{
 
-document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("selected"));
-
-btn.classList.add("selected");
-
 selected.platform=btn.dataset.platform;
 selected.alias=btn.dataset.alias;
-
-updatePreview();
 
 };
 
 });
 
+document.getElementById("renderForm").onsubmit=async(e)=>{
 
-/*
-==============================
-FILE PREVIEW
-==============================
-*/
+e.preventDefault();
 
-document.getElementById("fileInput").onchange=(e)=>{
+const formData=new FormData();
 
-const file=e.target.files[0];
-if(!file)return;
+formData.append("platform",selected.platform);
+formData.append("alias",selected.alias);
+formData.append("type",selected.type);
+formData.append("prompt",document.getElementById("promptInput").value);
 
-const preview=document.getElementById("previewArea");
-preview.innerHTML="";
+const file=document.getElementById("fileInput").files[0];
 
-const url=URL.createObjectURL(file);
+if(file){
 
-if(file.type.startsWith("video")){
-
-const v=document.createElement("video");
-v.src=url;
-v.controls=true;
-v.style.width="100%";
-preview.appendChild(v);
-
-}else{
-
-const img=document.createElement("img");
-img.src=url;
-img.style.width="100%";
-preview.appendChild(img);
+formData.append("file",file);
 
 }
-
-};
-
-
-/*
-==============================
-UI UPDATE
-==============================
-*/
-
-function updatePreview(){
-
-document.getElementById("previewInfo").innerText=
-
-"ENGINE: "+selected.platform+
-" | ALIAS: "+selected.alias+
-" | TYPE: "+selected.type;
-
-document.getElementById("engineSummary").innerText=
-
-"Ready → "+selected.platform+" / "+selected.alias;
-
-}
-
-
-/*
-==============================
-GENERATE
-==============================
-*/
-
-document.getElementById("generateBtn").onclick=async()=>{
 
 const res=await fetch(API+"/api/render",{
 
 method:"POST",
-headers:{ "Content-Type":"application/json" },
-
-body:JSON.stringify({
-
-alias:selected.alias,
-platform:selected.platform,
-type:selected.type,
-prompt:document.getElementById("promptInput").value
-
-})
+body:formData
 
 });
 
@@ -306,4 +135,4 @@ console.log(data);
 </script>
 
 </body>
-</html>
+   </html>
