@@ -1,83 +1,78 @@
 /*
 =====================================
-ULTRA MODEL ROUTER CLEAN
-SN DESIGN STUDIO
-ALIAS → REAL MODEL MAP
+MODEL ROUTER (ALIAS SAFE MODE)
 =====================================
 */
 
-const replicateService = require("./replicate/flux2pro");
-const runwayService = require("./runway/gen4video");
+const replicate = require("./replicate/flux2pro");
+const runway = require("./runway/gen4video");
 
 /*
-=====================================
-MODEL ALIAS MAP
-UI ส่ง alias
-Backend map → real engine
-=====================================
+UI alias (fake name)
+→ REAL ENGINE MAP
 */
 
-const MODEL_MAP = {
+const ROUTE = {
 
    /*
-   ==============================
-   REPLICATE
-   ==============================
+   USER sees only:
+   dance-motion
    */
 
-   "flux2pro-motion":{
-      platform:"replicate",
-      engine:"flux2pro",
-      mode:"motion"
+   "dance-motion":{
+
+      replicate:{
+         engine:"flux2pro",
+         mode:"motion"
+      },
+
+      runway:{
+         engine:"gen4",
+         mode:"motion"
+      }
+
    },
 
-   "flux2pro-lipsync":{
-      platform:"replicate",
-      engine:"flux2pro",
-      mode:"lipsync"
+   "face-swap":{
+
+      replicate:{
+         engine:"flux2pro",
+         mode:"faceswap"
+      },
+
+      runway:{
+         engine:"gen4",
+         mode:"faceswap"
+      }
+
    },
 
-   "flux2pro-faceswap":{
-      platform:"replicate",
-      engine:"flux2pro",
-      mode:"faceswap"
+   "ai-lipsync":{
+
+      replicate:{
+         engine:"flux2pro",
+         mode:"lipsync"
+      },
+
+      runway:{
+         engine:"gen4",
+         mode:"lipsync"
+      }
+
    },
 
-   "flux2pro":{
-      platform:"replicate",
-      engine:"flux2pro",
-      mode:"image"
-   },
+   "dark-viral":{
 
+      replicate:{
+         engine:"flux2pro",
+         mode:"image"
+      },
 
-   /*
-   ==============================
-   RUNWAY GEN4
-   ==============================
-   */
+      runway:{
+         engine:"gen4",
+         mode:"darkviral"
+      }
 
-   "gen4-motion":{
-      platform:"runway",
-      engine:"gen4",
-      mode:"motion"
-   },
-
-   "gen4-lipsync":{
-      platform:"runway",
-      engine:"gen4",
-      mode:"lipsync"
-   },
-
-   "gen4-faceswap":{
-      platform:"runway",
-      engine:"gen4",
-      mode:"faceswap"
-   },
-
-   "gen4-darkviral":{
-      platform:"runway",
-      engine:"gen4",
-      mode:"darkviral"
    }
 
 };
@@ -85,66 +80,55 @@ const MODEL_MAP = {
 
 /*
 =====================================
-RUN MODEL (MAIN ENTRY)
+RUN MODEL
 =====================================
 */
 
-async function run(alias,input){
+async function run(alias, platform, input){
 
-   const config = MODEL_MAP[alias];
+   const config = ROUTE[alias];
 
    if(!config){
 
-      throw new Error("MODEL ALIAS NOT FOUND: "+alias);
+      throw new Error("ALIAS NOT FOUND");
 
    }
 
-   console.log(
-      "RUN MODEL:",
-      alias,
-      "→",
-      config.platform
-   );
+   const target = config[platform];
 
+   if(!target){
+
+      throw new Error("PLATFORM NOT FOUND");
+
+   }
 
    /*
-   ==============================
-   REPLICATE
-   ==============================
+   replicate
    */
 
-   if(config.platform==="replicate"){
+   if(platform==="replicate"){
 
-      return await replicateService.run({
-
-         engine:config.engine,
-         mode:config.mode,
+      return await replicate.run({
+         engine:target.engine,
+         mode:target.mode,
          input
-
       });
 
    }
 
-
    /*
-   ==============================
-   RUNWAY
-   ==============================
+   runway
    */
 
-   if(config.platform==="runway"){
+   if(platform==="runway"){
 
-      return await runwayService.run({
-
-         engine:config.engine,
-         mode:config.mode,
+      return await runway.run({
+         engine:target.engine,
+         mode:target.mode,
          input
-
       });
 
    }
-
-   throw new Error("PLATFORM NOT SUPPORTED");
 
 }
 
