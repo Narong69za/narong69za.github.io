@@ -1,60 +1,25 @@
-/*
-=====================================
-CREATE CONTROLLER
-FINAL CLEAN VERSION
-=====================================
-*/
-
 const MODEL_ROUTER = require("../services/model.router");
 
 async function create(req,res){
 
    try{
 
-      /*
-      =====================================
-      EXPECT PAYLOAD
-      =====================================
+      console.log("REQ BODY:",req.body);
 
-      {
-         alias:"dance-motion",
-         platform:"replicate" | "runway",
-         prompt:"",
-         type:"",
-         file:null
-      }
+      const { alias, platform, prompt } = req.body;
 
-      */
+      if(!alias || !platform){
 
-      const { alias, platform, prompt, type } = req.body;
-
-      if(!alias){
-
-         throw new Error("ALIAS NOT FOUND FROM CONTROLLER");
+         throw new Error("ALIAS OR PLATFORM MISSING");
 
       }
-
-      if(!platform){
-
-         throw new Error("PLATFORM NOT FOUND");
-
-      }
-
-      /*
-      =====================================
-      CALL MODEL ROUTER
-      =====================================
-      */
 
       const result = await MODEL_ROUTER.run(
-
          alias,
          platform,
          {
-            prompt: prompt || "",
-            type: type || ""
+            prompt: prompt || ""
          }
-
       );
 
       res.json({
@@ -64,7 +29,7 @@ async function create(req,res){
 
    }catch(err){
 
-      console.log("CREATE ERROR:",err.message);
+      console.log(err);
 
       res.status(500).json({
          success:false,
