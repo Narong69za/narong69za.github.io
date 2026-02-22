@@ -8,7 +8,7 @@
 <title>Create | SN Design Studio</title>
 
 <link rel="stylesheet" href="/assets/css/master.css">
-<link rel="stylesheet" href="/assets/css/create.css">
+<link rel="stylesheet" href="/assets/css/create-premium.css">
 
 <style>
 
@@ -24,12 +24,8 @@ margin:auto;
 padding:20px;
 }
 
-h1{
-text-align:center;
-margin-bottom:20px;
-}
-
-.project-type button{
+.project-type button,
+.mode-btn{
 width:100%;
 margin:8px 0;
 padding:14px;
@@ -39,9 +35,9 @@ color:white;
 cursor:pointer;
 }
 
-.active-green{
-border:1px solid #00ff66;
-box-shadow:0 0 14px #00ff66;
+.type-active{
+background:white;
+color:black;
 }
 
 .selected.red{
@@ -52,6 +48,10 @@ box-shadow:0 0 14px red;
 .selected.blue{
 border:1px solid #00aaff;
 box-shadow:0 0 14px #00aaff;
+}
+
+.type-active{
+box-shadow:0 0 20px #00ff55;
 }
 
 .engines{
@@ -92,6 +92,9 @@ border-radius:10px;
 
 <input id="promptInput" placeholder="Enter prompt">
 
+
+<!-- TYPE -->
+
 <div class="project-type">
 
 <button class="action-btn" data-type="video">Generate Video</button>
@@ -100,15 +103,17 @@ border-radius:10px;
 
 </div>
 
+
 <div class="engines">
 
 <div class="engine">
+
 <h3>RED ENGINE</h3>
 
-<button class="mode-btn red" data-platform="replicate" data-mode="dark">Dark Viral</button>
-<button class="mode-btn red" data-platform="replicate" data-mode="lipsync">AI LipSync</button>
-<button class="mode-btn red" data-platform="replicate" data-mode="motion">Dance Motion</button>
-<button class="mode-btn red" data-platform="replicate" data-mode="face">Face Swap</button>
+<button class="mode-btn red" data-platform="replicate" data-alias="dark-viral">Dark Viral</button>
+<button class="mode-btn red" data-platform="replicate" data-alias="ai-lipsync">AI LipSync</button>
+<button class="mode-btn red" data-platform="replicate" data-alias="dance-motion">Dance Motion</button>
+<button class="mode-btn red" data-platform="replicate" data-alias="face-swap">Face Swap</button>
 
 </div>
 
@@ -116,14 +121,17 @@ border-radius:10px;
 
 <h3>BLUE ENGINE</h3>
 
-<button class="mode-btn blue" data-platform="runway" data-mode="dark">Dark Viral</button>
-<button class="mode-btn blue" data-platform="runway" data-mode="lipsync">AI LipSync</button>
-<button class="mode-btn blue" data-platform="runway" data-mode="motion">Dance Motion</button>
-<button class="mode-btn blue" data-platform="runway" data-mode="face">Face Swap</button>
+<button class="mode-btn blue" data-platform="runway" data-alias="dark-viral">Dark Viral</button>
+<button class="mode-btn blue" data-platform="runway" data-alias="ai-lipsync">AI LipSync</button>
+<button class="mode-btn blue" data-platform="runway" data-alias="dance-motion">Dance Motion</button>
+<button class="mode-btn blue" data-platform="runway" data-alias="face-swap">Face Swap</button>
 
 </div>
 
 </div>
+
+
+<!-- PREVIEW -->
 
 <div class="preview-box">
 
@@ -133,9 +141,12 @@ border-radius:10px;
 
 <div id="previewArea"></div>
 
-<p id="previewMeta">No selection</p>
+<p id="previewInfo">No selection</p>
 
 </div>
+
+
+<!-- CTA -->
 
 <div class="cta-box">
 
@@ -153,40 +164,70 @@ border-radius:10px;
 
 const API="https://sn-design-api.onrender.com";
 
-let selected={type:null,platform:null,mode:null};
+let selected={
+   type:null,
+   platform:null,
+   alias:null
+};
+
+
+/*
+==============================
+TYPE SELECT
+==============================
+*/
 
 document.querySelectorAll(".action-btn").forEach(btn=>{
+
 btn.onclick=()=>{
-document.querySelectorAll(".action-btn").forEach(b=>b.classList.remove("active-green"));
-btn.classList.add("active-green");
+
+document.querySelectorAll(".action-btn").forEach(b=>b.classList.remove("type-active"));
+
+btn.classList.add("type-active");
+
 selected.type=btn.dataset.type;
+
 updatePreview();
+
 };
+
 });
+
+
+/*
+==============================
+MODE SELECT
+==============================
+*/
 
 document.querySelectorAll(".mode-btn").forEach(btn=>{
+
 btn.onclick=()=>{
+
 document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("selected"));
+
 btn.classList.add("selected");
+
 selected.platform=btn.dataset.platform;
-selected.mode=btn.dataset.mode;
+selected.alias=btn.dataset.alias;
+
 updatePreview();
+
 };
+
 });
 
-function updatePreview(){
-document.getElementById("previewMeta").innerText=
-`ENGINE: ${selected.platform} | MODE: ${selected.mode} | TYPE: ${selected.type}`;
-document.getElementById("engineSummary").innerText=
-`Ready → ${selected.platform} / ${selected.mode}`;
-}
 
-const fileInput=document.getElementById("fileInput");
+/*
+==============================
+FILE PREVIEW
+==============================
+*/
 
-fileInput.onchange=(e)=>{
+document.getElementById("fileInput").onchange=(e)=>{
 
 const file=e.target.files[0];
-if(!file) return;
+if(!file)return;
 
 const preview=document.getElementById("previewArea");
 preview.innerHTML="";
@@ -194,36 +235,73 @@ preview.innerHTML="";
 const url=URL.createObjectURL(file);
 
 if(file.type.startsWith("video")){
+
 const v=document.createElement("video");
 v.src=url;
 v.controls=true;
 v.style.width="100%";
 preview.appendChild(v);
-}
-else{
+
+}else{
+
 const img=document.createElement("img");
 img.src=url;
 img.style.width="100%";
 preview.appendChild(img);
+
 }
 
 };
 
+
+/*
+==============================
+UI UPDATE
+==============================
+*/
+
+function updatePreview(){
+
+document.getElementById("previewInfo").innerText=
+
+"ENGINE: "+selected.platform+
+" | ALIAS: "+selected.alias+
+" | TYPE: "+selected.type;
+
+document.getElementById("engineSummary").innerText=
+
+"Ready → "+selected.platform+" / "+selected.alias;
+
+}
+
+
+/*
+==============================
+GENERATE
+==============================
+*/
+
 document.getElementById("generateBtn").onclick=async()=>{
 
 const res=await fetch(API+"/api/render",{
+
 method:"POST",
 headers:{ "Content-Type":"application/json" },
+
 body:JSON.stringify({
-alias:selected.mode,
+
+alias:selected.alias,
 platform:selected.platform,
-input:{
+type:selected.type,
 prompt:document.getElementById("promptInput").value
-}
+
 })
+
 });
 
-console.log(await res.json());
+const data=await res.json();
+
+console.log(data);
 
 };
 
