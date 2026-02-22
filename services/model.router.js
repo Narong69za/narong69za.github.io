@@ -1,48 +1,83 @@
 /*
 =====================================
-ULTRA STATIC MODEL ROUTER
-SN DESIGN STUDIO FINAL LOCK
+ULTRA MODEL ROUTER CLEAN
+SN DESIGN STUDIO
+ALIAS → REAL MODEL MAP
 =====================================
 */
 
-const replicateService = require("./replicate");
-const runwayService = require("./runway");
-
-console.log("=== STATIC MODEL ROUTER START ===");
+const replicateService = require("./replicate/flux2pro");
+const runwayService = require("./runway/gen4video");
 
 /*
 =====================================
-STATIC MODEL MAP (LOCKED)
+MODEL ALIAS MAP
+UI ส่ง alias
+Backend map → real engine
 =====================================
 */
 
 const MODEL_MAP = {
 
-   // REPLICATE
-   "dark-viral": {
-      provider:"replicate",
-      model:"flux2pro"
+   /*
+   ==============================
+   REPLICATE
+   ==============================
+   */
+
+   "flux2pro-motion":{
+      platform:"replicate",
+      engine:"flux2pro",
+      mode:"motion"
    },
 
-   "ai-lipsync": {
-      provider:"replicate",
-      model:"flux2pro"
+   "flux2pro-lipsync":{
+      platform:"replicate",
+      engine:"flux2pro",
+      mode:"lipsync"
    },
 
-   "dance-motion": {
-      provider:"replicate",
-      model:"flux2pro"
+   "flux2pro-faceswap":{
+      platform:"replicate",
+      engine:"flux2pro",
+      mode:"faceswap"
    },
 
-   "face-swap": {
-      provider:"replicate",
-      model:"flux2pro"
+   "flux2pro":{
+      platform:"replicate",
+      engine:"flux2pro",
+      mode:"image"
    },
 
-   // RUNWAY
-   "gen4-video":{
-      provider:"runwayml",
-      model:"gen4video"
+
+   /*
+   ==============================
+   RUNWAY GEN4
+   ==============================
+   */
+
+   "gen4-motion":{
+      platform:"runway",
+      engine:"gen4",
+      mode:"motion"
+   },
+
+   "gen4-lipsync":{
+      platform:"runway",
+      engine:"gen4",
+      mode:"lipsync"
+   },
+
+   "gen4-faceswap":{
+      platform:"runway",
+      engine:"gen4",
+      mode:"faceswap"
+   },
+
+   "gen4-darkviral":{
+      platform:"runway",
+      engine:"gen4",
+      mode:"darkviral"
    }
 
 };
@@ -50,40 +85,67 @@ const MODEL_MAP = {
 
 /*
 =====================================
-RUN MODEL
+RUN MODEL (MAIN ENTRY)
 =====================================
 */
 
-async function runModel(data){
+async function run(alias,input){
 
-   const config = MODEL_MAP[data.preset];
+   const config = MODEL_MAP[alias];
 
    if(!config){
 
-      throw new Error("MODEL NOT FOUND: " + data.preset);
+      throw new Error("MODEL ALIAS NOT FOUND: "+alias);
 
    }
 
-   console.log("RUN MODEL:",data.preset,"→",config.provider);
+   console.log(
+      "RUN MODEL:",
+      alias,
+      "→",
+      config.platform
+   );
 
-   if(config.provider==="replicate"){
 
-      return replicateService.run(config,data);
+   /*
+   ==============================
+   REPLICATE
+   ==============================
+   */
+
+   if(config.platform==="replicate"){
+
+      return await replicateService.run({
+
+         engine:config.engine,
+         mode:config.mode,
+         input
+
+      });
 
    }
 
-   if(config.provider==="runwayml"){
 
-      return runwayService.run(config,data);
+   /*
+   ==============================
+   RUNWAY
+   ==============================
+   */
+
+   if(config.platform==="runway"){
+
+      return await runwayService.run({
+
+         engine:config.engine,
+         mode:config.mode,
+         input
+
+      });
 
    }
 
-   throw new Error("Provider not supported");
+   throw new Error("PLATFORM NOT SUPPORTED");
 
 }
 
-module.exports = {
-
-   runModel
-
-};
+module.exports = { run };
