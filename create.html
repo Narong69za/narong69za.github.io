@@ -12,62 +12,73 @@
 
 <style>
 
-.project-type{
-display:flex;
-gap:10px;
+body{
+background:black;
+color:white;
+font-family:sans-serif;
+}
+
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
+}
+
+h1{
+text-align:center;
 margin-bottom:20px;
 }
 
-.type-btn{
-flex:1;
-padding:12px;
-background:#111;
-border:none;
-color:#fff;
-cursor:pointer;
-}
-
-.type-btn.active{
-background:#fff;
-color:#000;
-}
-
-.platform-wrap{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:20px;
-}
-
-.platform{
-padding:20px;
-border-radius:14px;
-background:#050505;
-}
-
+.project-type button,
 .mode-btn{
+
 width:100%;
+margin:8px 0;
 padding:14px;
-margin-bottom:10px;
 background:#111;
 border:none;
 color:white;
 cursor:pointer;
 }
 
-.mode-btn.selected.red{
+.type-active{
+background:white;
+color:black;
+}
+
+.selected.red{
 border:1px solid red;
-box-shadow:0 0 10px red;
+box-shadow:0 0 14px red;
 }
 
-.mode-btn.selected.blue{
+.selected.blue{
 border:1px solid #00aaff;
-box-shadow:0 0 10px #00aaff;
+box-shadow:0 0 14px #00aaff;
 }
 
-.preview{
-margin-top:25px;
+.engines{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+}
+
+.engine{
 padding:20px;
-background:#080808;
+border-radius:12px;
+background:#050505;
+}
+
+.preview-box{
+margin-top:20px;
+padding:20px;
+background:#090909;
+border-radius:10px;
+}
+
+.cta-box{
+margin-top:20px;
+padding:20px;
+background:#111;
 border-radius:10px;
 }
 
@@ -75,7 +86,7 @@ border-radius:10px;
 
 </head>
 
-<body class="create-page">
+<body>
 
 <div class="container">
 
@@ -83,82 +94,90 @@ border-radius:10px;
 
 <input id="promptInput" placeholder="Enter prompt">
 
-<!-- PROJECT TYPE -->
+<!-- TYPE -->
 
 <div class="project-type">
 
-<button class="type-btn" data-type="video">Generate Video</button>
-<button class="type-btn" data-type="image">Generate Image</button>
-<button class="type-btn" data-type="save">Save Image</button>
-<button class="type-btn" data-type="upscale">Upscale</button>
+<button data-type="video">Generate Video</button>
+<button data-type="image">Generate Image</button>
+<button data-type="upscale">Upscale</button>
 
 </div>
 
 
-<div class="platform-wrap">
+<div class="engines">
 
-<!-- RED -->
-
-<div class="platform">
+<div class="engine">
 
 <h3>RED ENGINE</h3>
 
-<button class="mode-btn red" data-platform="replicate" data-mode="dark-viral">Dark Viral</button>
-<button class="mode-btn red" data-platform="replicate" data-mode="ai-lipsync">AI LipSync</button>
-<button class="mode-btn red" data-platform="replicate" data-mode="dance-motion">Dance Motion</button>
-<button class="mode-btn red" data-platform="replicate" data-mode="face-swap">Face Swap</button>
+<button class="mode-btn red" data-platform="replicate" data-mode="dark">Dark Viral</button>
+<button class="mode-btn red" data-platform="replicate" data-mode="lipsync">AI LipSync</button>
+<button class="mode-btn red" data-platform="replicate" data-mode="motion">Dance Motion</button>
+<button class="mode-btn red" data-platform="replicate" data-mode="face">Face Swap</button>
 
 </div>
 
-
-<!-- BLUE -->
-
-<div class="platform">
+<div class="engine">
 
 <h3>BLUE ENGINE</h3>
 
-<button class="mode-btn blue" data-platform="runway" data-mode="dark-viral">Dark Viral</button>
-<button class="mode-btn blue" data-platform="runway" data-mode="ai-lipsync">AI LipSync</button>
-<button class="mode-btn blue" data-platform="runway" data-mode="dance-motion">Dance Motion</button>
-<button class="mode-btn blue" data-platform="runway" data-mode="face-swap">Face Swap</button>
+<button class="mode-btn blue" data-platform="runway" data-mode="dark">Dark Viral</button>
+<button class="mode-btn blue" data-platform="runway" data-mode="lipsync">AI LipSync</button>
+<button class="mode-btn blue" data-platform="runway" data-mode="motion">Dance Motion</button>
+<button class="mode-btn blue" data-platform="runway" data-mode="face">Face Swap</button>
 
 </div>
 
 </div>
 
-<!-- PREVIEW AREA -->
 
-<div class="preview">
+<!-- PREVIEW MODEL -->
 
-<h4>PROJECT PREVIEW</h4>
+<div class="preview-box" id="previewBox">
+
+<h4>MODEL PREVIEW</h4>
 
 <input type="file" accept="video/*,image/*">
 
+<p id="previewInfo">No selection</p>
+
 </div>
+
+
+<!-- CTA -->
+
+<div class="cta-box">
+
+<p id="engineSummary">---</p>
+
+<button id="generateBtn">GENERATE</button>
+
+</div>
+
 
 <div id="statusText">STATUS: IDLE</div>
 
 </div>
 
+
 <script>
 
 const API="https://sn-design-api.onrender.com";
 
-let selected={
-type:null,
-platform:null,
-mode:null
-};
+let selected={type:null,platform:null,mode:null};
 
-document.querySelectorAll(".type-btn").forEach(btn=>{
+document.querySelectorAll(".project-type button").forEach(btn=>{
 
 btn.onclick=()=>{
 
-document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+document.querySelectorAll(".project-type button").forEach(b=>b.classList.remove("type-active"));
 
-btn.classList.add("active");
+btn.classList.add("type-active");
 
 selected.type=btn.dataset.type;
+
+updatePreview();
 
 };
 
@@ -175,9 +194,49 @@ btn.classList.add("selected");
 selected.platform=btn.dataset.platform;
 selected.mode=btn.dataset.mode;
 
+updatePreview();
+
 };
 
 });
+
+function updatePreview(){
+
+document.getElementById("previewInfo").innerText=
+
+"ENGINE: "+selected.platform+
+" | MODE: "+selected.mode+
+" | TYPE: "+selected.type;
+
+document.getElementById("engineSummary").innerText=
+
+"Ready → "+selected.platform+" / "+selected.mode;
+
+}
+
+document.getElementById("generateBtn").onclick=async()=>{
+
+const res=await fetch(API+"/api/render",{
+
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+
+body:JSON.stringify({
+
+platform:selected.platform,
+mode:selected.mode,
+type:selected.type,
+prompt:document.getElementById("promptInput").value
+
+})
+
+});
+
+const data=await res.json();
+
+console.log(data);
+
+};
 
 </script>
 
