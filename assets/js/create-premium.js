@@ -2,185 +2,245 @@
 =====================================
 ULTRA CREATE PREMIUM FINAL
 SN DESIGN STUDIO
-STATIC LOCK FLOW
+ULTRA CONTROL PANEL NEXT
 ADD ONLY VERSION
 =====================================
 */
 
 const API="https://sn-design-api.onrender.com";
 
-let CURRENT_PRESET=null;
+let CURRENT_ENGINE=null;
+let CURRENT_MODE=null;
+let CURRENT_TYPE=null;
+let CURRENT_FILE=null;
 
 init();
 
-async function init(){
+/*
+=====================================
+INIT
+=====================================
+*/
 
-   await loadPreset();
+function init(){
+
+   bindEngineButtons();
+   bindTypeButtons();
+   bindFileInput();
 
 }
 
 /*
 =====================================
-LOAD TEMPLATE FROM URL
+ENGINE SELECT
 =====================================
 */
 
-async function loadPreset(){
+function bindEngineButtons(){
 
-   const params=new URLSearchParams(location.search);
+   document.querySelectorAll(".red-engine .mode").forEach(el=>{
+      el.onclick=()=>selectEngine("replicate",el.dataset.mode);
+   });
 
-   const id=params.get("template");
+   document.querySelectorAll(".blue-engine .mode").forEach(el=>{
+      el.onclick=()=>selectEngine("runway",el.dataset.mode);
+   });
 
-   if(!id){
+}
 
-      setEngine("UNKNOWN");
+function selectEngine(engine,mode){
 
-      return;
+   CURRENT_ENGINE=engine;
+   CURRENT_MODE=mode;
 
-   }
-
-   try{
-
-      const res=await fetch(API+"/api/templates/"+id);
-
-      if(!res.ok) throw "preset error";
-
-      const preset=await res.json();
-
-      CURRENT_PRESET=preset;
-
-      buildUI(preset);
-
-   }catch(e){
-
-      console.error(e);
-
-      setEngine("UNKNOWN");
-
-   }
+   updatePreviewLabel();
 
 }
 
 /*
 =====================================
-BUILD UI
+TYPE SELECT (video / image / upscale)
 =====================================
 */
 
-function buildUI(p){
+function bindTypeButtons(){
 
-   setEngine(p.id || "UNKNOWN");
+   document.querySelectorAll(".type-select").forEach(btn=>{
 
-   toggle("uploadVideo",p.ui?.needVideo);
-   toggle("uploadImage",p.ui?.needImage);
-   toggle("promptBox",p.ui?.needPrompt);
+      btn.onclick=()=>{
+
+         CURRENT_TYPE=btn.dataset.type;
+
+         document.querySelectorAll(".type-select")
+         .forEach(b=>b.classList.remove("active"));
+
+         btn.classList.add("active");
+
+         updatePreviewLabel();
+
+      };
+
+   });
 
 }
 
 /*
 =====================================
-SET ENGINE LABEL
+FILE IMPORT + LIVE PREVIEW
 =====================================
 */
 
-function setEngine(name){
+function bindFileInput(){
 
-   const el=document.getElementById("engineName");
+   const input=document.querySelector("#fileInput");
 
-   if(el){
+   if(!input) return;
 
-      el.innerText="ENGINE: "+name;
+   input.onchange=()=>{
 
-   }
+      const file=input.files[0];
 
-}
+      if(!file) return;
 
-/*
-=====================================
-SHOW / HIDE UI BLOCK
-=====================================
-*/
+      CURRENT_FILE=file;
 
-function toggle(id,state){
-
-   const el=document.getElementById(id);
-
-   if(!el) return;
-
-   if(state) el.classList.remove("hidden");
-   else el.classList.add("hidden");
-
-}
-
-/*
-=====================================
-CTA GENERATE
-=====================================
-*/
-
-const btn=document.getElementById("generateBtn");
-
-if(btn){
-
-   btn.onclick=async()=>{
-
-      if(!CURRENT_PRESET) return;
-
-      setStatus("PROCESSING");
-
-      simulateProgress();
-
-      try{
-
-         const res=await fetch(API+"/api/render",{
-
-            method:"POST",
-
-            headers:{
-               "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-
-               preset:CURRENT_PRESET.id,
-
-               prompt:document.getElementById("promptBox")?.value || ""
-
-            })
-
-         });
-
-         const data=await res.json();
-
-         console.log("RENDER RESULT:",data);
-
-         if(data.success){
-
-            setStatus("COMPLETE");
-
-            setProgress(100);
-
-         }else{
-
-            setStatus("FAILED");
-
-         }
-
-      }catch(e){
-
-         console.error(e);
-
-         setStatus("ERROR");
-
-      }
+      renderPreview(file);
 
    };
 
 }
 
+function renderPreview(file){
+
+   let previewBox=document.getElementById("previewMedia");
+
+   if(!previewBox){
+
+      previewBox=document.createElement("div");
+      previewBox.id="previewMedia";
+
+      const container=document.querySelector(".project-preview");
+
+      if(container) container.appendChild(previewBox);
+
+   }
+
+   previewBox.innerHTML="";
+
+   const url=URL.createObjectURL(file);
+
+   if(file.type.startsWith("video")){
+
+      const vid=document.createElement("video");
+      vid.src=url;
+      vid.controls=true;
+      vid.autoplay=true;
+      vid.loop=true;
+      vid.style.width="100%";
+
+      previewBox.appendChild(vid);
+
+   }else if(file.type.startsWith("image")){
+
+      const img=document.createElement("img");
+      img.src=url;
+      img.style.width="100%";
+
+      previewBox.appendChild(img);
+
+   }
+
+}
+
 /*
 =====================================
-STATUS + PROGRESS
+PREVIEW LABEL UPDATE
+=====================================
+*/
+
+function updatePreviewLabel(){
+
+   const label=document.getElementById("previewInfo");
+
+   if(!label) return;
+
+   label.innerText=
+   `ENGINE: ${CURRENT_ENGINE || "-"} | MODE: ${CURRENT_MODE || "-"} | TYPE: ${CURRENT_TYPE || "-"}`;
+
+}
+
+/*
+=====================================
+GENERATE BUTTON
+=====================================
+*/
+
+document.addEventListener("click",(e)=>{
+
+   if(e.target.id!=="generateBtn") return;
+
+   generate();
+
+});
+
+async function generate(){
+
+   if(!CURRENT_ENGINE || !CURRENT_MODE){
+
+      setStatus("SELECT ENGINE FIRST");
+      return;
+
+   }
+
+   setStatus("PROCESSING");
+
+   try{
+
+      const res=await fetch(API+"/api/render",{
+
+         method:"POST",
+
+         headers:{
+            "Content-Type":"application/json"
+         },
+
+         body:JSON.stringify({
+
+            engine:CURRENT_ENGINE,
+            mode:CURRENT_MODE,
+            type:CURRENT_TYPE,
+            prompt:document.getElementById("promptBox")?.value || ""
+
+         })
+
+      });
+
+      const data=await res.json();
+
+      console.log("RESULT:",data);
+
+      if(data.success){
+
+         setStatus("COMPLETE");
+
+      }else{
+
+         setStatus("FAILED");
+
+      }
+
+   }catch(err){
+
+      console.error(err);
+      setStatus("ERROR");
+
+   }
+
+}
+
+/*
+=====================================
+STATUS
 =====================================
 */
 
@@ -195,115 +255,3 @@ function setStatus(text){
    }
 
 }
-
-function simulateProgress(){
-
-   let progress=0;
-
-   const interval=setInterval(()=>{
-
-      progress+=10;
-
-      if(progress>=90){
-
-         clearInterval(interval);
-
-      }
-
-      setProgress(progress);
-
-   },300);
-
-}
-
-function setProgress(val){
-
-   const bar=document.getElementById("progressBar");
-
-   if(bar){
-
-      bar.style.width=val+"%";
-
-   }
-
-}
-
-/*
-=====================================
-ULTRA CINEMATIC PREVIEW SYSTEM
-ADD ONLY
-=====================================
-*/
-
-const fileInput=document.querySelector('input[type="file"]');
-const previewBox=document.getElementById("previewBox");
-
-if(fileInput && previewBox){
-
-fileInput.addEventListener("change",(e)=>{
-
-const file=e.target.files[0];
-if(!file) return;
-
-const url=URL.createObjectURL(file);
-
-previewBox.innerHTML="";
-
-if(file.type.startsWith("video")){
-
-const video=document.createElement("video");
-
-video.src=url;
-video.controls=true;
-video.autoplay=true;
-video.loop=true;
-video.muted=true;
-
-video.style.width="100%";
-video.style.borderRadius="12px";
-
-previewBox.appendChild(video);
-
-}else if(file.type.startsWith("image")){
-
-const img=document.createElement("img");
-
-img.src=url;
-img.style.width="100%";
-img.style.borderRadius="12px";
-
-previewBox.appendChild(img);
-
-}
-
-});
-
-}
-
-/*
-=====================================
-ULTRA ENGINE MODE VISUAL SELECT
-(RED / BLUE highlight)
-ADD ONLY
-=====================================
-*/
-
-document.querySelectorAll(".engine-mode").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-const parent=btn.closest(".engine-block");
-
-if(!parent) return;
-
-parent.querySelectorAll(".engine-mode").forEach(b=>{
-
-b.classList.remove("active");
-
-});
-
-btn.classList.add("active");
-
-});
-
-});
