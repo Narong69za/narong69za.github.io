@@ -2,250 +2,118 @@
 <html>
 <head>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Create | SN Design Studio</title>
-
 <link rel="stylesheet" href="/assets/css/create-premium.css">
-
-<style>
-body{
-background:#000;
-color:#fff;
-font-family:sans-serif;
-}
-
-.container{
-max-width:900px;
-margin:auto;
-padding:20px;
-}
-
-button{
-cursor:pointer;
-}
-
-.active{
-outline:2px solid #00ff88;
-}
-
-.engine-btn.red.active{
-outline:2px solid red;
-}
-
-.engine-btn.blue.active{
-outline:2px solid #00aaff;
-}
-
-.preview-box{
-margin-top:20px;
-}
-
-.preview-box img,
-.preview-box video{
-max-width:100%;
-border-radius:10px;
-}
-
-</style>
 
 </head>
 
 <body>
 
-<div class="container">
+<h1>ULTRA ENGINE CONTROL</h1>
 
-<h1>CREATE ENGINE</h1>
+<form id="createForm" enctype="multipart/form-data">
 
-<input id="promptInput" placeholder="Enter prompt" style="width:100%;padding:12px;margin-bottom:20px;">
+<input type="text" name="prompt" placeholder="Enter prompt">
 
-<h3>1. Select Action</h3>
+<div class="engine-row">
 
-<button class="action-btn" data-type="video">Generate Video</button>
-<button class="action-btn" data-type="image">Generate Image</button>
-<button class="action-btn" data-type="upscale">Upscale</button>
+<div class="engine red">
 
-<h3 style="margin-top:30px;">2. Select Engine</h3>
+<h3>RED ENGINE</h3>
 
-<div>
-
-<button class="engine-btn red" data-platform="replicate" data-mode="dark-viral">
-RED Dark Viral
-</button>
-
-<button class="engine-btn red" data-platform="replicate" data-mode="ai-lipsync">
-RED AI LipSync
-</button>
-
-<button class="engine-btn red" data-platform="replicate" data-mode="dance-motion">
-RED Dance Motion
-</button>
-
-<button class="engine-btn red" data-platform="replicate" data-mode="face-swap">
-RED Face Swap
-</button>
+<button type="button" data-engine="replicate" data-alias="dark-viral">Dark Viral</button>
+<button type="button" data-engine="replicate" data-alias="ai-lipsync">AI LipSync</button>
+<button type="button" data-engine="replicate" data-alias="dance-motion">Dance Motion</button>
+<button type="button" data-engine="replicate" data-alias="face-swap">Face Swap</button>
 
 </div>
 
-<div style="margin-top:10px;">
+<div class="engine blue">
 
-<button class="engine-btn blue" data-platform="runway" data-mode="dark-viral">
-BLUE Dark Viral
-</button>
+<h3>BLUE ENGINE</h3>
 
-<button class="engine-btn blue" data-platform="runway" data-mode="ai-lipsync">
-BLUE AI LipSync
-</button>
-
-<button class="engine-btn blue" data-platform="runway" data-mode="dance-motion">
-BLUE Dance Motion
-</button>
-
-<button class="engine-btn blue" data-platform="runway" data-mode="face-swap">
-BLUE Face Swap
-</button>
+<button type="button" data-engine="runway" data-alias="dark-viral">Dark Viral</button>
+<button type="button" data-engine="runway" data-alias="ai-lipsync">AI LipSync</button>
+<button type="button" data-engine="runway" data-alias="dance-motion">Dance Motion</button>
+<button type="button" data-engine="runway" data-alias="face-swap">Face Swap</button>
 
 </div>
 
-<h3 style="margin-top:30px;">3. Upload File</h3>
-
-<input type="file" id="fileInput" accept="video/*,image/*">
-
-<div class="preview-box" id="previewBox"></div>
-
-<h3 style="margin-top:30px;">4. Generate</h3>
-
-<button id="generateBtn" style="padding:15px 30px;">GENERATE</button>
-
-<p id="statusText" style="margin-top:20px;">STATUS: IDLE</p>
-
 </div>
+
+<h3>Upload Files</h3>
+
+<div id="dynamicInputs"></div>
+
+<button type="submit">GENERATE</button>
+
+</form>
 
 <script>
 
-const API="https://sn-design-api.onrender.com";
+let selectedEngine=null;
+let selectedAlias=null;
 
-let selectedType=null;
-let selectedPlatform=null;
-let selectedMode=null;
-let selectedFile=null;
+const ENGINE_INPUTS = {
 
-/* ACTION */
-
-document.querySelectorAll(".action-btn")
-.forEach(btn=>{
-
-btn.onclick=()=>{
-
-document.querySelectorAll(".action-btn")
-.forEach(b=>b.classList.remove("active"));
-
-btn.classList.add("active");
-
-selectedType=btn.dataset.type;
+   "face-swap":["source","target"],
+   "dance-motion":["source","motion"],
+   "ai-lipsync":["video","audio"],
+   "dark-viral":["image"]
 
 };
 
-});
+document.querySelectorAll("[data-engine]").forEach(btn=>{
 
-/* ENGINE */
+   btn.onclick=()=>{
 
-document.querySelectorAll(".engine-btn")
-.forEach(btn=>{
+      selectedEngine=btn.dataset.engine;
+      selectedAlias=btn.dataset.alias;
 
-btn.onclick=()=>{
+      renderInputs(selectedAlias);
 
-document.querySelectorAll(".engine-btn")
-.forEach(b=>b.classList.remove("active"));
-
-btn.classList.add("active");
-
-selectedPlatform=btn.dataset.platform;
-selectedMode=btn.dataset.mode;
-
-};
+   };
 
 });
 
-/* FILE PREVIEW */
+function renderInputs(alias){
 
-document.getElementById("fileInput")
-.addEventListener("change",(e)=>{
+   const container=document.getElementById("dynamicInputs");
 
-const file=e.target.files[0];
+   container.innerHTML="";
 
-if(!file) return;
+   ENGINE_INPUTS[alias].forEach(name=>{
 
-selectedFile=file;
+      const label=document.createElement("label");
 
-const url=URL.createObjectURL(file);
+      label.innerText=name;
 
-const box=document.getElementById("previewBox");
+      const input=document.createElement("input");
 
-if(file.type.startsWith("video")){
+      input.type="file";
+      input.name=name;
 
-box.innerHTML=`<video src="${url}" controls autoplay loop></video>`;
+      container.appendChild(label);
+      container.appendChild(input);
 
-}else{
-
-box.innerHTML=`<img src="${url}">`;
-
-}
-
-});
-
-/* GENERATE */
-
-document.getElementById("generateBtn")
-.onclick=async()=>{
-
-if(!selectedPlatform || !selectedMode){
-
-alert("Select Engine First");
-return;
+   });
 
 }
 
-document.getElementById("statusText").innerText="STATUS: PROCESSING";
+document.getElementById("createForm").onsubmit=async(e)=>{
 
-const formData=new FormData();
+   e.preventDefault();
 
-formData.append("platform",selectedPlatform);
-formData.append("alias",selectedMode);
-formData.append("type",selectedType || "");
-formData.append("prompt",document.getElementById("promptInput").value);
+   const formData=new FormData(e.target);
 
-if(selectedFile){
+   formData.append("platform",selectedEngine);
+   formData.append("alias",selectedAlias);
 
-formData.append("file",selectedFile);
+   await fetch("/api/render",{
 
-}
+      method:"POST",
+      body:formData
 
-try{
-
-const res=await fetch(API+"/api/render",{
-
-method:"POST",
-body:formData
-
-});
-
-const data=await res.json();
-
-console.log(data);
-
-document.getElementById("statusText")
-.innerText="STATUS: COMPLETE";
-
-}catch(err){
-
-console.log(err);
-
-document.getElementById("statusText")
-.innerText="STATUS: ERROR";
-
-}
+   });
 
 };
 
