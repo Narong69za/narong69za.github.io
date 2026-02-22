@@ -246,3 +246,107 @@ function setProgress(val){
    }
 
       }
+/*
+=====================================
+ULTRA CONTROL STATE SYSTEM
+ADD ONLY
+=====================================
+*/
+
+let CURRENT_ACTION = null;
+
+/*
+=====================================
+ACTION SELECT (TOP MENU)
+=====================================
+*/
+
+const ACTION_BUTTONS = document.querySelectorAll(".action-btn");
+
+ACTION_BUTTONS.forEach(btn=>{
+
+   btn.onclick=()=>{
+
+      CURRENT_ACTION = btn.dataset.action;
+
+      ACTION_BUTTONS.forEach(b=>b.classList.remove("active-green"));
+
+      btn.classList.add("active-green");
+
+      updatePreviewLabel();
+
+   };
+
+});
+
+
+/*
+=====================================
+PREVIEW FILE SYSTEM
+=====================================
+*/
+
+const fileInput = document.getElementById("fileInput");
+
+if(fileInput){
+
+fileInput.onchange=(e)=>{
+
+   const file = e.target.files[0];
+
+   if(!file) return;
+
+   const previewBox = document.getElementById("previewArea");
+
+   previewBox.innerHTML="";
+
+   const url = URL.createObjectURL(file);
+
+   if(file.type.startsWith("video")){
+
+      const video=document.createElement("video");
+
+      video.src=url;
+      video.controls=true;
+      video.autoplay=true;
+      video.loop=true;
+      video.style.width="100%";
+
+      previewBox.appendChild(video);
+
+   }
+   else if(file.type.startsWith("image")){
+
+      const img=document.createElement("img");
+
+      img.src=url;
+      img.style.width="100%";
+
+      previewBox.appendChild(img);
+
+   }
+
+};
+
+}
+
+
+/*
+=====================================
+UPDATE LABEL
+=====================================
+*/
+
+function updatePreviewLabel(){
+
+   const label=document.getElementById("previewMeta");
+
+   if(!label) return;
+
+   label.innerText = `
+ENGINE: ${CURRENT_ENGINE || "-"}
+| MODE: ${CURRENT_MODE || "-"}
+| TYPE: ${CURRENT_ACTION || "-"}
+`;
+
+      }
