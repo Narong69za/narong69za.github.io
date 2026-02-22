@@ -7,31 +7,30 @@ async function create(req,res){
       const { platform, mode, type, prompt } = req.body;
 
       /*
-      map UI mode -> alias router
+      UI mode → router alias map
       */
 
-      let alias = null;
+      const MODE_ALIAS = {
 
-      if(mode==="motion") alias="dance-motion";
-      if(mode==="face") alias="face-swap";
-      if(mode==="lipsync") alias="ai-lipsync";
-      if(mode==="dark") alias="dark-viral";
+         motion:"dance-motion",
+         face:"face-swap",
+         lipsync:"ai-lipsync",
+         dark:"dark-viral"
+
+      };
+
+      const alias = MODE_ALIAS[mode];
 
       if(!alias){
 
-         throw new Error("ALIAS NOT FOUND FROM CONTROLLER");
+         throw new Error("ALIAS NOT FOUND");
 
       }
 
       const result = await MODEL_ROUTER.run(
-
          alias,
          platform,
-         {
-            prompt,
-            type
-         }
-
+         { type, prompt }
       );
 
       res.json({
