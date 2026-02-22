@@ -1,352 +1,138 @@
-/*
-=====================================
-ULTRA CREATE PREMIUM FINAL
-SN DESIGN STUDIO
-STATIC LOCK FLOW
-=====================================
-*/
-
-const API="https://sn-design-api.onrender.com";
-
-let CURRENT_PRESET=null;
-
-init();
-
-async function init(){
-
-   loadPreset();
-
+body{
+background:black;
+color:white;
+font-family:sans-serif;
 }
 
-/*
-=====================================
-STATIC PRESET (NO API CALL)
-=====================================
-*/
-
-function loadPreset(){
-
-   const params=new URLSearchParams(location.search);
-
-   const id=params.get("template");
-
-   if(!id){
-
-      setEngine("UNKNOWN");
-
-      return;
-
-   }
-
-   /* STATIC MAP */
-
-   const STATIC_PRESETS={
-
-      "dark-viral":{
-         id:"dark-viral",
-         ui:{needPrompt:true}
-      },
-
-      "lipsync":{
-         id:"lipsync",
-         ui:{needPrompt:true}
-      },
-
-      "dance-motion":{
-         id:"dance-motion",
-         ui:{needPrompt:true}
-      },
-
-      "face-swap":{
-         id:"face-swap",
-         ui:{needPrompt:true}
-      }
-
-   };
-
-   const preset=STATIC_PRESETS[id];
-
-   if(!preset){
-
-      setEngine("UNKNOWN");
-
-      return;
-
-   }
-
-   CURRENT_PRESET=preset;
-
-   buildUI(preset);
-
+.container{
+max-width:900px;
+margin:auto;
+padding:20px;
 }
 
-/*
-=====================================
-BUILD UI
-=====================================
-*/
-
-function buildUI(p){
-
-   setEngine(p.id || "UNKNOWN");
-
-   toggle("promptBox",p.ui?.needPrompt);
-
+h1{
+text-align:center;
+margin-bottom:20px;
+letter-spacing:2px;
 }
 
-/*
-=====================================
-SET ENGINE LABEL
-=====================================
-*/
+/* TOP ACTION */
 
-function setEngine(name){
-
-   const el=document.getElementById("engineName");
-
-   if(el){
-
-      el.innerText="ENGINE: "+name;
-
-   }
-
+.project-type button{
+width:100%;
+margin:10px 0;
+padding:16px;
+background:#111;
+border:none;
+color:white;
+cursor:pointer;
+font-size:16px;
+transition:0.3s;
 }
 
-/*
-=====================================
-SHOW / HIDE UI BLOCK
-=====================================
-*/
-
-function toggle(id,state){
-
-   const el=document.getElementById(id);
-
-   if(!el) return;
-
-   if(state) el.classList.remove("hidden");
-   else el.classList.add("hidden");
-
+.project-type button:hover{
+background:#1a1a1a;
 }
 
-/*
-=====================================
-CTA GENERATE
-=====================================
-*/
-
-const btn=document.getElementById("generateBtn");
-
-if(btn){
-
-   btn.onclick=async()=>{
-
-      if(!CURRENT_PRESET) return;
-
-      setStatus("PROCESSING");
-
-      simulateProgress();
-
-      try{
-
-         const res=await fetch(API+"/api/render",{
-
-            method:"POST",
-
-            headers:{
-               "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-
-               preset:CURRENT_PRESET.id,
-
-               model: window.getSelectedModel ? window.getSelectedModel() : null,
-
-               prompt:document.getElementById("promptBox")?.value || ""
-
-            })
-
-         });
-
-         const data=await res.json();
-
-         console.log("RENDER RESULT:",data);
-
-         if(data.success){
-
-            setStatus("COMPLETE");
-
-            setProgress(100);
-
-         }else{
-
-            setStatus("FAILED");
-
-         }
-
-      }catch(e){
-
-         console.error(e);
-
-         setStatus("ERROR");
-
-      }
-
-   };
-
+.active-green{
+border:1px solid #00ff66;
+box-shadow:0 0 25px #00ff66;
 }
 
-/*
-=====================================
-STATUS + PROGRESS
-=====================================
-*/
+/* ENGINE GRID */
 
-function setStatus(text){
-
-   const el=document.getElementById("statusText");
-
-   if(el){
-
-      el.innerText="STATUS: "+text;
-
-   }
-
+.engines{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-top:20px;
 }
 
-function simulateProgress(){
-
-   let progress=0;
-
-   const interval=setInterval(()=>{
-
-      progress+=10;
-
-      if(progress>=90){
-
-         clearInterval(interval);
-
-      }
-
-      setProgress(progress);
-
-   },300);
-
+.engine{
+padding:20px;
+border-radius:16px;
+background:#070707;
 }
 
-function setProgress(val){
+/* MODE BUTTON */
 
-   const bar=document.getElementById("progressBar");
-
-   if(bar){
-
-      bar.style.width=val+"%";
-
-   }
-
-      }
-/*
-=====================================
-ULTRA CONTROL STATE SYSTEM
-ADD ONLY
-=====================================
-*/
-
-let CURRENT_ACTION = null;
-
-/*
-=====================================
-ACTION SELECT (TOP MENU)
-=====================================
-*/
-
-const ACTION_BUTTONS = document.querySelectorAll(".action-btn");
-
-ACTION_BUTTONS.forEach(btn=>{
-
-   btn.onclick=()=>{
-
-      CURRENT_ACTION = btn.dataset.action;
-
-      ACTION_BUTTONS.forEach(b=>b.classList.remove("active-green"));
-
-      btn.classList.add("active-green");
-
-      updatePreviewLabel();
-
-   };
-
-});
-
-
-/*
-=====================================
-PREVIEW FILE SYSTEM
-=====================================
-*/
-
-const fileInput = document.getElementById("fileInput");
-
-if(fileInput){
-
-fileInput.onchange=(e)=>{
-
-   const file = e.target.files[0];
-
-   if(!file) return;
-
-   const previewBox = document.getElementById("previewArea");
-
-   previewBox.innerHTML="";
-
-   const url = URL.createObjectURL(file);
-
-   if(file.type.startsWith("video")){
-
-      const video=document.createElement("video");
-
-      video.src=url;
-      video.controls=true;
-      video.autoplay=true;
-      video.loop=true;
-      video.style.width="100%";
-
-      previewBox.appendChild(video);
-
-   }
-   else if(file.type.startsWith("image")){
-
-      const img=document.createElement("img");
-
-      img.src=url;
-      img.style.width="100%";
-
-      previewBox.appendChild(img);
-
-   }
-
-};
-
+.mode-btn{
+display:block;
+width:100%;
+margin:12px 0;
+padding:14px;
+background:#111;
+border:none;
+color:white;
+cursor:pointer;
+font-size:15px;
+transition:0.3s;
+border-radius:8px;
 }
 
+.mode-btn:hover{
+background:#1a1a1a;
+}
 
-/*
-=====================================
-UPDATE LABEL
-=====================================
-*/
+/* SELECTED STATES */
 
-function updatePreviewLabel(){
+.selected.red{
+border:1px solid red;
+box-shadow:
+0 0 10px red,
+0 0 20px red,
+0 0 40px rgba(255,0,0,0.6);
+}
 
-   const label=document.getElementById("previewMeta");
+.selected.blue{
+border:1px solid #00aaff;
+box-shadow:
+0 0 10px #00aaff,
+0 0 20px #00aaff,
+0 0 40px rgba(0,170,255,0.6);
+}
 
-   if(!label) return;
+/* PREVIEW */
 
-   label.innerText = `
-ENGINE: ${CURRENT_ENGINE || "-"}
-| MODE: ${CURRENT_MODE || "-"}
-| TYPE: ${CURRENT_ACTION || "-"}
-`;
+.preview-box{
+margin-top:30px;
+padding:20px;
+background:#0c0c0c;
+border-radius:14px;
+}
 
-      }
+.preview-box video,
+.preview-box img{
+width:100%;
+border-radius:10px;
+margin-top:15px;
+}
+
+/* CTA */
+
+.cta-box{
+margin-top:30px;
+padding:20px;
+background:#111;
+border-radius:14px;
+text-align:center;
+}
+
+#generateBtn{
+padding:12px 24px;
+background:#222;
+color:white;
+border:none;
+cursor:pointer;
+transition:0.3s;
+}
+
+#generateBtn:hover{
+background:#333;
+}
+
+#statusText{
+margin-top:15px;
+text-align:center;
+opacity:0.7;
+}
