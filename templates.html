@@ -2,31 +2,25 @@
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Official Website — SN DESIGN STUDIO</title>
 
-<!-- ULTRA CSS LOCK -->
 <link rel="stylesheet" href="/assets/css/master.css">
-
 </head>
 
 <body class="template-page">
 
 <section class="hero-master">
-
 <img 
-src="https://sn-designstudio.dev/assets/images/hero.png"
+src="/assets/images/hero.png"
 alt="SN Design Studio Template Collection"
 loading="eager"
 >
-
 <div class="hero-content-bottom fade-up">
 <h1>Template Collection</h1>
 <p>Create faster. Grow faster. Built for real creators.</p>
 </div>
-
 </section>
 
 <section class="section">
@@ -35,22 +29,22 @@ loading="eager"
 <div class="template-grid">
 
 <div class="template-card" data-template="dark-viral">
-<img src="assets/images/template-dark-viral.jpg">
+<img src="/assets/images/template-dark-viral.jpg" alt="Dark Viral">
 <h3>Dark Viral Style</h3>
 </div>
 
 <div class="template-card" data-template="lipsync">
-<img src="assets/images/template-lipsync.jpg">
+<img src="/assets/images/template-lipsync.jpg" alt="AI LipSync">
 <h3>AI LipSync</h3>
 </div>
 
 <div class="template-card" data-template="dance-motion">
-<img src="assets/images/template-dance.jpg">
+<img src="/assets/images/template-dance.jpg" alt="Dance Motion">
 <h3>Dance Motion</h3>
 </div>
 
 <div class="template-card" data-template="face-swap">
-<img src="assets/images/template-face-swap.jpg">
+<img src="/assets/images/template-face-swap.jpg" alt="Face Swap">
 <h3>Face Swap</h3>
 </div>
 
@@ -63,17 +57,13 @@ loading="eager"
 © SN Design Studio, 2026 · All rights reserved.
 </footer>
 
-<!-- NAV AUTO INJECT (UNCHANGED SYSTEM) -->
 <script src="/assets/js/nav.js"></script>
 
-<!-- TEMPLATE CLICK -->
 <script>
-document.querySelectorAll("[data-template]").forEach(el=>{
-   el.addEventListener("click",()=>{
-      const model = el.dataset.template;
-      if(model){
-         window.location.href = "create.html?template="+model;
-      }
+document.querySelectorAll(".template-card").forEach(card=>{
+   card.addEventListener("click",()=>{
+      const model = card.dataset.template;
+      window.location.href = "/create.html?template="+model;
    });
 });
 </script>
