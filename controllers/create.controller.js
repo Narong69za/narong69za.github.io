@@ -1,28 +1,32 @@
+/*
+=====================================
+CREATE CONTROLLER
+FINAL CLEAN VERSION
+=====================================
+*/
+
 const MODEL_ROUTER = require("../services/model.router");
 
 async function create(req,res){
 
    try{
 
-      console.log("REQ BODY:", req.body);
-
-      const { platform, mode, type, prompt } = req.body;
-
       /*
-      UI MODE → ROUTER ALIAS
-      FINAL MAP
+      =====================================
+      EXPECT PAYLOAD
+      =====================================
+
+      {
+         alias:"dance-motion",
+         platform:"replicate" | "runway",
+         prompt:"",
+         type:"",
+         file:null
+      }
+
       */
 
-      const MODE_ALIAS = {
-
-         motion:"dance-motion",
-         face:"face-swap",
-         lipsync:"ai-lipsync",
-         dark:"dark-viral"
-
-      };
-
-      const alias = MODE_ALIAS[mode];
+      const { alias, platform, prompt, type } = req.body;
 
       if(!alias){
 
@@ -30,13 +34,27 @@ async function create(req,res){
 
       }
 
+      if(!platform){
+
+         throw new Error("PLATFORM NOT FOUND");
+
+      }
+
+      /*
+      =====================================
+      CALL MODEL ROUTER
+      =====================================
+      */
+
       const result = await MODEL_ROUTER.run(
+
          alias,
          platform,
          {
-            type,
-            prompt
+            prompt: prompt || "",
+            type: type || ""
          }
+
       );
 
       res.json({
@@ -46,7 +64,7 @@ async function create(req,res){
 
    }catch(err){
 
-      console.log(err);
+      console.log("CREATE ERROR:",err.message);
 
       res.status(500).json({
          success:false,
