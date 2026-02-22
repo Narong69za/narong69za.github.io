@@ -136,3 +136,38 @@ margin-top:15px;
 text-align:center;
 opacity:0.7;
 }
+/* ENGINE ACTIVE STATE */
+
+.engineColumn button {
+    background:#1a1a1a;
+    border:1px solid #333;
+    color:#fff;
+    padding:10px 14px;
+    margin:6px;
+    border-radius:8px;
+}
+
+.engineColumn.red button.active {
+    border:2px solid #ff2b2b;
+    box-shadow:0 0 15px #ff0000;
+}
+
+.engineColumn.blue button.active {
+    border:2px solid #00b3ff;
+    box-shadow:0 0 15px #009dff;
+}
+
+/* Generate button premium */
+
+#generateBtn{
+    background:#111;
+    border:1px solid #444;
+    color:#fff;
+    padding:14px 20px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+#generateBtn:hover{
+    background:#1e1e1e;
+}
