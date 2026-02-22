@@ -10,22 +10,115 @@
 <link rel="stylesheet" href="/assets/css/master.css">
 <link rel="stylesheet" href="/assets/css/create.css">
 
+<style>
+
+/* PLATFORM LAYOUT */
+
+.platform-wrap{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+margin-top:30px;
+}
+
+.platform{
+border-radius:12px;
+padding:20px;
+background:#050505;
+box-shadow:0 0 20px rgba(0,0,0,0.5);
+}
+
+/* RED SIDE */
+
+.platform.red{
+border:1px solid rgba(255,50,50,0.4);
+box-shadow:0 0 20px rgba(255,0,0,0.2);
+}
+
+/* BLUE SIDE */
+
+.platform.blue{
+border:1px solid rgba(0,150,255,0.4);
+box-shadow:0 0 20px rgba(0,150,255,0.2);
+}
+
+.engine-title{
+font-size:18px;
+margin-bottom:15px;
+}
+
+.mode-btn{
+display:block;
+width:100%;
+margin-bottom:10px;
+padding:12px;
+background:#111;
+border:none;
+cursor:pointer;
+color:#fff;
+border-radius:8px;
+}
+
+.mode-btn:hover{
+background:#222;
+}
+
+.generate-btn{
+margin-top:15px;
+width:100%;
+padding:14px;
+background:#fff;
+color:#000;
+border:none;
+cursor:pointer;
+font-weight:bold;
+}
+
+</style>
+
 </head>
 
 <body class="create-page">
 
 <div class="container">
 
-<h1 id="engineName">ENGINE: LOADING...</h1>
+<h1>ULTRA ENGINE CONTROL</h1>
 
-<select id="modelSelect"></select>
+<input id="promptInput" placeholder="Enter prompt">
 
-<input id="promptBox" placeholder="Enter prompt">
+<div class="platform-wrap">
 
-<button id="generateBtn">GENERATE</button>
+<!-- RED SIDE (REPLICATE) -->
 
-<div class="progress">
-<div id="progressBar"></div>
+<div class="platform red">
+
+<div class="engine-title">RED ENGINE</div>
+
+<button class="mode-btn" data-platform="replicate" data-mode="dark-viral">Dark Viral</button>
+<button class="mode-btn" data-platform="replicate" data-mode="ai-lipsync">AI LipSync</button>
+<button class="mode-btn" data-platform="replicate" data-mode="dance-motion">Dance Motion</button>
+<button class="mode-btn" data-platform="replicate" data-mode="face-swap">Face Swap</button>
+
+<button class="generate-btn" id="generateRed">GENERATE RED</button>
+
+</div>
+
+
+<!-- BLUE SIDE (RUNWAY) -->
+
+<div class="platform blue">
+
+<div class="engine-title">BLUE ENGINE</div>
+
+<button class="mode-btn" data-platform="runway" data-mode="dark-viral">Dark Viral</button>
+<button class="mode-btn" data-platform="runway" data-mode="ai-lipsync">AI LipSync</button>
+<button class="mode-btn" data-platform="runway" data-mode="dance-motion">Dance Motion</button>
+<button class="mode-btn" data-platform="runway" data-mode="face-swap">Face Swap</button>
+
+<button class="generate-btn" id="generateBlue">GENERATE BLUE</button>
+
+</div>
+
 </div>
 
 <div id="statusText">STATUS: IDLE</div>
@@ -34,74 +127,64 @@
 
 <script>
 
-/* ===============================
-   TEMPLATE → MODEL MAP
-================================ */
+const API="https://sn-design-api.onrender.com";
 
-const TEMPLATE_MODELS = {
+let selected={ platform:null, mode:null };
 
-   "dark-viral": ["flux2pro","gen4-darkviral"],
-   "lipsync": ["flux2pro-lipsync","gen4-lipsync"],
-   "dance-motion": ["flux2pro-motion","gen4-motion"],
-   "face-swap": ["flux2pro-faceswap","gen4-faceswap"]
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+
+btn.onclick=()=>{
+
+selected.platform=btn.dataset.platform;
+selected.mode=btn.dataset.mode;
+
+console.log("SELECTED:",selected);
 
 };
 
-const params = new URLSearchParams(window.location.search);
-const template = params.get("template");
+});
 
-const modelSelect = document.getElementById("modelSelect");
-const engineName = document.getElementById("engineName");
+async function run(){
 
-if(template && TEMPLATE_MODELS[template]){
+if(!selected.platform || !selected.mode) return;
 
-   const models = TEMPLATE_MODELS[template];
+document.getElementById("statusText").innerText="STATUS: PROCESSING";
 
-   modelSelect.innerHTML = `
-      <option value="${models[0]}" data-engine="replicate">
-         🔴 Replicate — ${models[0]}
-      </option>
+try{
 
-      <option value="${models[1]}" data-engine="runway">
-         🔵 RunwayML — ${models[1]}
-      </option>
-   `;
+const res=await fetch(API+"/api/render",{
+
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+
+body:JSON.stringify({
+
+preset:selected.mode,
+platform:selected.platform,
+prompt:document.getElementById("promptInput").value
+
+})
+
+});
+
+const data=await res.json();
+
+console.log(data);
+
+document.getElementById("statusText").innerText="STATUS: COMPLETE";
+
+}catch(e){
+
+document.getElementById("statusText").innerText="STATUS: ERROR";
 
 }
 
-/* ===============================
-   UPDATE ENGINE LABEL
-================================ */
-
-function updateEngine(){
-
-   const engine =
-   modelSelect.options[modelSelect.selectedIndex].dataset.engine;
-
-   engineName.innerText =
-      engine === "replicate"
-      ? "ENGINE: REPLICATE AI"
-      : "ENGINE: RUNWAY GEN4";
-
 }
 
-modelSelect.addEventListener("change",updateEngine);
-updateEngine();
-
-/* ===============================
-   IMPORTANT !!!
-   expose selected model for create-premium.js
-================================ */
-
-window.getSelectedModel = function(){
-
-   return modelSelect.value;
-
-};
+document.getElementById("generateRed").onclick=run;
+document.getElementById("generateBlue").onclick=run;
 
 </script>
-
-<script src="/assets/js/create-premium.js"></script>
 
 </body>
 </html>
