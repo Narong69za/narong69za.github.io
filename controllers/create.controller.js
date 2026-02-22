@@ -1,10 +1,9 @@
 const MODEL_ROUTER = require("../services/model.router");
+const path = require("path");
 
 async function create(req,res){
 
    try{
-
-      console.log("REQ BODY:",req.body);
 
       const { alias, platform, prompt } = req.body;
 
@@ -14,12 +13,23 @@ async function create(req,res){
 
       }
 
+      let inputFile = null;
+
+      if(req.file){
+
+         inputFile = "/storage/input/"+req.file.filename;
+
+      }
+
       const result = await MODEL_ROUTER.run(
+
          alias,
          platform,
          {
-            prompt: prompt || ""
+            prompt: prompt || "",
+            file: inputFile
          }
+
       );
 
       res.json({
