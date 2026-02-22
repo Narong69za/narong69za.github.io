@@ -4,10 +4,13 @@ async function create(req,res){
 
    try{
 
+      console.log("REQ BODY:", req.body);
+
       const { platform, mode, type, prompt } = req.body;
 
       /*
-      UI mode → router alias map
+      UI MODE → ROUTER ALIAS
+      FINAL MAP
       */
 
       const MODE_ALIAS = {
@@ -23,14 +26,17 @@ async function create(req,res){
 
       if(!alias){
 
-         throw new Error("ALIAS NOT FOUND");
+         throw new Error("ALIAS NOT FOUND FROM CONTROLLER");
 
       }
 
       const result = await MODEL_ROUTER.run(
          alias,
          platform,
-         { type, prompt }
+         {
+            type,
+            prompt
+         }
       );
 
       res.json({
