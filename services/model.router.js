@@ -14,65 +14,48 @@ UI alias (fake name)
 
 const ROUTE = {
 
-   /*
-   USER sees only:
-   dance-motion
-   */
-
    "dance-motion":{
-
       replicate:{
          engine:"flux2pro",
          mode:"motion"
       },
-
       runway:{
          engine:"gen4",
          mode:"motion"
       }
-
    },
 
    "face-swap":{
-
       replicate:{
          engine:"flux2pro",
          mode:"faceswap"
       },
-
       runway:{
          engine:"gen4",
          mode:"faceswap"
       }
-
    },
 
    "ai-lipsync":{
-
       replicate:{
          engine:"flux2pro",
          mode:"lipsync"
       },
-
       runway:{
          engine:"gen4",
          mode:"lipsync"
       }
-
    },
 
    "dark-viral":{
-
       replicate:{
          engine:"flux2pro",
          mode:"image"
       },
-
       runway:{
          engine:"gen4",
          mode:"darkviral"
       }
-
    }
 
 };
@@ -80,7 +63,7 @@ const ROUTE = {
 
 /*
 =====================================
-RUN MODEL
+CORE RUN
 =====================================
 */
 
@@ -89,17 +72,13 @@ async function run(alias, platform, input){
    const config = ROUTE[alias];
 
    if(!config){
-
       throw new Error("ALIAS NOT FOUND");
-
    }
 
    const target = config[platform];
 
    if(!target){
-
       throw new Error("PLATFORM NOT FOUND");
-
    }
 
    /*
@@ -130,6 +109,34 @@ async function run(alias, platform, input){
 
    }
 
+   throw new Error("UNKNOWN PLATFORM");
+
 }
 
-module.exports = { run };
+
+/*
+=====================================
+COMPATIBILITY LAYER
+(for controller runModel)
+=====================================
+*/
+
+async function runModel(payload){
+
+   const { alias, engine, input } = payload;
+
+   return await run(alias, engine, input);
+
+}
+
+
+/*
+=====================================
+EXPORT
+=====================================
+*/
+
+module.exports = {
+   run,
+   runModel
+};
