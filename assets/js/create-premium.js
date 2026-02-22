@@ -3,6 +3,7 @@
 ULTRA CREATE PREMIUM FINAL
 SN DESIGN STUDIO
 STATIC LOCK FLOW
+ADD ONLY VERSION
 =====================================
 */
 
@@ -14,17 +15,17 @@ init();
 
 async function init(){
 
-   loadPreset();
+   await loadPreset();
 
 }
 
 /*
 =====================================
-STATIC PRESET (NO API CALL)
+LOAD TEMPLATE FROM URL
 =====================================
 */
 
-function loadPreset(){
+async function loadPreset(){
 
    const params=new URLSearchParams(location.search);
 
@@ -38,45 +39,25 @@ function loadPreset(){
 
    }
 
-   /* STATIC MAP */
+   try{
 
-   const STATIC_PRESETS={
+      const res=await fetch(API+"/api/templates/"+id);
 
-      "dark-viral":{
-         id:"dark-viral",
-         ui:{needPrompt:true}
-      },
+      if(!res.ok) throw "preset error";
 
-      "lipsync":{
-         id:"lipsync",
-         ui:{needPrompt:true}
-      },
+      const preset=await res.json();
 
-      "dance-motion":{
-         id:"dance-motion",
-         ui:{needPrompt:true}
-      },
+      CURRENT_PRESET=preset;
 
-      "face-swap":{
-         id:"face-swap",
-         ui:{needPrompt:true}
-      }
+      buildUI(preset);
 
-   };
+   }catch(e){
 
-   const preset=STATIC_PRESETS[id];
-
-   if(!preset){
+      console.error(e);
 
       setEngine("UNKNOWN");
 
-      return;
-
    }
-
-   CURRENT_PRESET=preset;
-
-   buildUI(preset);
 
 }
 
@@ -90,6 +71,8 @@ function buildUI(p){
 
    setEngine(p.id || "UNKNOWN");
 
+   toggle("uploadVideo",p.ui?.needVideo);
+   toggle("uploadImage",p.ui?.needImage);
    toggle("promptBox",p.ui?.needPrompt);
 
 }
@@ -160,8 +143,6 @@ if(btn){
             body:JSON.stringify({
 
                preset:CURRENT_PRESET.id,
-
-               model: window.getSelectedModel ? window.getSelectedModel() : null,
 
                prompt:document.getElementById("promptBox")?.value || ""
 
@@ -246,3 +227,83 @@ function setProgress(val){
    }
 
 }
+
+/*
+=====================================
+ULTRA CINEMATIC PREVIEW SYSTEM
+ADD ONLY
+=====================================
+*/
+
+const fileInput=document.querySelector('input[type="file"]');
+const previewBox=document.getElementById("previewBox");
+
+if(fileInput && previewBox){
+
+fileInput.addEventListener("change",(e)=>{
+
+const file=e.target.files[0];
+if(!file) return;
+
+const url=URL.createObjectURL(file);
+
+previewBox.innerHTML="";
+
+if(file.type.startsWith("video")){
+
+const video=document.createElement("video");
+
+video.src=url;
+video.controls=true;
+video.autoplay=true;
+video.loop=true;
+video.muted=true;
+
+video.style.width="100%";
+video.style.borderRadius="12px";
+
+previewBox.appendChild(video);
+
+}else if(file.type.startsWith("image")){
+
+const img=document.createElement("img");
+
+img.src=url;
+img.style.width="100%";
+img.style.borderRadius="12px";
+
+previewBox.appendChild(img);
+
+}
+
+});
+
+}
+
+/*
+=====================================
+ULTRA ENGINE MODE VISUAL SELECT
+(RED / BLUE highlight)
+ADD ONLY
+=====================================
+*/
+
+document.querySelectorAll(".engine-mode").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const parent=btn.closest(".engine-block");
+
+if(!parent) return;
+
+parent.querySelectorAll(".engine-mode").forEach(b=>{
+
+b.classList.remove("active");
+
+});
+
+btn.classList.add("active");
+
+});
+
+});
