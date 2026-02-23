@@ -1,37 +1,47 @@
 const express = require("express");
 const router = express.Router();
-const MODEL_ROUTER = require("../services/model.router");
+const multer = require("multer");
 
-router.post("/render", async (req,res)=>{
+const createController = require("../controllers/create.controller");
 
-   try{
+const upload = multer({
 
-      const { engine, alias, prompt } = req.body;
-
-      const result = await MODEL_ROUTER.run(
-         alias,
-         engine,
-         {
-            prompt
-         }
-      );
-
-      res.json({
-         status:"complete",
-         result
-      });
-
-   }catch(err){
-
-      console.log(err);
-
-      res.status(500).json({
-         status:"error",
-         error:err.message
-      });
-
-   }
+   storage:multer.memoryStorage()
 
 });
+
+/*
+ULTRA AUTO ENGINE PIPELINE
+
+รับ dynamic files:
+
+template
+subject
+source
+target
+image
+video
+voice
+*/
+
+router.post(
+
+   "/render",
+
+   upload.fields([
+
+      { name:"template" },
+      { name:"subject" },
+      { name:"source" },
+      { name:"target" },
+      { name:"image" },
+      { name:"video" },
+      { name:"voice" }
+
+   ]),
+
+   createController.create
+
+);
 
 module.exports = router;
