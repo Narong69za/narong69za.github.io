@@ -1,3 +1,5 @@
+// controllers/create.controller.js
+
 const MODEL_ROUTER = require("../services/model.router");
 const db = require("../db/db");
 
@@ -10,47 +12,57 @@ async function create(req,res){
       const type = req.body.type;
       const prompt = req.body.prompt || "";
 
-      if(!engine || !alias){
+      const files = {};
 
-         return res.status(400).json({
-            error:"missing engine or alias"
+      if(req.files){
+
+         req.files.forEach(f=>{
+            files[f.fieldname] = f;
          });
 
       }
 
-      const jobID = Date.now().toString();
+      if(!engine || !alias){
+
+         return res.status(400).json({
+            status:"error",
+            message:"missing engine or alias"
+         });
+
+      }
+
+      const id = Date.now().toString();
+
+      // INSERT DB
 
       db.run(
          "INSERT INTO projects (id,engine,prompt,status) VALUES (?,?,?,?)",
-         [jobID,engine,prompt,"queued"]
+         [id,engine,prompt,"processing"]
       );
 
-      const result = await MODEL_ROUTER.run({
+      // RUN ENGINE REALTIME
 
+      const result = await MODEL_ROUTER.run({
          engine,
          alias,
          type,
          prompt,
-         files:req.files || [],
-         jobID
-
+         files,
+         jobID:id
       });
 
       res.json({
-
          status:"done",
-         jobID,
          result
-
       });
 
    }catch(err){
 
-      console.log(err);
+      console.error(err);
 
       res.status(500).json({
          status:"error",
-         error:err.message
+         message:err.message
       });
 
    }
