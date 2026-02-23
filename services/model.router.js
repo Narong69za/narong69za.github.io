@@ -1,6 +1,6 @@
-// model.router.js
+// src/services/model.router.js
 
-const worker = require("./job.worker");
+const worker = require("../job.worker");
 
 exports.run = async (payload)=>{
 
