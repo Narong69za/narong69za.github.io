@@ -1,64 +1,69 @@
-/*
-=====================================
-REPLICATE ENGINE SERVICE
-ULTRA PRODUCTION VERSION
-=====================================
-*/
+// services/replicate.service.js
 
-const Replicate = require("replicate");
+const fetch = require("node-fetch");
+const db = require("../db/db");
 
-const replicate = new Replicate({
-   auth: process.env.REPLICATE_API_TOKEN
-});
+const REPLICATE_API = process.env.REPLICATE_API_TOKEN;
 
-async function run({ model, prompt, jobID }){
+const MODEL_MAP = {
 
-   if(!process.env.REPLICATE_API_TOKEN){
-      throw new Error("REPLICATE_API_TOKEN missing");
-   }
+   "dance-motion": "PUT_MODEL_VERSION_ID_HERE",
+   "ai-lipsync": "PUT_MODEL_VERSION_ID_HERE",
+   "face-swap": "PUT_MODEL_VERSION_ID_HERE",
+   "dark-viral": "PUT_MODEL_VERSION_ID_HERE"
 
-   if(!model){
+};
+
+exports.run = async ({alias,type,prompt,files,jobID}) => {
+
+   if(!MODEL_MAP[alias]){
       throw new Error("REPLICATE MODEL NOT FOUND");
    }
 
-   if(!prompt){
-      throw new Error("PROMPT EMPTY");
-   }
+   console.log("REPLICATE EXEC:",alias);
+
+   const response = await fetch("https://api.replicate.com/v1/predictions",{
+
+      method:"POST",
+
+      headers:{
+         "Authorization":`Bearer ${REPLICATE_API}`,
+         "Content-Type":"application/json"
+      },
+
+      body:JSON.stringify({
+
+         version: MODEL_MAP[alias],
+
+         input:{
+            prompt: prompt || ""
+         }
+
+      })
+
+   });
+
+   const text = await response.text();
+
+   let result;
 
    try{
-
-      // รองรับ preset model object
-      let modelString;
-
-      if(typeof model === "object"){
-         modelString = `${model.id}:${model.version}`;
-      }else{
-         modelString = model;
-      }
-
-      const output = await replicate.run(
-         modelString,
-         {
-            input:{
-               prompt: prompt
-            }
-         }
-      );
-
-      return {
-         jobID,
-         output
-      };
-
+      result = JSON.parse(text);
    }catch(err){
-
-      console.error("REPLICATE ERROR:",err);
-      throw err;
-
+      console.error("REPLICATE RAW:",text);
+      throw new Error("REPLICATE INVALID JSON");
    }
 
-}
+   if(!result.id){
+      console.error(result);
+      throw new Error("REPLICATE START FAILED");
+   }
 
-module.exports = {
-   run
+   db.run(
+      "UPDATE projects SET status='processing', externalID=? WHERE id=?",
+      [result.id, jobID]
+   );
+
+   return result;
+
 };
