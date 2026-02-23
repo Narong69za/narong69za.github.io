@@ -9,17 +9,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* =============================
-MULTIPART SUPPORT
-============================= */
+const upload = multer({
+   storage: multer.memoryStorage()
+});
 
-const upload = multer({ storage: multer.memoryStorage() });
+/* API RENDER */
 
 app.post("/api/render", upload.any(), create);
 
-/* =============================
-STATUS API (LOCKED)
-============================= */
+/* STATUS API */
 
 app.get("/api/status/server",(req,res)=>{
    res.json({ server:"online" });
