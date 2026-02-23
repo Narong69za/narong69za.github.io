@@ -1,12 +1,12 @@
-// create.controller.js
+// src/controllers/create.controller.js
 
-const router = require("../model.router");
+const MODEL_ROUTER = require("../services/model.router");
 
 exports.create = async (req,res)=>{
 
    try{
 
-      const job = {
+      const payload = {
 
          engine: req.body.engine,
          alias: req.body.alias,
@@ -17,7 +17,7 @@ exports.create = async (req,res)=>{
 
       };
 
-      const result = await router.run(job);
+      const result = await MODEL_ROUTER.run(payload);
 
       res.json({
          status:"started",
