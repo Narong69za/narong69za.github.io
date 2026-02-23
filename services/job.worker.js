@@ -1,52 +1,38 @@
-const db = require("../db/db");
-const MODEL_ROUTER = require("./model.router");
+// job.worker.js
 
-async function processJobs(){
+const replicate = require("./services/replicate.service");
+const runway = require("./services/runway/gen4video");
 
-   db.all(
-      "SELECT * FROM projects WHERE status='queued'",
-      async (err,rows)=>{
+exports.run = async (job) => {
 
-         if(err) return;
+   const {engine,alias,type,prompt,files,jobID} = job;
 
-         for(const job of rows){
+   console.log("ULTRA ENGINE RUN:",engine,alias);
 
-            try{
+   if(engine === "replicate"){
 
-               await MODEL_ROUTER.run({
+      return await replicate.run({
+         alias,
+         type,
+         prompt,
+         files,
+         jobID
+      });
 
-                  engine: job.engine,
-                  alias: job.alias,
-                  type: job.type,
-                  prompt: job.prompt,
-                  files: job.files,
-                  jobID: job.id
+   }
 
-               });
+   if(engine === "runway"){
 
-               db.run(
-                  "UPDATE projects SET status='done' WHERE id=?",
-                  [job.id]
-               );
+      return await runway.run({
+         alias,
+         type,
+         prompt,
+         files,
+         jobID
+      });
 
-            }catch(e){
+   }
 
-               console.log("WORKER ERROR:",e);
+   throw new Error("ENGINE NOT FOUND");
 
-               db.run(
-                  "UPDATE projects SET status='failed' WHERE id=?",
-                  [job.id]
-               );
-
-            }
-
-         }
-
-      }
-   );
-
-}
-
-setInterval(processJobs,3000);
-
-module.exports = {};
+};
