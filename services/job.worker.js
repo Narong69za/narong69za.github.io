@@ -1,17 +1,20 @@
 const db = require("../db/db");
 const MODEL_ROUTER = require("./model.router");
+const fetch = require("node-fetch");
 
 const sleep = (ms)=> new Promise(r=>setTimeout(r,ms));
 
-async function pollReplicate(predictionId){
+/* ============================
+   ENGINE POLLERS
+============================ */
 
-    const fetch = require("node-fetch");
+async function pollReplicate(predictionId){
 
     const res = await fetch(
         `https://api.replicate.com/v1/predictions/${predictionId}`,
         {
             headers:{
-                "Authorization":`Bearer ${process.env.REPLICATE_API_TOKEN}`
+                Authorization:`Bearer ${process.env.REPLICATE_API_TOKEN}`
             }
         }
     );
@@ -19,32 +22,57 @@ async function pollReplicate(predictionId){
     return await res.json();
 }
 
+async function pollRunway(taskId){
+
+    const res = await fetch(
+        `https://api.runwayml.com/v1/tasks/${taskId}`,
+        {
+            headers:{
+                Authorization:`Bearer ${process.env.RUNWAY_API_KEY}`
+            }
+        }
+    );
+
+    return await res.json();
+}
+
+/* ============================
+   MAIN WORKER
+============================ */
+
 exports.run = async(job)=>{
 
     try{
 
         db.run(`UPDATE projects SET status='processing' WHERE id=?`,[job.id]);
 
-        const prediction = await MODEL_ROUTER.run(job);
+        const resultStart = await MODEL_ROUTER.run(job);
 
-        let result = prediction;
+        let engine = resultStart.engine; // IMPORTANT
+        let result = resultStart;
 
         while(true){
 
-            result = await pollReplicate(prediction.id);
+            if(engine==="replicate"){
 
-            console.log("REPLICATE STATUS:",result.status);
+                result = await pollReplicate(resultStart.id);
+
+            }else if(engine==="runway"){
+
+                result = await pollRunway(resultStart.id);
+
+            }
+
+            console.log("ENGINE STATUS:",engine,result.status);
 
             db.run(
                 `UPDATE projects SET status=? WHERE id=?`,
                 [result.status,job.id]
             );
 
-            if(result.status==="succeeded"){
+            if(result.status==="succeeded" || result.status==="completed"){
 
-                const output = Array.isArray(result.output)
-                    ? result.output[0]
-                    : result.output;
+                const output = result.output || result.assets?.[0]?.url;
 
                 db.run(
                     `UPDATE projects SET status='done', output=? WHERE id=?`,
