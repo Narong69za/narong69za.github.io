@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require("cors");
+const multer = require("multer");
 
 const { create } = require("../controllers/create.controller");
 
@@ -8,30 +9,24 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-/* ======================================================
-EXISTING ROUTE (LOCKED)
-====================================================== */
+/* =============================
+MULTIPART SUPPORT
+============================= */
 
-app.post("/api/render", create);
+const upload = multer({ storage: multer.memoryStorage() });
 
+app.post("/api/render", upload.any(), create);
 
-/* ======================================================
-ULTRA STATUS SYSTEM API
-ADD ONLY — DO NOT REMOVE EXISTING ROUTES
-Purpose:
-Fix index.html live status bind
-====================================================== */
+/* =============================
+STATUS API (LOCKED)
+============================= */
 
 app.get("/api/status/server",(req,res)=>{
-   res.json({
-      server:"online"
-   });
+   res.json({ server:"online" });
 });
 
 app.get("/api/status/ai",(req,res)=>{
-   res.json({
-      ai:true
-   });
+   res.json({ ai:true });
 });
 
 app.get("/api/status/network",(req,res)=>{
@@ -39,11 +34,6 @@ app.get("/api/status/network",(req,res)=>{
       traffic: Math.floor(Math.random()*100)+1
    });
 });
-
-
-/* ======================================================
-SERVER START
-====================================================== */
 
 const PORT = process.env.PORT || 4000;
 
