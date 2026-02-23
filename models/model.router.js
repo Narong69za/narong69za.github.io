@@ -1,75 +1,17 @@
-/*
-=====================================
-ULTRA MODEL MAP
-SN DESIGN STUDIO FINAL
-=====================================
-*/
+const replicate = require("../services/replicate/replicate.service");
+const runway = require("../services/runway/runway.service");
 
-const MODEL_MAP = {
+exports.run = async (payload) => {
 
-   // REPLICATE
-   "replicate-face-clone": {
-      provider:"replicate",
-      model:"owner/face-clone-model"
-   },
+   const engine = payload.engine;
 
-   "replicate-image-gen": {
-      provider:"replicate",
-      model:"owner/image-gen-model"
-   },
-
-   // RUNWAY
-   "runway-act-two":{
-      provider:"runwayml",
-      model:"act-two"
-   },
-
-   "runway-gen3-alpha-turbo":{
-      provider:"runwayml",
-      model:"gen3-alpha-turbo"
-   },
-
-   "runway-gen4-image":{
-      provider:"runwayml",
-      model:"gen4-image"
-   },
-
-   "runway-gen4-image-turbo":{
-      provider:"runwayml",
-      model:"gen4-image-turbo"
-   },
-
-   "runway-upscale-v1":{
-      provider:"runwayml",
-      model:"upscale-v1"
-   },
-
-   "runway-superresolution":{
-      provider:"runwayml",
-      model:"superresolution"
-   },
-
-   // OTHER
-   "motion-control":{
-      provider:"runwayml",
-      model:"motion-control"
-   },
-
-   "lipsync":{
-      provider:"replicate",
-      model:"lipsync-model"
-   },
-
-   "dance-motion":{
-      provider:"runwayml",
-      model:"dance-motion"
-   },
-
-   "style-transfer":{
-      provider:"replicate",
-      model:"style-transfer"
+   if (engine === "replicate") {
+      return await replicate.run(payload);
    }
 
-};
+   if (engine === "runway") {
+      return await runway.run(payload);
+   }
 
-module.exports = MODEL_MAP;
+   throw new Error("ENGINE NOT SUPPORTED");
+};
