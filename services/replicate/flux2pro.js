@@ -1,82 +1,41 @@
-/*
-=====================================
-REPLICATE FLUX2PRO ENGINE
-=====================================
-*/
+// services/replicate/flux2pro.js
 
 const Replicate = require("replicate");
+const db = require("../../db/db");
 
 const replicate = new Replicate({
-   auth:process.env.REPLICATE_API_TOKEN
+   auth: process.env.REPLICATE_API_TOKEN
 });
 
+exports.run = async ({alias,type,prompt,files,jobID}) => {
 
-/*
-=====================================
-MODEL MAP (internal only)
-UI alias is hidden
-=====================================
-*/
+   console.log("REPLICATE EXEC:",alias);
 
-const MODEL_MAP = {
+   let input={};
 
-   motion:"black-forest-labs/flux-2-pro",
-   faceswap:"black-forest-labs/flux-2-pro",
-   lipsync:"black-forest-labs/flux-2-pro",
-   image:"black-forest-labs/flux-2-pro"
-
-};
-
-
-/*
-=====================================
-RUN
-=====================================
-*/
-
-async function run(data){
-
-   const {
-
-      engine,
-      mode,
-      input
-
-   } = data;
-
-   const modelID = MODEL_MAP[mode];
-
-   if(!modelID){
-
-      throw new Error("REPLICATE MODE NOT SUPPORTED");
-
+   if(alias==="dark-viral"){
+      input = {
+         prompt:prompt,
+         image:files.image.path
+      };
    }
 
-   /*
-   ULTRA SAFE INPUT
-   */
+   if(alias==="face-swap"){
+      input = {
+         source:files.source.path,
+         target:files.target.path
+      };
+   }
 
-   const payload = {
+   const prediction = await replicate.predictions.create({
+      model:"flux2pro",
+      input
+   });
 
-      prompt: input?.prompt || ""
-
-   };
-
-   /*
-   CALL REPLICATE
-   */
-
-   const output = await replicate.run(
-
-      modelID,
-      {
-         input:payload
-      }
-
+   db.run(
+      "UPDATE projects SET status='processing', externalID=? WHERE id=?",
+      [prediction.id, jobID]
    );
 
-   return output;
-
-}
-
-module.exports = { run };
+   return prediction;
+};
