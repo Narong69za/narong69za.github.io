@@ -4,7 +4,7 @@ const fetch = require("node-fetch");
 const db = require("../../db/db");
 
 const RUNWAY_API = process.env.RUNWAY_API;
-const RUNWAY_URL = "https://api.runwayml.com/v1/motion_clone";
+const RUNWAY_URL = "https://api.runwayml.com/v1/tasks";
 
 exports.run = async ({alias,type,prompt,files,jobID}) => {
 
@@ -28,14 +28,28 @@ exports.run = async ({alias,type,prompt,files,jobID}) => {
          "Content-Type":"application/json"
       },
       body:JSON.stringify({
-         mode:"motion_clone",
-         template_url:template.path,
-         subject_url:subject.path,
-         prompt:prompt || ""
+
+         model:"gen4_motion_clone", // 👈 model name
+
+         input:{
+            template_url:template.path,
+            subject_url:subject.path,
+            prompt:prompt || ""
+         }
+
       })
    });
 
-   const result = await response.json();
+   const text = await response.text();
+
+   let result;
+
+   try{
+      result = JSON.parse(text);
+   }catch(e){
+      console.log("RUNWAY RAW RESPONSE:",text);
+      throw new Error("RUNWAY INVALID JSON RESPONSE");
+   }
 
    if(!result.id){
       throw new Error("RUNWAY START FAILED");
