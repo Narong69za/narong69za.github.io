@@ -1,85 +1,32 @@
-/*
-=====================================
-RUNWAY GEN4 ENGINE
-=====================================
-*/
+exports.run = async ({alias,type,prompt,files,jobID})=>{
 
-const fetch = require("node-fetch");
+   /*
+   ULTRA ENGINE MAP
+   */
 
-/*
-=====================================
-MODEL MAP (hidden from UI)
-=====================================
-*/
+   const MODE_MAP = {
 
-const MODEL_MAP = {
+      "dance-motion":"motion_clone",
+      "face-swap":"face_swap",
+      "dark-viral":"image_to_video",
+      "ai-lipsync":"lip_sync"
 
-   motion:"gen4_image_to_video",
-   lipsync:"gen4_image_to_video",
-   faceswap:"gen4_image_to_video",
-   darkviral:"gen4_image_to_video"
+   };
 
-};
+   const mode = MODE_MAP[alias];
 
-
-/*
-=====================================
-RUN
-=====================================
-*/
-
-async function run(data){
-
-   const {
-
-      mode,
-      input
-
-   } = data;
-
-   const modelID = MODEL_MAP[mode];
-
-   if(!modelID){
+   if(!mode){
 
       throw new Error("RUNWAY MODE NOT SUPPORTED");
 
    }
 
-   const payload = {
+   /*
+   MOCK CALL (replace with real runway API later)
+   */
 
-      model:modelID,
+   console.log("RUNWAY EXEC:",mode);
 
-      input:{
-         prompt: input?.prompt || ""
-      }
+   return true;
 
-   };
-
-   const res = await fetch(
-
-      "https://api.runwayml.com/v1/generate",
-
-      {
-         method:"POST",
-         headers:{
-            "Authorization":`Bearer ${process.env.RUNWAY_API_TOKEN}`,
-            "Content-Type":"application/json"
-         },
-         body:JSON.stringify(payload)
-      }
-
-   );
-
-   const json = await res.json();
-
-   if(!res.ok){
-
-      throw new Error(json.error || "RUNWAY API ERROR");
-
-   }
-
-   return json;
-
-}
-
-module.exports = { run };
+};
