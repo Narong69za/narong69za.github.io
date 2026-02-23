@@ -1,109 +1,60 @@
-// controllers/create.controller.js
-
-const modelRouter = require("../services/model.router");
+const MODEL_ROUTER = require("../services/model.router");
 const db = require("../db/db");
 
-/*
-ULTRA AUTO ENGINE PIPELINE
-
-REQ:
-engine
-alias
-type
-prompt
-files(dynamic from schema)
-*/
-
-exports.create = async (req,res)=>{
+async function create(req,res){
 
    try{
 
-      const { engine, alias, type, prompt } = req.body;
+      const engine = req.body.engine;
+      const alias = req.body.alias;
+      const type = req.body.type;
+      const prompt = req.body.prompt || "";
 
       if(!engine || !alias){
 
          return res.status(400).json({
-            error:"ENGINE OR ALIAS MISSING"
+            error:"missing engine or alias"
          });
 
       }
 
-      const id = Date.now().toString();
-
-      /* =====================
-         SAVE QUEUE ENTRY
-      ====================== */
+      const jobID = Date.now().toString();
 
       db.run(
-         "INSERT INTO projects (id,engine,alias,type,prompt,status) VALUES (?,?,?,?,?,?)",
-         [
-            id,
-            engine,
-            alias,
-            type || "video",
-            prompt || "",
-            "queued"
-         ]
+         "INSERT INTO projects (id,engine,prompt,status) VALUES (?,?,?,?)",
+         [jobID,engine,prompt,"queued"]
       );
 
-      /* =====================
-         AUTO FILE DETECT
-      ====================== */
-
-      const files={};
-
-      if(req.files){
-
-         Object.keys(req.files).forEach(name=>{
-
-            files[name]=req.files[name][0];
-
-         });
-
-      }
-
-      /* =====================
-         MODEL ROUTER CALL
-      ====================== */
-
-      const result = await modelRouter.run({
+      const result = await MODEL_ROUTER.run({
 
          engine,
          alias,
          type,
          prompt,
-         files,
-         jobID:id
+         files:req.files || [],
+         jobID
 
       });
 
-      /* =====================
-         UPDATE STATUS
-      ====================== */
-
-      db.run(
-         "UPDATE projects SET status=? WHERE id=?",
-         ["processing",id]
-      );
-
       res.json({
 
-         status:"processing",
-         id,
+         status:"done",
+         jobID,
          result
 
       });
 
    }catch(err){
 
-      console.log("CREATE CONTROLLER ERROR",err);
+      console.log(err);
 
       res.status(500).json({
-
-         error:"PIPELINE FAILED"
-
+         status:"error",
+         error:err.message
       });
 
    }
 
-};
+}
+
+module.exports = { create };
