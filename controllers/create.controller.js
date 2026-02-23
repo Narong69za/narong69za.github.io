@@ -1,58 +1,26 @@
-// controllers/create.controller.js
+// create.controller.js
 
-const MODEL_ROUTER = require("../services/model.router");
-const db = require("../db/db");
+const router = require("../model.router");
 
-async function create(req,res){
+exports.create = async (req,res)=>{
 
    try{
 
-      const engine = req.body.engine;
-      const alias = req.body.alias;
-      const type = req.body.type;
-      const prompt = req.body.prompt || "";
+      const job = {
 
-      const files = {};
+         engine: req.body.engine,
+         alias: req.body.alias,
+         type: req.body.type,
+         prompt: req.body.prompt,
+         files: req.files || {},
+         jobID: Date.now()
 
-      if(req.files){
+      };
 
-         req.files.forEach(f=>{
-            files[f.fieldname] = f;
-         });
-
-      }
-
-      if(!engine || !alias){
-
-         return res.status(400).json({
-            status:"error",
-            message:"missing engine or alias"
-         });
-
-      }
-
-      const id = Date.now().toString();
-
-      // INSERT DB
-
-      db.run(
-         "INSERT INTO projects (id,engine,prompt,status) VALUES (?,?,?,?)",
-         [id,engine,prompt,"processing"]
-      );
-
-      // RUN ENGINE REALTIME
-
-      const result = await MODEL_ROUTER.run({
-         engine,
-         alias,
-         type,
-         prompt,
-         files,
-         jobID:id
-      });
+      const result = await router.run(job);
 
       res.json({
-         status:"done",
+         status:"started",
          result
       });
 
@@ -61,12 +29,9 @@ async function create(req,res){
       console.error(err);
 
       res.status(500).json({
-         status:"error",
-         message:err.message
+         error: err.message
       });
 
    }
 
-}
-
-module.exports = { create };
+};
