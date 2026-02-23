@@ -67,6 +67,15 @@
 
 <script>
 
+/* =========================
+ULTRA AUTO ENGINE PIPELINE
+ADD ONLY PATCH
+========================= */
+
+const API_BASE="https://sn-design-api.onrender.com";
+
+/* ENGINE INPUT SCHEMA */
+
 const ENGINE_SCHEMA={
 
 "dance-motion":["template","subject"],
@@ -81,16 +90,21 @@ let selectedAlias=null;
 let selectedType=null;
 
 
+/* ACTION TYPE */
+
 document.querySelectorAll("[data-type]").forEach(btn=>{
 
 btn.onclick=()=>{
 
 selectedType=btn.dataset.type;
+console.log("TYPE SELECTED:",selectedType);
 
 };
 
 });
 
+
+/* ENGINE SELECT */
 
 document.querySelectorAll("[data-engine]").forEach(btn=>{
 
@@ -99,12 +113,16 @@ btn.onclick=()=>{
 selectedEngine=btn.dataset.engine;
 selectedAlias=btn.dataset.alias;
 
+console.log("ENGINE:",selectedEngine,"ALIAS:",selectedAlias);
+
 renderInputs(selectedAlias);
 
 };
 
 });
 
+
+/* DYNAMIC INPUT RENDER */
 
 function renderInputs(alias){
 
@@ -137,49 +155,13 @@ box.appendChild(wrap);
 }
 
 
-/* ===============================
-   ADD ONLY START (ULTRA CONTROL)
-================================= */
-
-let generating=false;
-
-/* ENGINE ACTIVE UI */
-
-document.querySelectorAll("[data-engine]").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-document.querySelectorAll("[data-engine]").forEach(b=>{
-
-b.classList.remove("active-red");
-b.classList.remove("active-blue");
-
-});
-
-if(btn.dataset.engine==="replicate"){
-
-btn.classList.add("active-red");
-
-}
-
-if(btn.dataset.engine==="runway"){
-
-btn.classList.add("active-blue");
-
-}
-
-});
-
-});
-
-/* ===============================
-   ADD ONLY END
-================================= */
-
+/* =========================
+ULTRA GENERATE HANDLER
+========================= */
 
 document.getElementById("generateBtn").onclick=async()=>{
 
-if(generating) return;
+try{
 
 if(!selectedEngine||!selectedAlias){
 
@@ -189,8 +171,6 @@ return;
 
 }
 
-generating=true;
-
 const form=new FormData();
 
 form.append("engine",selectedEngine);
@@ -199,9 +179,18 @@ form.append("type",selectedType||"video");
 
 form.append("prompt",document.getElementById("prompt").value||"");
 
+
+/* CHECK FILE INPUT */
+
+let missing=false;
+
 document.querySelectorAll("#dynamicInputs input").forEach(input=>{
 
-if(input.files[0]){
+if(!input.files[0]){
+
+missing=true;
+
+}else{
 
 form.append(input.name,input.files[0]);
 
@@ -209,35 +198,55 @@ form.append(input.name,input.files[0]);
 
 });
 
+if(missing){
+
+alert("missing file input");
+
+return;
+
+}
+
 document.getElementById("status").innerText="STATUS: QUEUED";
 
-try{
+console.log("POST TO:",API_BASE+"/api/render");
 
-const res=await fetch("/api/render",{
+/* SEND TO BACKEND */
+
+const res=await fetch(API_BASE+"/api/render",{
 
 method:"POST",
 body:form
 
 });
 
-const json=await res.json();
+console.log("HTTP STATUS:",res.status);
 
-document.getElementById("status").innerText="STATUS: "+(json.status||"DONE");
+if(!res.ok){
 
-}catch(err){
-
-document.getElementById("status").innerText="STATUS: ERROR";
-
-console.log(err);
+const text=await res.text();
+document.getElementById("status").innerText="STATUS: ERROR "+res.status;
+console.error("SERVER ERROR:",text);
+return;
 
 }
 
-generating=false;
+const json=await res.json();
+
+console.log("RESPONSE:",json);
+
+document.getElementById("status").innerText="STATUS: "+json.status;
+
+}catch(err){
+
+console.error("CLIENT ERROR:",err);
+
+document.getElementById("status").innerText="STATUS: CLIENT ERROR";
+
+}
 
 };
 
 </script>
 
 </body>
-
 </html>
