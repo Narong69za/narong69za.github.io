@@ -343,3 +343,83 @@ border:1px solid #222;
 border-radius:10px;
 padding:14px;
 }
+/* ===============================
+ENGINE FULL BALANCE
+=============================== */
+
+.engine{
+
+width:100%;
+max-width:520px;
+margin:auto;
+
+display:flex;
+flex-direction:column;
+align-items:stretch;
+
+padding:30px 24px;
+
+}
+/* ===============================
+PREMIUM CTA STYLE
+=============================== */
+
+.engine button{
+
+width:100%;
+
+font-size:16px;
+letter-spacing:1px;
+
+padding:14px 18px;
+
+border-radius:10px;
+
+background:linear-gradient(180deg,#1a1a1a,#111);
+
+border:1px solid rgba(255,255,255,0.15);
+
+transition:0.3s;
+
+}
+
+.engine button:hover{
+
+transform:translateY(-2px);
+box-shadow:0 0 20px rgba(0,255,200,0.35);
+
+}
+/* ===============================
+IMPORT CENTER ALIGN
+=============================== */
+
+.upload-wrap{
+
+display:flex;
+justify-content:center;
+gap:20px;
+
+width:100%;
+margin:30px auto;
+
+}
+/* ===============================
+PROMPT BALANCE
+=============================== */
+
+.prompt-box{
+
+width:100%;
+max-width:900px;
+
+margin:40px auto 10px;
+
+padding:18px;
+
+font-size:15px;
+
+border-radius:12px;
+
+background:rgba(255,255,255,0.03);
+
+}
