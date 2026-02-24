@@ -146,3 +146,51 @@ border:1px solid #222;
 color:#aaa;
 transition:0.25s;
 }
+/* =================================
+ULTRA ENGINE PERMA GLOW
+================================= */
+
+/* glow ตลอดเวลา */
+.engine.red {
+box-shadow:
+0 0 25px rgba(255,0,0,0.35),
+0 0 60px rgba(255,0,0,0.15) inset;
+}
+
+.engine.blue {
+box-shadow:
+0 0 25px rgba(0,255,220,0.35),
+0 0 60px rgba(0,255,220,0.15) inset;
+}
+
+/* active state เพิ่ม glow อีกชั้น */
+.engine.engine-active.red {
+box-shadow:
+0 0 35px rgba(255,0,0,0.7),
+0 0 120px rgba(255,0,0,0.25);
+}
+
+.engine.engine-active.blue {
+box-shadow:
+0 0 35px rgba(0,255,220,0.7),
+0 0 120px rgba(0,255,220,0.25);
+}
+
+/* =================================
+UPLOAD AREA CENTER FIX
+================================= */
+
+.upload-wrap{
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+width:100%;
+margin:auto;
+}
+
+.upload-wrap input{
+margin:6px auto;
+display:block;
+}
