@@ -240,3 +240,27 @@ box-shadow:
 0 0 50px rgba(0,255,220,.7),
 0 0 150px rgba(0,255,220,.3);
 }
+/* =================================
+GLOBAL CENTER BALANCE FIX
+================================= */
+
+.section-block,
+.upload-section,
+.status-section,
+.preview-section{
+width:100%;
+max-width:1200px;
+margin:40px auto;
+display:flex;
+flex-direction:column;
+align-items:center;
+text-align:center;
+}
+
+/* preview row */
+.preview-row{
+display:flex;
+justify-content:center;
+gap:20px;
+flex-wrap:wrap;
+}
