@@ -364,3 +364,48 @@ width:auto;
 font-size:12px;
 opacity:0.7;
 }
+/* =====================================
+ULTRA PREVIEW FINAL LOCK (NO OVERFLOW)
+===================================== */
+
+/* container preview */
+.preview-wrapper,
+.preview-box,
+.preview-container{
+
+width:100%;
+max-width:100%;
+overflow:hidden;
+display:flex;
+justify-content:center;
+align-items:center;
+
+}
+
+/* video + image preview */
+.preview-wrapper video,
+.preview-wrapper img,
+.preview-box video,
+.preview-box img,
+video,
+img.preview{
+
+max-width:100%;
+width:100%;
+height:auto;
+object-fit:contain;
+
+border-radius:12px;
+display:block;
+
+}
+
+/* กัน mobile viewport ล้น */
+video{
+max-height:60vh; /* จำกัดความสูงมือถือ */
+}
+
+/* fix Android Chrome scaling */
+video::-webkit-media-controls{
+max-width:100%;
+}
