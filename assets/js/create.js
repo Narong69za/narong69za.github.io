@@ -1,12 +1,10 @@
 /* =====================================================
 SN DESIGN ENGINE AI
-CREATE.JS — FINAL STABLE BUILD
+CREATE.JS — FINAL ENGINE LOCK
 (UI LOCK SAFE VERSION)
 ===================================================== */
 
-
 document.addEventListener("DOMContentLoaded",()=>{
-
 
 /* ===============================
 STATE
@@ -58,13 +56,17 @@ document.querySelectorAll(".engine button").forEach(btn=>{
 
 btn.addEventListener("click",()=>{
 
-/* remove active glow */
-document.querySelectorAll(".engine button")
-.forEach(b=>b.classList.remove("active"));
+/* remove previous glow */
 
-btn.classList.add("active");
+document.querySelectorAll(".engine button")
+.forEach(b=>b.classList.remove("active-model"));
+
+/* add FINAL glow class */
+
+btn.classList.add("active-model");
 
 /* detect engine */
+
 const engineBox = btn.closest(".engine");
 
 if(engineBox.classList.contains("red")){
@@ -85,7 +87,7 @@ updateUI();
 
 
 /* ===============================
-FILE PREVIEW
+FILE PREVIEW (FINAL FIX)
 =============================== */
 
 function preview(file, videoEl, imageEl){
@@ -94,14 +96,20 @@ if(!file) return;
 
 const url = URL.createObjectURL(file);
 
+/* reset */
+
 if(videoEl){
 videoEl.pause?.();
+videoEl.removeAttribute("style"); // FIX inline override
 videoEl.style.display="none";
 }
 
 if(imageEl){
+imageEl.removeAttribute("style");
 imageEl.style.display="none";
 }
+
+/* show */
 
 if(file.type.startsWith("video/") && videoEl){
 
@@ -121,7 +129,9 @@ imageEl.style.display="block";
 }
 
 
-/* listeners */
+/* ===============================
+FILE LISTENERS
+=============================== */
 
 if(fileA){
 
@@ -161,9 +171,9 @@ document.querySelectorAll("[data-type]").forEach(btn=>{
 btn.addEventListener("click",()=>{
 
 document.querySelectorAll("[data-type]")
-.forEach(b=>b.classList.remove("active"));
+.forEach(b=>b.classList.remove("active-mode"));
 
-btn.classList.add("active");
+btn.classList.add("active-mode");
 
 STATE.type = btn.dataset.type;
 
