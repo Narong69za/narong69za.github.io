@@ -96,3 +96,40 @@ width:0%;
 background:#00ffcc;
 transition:0.3s;
 }
+/* ===============================
+ENGINE ACTIVE FULL CARD GLOW
+================================ */
+
+.engine-active{
+
+box-shadow:
+0 0 60px rgba(0,255,120,0.6),
+0 0 120px rgba(0,255,120,0.2);
+
+transition:0.3s;
+
+}
+
+/* ===============================
+TYPE ACTIVE EMPHASIS
+================================ */
+
+.type-selector button{
+opacity:0.6;
+}
+
+.type-selector button.active{
+opacity:1;
+}
+
+/* ===============================
+ENGINE BUTTON VISUAL STRONGER
+================================ */
+
+.engine button.active-mode{
+
+box-shadow:
+0 0 20px rgba(0,255,120,0.8),
+inset 0 0 12px rgba(255,255,255,0.2);
+
+}
