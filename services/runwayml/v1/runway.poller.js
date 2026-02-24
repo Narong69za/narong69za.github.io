@@ -1,71 +1,55 @@
 // services/runwayml/v1/runway.poller.js
 
 const fetch = require("node-fetch");
-const db = require("../../db/db");
+const db = require("../../../db/db");
 
-const STATUS_API = "https://api.dev.runwayml.com/v1/tasks/";
+const STATUS_ENDPOINT = "https://api.dev.runwayml.com/v1/tasks/";
 
-async function checkTask(taskID){
+async function checkTask(id) {
 
-    const res = await fetch(`${STATUS_API}${taskID}`, {
+  const res = await fetch(`${STATUS_ENDPOINT}${id}`, {
+    headers: {
+      Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+      "X-Runway-Version": "2024-11-06"
+    }
+  });
 
-        method: "GET",
-
-        headers: {
-            "Authorization": `Bearer ${process.env.RUNWAY_API_KEY}`,
-            "X-Runway-Version": "2024-11-06"
-        }
-
-    });
-
-    const data = await res.json();
-
-    return data;
-
+  return await res.json();
 }
 
+async function poll() {
 
-async function poll(){
+  const jobs = await db.getProcessingRunwayJobs();
 
-    const jobs = await db.getProcessingRunwayJobs();
+  for (const job of jobs) {
 
-    for(const job of jobs){
+    try {
 
-        try{
+      const result = await checkTask(job.externalID);
 
-            const result = await checkTask(job.externalID);
+      if (result.status === "SUCCEEDED") {
 
-            if(result.status === "SUCCEEDED"){
+        await db.completeJob(
+          job.id,
+          result.output?.videoUri || null
+        );
 
-                await db.completeJob({
+      }
 
-                    id: job.id,
-                    output: result.output?.videoUri || null
+      if (result.status === "FAILED") {
+        await db.failJob(job.id);
+      }
 
-                });
-
-            }
-
-            if(result.status === "FAILED"){
-
-                await db.failJob(job.id);
-
-            }
-
-        }catch(err){
-
-            console.error("RUNWAY POLL ERROR:", err.message);
-
-        }
-
+    } catch (err) {
+      console.error(err.message);
     }
 
+  }
+
 }
 
-function start(){
-
-    setInterval(poll, 8000);
-
+function start() {
+  setInterval(poll, 8000);
 }
 
 module.exports = { start };
