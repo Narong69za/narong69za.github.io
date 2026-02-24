@@ -131,3 +131,51 @@ box-shadow:
 border:1px solid rgba(255,255,255,.5);
 
 }
+/* ===============================
+CTA INFO BOX
+================================ */
+
+.cta-info-box{
+
+width:100%;
+max-width:520px;
+
+margin:20px auto;
+
+padding:16px;
+
+border-radius:12px;
+
+background:rgba(255,255,255,0.04);
+
+text-align:center;
+
+box-shadow:
+0 0 20px rgba(0,255,200,.2);
+
+}
+
+.cta-info-box #engine-info{
+
+font-size:13px;
+white-space:pre-line;
+margin-bottom:10px;
+
+}
+
+.user-policy{
+
+font-size:12px;
+opacity:.7;
+
+}
+
+
+/* ACTIVE VISUAL */
+
+.active-select{
+
+box-shadow:
+0 0 12px rgba(0,255,150,.6);
+
+}
