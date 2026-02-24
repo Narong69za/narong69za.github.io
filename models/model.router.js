@@ -1,20 +1,27 @@
-const replicate = require("../services/replicate/replicate.service");
-const runway = require("../services/runway/runway.service");
+// src/models/model.router.js
 
-exports.run = async ({engine,alias,type,prompt,files})=>{
+const imageToVideo = require("../services/runwayml/v1/image_to_video");
+const videoUpscale = require("../services/runwayml/v1/video_upscale");
 
-   if(engine==="replicate"){
+async function run(payload){
 
-      return replicate.run({alias,type,prompt,files});
+  const { engine, mode } = payload;
 
-   }
+  if(engine === "runwayml"){
 
-   if(engine==="runway"){
+    if(mode === "image_to_video"){
+      return await imageToVideo(payload);
+    }
 
-      return runway.run({alias,type,prompt,files});
+    if(mode === "video_upscale"){
+      return await videoUpscale(payload);
+    }
 
-   }
+    throw new Error("Unsupported runway mode");
+  }
 
-   throw new Error("ENGINE NOT FOUND");
+  throw new Error("Unsupported engine");
 
-};
+}
+
+module.exports = { run };
