@@ -1,171 +1,120 @@
-/*
-=====================================
-ULTRA AUTO UI FINAL CLEAN
-SN DESIGN STUDIO
-STATIC MODEL FLOW
-=====================================
-*/
+let STATE = {
+engine:null,
+mode:null,
+type:null
+};
 
-console.log("ULTRA CREATE UI START");
+const typeBtns = document.querySelectorAll("[data-type]");
+const modeBtns = document.querySelectorAll("[data-mode]");
 
-const API_BASE = "https://sn-design-api.onrender.com";
+const info = document.getElementById("model-info");
 
-/*
-=====================================
-SAFE DOM GET
-=====================================
-*/
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
 
-const container = document.getElementById("auto-template-container");
+function updatePreview(){
 
-if(!container){
-
-   console.error("AUTO UI ERROR: #auto-template-container NOT FOUND");
-   throw new Error("UI container missing");
+info.innerText =
+`ENGINE: ${STATE.engine || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
 
 }
 
-/*
-=====================================
-LOAD TEMPLATE LIST
-=====================================
-*/
+typeBtns.forEach(btn=>{
 
-async function loadTemplates(){
+btn.onclick = ()=>{
 
-   try{
+typeBtns.forEach(b=>b.classList.remove("active"));
 
-      console.log("FETCH:", API_BASE + "/api/templates");
+btn.classList.add("active");
 
-      const res = await fetch(`${API_BASE}/api/templates`);
+STATE.type = btn.dataset.type;
 
-      if(!res.ok){
-         throw new Error("API RESPONSE FAILED");
-      }
+updatePreview();
 
-      const presets = await res.json();
-
-      console.log("TEMPLATES:", presets);
-
-      buildUI(presets);
-
-   }catch(err){
-
-      console.error("LOAD TEMPLATE ERROR:",err);
-
-      container.innerHTML = `
-         <div class="preset-error">
-            API LOAD FAILED
-         </div>
-      `;
-   }
-
-}
-
-/*
-=====================================
-BUILD CARD UI
-=====================================
-*/
-
-function buildUI(presets){
-
-   container.innerHTML = "";
-
-   Object.values(presets).forEach(preset => {
-
-      const card = document.createElement("div");
-
-      card.className = "auto-card";
-
-      card.innerHTML = `
-
-         <div class="engine">
-            ENGINE : ${preset.id}
-         </div>
-
-         <div>Credit : ${preset.creditCost ?? "--"}</div>
-         <div>Limit : ${preset.limits?.maxDuration ?? "--"}</div>
-
-         <textarea class="prompt-input"
-         placeholder="Enter prompt..."></textarea>
-
-         <button class="cta-btn">
-            CREATE
-         </button>
-
-         <div class="status">
-            STATUS : IDLE
-         </div>
-      `;
-
-      const btn = card.querySelector(".cta-btn");
-      const input = card.querySelector(".prompt-input");
-      const status = card.querySelector(".status");
-
-      btn.addEventListener("click", async ()=>{
-
-         status.innerText = "STATUS : SENDING";
-
-         try{
-
-            const res = await fetch(`${API_BASE}/api/render`,{
-
-               method:"POST",
-
-               headers:{
-                  "Content-Type":"application/json"
-               },
-
-               body:JSON.stringify({
-
-                  preset: preset.id,
-                  prompt: input.value || ""
-
-               })
-
-            });
-
-            const result = await res.json();
-
-            console.log("RENDER RESULT:",result);
-
-            if(result.success){
-
-               status.innerText = "STATUS : SUCCESS";
-
-            }else{
-
-               status.innerText = "STATUS : FAILED";
-
-            }
-
-         }catch(e){
-
-            console.error(e);
-
-            status.innerText = "STATUS : ERROR";
-
-         }
-
-      });
-
-      container.appendChild(card);
-
-   });
-
-}
-
-/*
-=====================================
-START ENGINE
-=====================================
-*/
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-   console.log("DOM READY → START LOAD");
-
-   loadTemplates();
+};
 
 });
+
+modeBtns.forEach(btn=>{
+
+btn.onclick = ()=>{
+
+const engine = btn.dataset.engine;
+
+document.querySelectorAll(`.engine.${engine} button[data-mode]`)
+.forEach(b=>b.classList.remove("active-mode"));
+
+btn.classList.add("active-mode");
+
+STATE.engine = engine === "red" ? "replicate" : "runway";
+
+STATE.mode = btn.dataset.mode;
+
+updatePreview();
+
+};
+
+});
+
+async function validateFiles(){
+
+if(!STATE.mode) return false;
+
+if(STATE.mode==="face"){
+
+return fileA.files.length && fileB.files.length;
+
+}
+
+if(STATE.mode==="lipsync" || STATE.mode==="motion"){
+
+return fileA.files.length && fileB.files.length;
+
+}
+
+if(STATE.type==="upscale"){
+
+return fileA.files.length;
+
+}
+
+return true;
+
+}
+
+async function generate(engine){
+
+const ok = await validateFiles();
+
+if(!ok){
+
+alert("FILES MISSING");
+
+return;
+
+}
+
+document.getElementById("status").innerText="STATUS: PROCESSING";
+
+const form = new FormData();
+
+form.append("engine",STATE.engine);
+form.append("mode",STATE.mode);
+form.append("type",STATE.type);
+
+if(fileA.files[0]) form.append("fileA",fileA.files[0]);
+if(fileB.files[0]) form.append("fileB",fileB.files[0]);
+
+await fetch("/api/render",{
+
+method:"POST",
+body:form
+
+});
+
+document.getElementById("status").innerText="STATUS: COMPLETE";
+
+}
+
+document.getElementById("generate-red").onclick=()=>generate("red");
+document.getElementById("generate-blue").onclick=()=>generate("blue");
