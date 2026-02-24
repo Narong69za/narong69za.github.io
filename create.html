@@ -2,32 +2,34 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ULTRA ENGINE CONTROL</title>
+
 <link rel="stylesheet" href="/assets/css/create-premium.css">
+
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrap">
 
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<!-- PROMPT -->
 <input class="prompt" placeholder="Enter prompt">
 
-<!-- TYPE SELECT (CENTER LOCK) -->
-<div class="type-wrapper">
+<!-- TYPE CENTER -->
+<div class="type-center">
 
-<button class="type-btn active" data-type="video">Generate Video</button>
-<button class="type-btn" data-type="image">Generate Image</button>
-<button class="type-btn" data-type="upscale">Upscale</button>
+<button class="type active" data-type="video">Generate Video</button>
+<button class="type" data-type="image">Generate Image</button>
+<button class="type" data-type="upscale">Upscale</button>
 
 </div>
 
-<!-- ENGINE -->
-<div class="engine-zone">
+<!-- ENGINE SIDE BY SIDE -->
+<div class="engine-row">
 
+<!-- RED -->
 <div class="engine red" data-engine="replicate">
 
 <h2>RED ENGINE</h2>
@@ -41,6 +43,7 @@
 
 </div>
 
+<!-- BLUE -->
 <div class="engine blue" data-engine="runway">
 
 <h2>BLUE ENGINE</h2>
@@ -56,8 +59,7 @@
 
 </div>
 
-<!-- CTA FILE BOX (Adverra style) -->
-<div class="cta-box">
+<div class="preview">
 
 <h3>MODEL PREVIEW</h3>
 
@@ -69,9 +71,7 @@ ENGINE: - | MODE: - | TYPE: -
 
 </div>
 
-<div class="status">
-STATUS: <span id="status">IDLE</span>
-</div>
+<div class="status">STATUS: <span id="status">IDLE</span></div>
 
 </div>
 
@@ -87,19 +87,19 @@ const info=document.getElementById("info");
 const status=document.getElementById("status");
 
 /* TYPE */
-document.querySelectorAll(".type-btn").forEach(btn=>{
+document.querySelectorAll(".type").forEach(btn=>{
 btn.onclick=()=>{
-document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+document.querySelectorAll(".type").forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
 state.type=btn.dataset.type;
 update();
 };
 });
 
-/* ENGINE MODEL */
+/* ENGINE SELECT */
 document.querySelectorAll(".engine").forEach(engine=>{
 
-engine.onclick=(e)=>{
+engine.addEventListener("click",(e)=>{
 
 if(!e.target.classList.contains("model")) return;
 
@@ -113,23 +113,24 @@ state.engine=engine.dataset.engine;
 state.mode=e.target.dataset.mode;
 
 update();
-};
+
+});
 
 });
 
 /* GENERATE */
 document.querySelectorAll(".generate").forEach(btn=>{
 btn.onclick=()=>{
-if(!state.engine||!state.mode){
+
+if(!state.engine || !state.mode){
 alert("Select engine + model");
 return;
 }
+
 status.innerText="PROCESSING";
 
 setTimeout(()=>{
-
 status.innerText="COMPLETE";
-
 },2000);
 
 };
