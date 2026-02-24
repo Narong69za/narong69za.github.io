@@ -1,53 +1,41 @@
-const MODEL_ROUTER = require("../models/model.router");
-const db = require("../db/db");
+const MODEL_ROUTER = require("../models/model.router.js");
 
-exports.create = async (req, res) => {
+exports.create = async (req,res)=>{
 
-   try {
+   try{
 
-      const engine = req.body.engine;
-      const alias = req.body.alias;
-      const type = req.body.type || "video";
-      const prompt = req.body.prompt || "";
+      const {engine,alias,type,prompt} = req.body;
 
-      const files = req.files || {};
+      const files = {};
 
-      if (!engine || !alias) {
-         return res.status(400).json({ error: "missing engine or alias" });
+      if(req.files){
+         req.files.forEach(f=>{
+            files[f.fieldname] = f;
+         });
       }
 
-      console.log("CREATE JOB:", engine, alias);
-
-      // create project record
-      const jobID = Date.now().toString();
-
-      db.run(
-         "INSERT INTO projects (id,status,engine,alias) VALUES (?,?,?,?)",
-         [jobID, "queued", engine, alias]
-      );
-
-      // RUN MODEL
       const result = await MODEL_ROUTER.run({
          engine,
          alias,
          type,
          prompt,
-         files,
-         jobID
+         files
       });
 
-      return res.json({
-         status: "started",
-         jobID,
-         result
+      res.json({
+         status:"queued",
+         data:result
       });
 
-   } catch (err) {
+   }catch(err){
 
-      console.error("CREATE ERROR:", err);
+      console.error(err);
 
-      return res.status(500).json({
-         error: err.message
+      res.status(500).json({
+         error:true,
+         message:err.message
       });
+
    }
+
 };
