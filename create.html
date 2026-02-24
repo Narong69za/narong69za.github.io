@@ -1,98 +1,118 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>SN DESIGN ENGINE AI</title>
-<link rel="stylesheet" href="/assets/css/create-premium.css?v=2.0">
+
+<link rel="stylesheet" href="/assets/css/create-premium.css">
+
 </head>
 
 <body>
 
-<h1 class="main-title">SN DESIGN ENGINE AI</h1>
+<div class="create-root">
 
-<!-- ================= ENGINE AREA ================= -->
+<h1 class="title">SN DESIGN ENGINE AI</h1>
 
-<div class="engine-wrapper">
+<!-- TYPE SELECT -->
 
-    <!-- RED ENGINE -->
-    <div class="engine red">
-        <h2>RED ENGINE</h2>
+<div class="type-bar">
 
-        <div class="model-tabs">
-            <button data-engine="red" data-model="flux2pro">flux2pro</button>
-            <button data-engine="red" data-model="faceclone">faceclone</button>
-        </div>
-
-        <div class="mode-buttons">
-            <button data-engine="red" data-mode="generate">GENERATE</button>
-            <button data-engine="red" data-mode="variation">VARIATION</button>
-            <button data-engine="red" data-mode="style">STYLE</button>
-            <button data-engine="red" data-mode="upscale">UPSCALE</button>
-        </div>
-
-        <button id="generate-red">GENERATE RED</button>
-    </div>
-
-    <!-- BLUE ENGINE -->
-    <div class="engine blue">
-        <h2>BLUE ENGINE</h2>
-
-        <div class="model-tabs">
-            <button data-engine="blue" data-model="gen4video">gen4video</button>
-        </div>
-
-        <div class="mode-buttons">
-            <button data-engine="blue" data-mode="motion">MOTION</button>
-            <button data-engine="blue" data-mode="image2video">IMAGE2VIDEO</button>
-            <button data-engine="blue" data-mode="lipsync">LIPSYNC</button>
-            <button data-engine="blue" data-mode="dance">DANCE</button>
-            <button data-engine="blue" data-mode="generate">GENERATE</button>
-        </div>
-
-        <button id="generate-blue">GENERATE BLUE</button>
-    </div>
+<button data-type="video" class="type-btn active">Generate Video</button>
+<button data-type="image" class="type-btn">Generate Image</button>
+<button data-type="upscale" class="type-btn">Upscale</button>
 
 </div>
 
-<!-- ================= IMPORT AREA ================= -->
+<!-- ENGINE WRAP -->
 
-<div class="import-area">
+<div class="engine-wrap">
 
-    <input type="file" id="fileA" accept="image/*,video/*">
-    <input type="file" id="fileB" accept="image/*,video/*">
+<!-- RED ENGINE -->
+
+<div class="engine red engine-active">
+
+<h3>RED ENGINE</h3>
+
+<div class="model-row">
+<button data-engine="red" data-mode="generate">flux2pro</button>
+<button data-engine="red" data-mode="faceclone">faceclone</button>
+</div>
+
+<div class="mode-list">
+<button data-engine="red" data-mode="generate">GENERATE</button>
+<button data-engine="red" data-mode="variation">VARIATION</button>
+<button data-engine="red" data-mode="style">STYLE</button>
+<button data-engine="red" data-mode="upscale">UPSCALE</button>
+</div>
+
+<button id="generate-red">GENERATE RED</button>
 
 </div>
 
-<!-- ================= PREVIEW ================= -->
 
-<div class="preview-row">
+<!-- BLUE ENGINE -->
 
-    <video id="preview-red-video" controls></video>
-    <img id="preview-red-image">
+<div class="engine blue engine-active">
 
-    <video id="preview-blue-video" controls></video>
-    <img id="preview-blue-image">
+<h3>BLUE ENGINE</h3>
+
+<div class="model-row">
+<button data-engine="blue" data-mode="gen4video">gen4video</button>
+</div>
+
+<div class="mode-list">
+<button data-engine="blue" data-mode="motion">MOTION</button>
+<button data-engine="blue" data-mode="image2video">IMAGE2VIDEO</button>
+<button data-engine="blue" data-mode="lipsync">LIPSYNC</button>
+<button data-engine="blue" data-mode="dance">DANCE</button>
+<button data-engine="blue" data-mode="generate">GENERATE</button>
+</div>
+
+<button id="generate-blue">GENERATE BLUE</button>
 
 </div>
 
-<!-- ================= PROMPT (จะถูกย้ายลงล่างโดย JS) ================= -->
-
-<div id="prompt-original">
-    <textarea id="prompt" placeholder="Enter prompt..."></textarea>
 </div>
 
-<!-- ================= STATUS ================= -->
+<!-- CTA IMPORT CENTER -->
 
-<div class="status-section">
-    <div id="model-info">ENGINE - MODEL - MODE - TYPE</div>
-    <div id="status">STATUS: IDLE</div>
-    <div class="progress-bar">
-        <div id="progress-fill"></div>
-    </div>
+<div class="cta-box">
+
+<input type="file" id="fileA">
+<input type="file" id="fileB">
+
 </div>
 
-<script src="/assets/js/create.js?v=2.0"></script>
+<!-- PREVIEW -->
+
+<div class="preview-wrap">
+
+<video id="preview-red-video" controls></video>
+<img id="preview-red-image">
+
+<video id="preview-blue-video" controls></video>
+<img id="preview-blue-image">
+
+</div>
+
+<!-- PROMPT MOVED BOTTOM -->
+
+<textarea id="prompt" placeholder="Enter prompt..."></textarea>
+
+<div class="status-bar">
+
+ENGINE - MODEL - MODE - TYPE<br>
+STATUS: IDLE
+
+</div>
+
+</div>
+
+<script src="/assets/js/create.js"></script>
 
 </body>
-  </html>
+    </html>
