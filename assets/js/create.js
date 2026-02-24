@@ -1,98 +1,19 @@
-/* ===============================
-   SN DESIGN ENGINE AI — FINAL JS
-   RUNWAY + REPLICATE COMPAT
-================================ */
-
 let STATE = {
-  engine: null,
-  model: null,
-  mode: null,
-  type: null
+  engine:null,
+  mode:null,
+  type:null
 };
 
-/* ===============================
-   DOM
-================================ */
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
 
-const $ = (q)=>document.querySelector(q);
-const $$ = (q)=>document.querySelectorAll(q);
+const previewRedVideo = document.getElementById("preview-red-video");
+const previewRedImage = document.getElementById("preview-red-image");
 
-const fileA = $("#fileA");
-const fileB = $("#fileB");
+const previewBlueVideo = document.getElementById("preview-blue-video");
+const previewBlueImage = document.getElementById("preview-blue-image");
 
-const previewRedVideo = $("#preview-red-video");
-const previewRedImage = $("#preview-red-image");
-
-const previewBlueVideo = $("#preview-blue-video");
-const previewBlueImage = $("#preview-blue-image");
-
-const promptInput = $("#prompt");
-
-/* ===============================
-   ENGINE SELECT
-================================ */
-
-$$("[data-engine]").forEach(btn=>{
-  btn.onclick=()=>{
-
-    STATE.engine = btn.dataset.engine;
-
-    $$("[data-engine]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-
-    glowEngine();
-  };
-});
-
-/* ===============================
-   MODEL SELECT
-================================ */
-
-$$("[data-model]").forEach(btn=>{
-  btn.onclick=()=>{
-
-    STATE.model = btn.dataset.model;
-
-    $$("[data-model]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-
-    glowEngine();
-  };
-});
-
-/* ===============================
-   MODE SELECT
-================================ */
-
-$$("[data-mode]").forEach(btn=>{
-  btn.onclick=()=>{
-
-    STATE.mode = btn.dataset.mode;
-
-    $$("[data-mode]").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-  };
-});
-
-/* ===============================
-   ENGINE GLOW
-================================ */
-
-function glowEngine(){
-
-  const red = $(".red-engine");
-  const blue = $(".blue-engine");
-
-  red?.classList.remove("glow");
-  blue?.classList.remove("glow");
-
-  if(STATE.engine==="red") red?.classList.add("glow");
-  if(STATE.engine==="blue") blue?.classList.add("glow");
-}
-
-/* ===============================
-   PREVIEW
-================================ */
+const statusEl = document.getElementById("status");
 
 function preview(file, videoEl, imageEl){
 
@@ -106,7 +27,7 @@ function preview(file, videoEl, imageEl){
     imageEl.style.display="none";
   }
 
-  else if(file.type.startsWith("image/")){
+  if(file.type.startsWith("image/")){
     imageEl.src = url;
     imageEl.style.display="block";
     videoEl.style.display="none";
@@ -121,41 +42,73 @@ fileB?.addEventListener("change",()=>{
   preview(fileB.files[0],previewBlueVideo,previewBlueImage);
 });
 
-/* ===============================
-   GENERATE
-================================ */
 
-async function generate(){
+// TYPE SELECT
 
-  if(!STATE.engine || !STATE.model){
-    alert("Select Engine + Model");
+document.querySelectorAll(".type-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    STATE.type = btn.dataset.type;
+    document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});
+
+
+// MODE SELECT
+
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+
+    STATE.engine = btn.dataset.engine;
+    STATE.mode = btn.dataset.mode;
+
+    document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+  });
+});
+
+
+// GENERATE
+
+async function generate(engine){
+
+  if(!STATE.mode || !STATE.type){
+
+    statusEl.innerText="STATUS: SELECT MODE & TYPE";
     return;
+
   }
 
-  const payload = {
-    engine: STATE.engine,
-    model: STATE.model,
-    mode: STATE.mode,
-    prompt: promptInput?.value || ""
-  };
+  statusEl.innerText="STATUS: PROCESSING...";
 
   try{
 
-    const res = await fetch("/api/create",{
+    const res = await fetch("/api/render",{
       method:"POST",
-      headers:{ "Content-Type":"application/json"},
-      body:JSON.stringify(payload)
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        engine:engine,
+        mode:STATE.mode,
+        type:STATE.type
+      })
     });
 
     const data = await res.json();
 
-    console.log("RESULT",data);
+    console.log(data);
+
+    statusEl.innerText="STATUS: DONE";
 
   }catch(e){
+
     console.error(e);
+    statusEl.innerText="STATUS: ERROR";
+
   }
 }
 
-$$("[data-generate]").forEach(btn=>{
-  btn.onclick=generate;
-});
+document.getElementById("generate-red")?.addEventListener("click",()=>generate("red"));
+document.getElementById("generate-blue")?.addEventListener("click",()=>generate("blue"));
