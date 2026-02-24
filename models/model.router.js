@@ -1,18 +1,20 @@
-const replicate = require("../services/replicate/replicate.service.js");
-const runway = require("../services/runway/gen4video.js");
+const replicate = require("../services/replicate/replicate.service");
+const runway = require("../services/runway/runway.service");
 
-exports.run = async (payload)=>{
+exports.run = async ({engine,alias,type,prompt,files})=>{
 
-   const {engine} = payload;
+   if(engine==="replicate"){
 
-   if(engine === "replicate"){
-      return await replicate.run(payload);
+      return replicate.run({alias,type,prompt,files});
+
    }
 
-   if(engine === "runway"){
-      return await runway.run(payload);
+   if(engine==="runway"){
+
+      return runway.run({alias,type,prompt,files});
+
    }
 
-   throw new Error("ENGINE NOT SUPPORTED");
+   throw new Error("ENGINE NOT FOUND");
 
 };
