@@ -1,189 +1,161 @@
-/* =====================================================
-SN DESIGN ENGINE AI
-CREATE.JS — FINAL ENGINE LOCK
-(UI LOCK SAFE VERSION)
-===================================================== */
-
-document.addEventListener("DOMContentLoaded",()=>{
-
 /* ===============================
-STATE
-=============================== */
+   SN DESIGN ENGINE AI — FINAL JS
+   RUNWAY + REPLICATE COMPAT
+================================ */
 
 let STATE = {
-engine:null,
-model:null,
-mode:null,
-type:null
+  engine: null,
+  model: null,
+  mode: null,
+  type: null
 };
 
+/* ===============================
+   DOM
+================================ */
+
+const $ = (q)=>document.querySelector(q);
+const $$ = (q)=>document.querySelectorAll(q);
+
+const fileA = $("#fileA");
+const fileB = $("#fileB");
+
+const previewRedVideo = $("#preview-red-video");
+const previewRedImage = $("#preview-red-image");
+
+const previewBlueVideo = $("#preview-blue-video");
+const previewBlueImage = $("#preview-blue-image");
+
+const promptInput = $("#prompt");
 
 /* ===============================
-DOM
-=============================== */
+   ENGINE SELECT
+================================ */
 
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
+$$("[data-engine]").forEach(btn=>{
+  btn.onclick=()=>{
 
-const previewRedVideo = document.getElementById("preview-red-video");
-const previewRedImage = document.getElementById("preview-red-image");
+    STATE.engine = btn.dataset.engine;
 
-const previewBlueVideo = document.getElementById("preview-blue-video");
-const previewBlueImage = document.getElementById("preview-blue-image");
+    $$("[data-engine]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
 
-const info = document.getElementById("model-info");
-
-
-/* ===============================
-UPDATE STATUS
-=============================== */
-
-function updateUI(){
-
-if(!info) return;
-
-info.innerText =
-`ENGINE: ${STATE.engine||"-"} | MODEL: ${STATE.model||"-"} | MODE: ${STATE.mode||"-"} | TYPE: ${STATE.type||"-"}`;
-
-}
-
-
-/* ===============================
-ENGINE MODEL SELECT
-=============================== */
-
-document.querySelectorAll(".engine button").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-/* remove previous glow */
-
-document.querySelectorAll(".engine button")
-.forEach(b=>b.classList.remove("active-model"));
-
-/* add FINAL glow class */
-
-btn.classList.add("active-model");
-
-/* detect engine */
-
-const engineBox = btn.closest(".engine");
-
-if(engineBox.classList.contains("red")){
-STATE.engine="replicate";
-}
-
-if(engineBox.classList.contains("blue")){
-STATE.engine="runway";
-}
-
-STATE.model = btn.innerText.trim();
-
-updateUI();
-
+    glowEngine();
+  };
 });
 
+/* ===============================
+   MODEL SELECT
+================================ */
+
+$$("[data-model]").forEach(btn=>{
+  btn.onclick=()=>{
+
+    STATE.model = btn.dataset.model;
+
+    $$("[data-model]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+    glowEngine();
+  };
 });
 
+/* ===============================
+   MODE SELECT
+================================ */
+
+$$("[data-mode]").forEach(btn=>{
+  btn.onclick=()=>{
+
+    STATE.mode = btn.dataset.mode;
+
+    $$("[data-mode]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+  };
+});
 
 /* ===============================
-FILE PREVIEW (FINAL FIX)
-=============================== */
+   ENGINE GLOW
+================================ */
+
+function glowEngine(){
+
+  const red = $(".red-engine");
+  const blue = $(".blue-engine");
+
+  red?.classList.remove("glow");
+  blue?.classList.remove("glow");
+
+  if(STATE.engine==="red") red?.classList.add("glow");
+  if(STATE.engine==="blue") blue?.classList.add("glow");
+}
+
+/* ===============================
+   PREVIEW
+================================ */
 
 function preview(file, videoEl, imageEl){
 
-if(!file) return;
+  if(!file) return;
 
-const url = URL.createObjectURL(file);
+  const url = URL.createObjectURL(file);
 
-/* reset */
+  if(file.type.startsWith("video/")){
+    videoEl.src = url;
+    videoEl.style.display="block";
+    imageEl.style.display="none";
+  }
 
-if(videoEl){
-videoEl.pause?.();
-videoEl.removeAttribute("style"); // FIX inline override
-videoEl.style.display="none";
+  else if(file.type.startsWith("image/")){
+    imageEl.src = url;
+    imageEl.style.display="block";
+    videoEl.style.display="none";
+  }
 }
 
-if(imageEl){
-imageEl.removeAttribute("style");
-imageEl.style.display="none";
-}
+fileA?.addEventListener("change",()=>{
+  preview(fileA.files[0],previewRedVideo,previewRedImage);
+});
 
-/* show */
-
-if(file.type.startsWith("video/") && videoEl){
-
-videoEl.src = url;
-videoEl.load();
-videoEl.style.display="block";
-
-}
-
-if(file.type.startsWith("image/") && imageEl){
-
-imageEl.src = url;
-imageEl.style.display="block";
-
-}
-
-}
-
+fileB?.addEventListener("change",()=>{
+  preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+});
 
 /* ===============================
-FILE LISTENERS
-=============================== */
+   GENERATE
+================================ */
 
-if(fileA){
+async function generate(){
 
-fileA.addEventListener("change",()=>{
+  if(!STATE.engine || !STATE.model){
+    alert("Select Engine + Model");
+    return;
+  }
 
-preview(
-fileA.files[0],
-previewRedVideo,
-previewRedImage
-);
+  const payload = {
+    engine: STATE.engine,
+    model: STATE.model,
+    mode: STATE.mode,
+    prompt: promptInput?.value || ""
+  };
 
-});
+  try{
 
+    const res = await fetch("/api/create",{
+      method:"POST",
+      headers:{ "Content-Type":"application/json"},
+      body:JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+
+    console.log("RESULT",data);
+
+  }catch(e){
+    console.error(e);
+  }
 }
 
-if(fileB){
-
-fileB.addEventListener("change",()=>{
-
-preview(
-fileB.files[0],
-previewBlueVideo,
-previewBlueImage
-);
-
-});
-
-}
-
-
-/* ===============================
-TYPE SELECT
-=============================== */
-
-document.querySelectorAll("[data-type]").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-document.querySelectorAll("[data-type]")
-.forEach(b=>b.classList.remove("active-mode"));
-
-btn.classList.add("active-mode");
-
-STATE.type = btn.dataset.type;
-
-updateUI();
-
-});
-
-});
-
-
-updateUI();
-
+$$("[data-generate]").forEach(btn=>{
+  btn.onclick=generate;
 });
