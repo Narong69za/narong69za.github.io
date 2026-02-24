@@ -33,3 +33,116 @@ outline:2px solid #00ff88;
 box-shadow:0 0 12px #00ff66;
 
 }
+/* =====================================
+ULTRA ENGINE CONTROL VISUAL RESTORE
+===================================== */
+
+body{
+background:linear-gradient(180deg,#050505,#0b0f14);
+font-family:Arial, sans-serif;
+color:#fff;
+}
+
+.title{
+text-align:center;
+letter-spacing:3px;
+margin-top:20px;
+margin-bottom:20px;
+font-weight:600;
+}
+
+.type-selector{
+text-align:center;
+margin-bottom:25px;
+}
+
+.type-selector button{
+background:#111;
+border:1px solid #333;
+color:#aaa;
+padding:10px 16px;
+margin:6px;
+transition:0.3s;
+}
+
+.type-selector button.active{
+color:#fff;
+border-color:#00ff88;
+box-shadow:0 0 14px rgba(0,255,150,0.5);
+}
+
+/* ENGINE PANELS */
+
+.engine-wrap{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:40px;
+padding:20px;
+}
+
+.engine{
+width:340px;
+padding:25px;
+border-radius:18px;
+background:rgba(20,20,20,0.6);
+backdrop-filter:blur(12px);
+transition:0.3s;
+}
+
+.engine.red{
+box-shadow:0 0 30px rgba(255,0,0,0.15);
+}
+
+.engine.blue{
+box-shadow:0 0 30px rgba(0,255,255,0.15);
+}
+
+.engine-active.red{
+box-shadow:0 0 45px rgba(255,0,0,0.5);
+border:1px solid rgba(255,0,0,0.6);
+}
+
+.engine-active.blue{
+box-shadow:0 0 45px rgba(0,255,255,0.5);
+border:1px solid rgba(0,255,255,0.6);
+}
+
+.engine h2{
+text-align:center;
+letter-spacing:2px;
+margin-bottom:20px;
+}
+
+/* MODEL TABS */
+
+.model-tabs button{
+background:#111;
+border:1px solid #333;
+color:#bbb;
+padding:8px 12px;
+transition:0.3s;
+}
+
+.model-tabs button:hover{
+border-color:#00ff88;
+color:#fff;
+}
+
+.model-tabs button.active{
+border-color:#00ff88;
+box-shadow:0 0 14px rgba(0,255,150,0.6);
+color:#fff;
+}
+
+/* MODE BUTTONS */
+
+.mode-container button{
+width:100%;
+margin:8px 0;
+padding:12px;
+background:#111;
+border:1px solid #222;
+color:#aaa;
+transition:0.25s;
+}
