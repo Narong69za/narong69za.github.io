@@ -19,6 +19,8 @@ info.innerText =
 
 }
 
+/* TYPE SELECT */
+
 typeBtns.forEach(btn=>{
 
 btn.onclick = ()=>{
@@ -34,6 +36,8 @@ updatePreview();
 };
 
 });
+
+/* MODE SELECT */
 
 modeBtns.forEach(btn=>{
 
@@ -56,42 +60,37 @@ updatePreview();
 
 });
 
+/* FILE VALIDATION */
+
 async function validateFiles(){
 
 if(!STATE.mode) return false;
 
 if(STATE.mode==="face"){
-
 return fileA.files.length && fileB.files.length;
-
 }
 
 if(STATE.mode==="lipsync" || STATE.mode==="motion"){
-
 return fileA.files.length && fileB.files.length;
-
 }
 
 if(STATE.type==="upscale"){
-
 return fileA.files.length;
-
 }
 
 return true;
 
 }
 
+/* GENERATE */
+
 async function generate(engine){
 
 const ok = await validateFiles();
 
 if(!ok){
-
 alert("FILES MISSING");
-
 return;
-
 }
 
 document.getElementById("status").innerText="STATUS: PROCESSING";
@@ -106,10 +105,8 @@ if(fileA.files[0]) form.append("fileA",fileA.files[0]);
 if(fileB.files[0]) form.append("fileB",fileB.files[0]);
 
 await fetch("/api/render",{
-
 method:"POST",
 body:form
-
 });
 
 document.getElementById("status").innerText="STATUS: COMPLETE";
