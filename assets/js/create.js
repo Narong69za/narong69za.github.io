@@ -1,8 +1,17 @@
+/* ===============================
+ULTRA ENGINE CORE LOCK
+================================ */
+
 let STATE={
-engine:"replicate",
-mode:"generate",
+engine:null,
+model:null,
+mode:null,
 type:"video"
 };
+
+/* ===============================
+ELEMENTS
+================================ */
 
 const fileA=document.getElementById("fileA");
 const fileB=document.getElementById("fileB");
@@ -13,7 +22,81 @@ const previewRedImage=document.getElementById("preview-red-image");
 const previewBlueVideo=document.getElementById("preview-blue-video");
 const previewBlueImage=document.getElementById("preview-blue-image");
 
-function preview(file,videoEl,imageEl){
+const infoBox=document.getElementById("engine-info");
+
+/* ===============================
+MODEL REQUIREMENTS
+================================ */
+
+const MODEL_INFO={
+
+flux2pro:{
+engine:"replicate",
+text:`REPLICATE FLUX2PRO
+Image generation
+Variation / Style / Face swap
+Output: 720p base (Upscale → 1080p)`
+},
+
+gen4video:{
+engine:"runway",
+text:`RUNWAY GEN4 VIDEO
+Motion clone
+Image → Video
+Lipsync / Dance motion
+Max length: 30 sec
+720p base (Upscale → 1080p)`
+}
+
+};
+
+/* ===============================
+ACTIVE SELECT SYSTEM
+================================ */
+
+document.querySelectorAll("[data-model]").forEach(btn=>{
+
+btn.onclick=()=>{
+
+// clear ALL active
+document.querySelectorAll("[data-model]")
+.forEach(b=>b.classList.remove("active-select"));
+
+// apply
+btn.classList.add("active-select");
+
+STATE.model=btn.dataset.model;
+STATE.engine=MODEL_INFO[STATE.model].engine;
+
+// show info
+if(infoBox){
+infoBox.innerText=MODEL_INFO[STATE.model].text;
+}
+
+};
+
+});
+
+document.querySelectorAll("[data-mode]").forEach(btn=>{
+
+btn.onclick=()=>{
+
+document.querySelectorAll("[data-mode]")
+.forEach(b=>b.classList.remove("active-select"));
+
+btn.classList.add("active-select");
+
+STATE.mode=btn.dataset.mode;
+
+};
+
+});
+
+/* ===============================
+PREVIEW SYSTEM (LOCKED)
+================================ */
+
+function preview(file, videoEl, imageEl){
 
 if(!file) return;
 
@@ -25,7 +108,7 @@ videoEl.style.display="block";
 imageEl.style.display="none";
 }
 
-if(file.type.startsWith("image/")){
+else if(file.type.startsWith("image/")){
 imageEl.src=url;
 imageEl.style.display="block";
 videoEl.style.display="none";
@@ -39,34 +122,4 @@ preview(fileA.files[0],previewRedVideo,previewRedImage);
 
 fileB?.addEventListener("change",()=>{
 preview(fileB.files[0],previewBlueVideo,previewBlueImage);
-});
-/* ===============================
-ENGINE ACTIVE SELECT SYSTEM
-================================ */
-
-const allEngineBtns=document.querySelectorAll("[data-engine]");
-
-allEngineBtns.forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-// remove active from siblings inside same engine
-const parentEngine=btn.closest(".engine");
-
-parentEngine
-.querySelectorAll("[data-engine]")
-.forEach(b=>b.classList.remove("active-select"));
-
-// add active
-btn.classList.add("active-select");
-
-// update STATE
-STATE.engine=btn.dataset.engine==="red"
-?"replicate"
-:"runway";
-
-STATE.mode=btn.dataset.mode;
-
-});
-
 });
