@@ -208,3 +208,24 @@ gap:10px;
 flex-wrap:wrap;
 
 }
+/* ===============================
+SAFE ACTIVE STATE (NO LAYOUT CHANGE)
+================================ */
+
+/* model active */
+button.active-model{
+outline:2px solid #00ff88;
+outline-offset:-2px;
+box-shadow:0 0 8px #00ff88;
+}
+
+/* mode active */
+button.active-mode{
+outline:2px solid #00ff88;
+outline-offset:-2px;
+}
+
+/* ensure buttons keep original layout */
+.engine-box button{
+display:inline-block; /* คืนค่า inline */
+}
