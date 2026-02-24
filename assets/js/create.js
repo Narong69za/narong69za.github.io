@@ -1,82 +1,177 @@
-/* ===============================
-STATE SYSTEM
-================================ */
+/* =============================
+ENGINE MODEL DATABASE
+============================= */
+
+const ENGINE_MODELS={
+
+replicate:{
+
+flux2pro:{
+type:"image",
+modes:["generate","variation","style","upscale"]
+},
+
+faceclone:{
+type:"image",
+modes:["faceswap"]
+}
+
+},
+
+runway:{
+
+gen4video:{
+type:"video",
+modes:["motion","image2video","lipsync","dance","generate"]
+}
+
+}
+
+};
+
+
+/* ============================= */
 
 let STATE={
+
 engine:null,
+model:null,
 mode:null,
 type:null
-};
 
-const typeBtns=document.querySelectorAll("[data-type]");
-const modeBtns=document.querySelectorAll("[data-mode]");
-
-const fileA=document.getElementById("fileA");
-const fileB=document.getElementById("fileB");
-
-const info=document.getElementById("model-info");
-const hint=document.getElementById("requirement-hint");
-
-const previewRedVideo=document.getElementById("preview-red-video");
-const previewRedImage=document.getElementById("preview-red-image");
-
-const previewBlueVideo=document.getElementById("preview-blue-video");
-const previewBlueImage=document.getElementById("preview-blue-image");
-
-const progressFill=document.getElementById("progress-fill");
-
-const REQUIRE={
-dark:"Prompt Only",
-lipsync:"Video/Image + Audio",
-motion:"Motion Video + Character",
-face:"Image + Image"
 };
 
 
-/* ===============================
-UI UPDATE
-================================ */
+/* ============================= */
 
-function updateUI(){
+const redTabs=document.getElementById("red-model-tabs");
+const blueTabs=document.getElementById("blue-model-tabs");
 
-info.innerText=
-`ENGINE: ${STATE.engine||"-"} | MODE: ${STATE.mode||"-"} | TYPE: ${STATE.type||"-"}`;
+const redModes=document.getElementById("red-modes");
+const blueModes=document.getElementById("blue-modes");
 
-hint.innerText=REQUIRE[STATE.mode]||"";
+
+/* ============================= */
+
+function buildModelTabs(){
+
+Object.keys(ENGINE_MODELS.replicate).forEach(model=>{
+
+const btn=document.createElement("button");
+
+btn.innerText=model;
+
+btn.onclick=()=>selectModel("replicate",model);
+
+redTabs.appendChild(btn);
+
+});
+
+Object.keys(ENGINE_MODELS.runway).forEach(model=>{
+
+const btn=document.createElement("button");
+
+btn.innerText=model;
+
+btn.onclick=()=>selectModel("runway",model);
+
+blueTabs.appendChild(btn);
+
+});
+
+}
+
+buildModelTabs();
+
+
+/* ============================= */
+
+function selectModel(engine,model){
+
+STATE.engine=engine;
+STATE.model=model;
+
+setEngineActive(engine);
+
+renderModes(engine,model);
+
+updateUI();
 
 }
 
 
-/* ===============================
-ULTRA ACTIVE ENGINE VISUAL
-================================ */
+/* ============================= */
+
+function renderModes(engine,model){
+
+const modes=ENGINE_MODELS[engine][model].modes;
+
+const container=engine==="replicate"?redModes:blueModes;
+
+container.innerHTML="";
+
+modes.forEach(m=>{
+
+const btn=document.createElement("button");
+
+btn.innerText=m.toUpperCase();
+
+btn.onclick=()=>{
+
+STATE.mode=m;
+
+document.querySelectorAll(".mode-container button")
+.forEach(b=>b.classList.remove("active-mode"));
+
+btn.classList.add("active-mode");
+
+updateUI();
+
+};
+
+container.appendChild(btn);
+
+});
+
+}
+
+
+/* ============================= */
 
 function setEngineActive(engine){
 
 document.querySelectorAll(".engine")
 .forEach(e=>e.classList.remove("engine-active"));
 
-if(engine==="replicate"){
-document.querySelector(".engine.red")
-?.classList.add("engine-active");
-}
+if(engine==="replicate")
+document.querySelector(".engine.red").classList.add("engine-active");
 
-if(engine==="runway"){
-document.querySelector(".engine.blue")
-?.classList.add("engine-active");
-}
+if(engine==="runway")
+document.querySelector(".engine.blue").classList.add("engine-active");
 
 }
 
 
-/* ===============================
-TYPE SELECT
-================================ */
+/* ============================= */
 
-typeBtns.forEach(btn=>{
+const info=document.getElementById("model-info");
+
+function updateUI(){
+
+info.innerText=
+`ENGINE: ${STATE.engine||"-"} | MODEL: ${STATE.model||"-"} | MODE: ${STATE.mode||"-"} | TYPE: ${STATE.type||"-"}`;
+
+}
+
+
+/* ============================= */
+
+document.querySelectorAll("[data-type]").forEach(btn=>{
+
 btn.onclick=()=>{
 
-typeBtns.forEach(b=>b.classList.remove("active"));
+document.querySelectorAll("[data-type]")
+.forEach(b=>b.classList.remove("active"));
 
 btn.classList.add("active");
 
@@ -85,36 +180,11 @@ STATE.type=btn.dataset.type;
 updateUI();
 
 };
-});
-
-
-/* ===============================
-MODE SELECT (ENGINE + MODE)
-================================ */
-
-modeBtns.forEach(btn=>{
-
-btn.onclick=()=>{
-
-modeBtns.forEach(b=>b.classList.remove("active-mode"));
-
-btn.classList.add("active-mode");
-
-STATE.engine=btn.dataset.engine==="red"?"replicate":"runway";
-STATE.mode=btn.dataset.mode;
-
-setEngineActive(STATE.engine);
-
-updateUI();
-
-};
 
 });
 
 
-/* ===============================
-PREVIEW SYSTEM
-================================ */
+/* ============================= */
 
 function preview(file,targetVideo,targetImage){
 
@@ -137,20 +207,15 @@ targetImage.style.display="block";
 
 }
 
-fileA.onchange=()=>{
-preview(fileA.files[0],previewRedVideo,previewRedImage);
-};
-
-fileB.onchange=()=>{
-preview(fileB.files[0],previewBlueVideo,previewBlueImage);
-};
+fileA.onchange=()=>preview(fileA.files[0],previewRedVideo,previewRedImage);
+fileB.onchange=()=>preview(fileB.files[0],previewBlueVideo,previewBlueImage);
 
 
-/* ===============================
-GENERATE SIMULATION
-================================ */
+/* ============================= */
 
-async function generate(engine){
+const progressFill=document.getElementById("progress-fill");
+
+async function generate(){
 
 document.getElementById("status").innerText="STATUS: PROCESSING";
 
@@ -174,32 +239,5 @@ document.getElementById("status").innerText="STATUS: COMPLETE";
 
 }
 
-document.getElementById("generate-red").onclick=()=>generate("red");
-document.getElementById("generate-blue").onclick=()=>generate("blue");
-
-
-/* ===============================
-AUTO LOAD FROM TEMPLATE (URL PARAM)
-================================ */
-
-const params=new URLSearchParams(window.location.search);
-
-const autoEngine=params.get("engine");
-const autoMode=params.get("mode");
-const autoType=params.get("type");
-
-if(autoEngine && autoMode){
-
-STATE.engine=autoEngine;
-STATE.mode=autoMode;
-STATE.type=autoType || "video";
-
-document.querySelector(
-`[data-engine="${autoEngine==="replicate"?"red":"blue"}"][data-mode="${autoMode}"]`
-)?.click();
-
-document.querySelector(
-`[data-type="${STATE.type}"]`
-)?.click();
-
-}
+document.getElementById("generate-red").onclick=generate;
+document.getElementById("generate-blue").onclick=generate;
