@@ -1,135 +1,35 @@
-body{
-background:#000;
-color:#fff;
-font-family:Arial;
-text-align:center;
-margin:0;
-padding:20px;
-font-size:18px;
-}
+.model-tabs{
 
-.title{
-font-size:28px;
-letter-spacing:2px;
-margin-bottom:20px;
-text-shadow:0 0 12px rgba(255,255,255,0.3);
-}
-
-.engine-wrap{
 display:flex;
-flex-wrap:wrap;
-justify-content:center;
-gap:30px;
+gap:10px;
+margin-bottom:12px;
+
 }
 
-.engine{
-width:320px;
-padding:22px;
-border-radius:14px;
-background:linear-gradient(180deg,#111,#000);
-box-shadow:0 0 30px rgba(0,0,0,0.9);
-}
+.model-tabs button{
 
-.engine.red{
-box-shadow:0 0 30px rgba(255,0,0,0.6);
-}
-
-.engine.blue{
-box-shadow:0 0 30px rgba(0,255,255,0.6);
-}
-
-.engine button{
-width:100%;
-margin:8px 0;
-padding:14px;
 background:#111;
 border:1px solid #333;
 color:#fff;
+padding:8px 12px;
+cursor:pointer;
+
 }
 
-.model-preview{
-max-width:720px;
-margin:auto;
-margin-top:30px;
-padding:20px;
-border-radius:14px;
-background:rgba(255,255,255,0.04);
-}
+.model-tabs button.active{
 
-.preview-box{
-margin-top:30px;
-}
+box-shadow:0 0 14px #00ff88;
 
-.preview-dual{
-display:flex;
-gap:20px;
-justify-content:center;
-flex-wrap:wrap;
 }
-
-.preview-dual video,
-.preview-dual img{
-max-width:320px;
-width:100%;
-display:none;
-border-radius:12px;
-box-shadow:0 10px 40px rgba(0,0,0,0.9);
-}
-
-.process-station{
-margin-top:40px;
-}
-
-.progress-bar{
-width:100%;
-max-width:600px;
-height:6px;
-background:#111;
-margin:auto;
-border-radius:6px;
-overflow:hidden;
-}
-
-#progress-fill{
-height:100%;
-width:0%;
-background:#00ffcc;
-transition:0.3s;
-}
-/* ===============================
-ENGINE ACTIVE FULL CARD GLOW
-================================ */
 
 .engine-active{
 
-box-shadow:
-0 0 60px rgba(0,255,120,0.6),
-0 0 120px rgba(0,255,120,0.2);
-
-transition:0.3s;
+outline:2px solid #00ff88;
 
 }
 
-/* ===============================
-TYPE ACTIVE EMPHASIS
-================================ */
+.mode-container button.active-mode{
 
-.type-selector button{
-opacity:0.6;
-}
-
-.type-selector button.active{
-opacity:1;
-}
-
-/* ===============================
-ENGINE BUTTON VISUAL STRONGER
-================================ */
-
-.engine button.active-mode{
-
-box-shadow:
-0 0 20px rgba(0,255,120,0.8),
-inset 0 0 12px rgba(255,255,255,0.2);
+box-shadow:0 0 12px #00ff66;
 
 }
