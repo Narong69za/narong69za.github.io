@@ -251,3 +251,104 @@ costPreview.innerText =
 video.src = URL.createObjectURL(file);
 
   }
+
+/* ==================================================
+ULTRA FIX — DUAL PREVIEW ENGINE (ADD ONLY)
+================================================== */
+
+(function(){
+
+/* หา container เดิม (ไม่แตะ UI layout) */
+
+const previewContainer = document.querySelector(".model-preview");
+
+if(!previewContainer) return;
+
+/* สร้าง slot preview แยก (dynamic add only) */
+
+const slotWrap = document.createElement("div");
+slotWrap.style.display = "flex";
+slotWrap.style.gap = "10px";
+slotWrap.style.marginTop = "10px";
+slotWrap.style.justifyContent = "center";
+slotWrap.style.flexWrap = "wrap";
+
+/* SLOT A (LEFT) */
+
+const slotA = document.createElement("div");
+slotA.style.maxWidth = "48%";
+
+const videoA = document.createElement("video");
+videoA.controls = true;
+videoA.style.width = "100%";
+videoA.style.display = "none";
+
+const imageA = document.createElement("img");
+imageA.style.width = "100%";
+imageA.style.display = "none";
+
+slotA.appendChild(videoA);
+slotA.appendChild(imageA);
+
+/* SLOT B (RIGHT) */
+
+const slotB = document.createElement("div");
+slotB.style.maxWidth = "48%";
+
+const videoB = document.createElement("video");
+videoB.controls = true;
+videoB.style.width = "100%";
+videoB.style.display = "none";
+
+const imageB = document.createElement("img");
+imageB.style.width = "100%";
+imageB.style.display = "none";
+
+slotB.appendChild(videoB);
+slotB.appendChild(imageB);
+
+/* inject */
+
+slotWrap.appendChild(slotA);
+slotWrap.appendChild(slotB);
+
+previewContainer.appendChild(slotWrap);
+
+/* preview handler */
+
+function previewSlot(file, videoEl, imageEl){
+
+videoEl.style.display="none";
+imageEl.style.display="none";
+
+if(!file) return;
+
+const url = URL.createObjectURL(file);
+
+if(file.type.startsWith("video")){
+videoEl.src = url;
+videoEl.style.display="block";
+}
+
+if(file.type.startsWith("image")){
+imageEl.src = url;
+imageEl.style.display="block";
+}
+
+}
+
+/* bind file input */
+
+if(fileA){
+fileA.addEventListener("change", ()=>{
+previewSlot(fileA.files[0], videoA, imageA);
+});
+}
+
+if(fileB){
+fileB.addEventListener("change", ()=>{
+previewSlot(fileB.files[0], videoB, imageB);
+});
+}
+
+})();
