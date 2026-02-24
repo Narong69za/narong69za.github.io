@@ -1,32 +1,36 @@
-/*
-================================================
- ULTRA SERVICE CORE LOADER
- ROOT STRUCTURE VERSION
-================================================
-*/
+const express = require("express");
+const cors = require("cors");
+const multer = require("multer");
 
-const path = require("path");
+const { create } = require("../controllers/create.controller.js");
 
-/* ===============================
-   LOAD CORE SERVICES
-================================ */
+const app = express();
 
-const modelRouter = require("../models/model.router");
-const replicateService = require("./replicate/replicate.service");
-const runwayService = require("./runway/runway.service");
+app.use(cors());
+app.use(express.json());
 
-/* ===============================
-   LOAD QUEUE + WORKER
-================================ */
+const upload = multer({
+   storage: multer.memoryStorage()
+});
 
-require("./job.worker");
+app.post("/api/render", upload.any(), create);
 
-/* ===============================
-   EXPORTS (FOR CONTROLLER)
-================================ */
+app.get("/api/status/server",(req,res)=>{
+   res.json({ server:"online" });
+});
 
-module.exports = {
-   modelRouter,
-   replicateService,
-   runwayService
-};
+app.get("/api/status/ai",(req,res)=>{
+   res.json({ ai:true });
+});
+
+app.get("/api/status/network",(req,res)=>{
+   res.json({
+      traffic: Math.floor(Math.random()*100)+1
+   });
+});
+
+const PORT = process.env.PORT || 4000;
+
+app.listen(PORT,()=>{
+   console.log("ULTRA ENGINE RUNNING:",PORT);
+});
