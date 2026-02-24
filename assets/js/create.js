@@ -1,223 +1,179 @@
-/* =============================
-ENGINE MODEL DATABASE
-============================= */
-
-const ENGINE_MODELS={
-
-replicate:{
-
-flux2pro:{
-type:"image",
-modes:["generate","variation","style","upscale"]
-},
-
-faceclone:{
-type:"image",
-modes:["faceswap"]
-}
-
-},
-
-runway:{
-
-gen4video:{
-type:"video",
-modes:["motion","image2video","lipsync","dance","generate"]
-}
-
-}
-
-};
-
-
-/* ============================= */
+/* =================================
+STATE SYSTEM
+================================= */
 
 let STATE={
-
 engine:null,
-model:null,
 mode:null,
 type:null
-
 };
 
+/* =================================
+ELEMENTS
+================================= */
 
-/* ============================= */
+const fileA=document.getElementById("fileA");
+const fileB=document.getElementById("fileB");
 
-const redTabs=document.getElementById("red-model-tabs");
-const blueTabs=document.getElementById("blue-model-tabs");
+const previewRedVideo=document.getElementById("preview-red-video");
+const previewRedImage=document.getElementById("preview-red-image");
 
-const redModes=document.getElementById("red-modes");
-const blueModes=document.getElementById("blue-modes");
+const previewBlueVideo=document.getElementById("preview-blue-video");
+const previewBlueImage=document.getElementById("preview-blue-image");
 
+const progressFill=document.getElementById("progress-fill");
 
-/* ============================= */
+const statusEl=document.getElementById("status");
+const infoEl=document.getElementById("model-info");
 
-function buildModelTabs(){
+/* =================================
+PREVIEW SYSTEM
+================================= */
 
-Object.keys(ENGINE_MODELS.replicate).forEach(model=>{
+function preview(file, videoEl, imageEl){
 
-const btn=document.createElement("button");
+if(!file) return;
 
-btn.innerText=model;
+const url = URL.createObjectURL(file);
 
-btn.onclick=()=>selectModel("replicate",model);
+videoEl.style.display="none";
+imageEl.style.display="none";
 
-redTabs.appendChild(btn);
+if(file.type.startsWith("video/")){
+videoEl.src=url;
+videoEl.style.display="block";
+}
 
-});
-
-Object.keys(ENGINE_MODELS.runway).forEach(model=>{
-
-const btn=document.createElement("button");
-
-btn.innerText=model;
-
-btn.onclick=()=>selectModel("runway",model);
-
-blueTabs.appendChild(btn);
-
-});
+if(file.type.startsWith("image/")){
+imageEl.src=url;
+imageEl.style.display="block";
+}
 
 }
 
-buildModelTabs();
+/* RED FILE */
 
-
-/* ============================= */
-
-function selectModel(engine,model){
-
-STATE.engine=engine;
-STATE.model=model;
-
-setEngineActive(engine);
-
-renderModes(engine,model);
-
-updateUI();
-
-}
-
-
-/* ============================= */
-
-function renderModes(engine,model){
-
-const modes=ENGINE_MODELS[engine][model].modes;
-
-const container=engine==="replicate"?redModes:blueModes;
-
-container.innerHTML="";
-
-modes.forEach(m=>{
-
-const btn=document.createElement("button");
-
-btn.innerText=m.toUpperCase();
-
-btn.onclick=()=>{
-
-STATE.mode=m;
-
-document.querySelectorAll(".mode-container button")
-.forEach(b=>b.classList.remove("active-mode"));
-
-btn.classList.add("active-mode");
-
-updateUI();
-
-};
-
-container.appendChild(btn);
-
+fileA?.addEventListener("change",()=>{
+preview(fileA.files[0],previewRedVideo,previewRedImage);
 });
 
-}
+/* BLUE FILE */
 
+fileB?.addEventListener("change",()=>{
+preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+});
 
-/* ============================= */
+/* =================================
+ENGINE ACTIVE GLOW
+================================= */
 
 function setEngineActive(engine){
 
 document.querySelectorAll(".engine")
 .forEach(e=>e.classList.remove("engine-active"));
 
-if(engine==="replicate")
-document.querySelector(".engine.red").classList.add("engine-active");
+if(engine==="replicate"){
+document.querySelector(".engine.red")
+?.classList.add("engine-active");
+}
 
-if(engine==="runway")
-document.querySelector(".engine.blue").classList.add("engine-active");
+if(engine==="runway"){
+document.querySelector(".engine.blue")
+?.classList.add("engine-active");
+}
 
 }
 
+/* =================================
+MODE SELECT
+================================= */
 
-/* ============================= */
+document.querySelectorAll("[data-mode]").forEach(btn=>{
 
-const info=document.getElementById("model-info");
+btn.addEventListener("click",()=>{
 
-function updateUI(){
+document.querySelectorAll("[data-mode]")
+.forEach(b=>b.classList.remove("active-mode"));
 
-info.innerText=
-`ENGINE: ${STATE.engine||"-"} | MODEL: ${STATE.model||"-"} | MODE: ${STATE.mode||"-"} | TYPE: ${STATE.type||"-"}`;
+btn.classList.add("active-mode");
 
-}
+STATE.engine = btn.dataset.engine==="red" ? "replicate" : "runway";
+STATE.mode = btn.dataset.mode;
 
+setEngineActive(STATE.engine);
 
-/* ============================= */
+updateUI();
+
+});
+
+});
+
+/* =================================
+TYPE SELECT
+================================= */
 
 document.querySelectorAll("[data-type]").forEach(btn=>{
 
-btn.onclick=()=>{
+btn.addEventListener("click",()=>{
 
 document.querySelectorAll("[data-type]")
 .forEach(b=>b.classList.remove("active"));
 
 btn.classList.add("active");
 
-STATE.type=btn.dataset.type;
+STATE.type = btn.dataset.type;
 
 updateUI();
 
-};
+});
 
 });
 
+/* =================================
+UI INFO UPDATE
+================================= */
 
-/* ============================= */
+function updateUI(){
 
-function preview(file,targetVideo,targetImage){
+if(!infoEl) return;
 
-targetVideo.style.display="none";
-targetImage.style.display="none";
-
-if(!file)return;
-
-const url=URL.createObjectURL(file);
-
-if(file.type.startsWith("video")){
-targetVideo.src=url;
-targetVideo.style.display="block";
-}
-
-if(file.type.startsWith("image")){
-targetImage.src=url;
-targetImage.style.display="block";
-}
+infoEl.innerText =
+`ENGINE: ${STATE.engine || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
 
 }
 
-fileA.onchange=()=>preview(fileA.files[0],previewRedVideo,previewRedImage);
-fileB.onchange=()=>preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+/* =================================
+AUTO LOAD FROM TEMPLATE (URL PARAM)
+================================= */
 
+const params=new URLSearchParams(window.location.search);
 
-/* ============================= */
+const autoEngine=params.get("engine");
+const autoMode=params.get("mode");
+const autoType=params.get("type");
 
-const progressFill=document.getElementById("progress-fill");
+if(autoEngine && autoMode){
 
-async function generate(){
+STATE.engine=autoEngine;
+STATE.mode=autoMode;
+STATE.type=autoType || "video";
 
-document.getElementById("status").innerText="STATUS: PROCESSING";
+document.querySelector(
+`[data-engine="${autoEngine==="replicate"?"red":"blue"}"][data-mode="${autoMode}"]`
+)?.click();
+
+document.querySelector(`[data-type="${STATE.type}"]`)
+?.click();
+
+}
+
+/* =================================
+GENERATE MOCK PROCESS
+================================= */
+
+function generate(engine){
+
+if(statusEl) statusEl.innerText="STATUS: PROCESSING";
 
 let p=0;
 
@@ -225,13 +181,15 @@ const timer=setInterval(()=>{
 
 p+=10;
 
+if(progressFill)
 progressFill.style.width=p+"%";
 
 if(p>=100){
 
 clearInterval(timer);
 
-document.getElementById("status").innerText="STATUS: COMPLETE";
+if(statusEl)
+statusEl.innerText="STATUS: COMPLETE";
 
 }
 
@@ -239,25 +197,8 @@ document.getElementById("status").innerText="STATUS: COMPLETE";
 
 }
 
-document.getElementById("generate-red").onclick=generate;
-document.getElementById("generate-blue").onclick=generate;
+document.getElementById("generate-red")
+?.addEventListener("click",()=>generate("red"));
 
-/* =================================
-AUTO DEFAULT MODEL SELECT
-================================= */
-
-window.addEventListener("DOMContentLoaded",()=>{
-
-if(!STATE.engine){
-
-// auto select red default
-const redDefault=document.querySelector('[data-engine="red"]');
-redDefault?.click();
-
-}
-
-// ไม่ให้ blue collapse
-document.querySelector(".engine.blue")
-?.classList.add("engine-active");
-
-});
+document.getElementById("generate-blue")
+?.addEventListener("click",()=>generate("blue"));
