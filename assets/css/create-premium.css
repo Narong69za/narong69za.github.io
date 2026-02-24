@@ -130,3 +130,120 @@ border-radius:10px;
 margin-top:30px;
 letter-spacing:3px;
 }
+/* =========================================
+ULTRA VISUAL BALANCE FIX v1
+ADD ONLY — DO NOT MODIFY EXISTING CSS
+========================================= */
+
+/* ===== GLOBAL TYPE SCALE ===== */
+
+.title{
+font-size: clamp(18px, 3.5vw, 26px);
+letter-spacing: 2px;
+margin-bottom: 20px;
+}
+
+.type-selector button{
+font-size:14px;
+padding:10px 16px;
+}
+
+/* ===== PROMPT INPUT ===== */
+
+#prompt{
+font-size:15px;
+padding:14px;
+margin-bottom:20px;
+}
+
+/* ===== ENGINE PANEL TYPOGRAPHY ===== */
+
+.engine h2{
+font-size:18px;
+letter-spacing:1px;
+margin-bottom:12px;
+}
+
+.engine button{
+font-size:14px;
+padding:12px;
+}
+
+/* ===== ENGINE WRAP BALANCE ===== */
+
+.engine-wrap{
+gap:24px;
+margin-bottom:30px;
+}
+
+/* ===== CTA UPLOAD BOX (LOCKED STYLE) ===== */
+
+.model-preview{
+padding:18px;
+border-radius:14px;
+max-width:720px;
+margin:auto;
+margin-top:20px;
+}
+
+/* ===== FILE INPUT VISUAL ===== */
+
+.model-preview input[type=file]{
+font-size:13px;
+margin:6px 0;
+}
+
+/* ===== META INFO SCALE ===== */
+
+#model-info{
+font-size:13px;
+opacity:0.85;
+margin-top:10px;
+}
+
+/* ===== COST DISPLAY ===== */
+
+#cost-preview{
+font-size:14px;
+margin-top:8px;
+color:#00ffb3;
+letter-spacing:0.5px;
+}
+
+/* ===== PREVIEW MEDIA BALANCE ===== */
+
+.model-preview video,
+.model-preview img{
+max-width:100%;
+border-radius:12px;
+margin-top:14px;
+}
+
+/* ===== STATUS TEXT ===== */
+
+#status{
+font-size:13px;
+letter-spacing:1px;
+margin-top:18px;
+opacity:0.9;
+}
+
+/* ===== MOBILE VISUAL LOCK (720p BASELINE) ===== */
+
+@media(max-width:720px){
+
+.engine-wrap{
+flex-direction:column;
+align-items:center;
+}
+
+.engine{
+width:92%;
+max-width:420px;
+}
+
+}
+
+/* =========================================
+END ULTRA VISUAL BALANCE FIX
+========================================= */
