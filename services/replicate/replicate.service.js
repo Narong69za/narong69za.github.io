@@ -1,61 +1,30 @@
-// src/services/replicate.service.js
-
 const fetch = require("node-fetch");
-const db = require("../db/db");
+const db = require("../../db/db.js");
 
-const REPLICATE_API = process.env.REPLICATE_API_TOKEN;
+const REPLICATE_API_TOKEN = process.env.REPLICATE_API_TOKEN;
+const REPLICATE_URL = "https://api.replicate.com/v1/predictions";
 
-const MODEL_MAP = {
-
-   "face-swap": "PUT_MODEL_VERSION_ID",
-   "ai-lipsync": "PUT_MODEL_VERSION_ID",
-   "dance-motion": "PUT_MODEL_VERSION_ID",
-   "dark-viral": "PUT_MODEL_VERSION_ID"
-
-};
-
-exports.run = async ({alias,prompt,jobID})=>{
-
-   if(!MODEL_MAP[alias]){
-      throw new Error("REPLICATE MODEL NOT FOUND");
-   }
+exports.run = async ({alias,type,prompt,files,jobID}) => {
 
    console.log("REPLICATE EXEC:",alias);
 
-   const res = await fetch("https://api.replicate.com/v1/predictions",{
-
+   const response = await fetch(REPLICATE_URL,{
       method:"POST",
-
       headers:{
-         "Authorization":`Bearer ${REPLICATE_API}`,
+         "Authorization":`Token ${REPLICATE_API_TOKEN}`,
          "Content-Type":"application/json"
       },
-
       body:JSON.stringify({
-
-         version: MODEL_MAP[alias],
-
+         version: alias,
          input:{
-            prompt: prompt || ""
+            prompt:prompt || ""
          }
-
       })
-
    });
 
-   const text = await res.text();
-
-   let result;
-
-   try{
-      result = JSON.parse(text);
-   }catch{
-      console.log(text);
-      throw new Error("REPLICATE INVALID JSON");
-   }
+   const result = await response.json();
 
    if(!result.id){
-      console.log(result);
       throw new Error("REPLICATE START FAILED");
    }
 
@@ -65,5 +34,4 @@ exports.run = async ({alias,prompt,jobID})=>{
    );
 
    return result;
-
 };
