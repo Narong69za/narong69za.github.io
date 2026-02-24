@@ -1,5 +1,5 @@
 let STATE = {
-engine:null,
+enginel,
 mode:null,
 type:null
 };
@@ -151,6 +151,68 @@ box-sizing:border-box;
 }
 
 /* กัน body ล้น */
+body{
+overflow-x:hiddhidden/* =========================
+ULTRA ENGINE MATRIX RESTORE
+========================= */
+
+/* wrapper หลัก 2 engine */
+.engine-wrap{
+display:flex;
+justify-content:center;
+align-items:stretch;
+gap:40px;
+
+width:100%;
+max-width:1200px;
+margin:40px auto;
+
+flex-wrap:nowrap; /* ห้ามยุบ */
+}
+
+/* card engine */
+.engine{
+flex:1;
+min-width:0; /* กัน overflow flex bug */
+max-width:540px;
+width:100%;
+}
+
+/* mobile stack */
+@media(max-width:900px){
+
+.engine-wrap{
+flex-direction:column;
+align-items:center;
+}
+
+.engine{
+max-width:600px;
+}
+
+}
+
+/* TYPE SELECTOR CENTER LOCK */
+.type-selector{
+display:flex;
+justify-content:center;
+gap:12px;
+flex-wrap:nowrap;
+}
+
+/* INPUT FULL WIDTH */
+.prompt-input{
+width:100%;
+max-width:900px;
+margin:0 auto;
+display:block;
+}
+
+/* ป้องกัน layout collapse */
+*{
+box-sizing:border-box;
+}
+
 body{
 overflow-x:hidden;
 }
