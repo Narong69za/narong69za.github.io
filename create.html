@@ -2,138 +2,148 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>ULTRA ENGINE CONTROL</title>
 <link rel="stylesheet" href="/assets/css/create-premium.css">
 </head>
+
 <body>
 
 <div class="container">
 
-    <h1 class="title">ULTRA ENGINE CONTROL</h1>
+<h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-    <!-- PROMPT -->
-    <div class="prompt-zone">
-        <input type="text" id="prompt" placeholder="Enter prompt">
-    </div>
+<!-- PROMPT -->
+<input class="prompt" placeholder="Enter prompt">
 
-    <!-- GLOBAL TYPE SELECT -->
-    <div class="type-zone">
-        <button class="type-btn active" data-type="video">Generate Video</button>
-        <button class="type-btn" data-type="image">Generate Image</button>
-        <button class="type-btn" data-type="upscale">Upscale</button>
-    </div>
+<!-- TYPE SELECT (CENTER LOCK) -->
+<div class="type-wrapper">
 
-    <!-- ENGINE SECTION -->
-    <div class="engine-wrapper">
+<button class="type-btn active" data-type="video">Generate Video</button>
+<button class="type-btn" data-type="image">Generate Image</button>
+<button class="type-btn" data-type="upscale">Upscale</button>
 
-        <!-- RED ENGINE -->
-        <div class="engine-panel red" data-engine="red">
-            <h2>RED ENGINE</h2>
+</div>
 
-            <button class="model-btn" data-model="viral">Dark Viral</button>
-            <button class="model-btn" data-model="lipsync">AI LipSync</button>
-            <button class="model-btn" data-model="motion">Dance Motion</button>
-            <button class="model-btn" data-model="face">Face Swap</button>
+<!-- ENGINE -->
+<div class="engine-zone">
 
-            <button class="generate-btn">GENERATE RED</button>
-        </div>
+<div class="engine red" data-engine="replicate">
 
-        <!-- BLUE ENGINE -->
-        <div class="engine-panel blue" data-engine="blue">
-            <h2>BLUE ENGINE</h2>
+<h2>RED ENGINE</h2>
 
-            <button class="model-btn" data-model="viral">Dark Viral</button>
-            <button class="model-btn" data-model="lipsync">AI LipSync</button>
-            <button class="model-btn" data-model="motion">Dance Motion</button>
-            <button class="model-btn" data-model="face">Face Swap</button>
+<button class="model" data-mode="viral">Dark Viral</button>
+<button class="model" data-mode="lipsync">AI LipSync</button>
+<button class="model" data-mode="motion">Dance Motion</button>
+<button class="model" data-mode="face">Face Swap</button>
 
-            <button class="generate-btn">GENERATE BLUE</button>
-        </div>
+<button class="generate">GENERATE RED</button>
 
-    </div>
+</div>
 
-    <!-- FILE UPLOAD -->
-    <div class="preview-box">
-        <h3>MODEL PREVIEW</h3>
-        <input type="file" id="fileInput">
-        <div id="engineInfo">ENGINE: - | MODE: - | TYPE: -</div>
-    </div>
+<div class="engine blue" data-engine="runway">
 
-    <!-- STATUS -->
-    <div class="status-box">
-        STATUS: <span id="status">IDLE</span>
-    </div>
+<h2>BLUE ENGINE</h2>
+
+<button class="model" data-mode="viral">Dark Viral</button>
+<button class="model" data-mode="lipsync">AI LipSync</button>
+<button class="model" data-mode="motion">Dance Motion</button>
+<button class="model" data-mode="face">Face Swap</button>
+
+<button class="generate">GENERATE BLUE</button>
+
+</div>
+
+</div>
+
+<!-- CTA FILE BOX (Adverra style) -->
+<div class="cta-box">
+
+<h3>MODEL PREVIEW</h3>
+
+<input type="file">
+
+<div id="info">
+ENGINE: - | MODE: - | TYPE: -
+</div>
+
+</div>
+
+<div class="status">
+STATUS: <span id="status">IDLE</span>
+</div>
 
 </div>
 
 <script>
-const state = {
-    engine: null,
-    provider: null,
-    model: null,
-    type: "video"
+
+const state={
+engine:null,
+mode:null,
+type:"video"
 };
 
-const typeBtns = document.querySelectorAll(".type-btn");
-const enginePanels = document.querySelectorAll(".engine-panel");
-const statusEl = document.getElementById("status");
-const engineInfo = document.getElementById("engineInfo");
+const info=document.getElementById("info");
+const status=document.getElementById("status");
 
-/* TYPE SELECT */
-typeBtns.forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        typeBtns.forEach(b=>b.classList.remove("active"));
-        btn.classList.add("active");
-        state.type = btn.dataset.type;
-        updateInfo();
-    });
+/* TYPE */
+document.querySelectorAll(".type-btn").forEach(btn=>{
+btn.onclick=()=>{
+document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+btn.classList.add("active");
+state.type=btn.dataset.type;
+update();
+};
 });
 
-/* ENGINE + MODEL SELECT */
-enginePanels.forEach(panel=>{
-    panel.addEventListener("click",(e)=>{
-        if(e.target.classList.contains("model-btn")){
+/* ENGINE MODEL */
+document.querySelectorAll(".engine").forEach(engine=>{
 
-            document.querySelectorAll(".engine-panel").forEach(p=>{
-                p.classList.remove("selected");
-                p.querySelectorAll(".model-btn").forEach(m=>m.classList.remove("active"));
-            });
+engine.onclick=(e)=>{
 
-            panel.classList.add("selected");
-            e.target.classList.add("active");
+if(!e.target.classList.contains("model")) return;
 
-            state.engine = panel.dataset.engine;
-            state.provider = state.engine === "red" ? "replicate" : "runway";
-            state.model = e.target.dataset.model;
+document.querySelectorAll(".model").forEach(m=>m.classList.remove("active"));
+document.querySelectorAll(".engine").forEach(en=>en.classList.remove("selected"));
 
-            updateInfo();
-        }
-    });
+engine.classList.add("selected");
+e.target.classList.add("active");
+
+state.engine=engine.dataset.engine;
+state.mode=e.target.dataset.mode;
+
+update();
+};
+
 });
 
 /* GENERATE */
-document.querySelectorAll(".generate-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        if(!state.engine || !state.model){
-            alert("Select engine and model first");
-            return;
-        }
+document.querySelectorAll(".generate").forEach(btn=>{
+btn.onclick=()=>{
+if(!state.engine||!state.mode){
+alert("Select engine + model");
+return;
+}
+status.innerText="PROCESSING";
 
-        statusEl.textContent = "PROCESSING";
+setTimeout(()=>{
 
-        setTimeout(()=>{
-            statusEl.textContent = "COMPLETE";
-        },2000);
-    });
+status.innerText="COMPLETE";
+
+},2000);
+
+};
 });
 
-function updateInfo(){
-    engineInfo.textContent =
-        "ENGINE: " + (state.provider || "-") +
-        " | MODE: " + (state.model || "-") +
-        " | TYPE: " + state.type;
+function update(){
+
+info.innerText=
+"ENGINE: "+(state.engine||"-")+
+" | MODE: "+(state.mode||"-")+
+" | TYPE: "+state.type;
+
 }
+
 </script>
 
 </body>
