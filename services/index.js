@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 
-const { create } = require("../controllers/create.controller.js");
+const { create } = require("../controllers/create.controller");
 
 const app = express();
 
