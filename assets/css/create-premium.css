@@ -826,3 +826,118 @@ background:linear-gradient(90deg,transparent,#00ffcc,transparent);
 transform:translateX(-50%);
 
 opacity:0.6;
+/* =========================================
+ULTRA HOLOGRAM UI — FINAL READABILITY FIX
+ADD ONLY — NO LAYOUT CHANGE
+========================================= */
+
+
+/* =========================
+GLOBAL TEXT SCALE BALANCE
+========================= */
+
+body{
+font-size:17px;
+line-height:1.6;
+}
+
+
+/* =========================
+TITLE CLARITY BOOST
+========================= */
+
+.title{
+font-size:clamp(24px,4.5vw,34px);
+letter-spacing:2px;
+font-weight:600;
+}
+
+
+/* =========================
+ENGINE TITLE SCALE
+========================= */
+
+.engine h2{
+font-size:22px;
+font-weight:600;
+letter-spacing:1px;
+}
+
+
+/* =========================
+BUTTON READABILITY BOOST
+========================= */
+
+.engine button,
+.type-selector button{
+
+font-size:16px;
+font-weight:500;
+
+}
+
+
+/* =========================
+PROMPT INPUT READABILITY
+========================= */
+
+#prompt{
+
+font-size:16px;
+padding:16px;
+
+}
+
+
+/* =========================
+META INFO VISIBILITY
+========================= */
+
+#model-info,
+#requirement-hint{
+
+font-size:15px;
+font-weight:500;
+opacity:0.95;
+
+}
+
+
+/* =========================
+COST TEXT EMPHASIS
+========================= */
+
+#cost-preview{
+
+font-size:16px;
+font-weight:700;
+
+}
+
+
+/* =========================
+STATUS TEXT CLARITY
+========================= */
+
+#status{
+
+font-size:15px;
+letter-spacing:1px;
+font-weight:500;
+
+}
+
+
+/* =========================
+TEXT GLOW SOFT CONTRAST
+========================= */
+
+.engine,
+.model-preview{
+
+color:#ffffff;
+
+text-shadow:
+0 0 4px rgba(255,255,255,0.2);
+
+}
