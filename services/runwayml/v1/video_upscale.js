@@ -2,45 +2,34 @@
 
 const fetch = require("node-fetch");
 
-const RUNWAY_API = "https://api.dev.runwayml.com/v1/video_upscale";
+const ENDPOINT = "https://api.dev.runwayml.com/v1/video_upscale";
 
-async function run(payload){
+async function createVideoUpscale(options = {}) {
 
-    const res = await fetch(RUNWAY_API, {
+  const res = await fetch(ENDPOINT, {
 
-        method: "POST",
+    method: "POST",
 
-        headers: {
-            "Authorization": `Bearer ${process.env.RUNWAY_API_KEY}`,
-            "Content-Type": "application/json",
-            "X-Runway-Version": "2024-11-06"
-        },
+    headers: {
+      Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+      "Content-Type": "application/json",
+      "X-Runway-Version": "2024-11-06"
+    },
 
-        body: JSON.stringify({
+    body: JSON.stringify({
+      model: "upscale_v1",
+      videoUri: options.videoUri
+    })
 
-            model: "upscale_v1",
+  });
 
-            videoUri: payload.videoUri
+  const text = await res.text();
 
-        })
+  if (!res.ok) {
+    throw new Error(text);
+  }
 
-    });
-
-    const text = await res.text();
-
-    let data;
-    try {
-        data = JSON.parse(text);
-    } catch(e){
-        throw new Error("RUNWAY RESPONSE INVALID: "+text);
-    }
-
-    if(!res.ok){
-        throw new Error("RUNWAY ERROR: "+text);
-    }
-
-    return data;
-
+  return JSON.parse(text);
 }
 
-module.exports = { run };
+module.exports = { createVideoUpscale };
