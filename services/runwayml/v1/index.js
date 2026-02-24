@@ -5,20 +5,21 @@ const videoUpscale = require("./video_upscale");
 
 async function run({ mode, payload }) {
 
-    switch(mode){
+  switch (mode) {
 
-        case "image2video":
-        case "motion":
-        case "dance":
-        case "lipsync":
-            return await imageToVideo.run(payload);
+    case "image2video":
+    case "motion":
+    case "dance":
+    case "lipsync":
+      return await imageToVideo.createImageToVideo(payload);
 
-        case "upscale":
-            return await videoUpscale.run(payload);
+    case "upscale":
+      return await videoUpscale.createVideoUpscale(payload);
 
-        default:
-            throw new Error("RUNWAY MODE NOT FOUND");
-    }
+    default:
+      throw new Error("RUNWAY MODE INVALID");
+
+  }
 
 }
 
