@@ -1,11 +1,6 @@
-/* ==========================================
-SN DESIGN ENGINE AI
-CREATE.JS — LOCK SAFE FINAL
-========================================== */
-
 /* ===============================
-GLOBAL STATE
-================================ */
+ENGINE CORE STATE
+=============================== */
 
 let STATE={
 engine:null,
@@ -15,178 +10,77 @@ type:null
 };
 
 /* ===============================
-ELEMENT SELECTORS
-================================ */
+ENGINE LOCK SYSTEM
+=============================== */
 
-const modelBtns=document.querySelectorAll("[data-model]");
-const modeBtns=document.querySelectorAll("[data-mode]");
+function selectEngine(engine){
 
-const fileA=document.getElementById("fileA");
-const fileB=document.getElementById("fileB");
+// block ถ้า engine เดิม
+if(STATE.engine===engine) return;
 
-const previewRedVideo=document.getElementById("preview-red-video");
-const previewRedImage=document.getElementById("preview-red-image");
+STATE.engine=engine;
+STATE.model=null;
+STATE.mode=null;
 
-const previewBlueVideo=document.getElementById("preview-blue-video");
-const previewBlueImage=document.getElementById("preview-blue-image");
+// remove active ทั้งหมด
+document.querySelectorAll(".engine-active")
+.forEach(el=>el.classList.remove("engine-active"));
 
-const engineInfo=document.getElementById("engine-info");
+/* activate engine เดียว */
+if(engine==="replicate"){
+document.querySelector(".engine.red")
+?.classList.add("engine-active");
+}
 
-/* ===============================
-MODEL INFO DATABASE
-================================ */
+if(engine==="runway"){
+document.querySelector(".engine.blue")
+?.classList.add("engine-active");
+}
 
-const MODEL_INFO={
+updateStatus();
 
-flux2pro:`
-REPLICATE FLUX2PRO
-
-Image generation
-Variation / Style
-Face swap
-
-Output:
-720p base
-1080p upscale
-`,
-
-faceclone:`
-REPLICATE FACELONE
-
-Face replace
-Image reference required
-
-720p base
-1080p upscale
-`,
-
-gen4video:`
-RUNWAY GEN4 VIDEO
-
-Motion clone
-Image → Video
-Lipsync / Dance motion
-
-Max length: 30 sec
-720p base
-1080p upscale
-`
-
-};
+}
 
 /* ===============================
-MODEL SELECT (ENGINE SAFE LOCK)
-================================ */
+MODEL SELECT (LOCK PER ENGINE)
+=============================== */
 
-modelBtns.forEach(btn=>{
+document.querySelectorAll("[data-model]").forEach(btn=>{
 
 btn.addEventListener("click",()=>{
 
-/* isolate per engine */
-const engineBox=btn.closest(".engine-box");
+const engineType = btn.closest(".engine").classList.contains("red")
+? "replicate"
+: "runway";
 
-/* remove active from same engine only */
-engineBox
-.querySelectorAll("[data-model]")
+/* auto switch engine */
+selectEngine(engineType);
+
+/* clear model active */
+document.querySelectorAll("[data-model]")
 .forEach(b=>b.classList.remove("active-model"));
 
 btn.classList.add("active-model");
 
-STATE.model=btn.dataset.model;
+STATE.model = btn.dataset.model;
 
-/* detect engine by parent class */
-if(engineBox.classList.contains("red-engine")){
-STATE.engine="replicate";
-}
-else if(engineBox.classList.contains("blue-engine")){
-STATE.engine="runway";
-}
-
-/* update info panel safely */
-if(engineInfo && MODEL_INFO[STATE.model]){
-engineInfo.innerText=MODEL_INFO[STATE.model];
-}
+updateStatus();
 
 });
 
 });
 
 /* ===============================
-MODE SELECT (ENGINE SCOPED)
-================================ */
-
-modeBtns.forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-const engineBox=btn.closest(".engine-box");
-
-/* remove active only inside same engine */
-engineBox
-.querySelectorAll("[data-mode]")
-.forEach(b=>b.classList.remove("active-mode"));
-
-btn.classList.add("active-mode");
-
-STATE.mode=btn.dataset.mode;
-
-});
-
-});
-
-/* ===============================
-FILE PREVIEW (LOCKED VISUAL)
-================================ */
-
-function preview(file,videoEl,imageEl){
-
-if(!file) return;
-
-const url=URL.createObjectURL(file);
-
-/* hide both first */
-videoEl.style.display="none";
-imageEl.style.display="none";
-
-if(file.type.startsWith("video")){
-videoEl.src=url;
-videoEl.style.display="block";
-}
-
-if(file.type.startsWith("image")){
-imageEl.src=url;
-imageEl.style.display="block";
-}
-
-}
-
-/* attach listeners safely */
-
-if(fileA){
-fileA.addEventListener("change",()=>{
-preview(fileA.files[0],previewRedVideo,previewRedImage);
-});
-}
-
-if(fileB){
-fileB.addEventListener("change",()=>{
-preview(fileB.files[0],previewBlueVideo,previewBlueImage);
-});
-}
-
-/* ==========================================
-END LOCK SAFE FINAL
-========================================== */
-/* ===============================
-SHOW FILE NAME (SAFE)
+STATUS UPDATE
 =============================== */
 
-fileA?.addEventListener("change",()=>{
-document.getElementById("fileA-name").innerText =
-fileA.files[0]?.name || "ไม่ได้เลือกไฟล์ใด";
-});
+function updateStatus(){
 
-fileB?.addEventListener("change",()=>{
-document.getElementById("fileB-name").innerText =
-fileB.files[0]?.name || "ไม่ได้เลือกไฟล์ใด";
-});
+const status=document.getElementById("status-text");
+
+if(!status) return;
+
+status.innerText=
+`ENGINE - ${STATE.engine||"-"} | MODEL - ${STATE.model||"-"} | MODE - ${STATE.mode||"-"} | TYPE - ${STATE.type||"-"}`;
+
+}
