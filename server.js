@@ -1,123 +1,55 @@
-/**
- * server.js
- * FULL VERSION
- * SN DESIGN STUDIO ENGINE SERVER
- */
-
 require("dotenv").config();
 
 const express = require("express");
-const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const MODEL_ROUTER = require("./services/model.router");
-
-// RUNWAY POLLER
 const runwayPoller = require("./services/runwayml/v1/runway.poller");
+const authMiddleware = require("./middleware/auth");
+const paymentWebhook = require("./routes/payment.webhook");
+const db = require("./db/db");
 
 const app = express();
 
-
-// =========================
-// BASIC CONFIG
-// =========================
-
 app.use(cors());
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
+app.use(paymentWebhook);
 
-// =========================
-// STATIC FRONTEND
-// =========================
+app.post("/api/create", authMiddleware, async (req,res)=>{
 
-app.use(express.static(path.join(__dirname, "public")));
+  try{
 
-
-// =========================
-// STATUS ROUTE
-// =========================
-
-app.get("/api/status", (req, res) => {
-
-  res.json({
-    status: "ok",
-    service: "SN DESIGN ENGINE AI",
-    time: new Date().toISOString()
-  });
-
-});
-
-
-// =========================
-// CREATE JOB ROUTE
-// =========================
-
-app.post("/api/create", async (req, res) => {
-
-  try {
-
-    const {
-      engine,
-      mode,
-      prompt,
-      fileAUrl,
-      fileBUrl
-    } = req.body;
+    if(req.user.id !== 1){ // dev bypass id=1
+      await db.deductCredit(req.user.id,1);
+    }
 
     const result = await MODEL_ROUTER.run({
-
-      engine,
-      mode,
-      prompt,
-
-      files: {
-        fileAUrl,
-        fileBUrl
+      engine:req.body.engine,
+      mode:req.body.mode,
+      prompt:req.body.prompt,
+      files:{
+        fileAUrl:req.body.fileAUrl,
+        fileBUrl:req.body.fileBUrl
       }
-
     });
 
-    res.json({
-      success: true,
-      data: result
-    });
+    res.json({success:true,data:result});
 
-  } catch (err) {
-
-    console.error("CREATE ERROR:", err.message);
-
-    res.status(500).json({
-      success: false,
-      error: err.message
-    });
-
+  }catch(err){
+    res.status(500).json({error:err.message});
   }
 
 });
 
-
-// =========================
-// ROOT
-// =========================
-
-app.get("/", (req, res) => {
-  res.send("SN DESIGN ENGINE AI SERVER RUNNING");
+app.get("/api/me", authMiddleware, async (req,res)=>{
+  res.json(req.user);
 });
-
-
-// =========================
-// START SERVER
-// =========================
 
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-
-  console.log(`🚀 SN DESIGN ENGINE AI RUNNING ON PORT ${PORT}`);
-
-  // START RUNWAY BACKGROUND POLLER
+app.listen(PORT,()=>{
+  console.log("SERVER RUNNING:",PORT);
   runwayPoller.start();
-
 });
