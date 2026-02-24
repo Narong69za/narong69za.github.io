@@ -241,3 +241,23 @@ document.getElementById("status").innerText="STATUS: COMPLETE";
 
 document.getElementById("generate-red").onclick=generate;
 document.getElementById("generate-blue").onclick=generate;
+
+/* =================================
+AUTO DEFAULT MODEL SELECT
+================================= */
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+if(!STATE.engine){
+
+// auto select red default
+const redDefault=document.querySelector('[data-engine="red"]');
+redDefault?.click();
+
+}
+
+// ไม่ให้ blue collapse
+document.querySelector(".engine.blue")
+?.classList.add("engine-active");
+
+});
