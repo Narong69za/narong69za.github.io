@@ -194,3 +194,49 @@ margin:auto;
 margin:6px auto;
 display:block;
 }
+/* =================================
+ENGINE FULL PANEL LOCK
+================================= */
+
+.engine{
+min-height: 420px;
+display:flex;
+flex-direction:column;
+justify-content:flex-start;
+padding:24px;
+transition:all .3s ease;
+}
+
+/* ล็อคให้ขนาดไม่เปลี่ยนตาม active */
+.engine.red,
+.engine.blue{
+transform:none !important;
+}
+/* =================================
+PERMANENT DUAL GLOW SYSTEM
+================================= */
+
+.engine.red{
+box-shadow:
+0 0 30px rgba(255,0,0,.35),
+0 0 90px rgba(255,0,0,.15);
+}
+
+.engine.blue{
+box-shadow:
+0 0 30px rgba(0,255,220,.35),
+0 0 90px rgba(0,255,220,.15);
+}
+
+/* active boost */
+.engine.engine-active.red{
+box-shadow:
+0 0 50px rgba(255,0,0,.7),
+0 0 150px rgba(255,0,0,.3);
+}
+
+.engine.engine-active.blue{
+box-shadow:
+0 0 50px rgba(0,255,220,.7),
+0 0 150px rgba(0,255,220,.3);
+}
