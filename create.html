@@ -1,34 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ULTRA ENGINE CONTROL</title>
-<link rel="stylesheet" href="./assets/css/create-premium.css">
-</head>
 
+<link rel="stylesheet" href="./assets/css/create-premium.css">
+
+</head>
 <body>
 
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<input id="prompt" placeholder="Enter prompt">
+<input id="prompt" class="prompt-input" placeholder="Enter prompt">
 
-<!-- TYPE SELECTOR (LOCKED CENTER) -->
-
+<!-- TYPE SELECTOR -->
 <div class="type-selector">
-
 <button data-type="video">Generate Video</button>
 <button data-type="image">Generate Image</button>
 <button data-type="upscale">Upscale</button>
-
 </div>
 
 <div class="engine-wrap">
 
 <!-- RED ENGINE -->
-
 <div class="engine red">
-
 <h2>RED ENGINE</h2>
 
 <button data-engine="red" data-mode="dark">Dark Viral</button>
@@ -36,14 +32,11 @@
 <button data-engine="red" data-mode="motion">Dance Motion</button>
 <button data-engine="red" data-mode="face">Face Swap</button>
 
-<button id="generate-red">GENERATE RED</button>
-
+<button id="generate-red" class="generate-btn">GENERATE RED</button>
 </div>
 
 <!-- BLUE ENGINE -->
-
 <div class="engine blue">
-
 <h2>BLUE ENGINE</h2>
 
 <button data-engine="blue" data-mode="dark">Dark Viral</button>
@@ -51,27 +44,24 @@
 <button data-engine="blue" data-mode="motion">Dance Motion</button>
 <button data-engine="blue" data-mode="face">Face Swap</button>
 
-<button id="generate-blue">GENERATE BLUE</button>
-
+<button id="generate-blue" class="generate-btn">GENERATE BLUE</button>
 </div>
 
 </div>
 
 <!-- MODEL PREVIEW -->
-
 <div class="model-preview">
-
 <input type="file" id="fileA">
 <input type="file" id="fileB">
 
 <div id="model-info">
 ENGINE: - | MODE: - | TYPE: -
 </div>
-
 </div>
 
 <div id="status">STATUS: IDLE</div>
-<script src="assets/js/create.js"></script>
+
+<script src="./assets/js/create.js"></script>
 
 </body>
 </html>
