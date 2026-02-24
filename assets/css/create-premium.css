@@ -325,3 +325,42 @@ margin-right:auto;
 max-width:800px;
 width:100%;
 }
+/* =====================================
+FINAL CENTER UPLOAD CORE
+===================================== */
+
+.upload-core-wrapper{
+width:100%;
+display:flex;
+justify-content:center;
+margin-top:24px;
+}
+
+.upload-core{
+display:flex;
+justify-content:center;
+align-items:center;
+gap:20px;
+flex-wrap:wrap;
+max-width:600px;
+width:100%;
+}
+
+.upload-box{
+display:flex;
+align-items:center;
+gap:8px;
+background:rgba(0,0,0,0.5);
+padding:10px 14px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.1);
+}
+
+.upload-box input{
+width:auto;
+}
+
+.upload-box span{
+font-size:12px;
+opacity:0.7;
+}
