@@ -1,62 +1,25 @@
-/* =====================================================
-RUNWAYML V1 MASTER ROUTER
-services/runwayml/v1/index.js
-===================================================== */
+// services/runwayml/v1/index.js
 
 const imageToVideo = require("./image_to_video");
 const videoUpscale = require("./video_upscale");
 
-/*
-SUPPORTED MODES
+async function run({ mode, payload }) {
 
-image2video
-upscale
-motion
-lipsync
-dance
-*/
+    switch(mode){
 
-exports.run = async ({ mode, files, prompt, jobID }) => {
+        case "image2video":
+        case "motion":
+        case "dance":
+        case "lipsync":
+            return await imageToVideo.run(payload);
 
-if (!mode) {
-throw new Error("RUNWAY MODE REQUIRED");
-}
+        case "upscale":
+            return await videoUpscale.run(payload);
 
-/*
-MODE ROUTING
-*/
-
-switch (mode) {
-
-case "image2video":
-
-if (!files?.fileAUrl) {
-throw new Error("IMAGE URL REQUIRED");
-}
-
-return await imageToVideo.run({
-prompt,
-imageUrl: files.fileAUrl,
-duration: 4,
-jobID
-});
-
-
-case "upscale":
-
-if (!files?.fileAUrl) {
-throw new Error("VIDEO URL REQUIRED");
-}
-
-return await videoUpscale.run({
-videoUrl: files.fileAUrl,
-jobID
-});
-
-
-default:
-throw new Error("RUNWAY MODE NOT SUPPORTED");
+        default:
+            throw new Error("RUNWAY MODE NOT FOUND");
+    }
 
 }
 
-};
+module.exports = { run };
