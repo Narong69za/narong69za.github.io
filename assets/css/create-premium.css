@@ -229,3 +229,99 @@ outline-offset:-2px;
 .engine-box button{
 display:inline-block; /* คืนค่า inline */
 }
+/* =========================================
+FINAL CENTER LOCK (ULTRA ALIGN FIX)
+========================================= */
+
+.create-container{
+max-width:1100px;
+margin-left:auto;
+margin-right:auto;
+padding-left:20px;
+padding-right:20px;
+}
+
+/* engine wrap center */
+
+.engine-wrap{
+display:flex;
+justify-content:center;
+align-items:flex-start;
+gap:40px;
+flex-wrap:wrap;
+margin-top:40px;
+}
+
+/* engine box restore */
+
+.engine-box{
+position:relative;
+width:420px;
+padding:40px 30px;
+border-radius:18px;
+text-align:center;
+}
+
+/* glow restore */
+
+.red-engine{
+box-shadow:0 0 60px rgba(255,0,0,0.35);
+}
+
+.blue-engine{
+box-shadow:0 0 60px rgba(0,255,220,0.35);
+}
+
+/* model button layout */
+
+.model-row,
+.mode-row{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:10px;
+margin-top:14px;
+}
+
+.model-row button,
+.mode-row button{
+width:auto !important;
+flex:none;
+}
+
+/* generate button size restore */
+
+.engine-box > button{
+margin-top:18px;
+width:auto;
+min-width:160px;
+}
+
+/* upload center */
+
+.upload-wrap{
+display:flex;
+justify-content:center;
+gap:20px;
+margin-top:30px;
+}
+
+/* preview center */
+
+.preview-dual{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:20px;
+margin-top:30px;
+}
+
+/* prompt center */
+
+textarea{
+display:block;
+margin-left:auto;
+margin-right:auto;
+max-width:800px;
+width:100%;
+}
