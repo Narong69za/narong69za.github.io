@@ -3,15 +3,26 @@
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-const dbPath = path.join(__dirname, "database.sqlite");
-
-const db = new sqlite3.Database(dbPath);
+const db = new sqlite3.Database(
+  path.join(__dirname, "database.sqlite")
+);
 
 db.serialize(() => {
 
   db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      googleId TEXT UNIQUE,
+      email TEXT,
+      credit INTEGER DEFAULT 0,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  db.run(`
     CREATE TABLE IF NOT EXISTS projects (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER,
       engine TEXT,
       mode TEXT,
       prompt TEXT,
@@ -24,112 +35,74 @@ db.serialize(() => {
     )
   `);
 
+  db.run(`
+    CREATE TABLE IF NOT EXISTS transactions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      userId INTEGER,
+      amount INTEGER,
+      type TEXT,
+      createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
 });
 
-function createProject(data) {
+function getUserByGoogleId(googleId){
+  return new Promise((resolve,reject)=>{
+    db.get(
+      "SELECT * FROM users WHERE googleId=?",
+      [googleId],
+      (err,row)=> err?reject(err):resolve(row)
+    );
+  });
+}
 
-  return new Promise((resolve, reject) => {
-
+function createUser(data){
+  return new Promise((resolve,reject)=>{
     db.run(
-      `
-      INSERT INTO projects
-      (engine, mode, prompt, fileAUrl, fileBUrl, status)
-      VALUES (?, ?, ?, ?, ?, ?)
-      `,
-      [
-        data.engine,
-        data.mode,
-        data.prompt,
-        data.fileAUrl,
-        data.fileBUrl,
-        "queued"
-      ],
-      function (err) {
-        if (err) return reject(err);
-        resolve(this.lastID);
+      "INSERT INTO users (googleId,email,credit) VALUES (?,?,?)",
+      [data.googleId,data.email,3],
+      function(err){
+        err?reject(err):resolve(this.lastID);
       }
     );
-
   });
-
 }
 
-function updateProcessing(id, externalID) {
-
-  return new Promise((resolve, reject) => {
-
+function updateCredit(userId,amount){
+  return new Promise((resolve,reject)=>{
     db.run(
-      `
-      UPDATE projects
-      SET status='processing', externalID=?
-      WHERE id=?
-      `,
-      [externalID, id],
-      (err) => err ? reject(err) : resolve()
+      "UPDATE users SET credit=credit+? WHERE id=?",
+      [amount,userId],
+      err=> err?reject(err):resolve()
     );
-
   });
-
 }
 
-function completeJob(id, outputUrl) {
-
-  return new Promise((resolve, reject) => {
-
+function deductCredit(userId,amount){
+  return new Promise((resolve,reject)=>{
     db.run(
-      `
-      UPDATE projects
-      SET status='completed', outputUrl=?
-      WHERE id=?
-      `,
-      [outputUrl, id],
-      (err) => err ? reject(err) : resolve()
+      "UPDATE users SET credit=credit-? WHERE id=?",
+      [amount,userId],
+      err=> err?reject(err):resolve()
     );
-
   });
-
 }
 
-function failJob(id) {
-
-  return new Promise((resolve, reject) => {
-
+function createTransaction(userId,amount,type){
+  return new Promise((resolve,reject)=>{
     db.run(
-      `
-      UPDATE projects
-      SET status='failed'
-      WHERE id=?
-      `,
-      [id],
-      (err) => err ? reject(err) : resolve()
+      "INSERT INTO transactions (userId,amount,type) VALUES (?,?,?)",
+      [userId,amount,type],
+      err=> err?reject(err):resolve()
     );
-
   });
-
-}
-
-function getProcessingRunwayJobs() {
-
-  return new Promise((resolve, reject) => {
-
-    db.all(
-      `
-      SELECT * FROM projects
-      WHERE engine='runway'
-      AND status='processing'
-      `,
-      [],
-      (err, rows) => err ? reject(err) : resolve(rows)
-    );
-
-  });
-
 }
 
 module.exports = {
-  createProject,
-  updateProcessing,
-  completeJob,
-  failJob,
-  getProcessingRunwayJobs
+  getUserByGoogleId,
+  createUser,
+  updateCredit,
+  deductCredit,
+  createTransaction
 };
