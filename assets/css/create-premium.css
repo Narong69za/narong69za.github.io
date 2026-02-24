@@ -179,3 +179,32 @@ box-shadow:
 0 0 12px rgba(0,255,150,.6);
 
 }
+/* ===============================
+LOCK ENGINE ACTIVE STYLE
+================================ */
+
+.active-model{
+
+box-shadow:0 0 12px #00ff88;
+border:1px solid #00ff88;
+
+}
+
+.active-mode{
+
+box-shadow:0 0 10px #00ff88 inset;
+
+}
+
+/* ===============================
+IMPORT CENTER FIX (NO LAYOUT CHANGE)
+================================ */
+
+.import-wrapper{
+
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+
+}
