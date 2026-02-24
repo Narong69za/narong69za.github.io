@@ -177,3 +177,16 @@ preview(fileB.files[0],previewBlueVideo,previewBlueImage);
 /* ==========================================
 END LOCK SAFE FINAL
 ========================================== */
+/* ===============================
+SHOW FILE NAME (SAFE)
+=============================== */
+
+fileA?.addEventListener("change",()=>{
+document.getElementById("fileA-name").innerText =
+fileA.files[0]?.name || "ไม่ได้เลือกไฟล์ใด";
+});
+
+fileB?.addEventListener("change",()=>{
+document.getElementById("fileB-name").innerText =
+fileB.files[0]?.name || "ไม่ได้เลือกไฟล์ใด";
+});
