@@ -43,11 +43,15 @@ function updatePreview(){
 info.innerText =
 `ENGINE: ${STATE.engine || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
 
+if(hint){
 hint.innerText = REQUIRE[STATE.mode] || "";
+}
 
 }
 
-/* TYPE SELECT */
+/* ======================
+TYPE SELECT
+====================== */
 
 typeBtns.forEach(btn=>{
 
@@ -57,13 +61,16 @@ typeBtns.forEach(b=>b.classList.remove("active"));
 btn.classList.add("active");
 
 STATE.type = btn.dataset.type;
+
 updatePreview();
 
 };
 
 });
 
-/* MODE SELECT */
+/* ======================
+MODE SELECT
+====================== */
 
 modeBtns.forEach(btn=>{
 
@@ -77,6 +84,7 @@ document.querySelectorAll(`.engine.${engine} button[data-mode]`)
 btn.classList.add("active-mode");
 
 STATE.engine = engine === "red" ? "replicate" : "runway";
+
 STATE.mode = btn.dataset.mode;
 
 updatePreview();
@@ -86,10 +94,12 @@ updatePreview();
 });
 
 /* ======================
-PREVIEW SYSTEM (ADD ONLY)
+PREVIEW SYSTEM (ADD ONLY SAFE)
 ====================== */
 
 function previewFile(file){
+
+if(!previewVideo || !previewImage) return;
 
 previewVideo.style.display="none";
 previewImage.style.display="none";
@@ -110,11 +120,16 @@ previewImage.style.display="block";
 
 }
 
+if(fileA){
 fileA.onchange = ()=> previewFile(fileA.files[0]);
+}
+
+if(fileB){
 fileB.onchange = ()=> previewFile(fileB.files[0]);
+}
 
 /* ======================
-VALIDATION MATRIX
+VALIDATION MATRIX (FIXED)
 ====================== */
 
 function validateFiles(){
@@ -123,14 +138,17 @@ if(!STATE.mode) return false;
 
 if(STATE.mode==="dark") return true;
 
+/* face swap requires 2 images */
 if(STATE.mode==="face")
 return fileA.files.length && fileB.files.length;
 
+/* motion control requires video + character */
 if(STATE.mode==="motion")
 return fileA.files.length && fileB.files.length;
 
+/* lipsync requires source + target */
 if(STATE.mode==="lipsync")
-return fileA.files.length || fileB.files.length;
+return fileA.files.length && fileB.files.length;
 
 if(STATE.type==="upscale")
 return fileA.files.length;
@@ -172,3 +190,64 @@ document.getElementById("status").innerText="STATUS: COMPLETE";
 
 document.getElementById("generate-red").onclick=()=>generate("red");
 document.getElementById("generate-blue").onclick=()=>generate("blue");
+
+/* ===================================
+ULTRA STEP 1 — VIDEO META DETECT
+ADD ONLY (NO UI CHANGE)
+=================================== */
+
+const COST_PER_SECOND = 2.2;
+const MAX_DURATION = 30;
+
+const costPreview = document.createElement("div");
+costPreview.id = "cost-preview";
+
+const modelPreviewBox = document.querySelector(".model-preview");
+
+if(modelPreviewBox){
+modelPreviewBox.appendChild(costPreview);
+}
+
+if(fileA){
+fileA.addEventListener("change", handleVideoMeta);
+}
+
+function handleVideoMeta(){
+
+if(!fileA.files.length) return;
+
+const file = fileA.files[0];
+
+if(!file.type.startsWith("video")) return;
+
+const video = document.createElement("video");
+
+video.preload = "metadata";
+
+video.onloadedmetadata = function(){
+
+const duration = video.duration;
+
+/* prevent memory leak */
+URL.revokeObjectURL(video.src);
+
+if(duration > MAX_DURATION){
+
+alert("Video max 30 seconds");
+
+fileA.value = "";
+
+return;
+
+}
+
+const cost = (duration * COST_PER_SECOND).toFixed(2);
+
+costPreview.innerText =
+`DURATION: ${duration.toFixed(1)}s | COST: ${cost} บาท`;
+
+};
+
+video.src = URL.createObjectURL(file);
+
+  }
