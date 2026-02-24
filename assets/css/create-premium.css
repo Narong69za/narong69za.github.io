@@ -90,3 +90,44 @@ color:#fff;
 margin-top:20px;
 opacity:.8;
 }
+/* ===============================
+CTA IMPORT FIX
+================================ */
+
+.cta-box{
+
+width:100%;
+max-width:520px;
+margin:20px auto;
+
+display:flex;
+flex-direction:column;
+gap:10px;
+
+align-items:center;
+
+}
+
+.cta-box input[type="file"]{
+
+width:100%;
+max-width:100%;
+
+}
+
+
+/* ===============================
+ACTIVE SELECT VISUAL
+================================ */
+
+.engine button.active-select{
+
+background:#111;
+color:#fff;
+
+box-shadow:
+0 0 12px rgba(255,255,255,.4);
+
+border:1px solid rgba(255,255,255,.5);
+
+}
