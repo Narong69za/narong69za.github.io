@@ -1,20 +1,22 @@
-const MODEL_ROUTER = require("../models/model.router.js");
+const modelRouter = require("../models/model.router");
 
 exports.create = async (req,res)=>{
 
    try{
 
-      const {engine,alias,type,prompt} = req.body;
+      const { engine, alias, type, prompt } = req.body;
 
-      const files = {};
+      const files={};
 
       if(req.files){
+
          req.files.forEach(f=>{
-            files[f.fieldname] = f;
+            files[f.fieldname]=f;
          });
+
       }
 
-      const result = await MODEL_ROUTER.run({
+      const result = await modelRouter.run({
          engine,
          alias,
          type,
@@ -24,7 +26,7 @@ exports.create = async (req,res)=>{
 
       res.json({
          status:"queued",
-         data:result
+         result
       });
 
    }catch(err){
@@ -32,8 +34,7 @@ exports.create = async (req,res)=>{
       console.error(err);
 
       res.status(500).json({
-         error:true,
-         message:err.message
+         error:err.message
       });
 
    }
