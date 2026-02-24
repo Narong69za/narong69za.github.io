@@ -524,3 +524,208 @@ letter-spacing:2px;
 opacity:0.8;
 
   }
+/* =========================================
+ULTRA FOCUS FLOW SYSTEM
+ADD ONLY — NO LAYOUT CHANGE
+========================================= */
+
+
+/* =========================
+GLOBAL VISUAL FLOW
+========================= */
+
+body{
+
+background:
+radial-gradient(circle at 50% -20%, rgba(0,255,180,0.08), transparent 60%),
+radial-gradient(circle at 50% 120%, rgba(255,0,60,0.05), transparent 60%),
+#000;
+
+}
+
+
+/* =========================
+ENGINE FOCUS DOMINANCE
+========================= */
+
+.engine{
+
+position:relative;
+transition:0.25s ease;
+
+}
+
+.engine::after{
+
+content:"";
+position:absolute;
+inset:-2px;
+
+background:
+linear-gradient(
+90deg,
+transparent,
+rgba(255,255,255,0.04),
+transparent
+);
+
+opacity:0;
+transition:0.3s;
+
+pointer-events:none;
+
+}
+
+.engine:hover::after{
+
+opacity:1;
+
+}
+
+
+/* =========================
+ACTIVE MODE ULTRA GLOW
+========================= */
+
+.engine button.active-mode{
+
+transform:scale(1.02);
+
+box-shadow:
+
+0 0 18px rgba(0,255,120,0.6),
+0 0 40px rgba(0,255,120,0.25),
+inset 0 0 10px rgba(255,255,255,0.15);
+
+}
+
+
+/* =========================
+TYPE BUTTON FOCUS FLOW
+========================= */
+
+.type-selector button.active{
+
+transform:translateY(-2px);
+
+box-shadow:
+
+0 6px 22px rgba(0,255,120,0.4),
+inset 0 0 8px rgba(255,255,255,0.12);
+
+}
+
+
+/* =========================
+CTA BOX PRIORITY LAYER
+========================= */
+
+.model-preview{
+
+position:relative;
+
+}
+
+.model-preview::before{
+
+content:"";
+position:absolute;
+top:-40px;
+left:0;
+right:0;
+height:80px;
+
+background:
+
+linear-gradient(
+180deg,
+rgba(0,0,0,0.9),
+transparent
+);
+
+pointer-events:none;
+
+}
+
+
+/* =========================
+MEDIA FOCUS DEPTH
+========================= */
+
+.model-preview video,
+.model-preview img{
+
+transition:0.3s ease;
+
+}
+
+.model-preview video:hover,
+.model-preview img:hover{
+
+transform:scale(1.015);
+
+box-shadow:
+
+0 20px 60px rgba(0,0,0,1);
+
+}
+
+
+/* =========================
+ENGINE PANEL FLOAT
+========================= */
+
+.engine-wrap{
+
+perspective:900px;
+
+}
+
+.engine:hover{
+
+transform:
+
+translateY(-6px)
+rotateX(2deg);
+
+}
+
+
+/* =========================
+PROMPT INPUT FOCUS
+========================= */
+
+#prompt:focus{
+
+outline:none;
+
+box-shadow:
+
+0 0 12px rgba(0,255,180,0.4),
+inset 0 0 8px rgba(255,255,255,0.1);
+
+}
+
+
+/* =========================
+STATUS VISUAL ATTENTION
+========================= */
+
+#status{
+
+animation: ultraPulse 3s infinite;
+
+}
+
+@keyframes ultraPulse{
+
+0%{opacity:0.6;}
+50%{opacity:1;}
+100%{opacity:0.6;}
+
+}
+
+
+/* =========================================
+END ULTRA FOCUS FLOW
+========================================= */
