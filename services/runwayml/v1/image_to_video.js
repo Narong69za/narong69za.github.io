@@ -2,53 +2,42 @@
 
 const fetch = require("node-fetch");
 
-const RUNWAY_API = "https://api.dev.runwayml.com/v1/image_to_video";
+const ENDPOINT = "https://api.dev.runwayml.com/v1/image_to_video";
 
-async function run(payload){
+async function createImageToVideo(options = {}) {
 
-    const res = await fetch(RUNWAY_API, {
+  const res = await fetch(ENDPOINT, {
 
-        method: "POST",
+    method: "POST",
 
-        headers: {
-            "Authorization": `Bearer ${process.env.RUNWAY_API_KEY}`,
-            "Content-Type": "application/json",
-            "X-Runway-Version": "2024-11-06"
-        },
+    headers: {
+      Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+      "Content-Type": "application/json",
+      "X-Runway-Version": "2024-11-06"
+    },
 
-        body: JSON.stringify({
+    body: JSON.stringify({
+      model: "gen4.5",
+      promptText: options.prompt,
+      promptImage: [
+        {
+          uri: options.imageUrl,
+          position: "first"
+        }
+      ],
+      ratio: "720:1280",
+      duration: 10
+    })
 
-            model: payload.model || "gen4.5",
+  });
 
-            promptText: payload.prompt,
+  const text = await res.text();
 
-            promptImage: payload.images,
+  if (!res.ok) {
+    throw new Error(text);
+  }
 
-            ratio: payload.ratio || "1280:720",
-
-            duration: payload.duration || 4,
-
-            seed: payload.seed || Math.floor(Math.random()*999999999)
-
-        })
-
-    });
-
-    const text = await res.text();
-
-    let data;
-    try {
-        data = JSON.parse(text);
-    } catch(e){
-        throw new Error("RUNWAY RESPONSE INVALID: "+text);
-    }
-
-    if(!res.ok){
-        throw new Error("RUNWAY ERROR: "+text);
-    }
-
-    return data;
-
+  return JSON.parse(text);
 }
 
-module.exports = { run };
+module.exports = { createImageToVideo };
