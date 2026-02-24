@@ -1,81 +1,82 @@
+console.log("CREATE JS LOADED");
+
 let STATE = {
   engine:null,
   mode:null,
   type:null
 };
 
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
-
-const previewRedVideo = document.getElementById("preview-red-video");
-const previewRedImage = document.getElementById("preview-red-image");
-
-const previewBlueVideo = document.getElementById("preview-blue-video");
-const previewBlueImage = document.getElementById("preview-blue-image");
-
-const statusEl = document.getElementById("status");
-
-function preview(file, videoEl, imageEl){
-
-  if(!file) return;
-
-  const url = URL.createObjectURL(file);
-
-  if(file.type.startsWith("video/")){
-    videoEl.src = url;
-    videoEl.style.display="block";
-    imageEl.style.display="none";
-  }
-
-  if(file.type.startsWith("image/")){
-    imageEl.src = url;
-    imageEl.style.display="block";
-    videoEl.style.display="none";
-  }
-}
-
-fileA?.addEventListener("change",()=>{
-  preview(fileA.files[0],previewRedVideo,previewRedImage);
-});
-
-fileB?.addEventListener("change",()=>{
-  preview(fileB.files[0],previewBlueVideo,previewBlueImage);
-});
+const statusEl = document.querySelector("#status");
 
 
-// TYPE SELECT
+// ---------- TYPE BUTTON ----------
 
 document.querySelectorAll(".type-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    STATE.type = btn.dataset.type;
+
+  btn.onclick = ()=>{
+
     document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+
     btn.classList.add("active");
-  });
+
+    STATE.type = btn.innerText;
+
+    console.log("TYPE:",STATE.type);
+
+  };
+
 });
 
 
-// MODE SELECT
+// ---------- ENGINE MODE ----------
 
-document.querySelectorAll(".mode-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
+document.querySelectorAll("button").forEach(btn=>{
 
-    STATE.engine = btn.dataset.engine;
-    STATE.mode = btn.dataset.mode;
+  btn.onclick = (e)=>{
 
-    document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
+    const text = btn.innerText.toLowerCase();
 
-  });
+    if(text.includes("dark") ||
+       text.includes("lipsync") ||
+       text.includes("dance") ||
+       text.includes("face")){
+
+      document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      STATE.mode = btn.innerText;
+
+      const parent = btn.closest("div");
+
+      if(parent && parent.innerText.includes("RED")){
+        STATE.engine="red";
+      }
+
+      if(parent && parent.innerText.includes("BLUE")){
+        STATE.engine="blue";
+      }
+
+      console.log("ENGINE:",STATE.engine);
+      console.log("MODE:",STATE.mode);
+
+    }
+
+  };
+
 });
 
 
-// GENERATE
+// ---------- GENERATE ----------
 
-async function generate(engine){
+async function runGenerate(engine){
 
-  if(!STATE.mode || !STATE.type){
+  console.log("CLICK GENERATE",engine);
 
-    statusEl.innerText="STATUS: SELECT MODE & TYPE";
+  if(!STATE.mode){
+
+    statusEl.innerText="STATUS: SELECT MODE";
+
     return;
 
   }
@@ -85,15 +86,19 @@ async function generate(engine){
   try{
 
     const res = await fetch("/api/render",{
+
       method:"POST",
+
       headers:{
         "Content-Type":"application/json"
       },
+
       body:JSON.stringify({
         engine:engine,
         mode:STATE.mode,
         type:STATE.type
       })
+
     });
 
     const data = await res.json();
@@ -102,13 +107,29 @@ async function generate(engine){
 
     statusEl.innerText="STATUS: DONE";
 
-  }catch(e){
+  }catch(err){
 
-    console.error(e);
-    statusEl.innerText="STATUS: ERROR";
+    console.error(err);
+
+    statusEl.innerText="STATUS ERROR";
 
   }
+
 }
 
-document.getElementById("generate-red")?.addEventListener("click",()=>generate("red"));
-document.getElementById("generate-blue")?.addEventListener("click",()=>generate("blue"));
+
+document.querySelectorAll("button").forEach(btn=>{
+
+  if(btn.innerText.includes("GENERATE RED")){
+
+    btn.onclick=()=>runGenerate("red");
+
+  }
+
+  if(btn.innerText.includes("GENERATE BLUE")){
+
+    btn.onclick=()=>runGenerate("blue");
+
+  }
+
+});
