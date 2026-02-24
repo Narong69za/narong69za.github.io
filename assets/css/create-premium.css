@@ -1,54 +1,124 @@
-body{
-background:#000;
-color:#fff;
-font-family:sans-serif;
+let STATE = {
+engine:null,
+mode:null,
+type:null
+};
+
+const typeBtns = document.querySelectorAll("[data-type]");
+const modeBtns = document.querySelectorAll("[data-mode]");
+
+const info = document.getElementById("model-info");
+
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
+
+function updatePreview(){
+
+info.innerText =
+`ENGINE: ${STATE.engine || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
+
 }
 
-.title{
-text-align:center;
-margin-top:20px;
+typeBtns.forEach(btn=>{
+
+btn.onclick = ()=>{
+
+typeBtns.forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+STATE.type = btn.dataset.type;
+
+updatePreview();
+
+};
+
+});
+
+modeBtns.forEach(btn=>{
+
+btn.onclick = ()=>{
+
+const engine = btn.dataset.engine;
+
+document.querySelectorAll(`.engine.${engine} button[data-mode]`)
+.forEach(b=>b.classList.remove("active-mode"));
+
+btn.classList.add("active-mode");
+
+STATE.engine = engine === "red" ? "replicate" : "runway";
+
+STATE.mode = btn.dataset.mode;
+
+updatePreview();
+
+};
+
+});
+
+async function validateFiles(){
+
+if(!STATE.mode) return false;
+
+if(STATE.mode==="face"){
+
+return fileA.files.length && fileB.files.length;
+
 }
 
-.type-selector{
-display:flex;
-justify-content:center;
-gap:10px;
-margin:20px;
+if(STATE.mode==="lipsync" || STATE.mode==="motion"){
+
+return fileA.files.length && fileB.files.length;
+
 }
 
-.type-selector button.active{
-border:2px solid #00ff5a;
-box-shadow:0 0 15px #00ff5a;
+if(STATE.type==="upscale"){
+
+return fileA.files.length;
+
 }
 
-.engine-wrap{
-display:flex;
-justify-content:center;
-gap:40px;
+return true;
+
 }
 
-.engine{
-padding:20px;
-border-radius:20px;
-border:1px solid #333;
+async function generate(engine){
+
+const ok = await validateFiles();
+
+if(!ok){
+
+alert("FILES MISSING");
+
+return;
+
 }
 
-.engine.red{
-box-shadow:0 0 20px #ff2020;
+document.getElementById("status").innerText="STATUS: PROCESSING";
+
+const form = new FormData();
+
+form.append("engine",STATE.engine);
+form.append("mode",STATE.mode);
+form.append("type",STATE.type);
+
+if(fileA.files[0]) form.append("fileA",fileA.files[0]);
+if(fileB.files[0]) form.append("fileB",fileB.files[0]);
+
+await fetch("/api/render",{
+
+method:"POST",
+body:form
+
+});
+
+document.getElementById("status").innerText="STATUS: COMPLETE";
+
 }
 
-.engine.blue{
-box-shadow:0 0 20px #00d9ff;
-}
+document.getElementById("generate-red").onclick=()=>generate("red");
+document.getElementById("generate-blue").onclick=()=>generate("blue");
 
-.engine button.active-mode{
-border:2px solid #00ff5a;
-box-shadow:0 0 15px #00ff5a;
-}
-
-.model-preview{
-margin:40px;
-}
 /* ===== FRAME LOCK FIX ===== */
 
 .engine-wrap{
