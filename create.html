@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
@@ -11,141 +11,70 @@
 
 <body>
 
-<div class="wrap">
-
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<input class="prompt" placeholder="Enter prompt">
+<input id="prompt" placeholder="Enter prompt">
 
-<!-- TYPE CENTER -->
-<div class="type-center">
+<!-- TYPE SELECTOR (LOCKED CENTER) -->
 
-<button class="type active" data-type="video">Generate Video</button>
-<button class="type" data-type="image">Generate Image</button>
-<button class="type" data-type="upscale">Upscale</button>
+<div class="type-selector">
+
+<button data-type="video">Generate Video</button>
+<button data-type="image">Generate Image</button>
+<button data-type="upscale">Upscale</button>
 
 </div>
 
-<!-- ENGINE SIDE BY SIDE -->
-<div class="engine-row">
+<div class="engine-wrap">
 
-<!-- RED -->
-<div class="engine red" data-engine="replicate">
+<!-- RED ENGINE -->
+
+<div class="engine red">
 
 <h2>RED ENGINE</h2>
 
-<button class="model" data-mode="viral">Dark Viral</button>
-<button class="model" data-mode="lipsync">AI LipSync</button>
-<button class="model" data-mode="motion">Dance Motion</button>
-<button class="model" data-mode="face">Face Swap</button>
+<button data-engine="red" data-mode="dark">Dark Viral</button>
+<button data-engine="red" data-mode="lipsync">AI LipSync</button>
+<button data-engine="red" data-mode="motion">Dance Motion</button>
+<button data-engine="red" data-mode="face">Face Swap</button>
 
-<button class="generate">GENERATE RED</button>
+<button id="generate-red">GENERATE RED</button>
 
 </div>
 
-<!-- BLUE -->
-<div class="engine blue" data-engine="runway">
+<!-- BLUE ENGINE -->
+
+<div class="engine blue">
 
 <h2>BLUE ENGINE</h2>
 
-<button class="model" data-mode="viral">Dark Viral</button>
-<button class="model" data-mode="lipsync">AI LipSync</button>
-<button class="model" data-mode="motion">Dance Motion</button>
-<button class="model" data-mode="face">Face Swap</button>
+<button data-engine="blue" data-mode="dark">Dark Viral</button>
+<button data-engine="blue" data-mode="lipsync">AI LipSync</button>
+<button data-engine="blue" data-mode="motion">Dance Motion</button>
+<button data-engine="blue" data-mode="face">Face Swap</button>
 
-<button class="generate">GENERATE BLUE</button>
-
-</div>
+<button id="generate-blue">GENERATE BLUE</button>
 
 </div>
 
-<div class="preview">
+</div>
 
-<h3>MODEL PREVIEW</h3>
+<!-- MODEL PREVIEW -->
 
-<input type="file">
+<div class="model-preview">
 
-<div id="info">
+<input type="file" id="fileA">
+<input type="file" id="fileB">
+
+<div id="model-info">
 ENGINE: - | MODE: - | TYPE: -
 </div>
 
 </div>
 
-<div class="status">STATUS: <span id="status">IDLE</span></div>
+<div id="status">STATUS: IDLE</div>
 
-</div>
-
-<script>
-
-const state={
-engine:null,
-mode:null,
-type:"video"
-};
-
-const info=document.getElementById("info");
-const status=document.getElementById("status");
-
-/* TYPE */
-document.querySelectorAll(".type").forEach(btn=>{
-btn.onclick=()=>{
-document.querySelectorAll(".type").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-state.type=btn.dataset.type;
-update();
-};
-});
-
-/* ENGINE SELECT */
-document.querySelectorAll(".engine").forEach(engine=>{
-
-engine.addEventListener("click",(e)=>{
-
-if(!e.target.classList.contains("model")) return;
-
-document.querySelectorAll(".model").forEach(m=>m.classList.remove("active"));
-document.querySelectorAll(".engine").forEach(en=>en.classList.remove("selected"));
-
-engine.classList.add("selected");
-e.target.classList.add("active");
-
-state.engine=engine.dataset.engine;
-state.mode=e.target.dataset.mode;
-
-update();
-
-});
-
-});
-
-/* GENERATE */
-document.querySelectorAll(".generate").forEach(btn=>{
-btn.onclick=()=>{
-
-if(!state.engine || !state.mode){
-alert("Select engine + model");
-return;
-}
-
-status.innerText="PROCESSING";
-
-setTimeout(()=>{
-status.innerText="COMPLETE";
-},2000);
-
-};
-});
-
-function update(){
-
-info.innerText=
-"ENGINE: "+(state.engine||"-")+
-" | MODE: "+(state.mode||"-")+
-" | TYPE: "+state.type;
-
-}
-
-</script>
+<script src="/assets/js/create.js"></script>
 
 </body>
 </html>
