@@ -3,7 +3,7 @@
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
 <title>SN DESIGN ENGINE AI</title>
 
@@ -13,57 +13,63 @@
 
 <body>
 
-<div class="create-wrapper">
+<div class="create-container">
 
-<!-- ===============================
-HEADER
-=============================== -->
+<h1 class="title">SN DESIGN ENGINE AI</h1>
 
-<h1 class="engine-title">SN DESIGN ENGINE AI</h1>
+<!-- TYPE SELECT -->
 
-<div class="type-selector">
+<div class="type-select">
 
-<button>Generate Video</button>
-<button>Generate Image</button>
-<button>Upscale</button>
+<button data-type="video">Generate Video</button>
+<button data-type="image">Generate Image</button>
+<button data-type="upscale">Upscale</button>
 
 </div>
 
-<!-- ===============================
-ENGINE PANEL
-=============================== -->
+<!-- ENGINE WRAP -->
 
-<div class="engine-panel">
+<div class="engine-wrap">
 
-<!-- ===============================
-RED ENGINE
-=============================== -->
+<!-- RED ENGINE -->
 
 <div class="engine-box red-engine">
 
 <h2>RED ENGINE</h2>
 
+<div class="model-row">
+
 <button data-model="flux2pro">flux2pro</button>
 <button data-model="faceclone">faceclone</button>
+
+</div>
+
+<div class="mode-row">
 
 <button data-mode="generate">GENERATE</button>
 <button data-mode="variation">VARIATION</button>
 <button data-mode="style">STYLE</button>
 <button data-mode="upscale">UPSCALE</button>
 
-<button class="generate-btn">GENERATE RED</button>
+</div>
+
+<button id="generate-red">GENERATE RED</button>
 
 </div>
 
-<!-- ===============================
-BLUE ENGINE
-=============================== -->
+<!-- BLUE ENGINE -->
 
 <div class="engine-box blue-engine">
 
 <h2>BLUE ENGINE</h2>
 
+<div class="model-row">
+
 <button data-model="gen4video">gen4video</button>
+
+</div>
+
+<div class="mode-row">
 
 <button data-mode="motion">MOTION</button>
 <button data-mode="image2video">IMAGE2VIDEO</button>
@@ -71,76 +77,50 @@ BLUE ENGINE
 <button data-mode="dance">DANCE</button>
 <button data-mode="generate">GENERATE</button>
 
-<button class="generate-btn">GENERATE BLUE</button>
+</div>
+
+<button id="generate-blue">GENERATE BLUE</button>
 
 </div>
 
 </div>
 
-<!-- ===============================
-IMPORT FILE AREA (LOCKED)
-=============================== -->
+<!-- IMPORT FILE -->
 
-<div class="import-wrapper">
+<div class="upload-wrap">
 
-<input id="fileA" type="file">
-<input id="fileB" type="file">
+<input type="file" id="fileA">
+<input type="file" id="fileB">
 
 </div>
 
-<!-- ===============================
-CTA INFO BOX (NEW)
-=============================== -->
+<!-- INFO BOX (LOCK POSITION) -->
 
-<div class="cta-info-box">
+<div id="engine-info" class="engine-info">
 
-<div id="engine-info">
 SELECT MODEL TO SEE REQUIREMENTS
-</div>
-
-<div class="user-policy">
-
-User Limit:
-Free 3 renders/day/IP
-Max video length: 30 seconds
-Resolution: 720p (Base) / 1080p (Upscale)
 
 </div>
 
-</div>
+<!-- PREVIEW AREA (LOCKED) -->
 
-<!-- ===============================
-PREVIEW AREA (LOCKED)
-=============================== -->
+<div class="preview-dual">
 
-<div class="preview-wrapper">
+<video id="preview-red-video" controls></video>
+<img id="preview-red-image">
 
-<video id="preview-red-video" controls style="display:none;"></video>
-<img id="preview-red-image" style="display:none;"/>
-
-<video id="preview-blue-video" controls style="display:none;"></video>
-<img id="preview-blue-image" style="display:none;"/>
+<video id="preview-blue-video" controls></video>
+<img id="preview-blue-image">
 
 </div>
 
-<!-- ===============================
-PROMPT (Moved bottom)
-=============================== -->
-
-<div class="prompt-wrapper">
+<!-- PROMPT (LOCKED BOTTOM) -->
 
 <textarea placeholder="Enter prompt..."></textarea>
 
-</div>
+<div id="engine-status">
 
-<!-- ===============================
-STATUS BAR
-=============================== -->
-
-<div class="status-bar">
-
-ENGINE - MODEL - MODE - TYPE
-<br>
+ENGINE - MODEL - MODE - TYPE<br>
 STATUS: IDLE
 
 </div>
