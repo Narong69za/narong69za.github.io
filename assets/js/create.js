@@ -1,24 +1,27 @@
 /* =====================================================
 SN DESIGN ENGINE AI
-create.js — FINAL ENGINE CORE
-LOCK UI LAYOUT / PATCH STATE ONLY
+CREATE.JS — FINAL STABLE BUILD
+(UI LOCK SAFE VERSION)
 ===================================================== */
 
 
+document.addEventListener("DOMContentLoaded",()=>{
+
+
 /* ===============================
-STATE SYSTEM
+STATE
 =============================== */
 
 let STATE = {
-engine: null,
-model: null,
-mode: null,
-type: null
+engine:null,
+model:null,
+mode:null,
+type:null
 };
 
 
 /* ===============================
-DOM REFERENCES
+DOM
 =============================== */
 
 const fileA = document.getElementById("fileA");
@@ -30,13 +33,11 @@ const previewRedImage = document.getElementById("preview-red-image");
 const previewBlueVideo = document.getElementById("preview-blue-video");
 const previewBlueImage = document.getElementById("preview-blue-image");
 
-const progressFill = document.getElementById("progress-fill");
-
 const info = document.getElementById("model-info");
 
 
 /* ===============================
-UPDATE UI STATUS
+UPDATE STATUS
 =============================== */
 
 function updateUI(){
@@ -44,38 +45,37 @@ function updateUI(){
 if(!info) return;
 
 info.innerText =
-`ENGINE: ${STATE.engine || "-"} | MODEL: ${STATE.model || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
+`ENGINE: ${STATE.engine||"-"} | MODEL: ${STATE.model||"-"} | MODE: ${STATE.mode||"-"} | TYPE: ${STATE.type||"-"}`;
 
 }
 
 
 /* ===============================
-ENGINE MODEL SELECT (FINAL LOCK)
+ENGINE MODEL SELECT
 =============================== */
 
-document.querySelectorAll("[data-engine-model]").forEach(btn=>{
+document.querySelectorAll(".engine button").forEach(btn=>{
 
 btn.addEventListener("click",()=>{
 
-const engine = btn.dataset.engine;
-const model = btn.dataset.model;
-
-/* remove active only inside same engine */
-
-document.querySelectorAll(
-`[data-engine-model][data-engine="${engine}"]`
-).forEach(b=>b.classList.remove("active"));
+/* remove active glow */
+document.querySelectorAll(".engine button")
+.forEach(b=>b.classList.remove("active"));
 
 btn.classList.add("active");
 
-/* prevent dual engine active */
+/* detect engine */
+const engineBox = btn.closest(".engine");
 
-document.querySelectorAll(
-`[data-engine-model]:not([data-engine="${engine}"])`
-).forEach(b=>b.classList.remove("active"));
+if(engineBox.classList.contains("red")){
+STATE.engine="replicate";
+}
 
-STATE.engine = engine;
-STATE.model = model;
+if(engineBox.classList.contains("blue")){
+STATE.engine="runway";
+}
+
+STATE.model = btn.innerText.trim();
 
 updateUI();
 
@@ -85,51 +85,7 @@ updateUI();
 
 
 /* ===============================
-MODE SELECT
-=============================== */
-
-document.querySelectorAll("[data-mode]").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-document.querySelectorAll(
-`[data-mode][data-engine="${btn.dataset.engine}"]`
-).forEach(b=>b.classList.remove("active"));
-
-btn.classList.add("active");
-
-STATE.mode = btn.dataset.mode;
-
-updateUI();
-
-});
-
-});
-
-
-/* ===============================
-TYPE SELECT
-=============================== */
-
-document.querySelectorAll("[data-type]").forEach(btn=>{
-
-btn.addEventListener("click",()=>{
-
-document.querySelectorAll("[data-type]").forEach(b=>b.classList.remove("active"));
-
-btn.classList.add("active");
-
-STATE.type = btn.dataset.type;
-
-updateUI();
-
-});
-
-});
-
-
-/* ===============================
-FILE PREVIEW SYSTEM (FINAL FIX)
+FILE PREVIEW
 =============================== */
 
 function preview(file, videoEl, imageEl){
@@ -155,7 +111,7 @@ videoEl.style.display="block";
 
 }
 
-else if(file.type.startsWith("image/") && imageEl){
+if(file.type.startsWith("image/") && imageEl){
 
 imageEl.src = url;
 imageEl.style.display="block";
@@ -165,74 +121,59 @@ imageEl.style.display="block";
 }
 
 
-/* FILE INPUT LISTENER */
+/* listeners */
 
 if(fileA){
+
 fileA.addEventListener("change",()=>{
+
 preview(
 fileA.files[0],
 previewRedVideo,
 previewRedImage
 );
+
 });
+
 }
 
 if(fileB){
+
 fileB.addEventListener("change",()=>{
+
 preview(
 fileB.files[0],
 previewBlueVideo,
 previewBlueImage
 );
+
 });
+
 }
 
 
 /* ===============================
-GENERATE SIMULATION (UI ONLY)
+TYPE SELECT
 =============================== */
 
-async function generate(engine){
+document.querySelectorAll("[data-type]").forEach(btn=>{
 
-const status = document.getElementById("status");
+btn.addEventListener("click",()=>{
 
-if(status){
-status.innerText="STATUS: PROCESSING";
-}
+document.querySelectorAll("[data-type]")
+.forEach(b=>b.classList.remove("active"));
 
-let p = 0;
+btn.classList.add("active");
 
-const timer = setInterval(()=>{
-
-p += 10;
-
-if(progressFill){
-progressFill.style.width = p + "%";
-}
-
-if(p>=100){
-
-clearInterval(timer);
-
-if(status){
-status.innerText="STATUS: COMPLETE";
-}
-
-}
-
-},300);
-
-}
-
-
-document.getElementById("generate-red")?.addEventListener("click",()=>generate("red"));
-
-document.getElementById("generate-blue")?.addEventListener("click",()=>generate("blue"));
-
-
-
-/* ===============================
-INIT
-=============================== */
+STATE.type = btn.dataset.type;
 
 updateUI();
+
+});
+
+});
+
+
+updateUI();
+
+});
