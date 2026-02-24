@@ -40,3 +40,33 @@ preview(fileA.files[0],previewRedVideo,previewRedImage);
 fileB?.addEventListener("change",()=>{
 preview(fileB.files[0],previewBlueVideo,previewBlueImage);
 });
+/* ===============================
+ENGINE ACTIVE SELECT SYSTEM
+================================ */
+
+const allEngineBtns=document.querySelectorAll("[data-engine]");
+
+allEngineBtns.forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+// remove active from siblings inside same engine
+const parentEngine=btn.closest(".engine");
+
+parentEngine
+.querySelectorAll("[data-engine]")
+.forEach(b=>b.classList.remove("active-select"));
+
+// add active
+btn.classList.add("active-select");
+
+// update STATE
+STATE.engine=btn.dataset.engine==="red"
+?"replicate"
+:"runway";
+
+STATE.mode=btn.dataset.mode;
+
+});
+
+});
