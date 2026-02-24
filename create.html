@@ -1,251 +1,139 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ULTRA ENGINE CONTROL</title>
-
 <link rel="stylesheet" href="/assets/css/create-premium.css">
-
 </head>
-
 <body>
 
 <div class="container">
 
-<h1>ULTRA ENGINE CONTROL</h1>
+    <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<input id="prompt" placeholder="Enter prompt">
+    <!-- PROMPT -->
+    <div class="prompt-zone">
+        <input type="text" id="prompt" placeholder="Enter prompt">
+    </div>
 
-<div class="actionRow">
+    <!-- GLOBAL TYPE SELECT -->
+    <div class="type-zone">
+        <button class="type-btn active" data-type="video">Generate Video</button>
+        <button class="type-btn" data-type="image">Generate Image</button>
+        <button class="type-btn" data-type="upscale">Upscale</button>
+    </div>
 
-<button data-type="video">Generate Video</button>
-<button data-type="image">Generate Image</button>
-<button data-type="upscale">Upscale</button>
+    <!-- ENGINE SECTION -->
+    <div class="engine-wrapper">
+
+        <!-- RED ENGINE -->
+        <div class="engine-panel red" data-engine="red">
+            <h2>RED ENGINE</h2>
+
+            <button class="model-btn" data-model="viral">Dark Viral</button>
+            <button class="model-btn" data-model="lipsync">AI LipSync</button>
+            <button class="model-btn" data-model="motion">Dance Motion</button>
+            <button class="model-btn" data-model="face">Face Swap</button>
+
+            <button class="generate-btn">GENERATE RED</button>
+        </div>
+
+        <!-- BLUE ENGINE -->
+        <div class="engine-panel blue" data-engine="blue">
+            <h2>BLUE ENGINE</h2>
+
+            <button class="model-btn" data-model="viral">Dark Viral</button>
+            <button class="model-btn" data-model="lipsync">AI LipSync</button>
+            <button class="model-btn" data-model="motion">Dance Motion</button>
+            <button class="model-btn" data-model="face">Face Swap</button>
+
+            <button class="generate-btn">GENERATE BLUE</button>
+        </div>
+
+    </div>
+
+    <!-- FILE UPLOAD -->
+    <div class="preview-box">
+        <h3>MODEL PREVIEW</h3>
+        <input type="file" id="fileInput">
+        <div id="engineInfo">ENGINE: - | MODE: - | TYPE: -</div>
+    </div>
+
+    <!-- STATUS -->
+    <div class="status-box">
+        STATUS: <span id="status">IDLE</span>
+    </div>
 
 </div>
-
-
-<div class="engineGrid">
-
-<div class="engineColumn red">
-
-<h2>RED ENGINE</h2>
-
-<button data-engine="replicate" data-alias="dark-viral">Dark Viral</button>
-<button data-engine="replicate" data-alias="ai-lipsync">AI LipSync</button>
-<button data-engine="replicate" data-alias="dance-motion">Dance Motion</button>
-<button data-engine="replicate" data-alias="face-swap">Face Swap</button>
-
-</div>
-
-
-<div class="engineColumn blue">
-
-<h2>BLUE ENGINE</h2>
-
-<button data-engine="runway" data-alias="dark-viral">Dark Viral</button>
-<button data-engine="runway" data-alias="ai-lipsync">AI LipSync</button>
-<button data-engine="runway" data-alias="dance-motion">Dance Motion</button>
-<button data-engine="runway" data-alias="face-swap">Face Swap</button>
-
-</div>
-
-</div>
-
-
-<div id="dynamicInputs"></div>
-
-<button id="generateBtn">GENERATE</button>
-
-<div id="status">STATUS: IDLE</div>
-
-</div>
-
 
 <script>
-
-/* =========================
-ULTRA AUTO ENGINE PIPELINE
-ADD ONLY PATCH
-========================= */
-
-const API_BASE="https://sn-design-api.onrender.com";
-
-/* ENGINE INPUT SCHEMA */
-
-const ENGINE_SCHEMA={
-
-"dance-motion":["template","subject"],
-"face-swap":["source","target"],
-"dark-viral":["image"],
-"ai-lipsync":["video","voice"]
-
+const state = {
+    engine: null,
+    provider: null,
+    model: null,
+    type: "video"
 };
 
-let selectedEngine=null;
-let selectedAlias=null;
-let selectedType=null;
+const typeBtns = document.querySelectorAll(".type-btn");
+const enginePanels = document.querySelectorAll(".engine-panel");
+const statusEl = document.getElementById("status");
+const engineInfo = document.getElementById("engineInfo");
 
-
-/* ACTION TYPE */
-
-document.querySelectorAll("[data-type]").forEach(btn=>{
-
-btn.onclick=()=>{
-
-selectedType=btn.dataset.type;
-console.log("TYPE SELECTED:",selectedType);
-
-};
-
+/* TYPE SELECT */
+typeBtns.forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        typeBtns.forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        state.type = btn.dataset.type;
+        updateInfo();
+    });
 });
 
+/* ENGINE + MODEL SELECT */
+enginePanels.forEach(panel=>{
+    panel.addEventListener("click",(e)=>{
+        if(e.target.classList.contains("model-btn")){
 
-/* ENGINE SELECT */
+            document.querySelectorAll(".engine-panel").forEach(p=>{
+                p.classList.remove("selected");
+                p.querySelectorAll(".model-btn").forEach(m=>m.classList.remove("active"));
+            });
 
-document.querySelectorAll("[data-engine]").forEach(btn=>{
+            panel.classList.add("selected");
+            e.target.classList.add("active");
 
-btn.onclick=()=>{
+            state.engine = panel.dataset.engine;
+            state.provider = state.engine === "red" ? "replicate" : "runway";
+            state.model = e.target.dataset.model;
 
-selectedEngine=btn.dataset.engine;
-selectedAlias=btn.dataset.alias;
-
-console.log("ENGINE:",selectedEngine,"ALIAS:",selectedAlias);
-
-renderInputs(selectedAlias);
-
-};
-
+            updateInfo();
+        }
+    });
 });
 
+/* GENERATE */
+document.querySelectorAll(".generate-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        if(!state.engine || !state.model){
+            alert("Select engine and model first");
+            return;
+        }
 
-/* DYNAMIC INPUT RENDER */
+        statusEl.textContent = "PROCESSING";
 
-function renderInputs(alias){
-
-const box=document.getElementById("dynamicInputs");
-
-box.innerHTML="";
-
-if(!ENGINE_SCHEMA[alias]) return;
-
-ENGINE_SCHEMA[alias].forEach(name=>{
-
-const wrap=document.createElement("div");
-
-const label=document.createElement("div");
-label.innerText="UPLOAD "+name;
-
-const input=document.createElement("input");
-
-input.type="file";
-input.name=name;
-input.required=true;
-
-wrap.appendChild(label);
-wrap.appendChild(input);
-
-box.appendChild(wrap);
-
+        setTimeout(()=>{
+            statusEl.textContent = "COMPLETE";
+        },2000);
+    });
 });
 
+function updateInfo(){
+    engineInfo.textContent =
+        "ENGINE: " + (state.provider || "-") +
+        " | MODE: " + (state.model || "-") +
+        " | TYPE: " + state.type;
 }
-
-
-/* =========================
-ULTRA GENERATE HANDLER
-========================= */
-
-document.getElementById("generateBtn").onclick=async()=>{
-
-try{
-
-if(!selectedEngine||!selectedAlias){
-
-alert("select engine");
-
-return;
-
-}
-
-const form=new FormData();
-
-form.append("engine",selectedEngine);
-form.append("alias",selectedAlias);
-form.append("type",selectedType||"video");
-
-form.append("prompt",document.getElementById("prompt").value||"");
-
-
-/* CHECK FILE INPUT */
-
-let missing=false;
-
-document.querySelectorAll("#dynamicInputs input").forEach(input=>{
-
-if(!input.files[0]){
-
-missing=true;
-
-}else{
-
-form.append(input.name,input.files[0]);
-
-}
-
-});
-
-if(missing){
-
-alert("missing file input");
-
-return;
-
-}
-
-document.getElementById("status").innerText="STATUS: QUEUED";
-
-console.log("POST TO:",API_BASE+"/api/render");
-
-/* SEND TO BACKEND */
-
-const res=await fetch(API_BASE+"/api/render",{
-
-method:"POST",
-body:form
-
-});
-
-console.log("HTTP STATUS:",res.status);
-
-if(!res.ok){
-
-const text=await res.text();
-document.getElementById("status").innerText="STATUS: ERROR "+res.status;
-console.error("SERVER ERROR:",text);
-return;
-
-}
-
-const json=await res.json();
-
-console.log("RESPONSE:",json);
-
-document.getElementById("status").innerText="STATUS: "+json.status;
-
-}catch(err){
-
-console.error("CLIENT ERROR:",err);
-
-document.getElementById("status").innerText="STATUS: CLIENT ERROR";
-
-}
-
-};
-
 </script>
 
 </body>
