@@ -2,148 +2,230 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
 <title>ULTRA ENGINE CONTROL</title>
 
-<link rel="stylesheet" href="/assets/css/create-premium.css">
-
+<link rel="stylesheet" href="assets/css/create-premium.css">
 </head>
 
 <body>
 
-<div class="wrap">
+<div class="create-wrapper">
 
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<input class="prompt" placeholder="Enter prompt">
+<input id="promptInput" class="prompt-input" placeholder="Enter prompt">
 
-<!-- TYPE CENTER -->
-<div class="type-center">
-
-<button class="type active" data-type="video">Generate Video</button>
-<button class="type" data-type="image">Generate Image</button>
-<button class="type" data-type="upscale">Upscale</button>
-
+<div class="type-selector">
+<button data-type="video">Generate Video</button>
+<button data-type="image">Generate Image</button>
+<button data-type="upscale">Upscale</button>
 </div>
 
-<!-- ENGINE SIDE BY SIDE -->
-<div class="engine-row">
 
-<!-- RED -->
+<div class="engine-grid">
+
 <div class="engine red" data-engine="replicate">
-
 <h2>RED ENGINE</h2>
 
-<button class="model" data-mode="viral">Dark Viral</button>
-<button class="model" data-mode="lipsync">AI LipSync</button>
-<button class="model" data-mode="motion">Dance Motion</button>
-<button class="model" data-mode="face">Face Swap</button>
+<button data-mode="darkviral">Dark Viral</button>
+<button data-mode="lipsync">AI LipSync</button>
+<button data-mode="motion">Dance Motion</button>
+<button data-mode="face">Face Swap</button>
 
-<button class="generate">GENERATE RED</button>
+<button class="generate-btn" data-engine-run="replicate">GENERATE RED</button>
 
 </div>
 
-<!-- BLUE -->
+
 <div class="engine blue" data-engine="runway">
 
 <h2>BLUE ENGINE</h2>
 
-<button class="model" data-mode="viral">Dark Viral</button>
-<button class="model" data-mode="lipsync">AI LipSync</button>
-<button class="model" data-mode="motion">Dance Motion</button>
-<button class="model" data-mode="face">Face Swap</button>
+<button data-mode="darkviral">Dark Viral</button>
+<button data-mode="lipsync">AI LipSync</button>
+<button data-mode="motion">Dance Motion</button>
+<button data-mode="face">Face Swap</button>
 
-<button class="generate">GENERATE BLUE</button>
-
-</div>
+<button class="generate-btn" data-engine-run="runway">GENERATE BLUE</button>
 
 </div>
 
-<div class="preview">
+</div>
 
-<h3>MODEL PREVIEW</h3>
 
-<input type="file">
+<div class="model-preview">
 
-<div id="info">
+<input type="file" id="fileInput">
+
+<p id="fileName">ไม่ได้เลือกไฟล์ใด</p>
+
+<p id="engineInfo">
 ENGINE: - | MODE: - | TYPE: -
+</p>
+
+</div>
+
+<div class="status">
+STATUS: <span id="statusText">IDLE</span>
 </div>
 
 </div>
 
-<div class="status">STATUS: <span id="status">IDLE</span></div>
-
-</div>
 
 <script>
 
-const state={
-engine:null,
-mode:null,
-type:"video"
-};
+/* ===========================
+ENGINE INPUT LOGIC (ADD ONLY)
+=========================== */
 
-const info=document.getElementById("info");
-const status=document.getElementById("status");
+let selectedEngine=null;
+let selectedMode=null;
+let selectedType=null;
+let selectedFile=null;
 
-/* TYPE */
-document.querySelectorAll(".type").forEach(btn=>{
+/* TYPE SELECT */
+
+document.querySelectorAll('.type-selector button')
+.forEach(btn=>{
 btn.onclick=()=>{
-document.querySelectorAll(".type").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
-state.type=btn.dataset.type;
-update();
-};
+document.querySelectorAll('.type-selector button')
+.forEach(b=>b.classList.remove('active'));
+
+btn.classList.add('active');
+
+selectedType=btn.dataset.type;
+
+updatePreview();
+}
 });
 
-/* ENGINE SELECT */
-document.querySelectorAll(".engine").forEach(engine=>{
 
-engine.addEventListener("click",(e)=>{
+/* ENGINE MODE SELECT */
 
-if(!e.target.classList.contains("model")) return;
+document.querySelectorAll('.engine button[data-mode]')
+.forEach(btn=>{
 
-document.querySelectorAll(".model").forEach(m=>m.classList.remove("active"));
-document.querySelectorAll(".engine").forEach(en=>en.classList.remove("selected"));
-
-engine.classList.add("selected");
-e.target.classList.add("active");
-
-state.engine=engine.dataset.engine;
-state.mode=e.target.dataset.mode;
-
-update();
-
-});
-
-});
-
-/* GENERATE */
-document.querySelectorAll(".generate").forEach(btn=>{
 btn.onclick=()=>{
 
-if(!state.engine || !state.mode){
-alert("Select engine + model");
-return;
+let engineBox=btn.closest('.engine');
+
+engineBox.querySelectorAll('[data-mode]')
+.forEach(b=>b.classList.remove('active-mode'));
+
+btn.classList.add('active-mode');
+
+selectedEngine=engineBox.dataset.engine;
+selectedMode=btn.dataset.mode;
+
+updatePreview();
+
 }
 
-status.innerText="PROCESSING";
+});
+
+
+/* FILE INPUT */
+
+document.getElementById('fileInput').addEventListener('change',(e)=>{
+
+selectedFile=e.target.files[0];
+
+if(selectedFile){
+
+document.getElementById('fileName').innerText=selectedFile.name;
+
+validateInput();
+
+}
+
+});
+
+
+/* VALIDATION */
+
+function validateInput(){
+
+if(!selectedFile)return;
+
+let isImage=selectedFile.type.startsWith('image/');
+let isVideo=selectedFile.type.startsWith('video/');
+
+let allowed=false;
+
+/* INPUT MATRIX */
+
+if(selectedType==="video" && (isImage || isVideo)) allowed=true;
+
+if(selectedType==="image" && (isVideo || isImage)) allowed=true;
+
+if(selectedType==="upscale" && isImage) allowed=true;
+
+if(!allowed){
+
+alert("ไฟล์ไม่รองรับสำหรับ TYPE นี้");
+
+selectedFile=null;
+
+document.getElementById('fileInput').value="";
+
+}
+
+}
+
+
+/* PREVIEW UPDATE */
+
+function updatePreview(){
+
+document.getElementById('engineInfo').innerText=
+
+"ENGINE: "+(selectedEngine||"-")+
+
+" | MODE: "+(selectedMode||"-")+
+
+" | TYPE: "+(selectedType||"-");
+
+}
+
+
+/* GENERATE BUTTON */
+
+document.querySelectorAll('.generate-btn')
+.forEach(btn=>{
+
+btn.onclick=()=>{
+
+if(!selectedEngine || !selectedMode || !selectedType){
+
+alert("เลือก ENGINE / MODE / TYPE ก่อน");
+
+return;
+
+}
+
+if(!selectedFile){
+
+alert("กรุณาเลือกไฟล์");
+
+return;
+
+}
+
+document.getElementById('statusText').innerText="PROCESSING";
+
+/* SEND TO BACKEND HERE */
 
 setTimeout(()=>{
-status.innerText="COMPLETE";
+
+document.getElementById('statusText').innerText="COMPLETE";
+
 },2000);
 
-};
-});
-
-function update(){
-
-info.innerText=
-"ENGINE: "+(state.engine||"-")+
-" | MODE: "+(state.mode||"-")+
-" | TYPE: "+state.type;
-
 }
+
+});
 
 </script>
 
