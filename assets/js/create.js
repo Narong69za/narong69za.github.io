@@ -1,17 +1,20 @@
 /* ===============================
-ULTRA ENGINE CORE LOCK
+STATE
 ================================ */
 
 let STATE={
 engine:null,
 model:null,
 mode:null,
-type:"video"
+type:null
 };
 
 /* ===============================
 ELEMENTS
 ================================ */
+
+const modelBtns=document.querySelectorAll("[data-model]");
+const modeBtns=document.querySelectorAll("[data-mode]");
 
 const fileA=document.getElementById("fileA");
 const fileB=document.getElementById("fileB");
@@ -22,69 +25,79 @@ const previewRedImage=document.getElementById("preview-red-image");
 const previewBlueVideo=document.getElementById("preview-blue-video");
 const previewBlueImage=document.getElementById("preview-blue-image");
 
-const infoBox=document.getElementById("engine-info");
+const engineInfo=document.getElementById("engine-info");
 
 /* ===============================
-MODEL REQUIREMENTS
+MODEL INFO DATABASE
 ================================ */
 
 const MODEL_INFO={
 
-flux2pro:{
-engine:"replicate",
-text:`REPLICATE FLUX2PRO
-Image generation
-Variation / Style / Face swap
-Output: 720p base (Upscale → 1080p)`
-},
+gen4video:`
+RUNWAY GEN4 VIDEO
 
-gen4video:{
-engine:"runway",
-text:`RUNWAY GEN4 VIDEO
 Motion clone
 Image → Video
 Lipsync / Dance motion
+
 Max length: 30 sec
-720p base (Upscale → 1080p)`
-}
+720p base (Upscale → 1080p)
+`,
+
+flux2pro:`
+REPLICATE FLUX2PRO
+
+Image generation
+Variation
+Face swap
+Style transfer
+
+720p / 1080p upscale
+`
 
 };
 
 /* ===============================
-ACTIVE SELECT SYSTEM
+MODEL SELECT (LOCK ENGINE CORE)
 ================================ */
 
-document.querySelectorAll("[data-model]").forEach(btn=>{
+modelBtns.forEach(btn=>{
 
 btn.onclick=()=>{
 
-// clear ALL active
-document.querySelectorAll("[data-model]")
-.forEach(b=>b.classList.remove("active-select"));
+/* remove active from all */
+modelBtns.forEach(b=>b.classList.remove("active-model"));
 
-// apply
-btn.classList.add("active-select");
+btn.classList.add("active-model");
 
 STATE.model=btn.dataset.model;
-STATE.engine=MODEL_INFO[STATE.model].engine;
 
-// show info
-if(infoBox){
-infoBox.innerText=MODEL_INFO[STATE.model].text;
+STATE.engine=
+btn.closest(".red-engine") ? "replicate" : "runway";
+
+/* update info box */
+
+if(engineInfo && MODEL_INFO[STATE.model]){
+
+engineInfo.innerText=MODEL_INFO[STATE.model];
+
 }
 
 };
 
 });
 
-document.querySelectorAll("[data-mode]").forEach(btn=>{
+/* ===============================
+MODE SELECT
+================================ */
+
+modeBtns.forEach(btn=>{
 
 btn.onclick=()=>{
 
-document.querySelectorAll("[data-mode]")
-.forEach(b=>b.classList.remove("active-select"));
+modeBtns.forEach(b=>b.classList.remove("active-mode"));
 
-btn.classList.add("active-select");
+btn.classList.add("active-mode");
 
 STATE.mode=btn.dataset.mode;
 
@@ -93,33 +106,41 @@ STATE.mode=btn.dataset.mode;
 });
 
 /* ===============================
-PREVIEW SYSTEM (LOCKED)
+FILE PREVIEW (LOCKED VISUAL)
 ================================ */
 
-function preview(file, videoEl, imageEl){
+function preview(file,videoEl,imageEl){
 
 if(!file) return;
 
 const url=URL.createObjectURL(file);
 
-if(file.type.startsWith("video/")){
+if(file.type.startsWith("video")){
+
 videoEl.src=url;
 videoEl.style.display="block";
 imageEl.style.display="none";
+
 }
 
-else if(file.type.startsWith("image/")){
+else if(file.type.startsWith("image")){
+
 imageEl.src=url;
 imageEl.style.display="block";
 videoEl.style.display="none";
+
 }
 
 }
 
 fileA?.addEventListener("change",()=>{
+
 preview(fileA.files[0],previewRedVideo,previewRedImage);
+
 });
 
 fileB?.addEventListener("change",()=>{
+
 preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+
 });
