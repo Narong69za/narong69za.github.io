@@ -1,184 +1,134 @@
-let STATE = {
-enginel,
-mode:null,
-type:null
-};
-
-const typeBtns = document.querySelectorAll("[data-type]");
-const modeBtns = document.querySelectorAll("[data-mode]");
-
-const info = document.getElementById("model-info");
-
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
-
-function updatePreview(){
-
-info.innerText =
-`ENGINE: ${STATE.engine || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
-
-}
-
-typeBtns.forEach(btn=>{
-
-btn.onclick = ()=>{
-
-typeBtns.forEach(b=>b.classList.remove("active"));
-
-btn.classList.add("active");
-
-STATE.type = btn.dataset.type;
-
-updatePreview();
-
-};
-
-});
-
-modeBtns.forEach(btn=>{
-
-btn.onclick = ()=>{
-
-const engine = btn.dataset.engine;
-
-document.querySelectorAll(`.engine.${engine} button[data-mode]`)
-.forEach(b=>b.classList.remove("active-mode"));
-
-btn.classList.add("active-mode");
-
-STATE.engine = engine === "red" ? "replicate" : "runway";
-
-STATE.mode = btn.dataset.mode;
-
-updatePreview();
-
-};
-
-});
-
-async function validateFiles(){
-
-if(!STATE.mode) return false;
-
-if(STATE.mode==="face"){
-
-return fileA.files.length && fileB.files.length;
-
-}
-
-if(STATE.mode==="lipsync" || STATE.mode==="motion"){
-
-return fileA.files.length && fileB.files.length;
-
-}
-
-if(STATE.type==="upscale"){
-
-return fileA.files.length;
-
-}
-
-return true;
-
-}
-
-async function generate(engine){
-
-const ok = await validateFiles();
-
-if(!ok){
-
-alert("FILES MISSING");
-
-return;
-
-}
-
-document.getElementById("status").innerText="STATUS: PROCESSING";
-
-const form = new FormData();
-
-form.append("engine",STATE.engine);
-form.append("mode",STATE.mode);
-form.append("type",STATE.type);
-
-if(fileA.files[0]) form.append("fileA",fileA.files[0]);
-if(fileB.files[0]) form.append("fileB",fileB.files[0]);
-
-await fetch("/api/render",{
-
-method:"POST",
-body:form
-
-});
-
-document.getElementById("status").innerText="STATUS: COMPLETE";
-
-}
-
-document.getElementById("generate-red").onclick=()=>generate("red");
-document.getElementById("generate-blue").onclick=()=>generate("blue");
-
-/* ===== FRAME LOCK FIX ===== */
-
-.engine-wrap{
-max-width:1100px;
-margin:40px auto;
-padding:0 20px;
+*{
 box-sizing:border-box;
+margin:0;
+padding:0;
 }
 
-/* กันล้นมือถือ */
-@media(max-width:900px){
-
-.engine-wrap{
-flex-direction:column;
-align-items:center;
-}
-
-.engine{
-width:100%;
-max-width:500px;
-}
-
-}
-
-/* กัน input ล้น */
-input{
-width:100%;
-max-width:100%;
-box-sizing:border-box;
-}
-
-/* กัน body ล้น */
 body{
-overflow-x:hiddhidden/* =========================
-ULTRA ENGINE MATRIX RESTORE
-========================= */
+background:#000;
+color:#fff;
+font-family:Arial, sans-serif;
+overflow-x:hidden;
+padding:40px 20px;
+text-align:center;
+}
 
-/* wrapper หลัก 2 engine */
+.title{
+margin-bottom:30px;
+font-size:28px;
+letter-spacing:2px;
+}
+
+.prompt-input{
+width:100%;
+max-width:900px;
+margin:0 auto 25px auto;
+padding:12px;
+background:#111;
+border:1px solid #333;
+color:#fff;
+display:block;
+}
+
+.type-selector{
+display:flex;
+justify-content:center;
+gap:15px;
+margin-bottom:40px;
+}
+
+.type-selector button{
+padding:10px 18px;
+background:#111;
+border:1px solid #444;
+color:#fff;
+cursor:pointer;
+}
+
+.type-selector button.active{
+border:2px solid #00ff5a;
+box-shadow:0 0 15px #00ff5a;
+}
+
 .engine-wrap{
 display:flex;
 justify-content:center;
-align-items:stretch;
 gap:40px;
-
-width:100%;
+flex-wrap:nowrap;
 max-width:1200px;
-margin:40px auto;
-
-flex-wrap:nowrap; /* ห้ามยุบ */
+margin:0 auto 50px auto;
 }
 
-/* card engine */
 .engine{
 flex:1;
-min-width:0; /* กัน overflow flex bug */
-max-width:540px;
-width:100%;
+max-width:520px;
+background:#0a0a0a;
+padding:30px;
+border-radius:18px;
+border:1px solid #222;
+transition:0.3s;
 }
 
-/* mobile stack */
+.engine.red{
+box-shadow:0 0 25px rgba(255,0,0,0.4);
+}
+
+.engine.blue{
+box-shadow:0 0 25px rgba(0,200,255,0.4);
+}
+
+.engine h2{
+margin-bottom:25px;
+letter-spacing:2px;
+}
+
+.engine button{
+display:block;
+width:100%;
+margin-bottom:12px;
+padding:10px;
+background:#111;
+border:1px solid #333;
+color:#fff;
+cursor:pointer;
+}
+
+.engine button.active-mode{
+border:2px solid #00ff5a;
+box-shadow:0 0 15px #00ff5a;
+}
+
+.generate-btn{
+margin-top:20px;
+background:#ddd !important;
+color:#000 !important;
+font-weight:bold;
+}
+
+.model-preview{
+background:#111;
+padding:25px;
+border-radius:15px;
+max-width:900px;
+margin:0 auto 25px auto;
+border:1px solid #333;
+}
+
+.model-preview input{
+margin-bottom:10px;
+}
+
+#model-info{
+margin-top:10px;
+color:#ccc;
+}
+
+#status{
+margin-top:15px;
+letter-spacing:2px;
+color:#aaa;
+}
+
 @media(max-width:900px){
 
 .engine-wrap{
@@ -190,29 +140,4 @@ align-items:center;
 max-width:600px;
 }
 
-}
-
-/* TYPE SELECTOR CENTER LOCK */
-.type-selector{
-display:flex;
-justify-content:center;
-gap:12px;
-flex-wrap:nowrap;
-}
-
-/* INPUT FULL WIDTH */
-.prompt-input{
-width:100%;
-max-width:900px;
-margin:0 auto;
-display:block;
-}
-
-/* ป้องกัน layout collapse */
-*{
-box-sizing:border-box;
-}
-
-body{
-overflow-x:hidden;
 }
