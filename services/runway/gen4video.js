@@ -1,19 +1,12 @@
-// src/services/runway/gen4video.js
-
 const fetch = require("node-fetch");
-const db = require("../../db/db");
+const db = require("../../db/db.js");
 
 const RUNWAY_API = process.env.RUNWAY_API;
+const RUNWAY_URL = "https://api.runwayml.com/v1/motion_clone";
 
-const RUNWAY_MAP = {
+exports.run = async ({alias,type,prompt,files,jobID}) => {
 
-   "dance-motion": true
-
-};
-
-exports.run = async ({alias,prompt,files,jobID})=>{
-
-   if(!RUNWAY_MAP[alias]){
+   if(alias !== "dance-motion"){
       throw new Error("RUNWAY MODE NOT SUPPORTED");
    }
 
@@ -26,47 +19,21 @@ exports.run = async ({alias,prompt,files,jobID})=>{
 
    console.log("RUNWAY EXEC:",alias);
 
-   const res = await fetch("https://api.runwayml.com/v1/motion_clone",{
-
+   const response = await fetch(RUNWAY_URL,{
       method:"POST",
-
       headers:{
          "Authorization":`Bearer ${RUNWAY_API}`,
          "Content-Type":"application/json"
       },
-
       body:JSON.stringify({
-
          mode:"motion_clone",
-         template_url: template.path,
-         subject_url: subject.path,
-         prompt: prompt || ""
-
+         template_url:template.path,
+         subject_url:subject.path,
+         prompt:prompt || ""
       })
-
    });
 
-   const text = await res.text();
-
-   let result;
-
-   try{
-      result = JSON.parse(text);
-   }catch{
-      console.log(text);
-      throw new Error("RUNWAY INVALID JSON");
-   }
+   const result = await response.json();
 
    if(!result.id){
-      console.log(result);
-      throw new Error("RUNWAY START FAILED");
-   }
-
-   db.run(
-      "UPDATE projects SET status='processing', externalID=? WHERE id=?",
-      [result.id, jobID]
-   );
-
-   return result;
-
-};
+      throw new Error("RUN
