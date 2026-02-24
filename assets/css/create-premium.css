@@ -1,425 +1,92 @@
-.model-tabs{
-
-display:flex;
-gap:10px;
-margin-bottom:12px;
-
+*{
+box-sizing:border-box;
 }
-
-.model-tabs button{
-
-background:#111;
-border:1px solid #333;
-color:#fff;
-padding:8px 12px;
-cursor:pointer;
-
-}
-
-.model-tabs button.active{
-
-box-shadow:0 0 14px #00ff88;
-
-}
-
-.engine-active{
-
-outline:2px solid #00ff88;
-
-}
-
-.mode-container button.active-mode{
-
-box-shadow:0 0 12px #00ff66;
-
-}
-/* =====================================
-ULTRA ENGINE CONTROL VISUAL RESTORE
-===================================== */
 
 body{
-background:linear-gradient(180deg,#050505,#0b0f14);
-font-family:Arial, sans-serif;
+margin:0;
+background:#050505;
 color:#fff;
+overflow-x:hidden;
+font-family:sans-serif;
+}
+
+.create-root{
+max-width:1200px;
+margin:auto;
+padding:20px;
+text-align:center;
 }
 
 .title{
-text-align:center;
 letter-spacing:3px;
-margin-top:20px;
-margin-bottom:20px;
-font-weight:600;
 }
 
-.type-selector{
-text-align:center;
-margin-bottom:25px;
+.type-bar{
+margin:20px;
 }
-
-.type-selector button{
-background:#111;
-border:1px solid #333;
-color:#aaa;
-padding:10px 16px;
-margin:6px;
-transition:0.3s;
-}
-
-.type-selector button.active{
-color:#fff;
-border-color:#00ff88;
-box-shadow:0 0 14px rgba(0,255,150,0.5);
-}
-
-/* ENGINE PANELS */
 
 .engine-wrap{
 display:flex;
 flex-wrap:wrap;
 justify-content:center;
-gap:40px;
-padding:20px;
 }
 
 .engine{
-width:340px;
-padding:25px;
-border-radius:18px;
-background:rgba(20,20,20,0.6);
-backdrop-filter:blur(12px);
-transition:0.3s;
-}
-
-.engine.red{
-box-shadow:0 0 30px rgba(255,0,0,0.15);
-}
-
-.engine.blue{
-box-shadow:0 0 30px rgba(0,255,255,0.15);
-}
-
-.engine-active.red{
-box-shadow:0 0 45px rgba(255,0,0,0.5);
-border:1px solid rgba(255,0,0,0.6);
-}
-
-.engine-active.blue{
-box-shadow:0 0 45px rgba(0,255,255,0.5);
-border:1px solid rgba(0,255,255,0.6);
-}
-
-.engine h2{
-text-align:center;
-letter-spacing:2px;
-margin-bottom:20px;
-}
-
-/* MODEL TABS */
-
-.model-tabs button{
-background:#111;
-border:1px solid #333;
-color:#bbb;
-padding:8px 12px;
-transition:0.3s;
-}
-
-.model-tabs button:hover{
-border-color:#00ff88;
-color:#fff;
-}
-
-.model-tabs button.active{
-border-color:#00ff88;
-box-shadow:0 0 14px rgba(0,255,150,0.6);
-color:#fff;
-}
-
-/* MODE BUTTONS */
-
-.mode-container button{
-width:100%;
-margin:8px 0;
-padding:12px;
-background:#111;
-border:1px solid #222;
-color:#aaa;
-transition:0.25s;
-}
-/* =================================
-ULTRA ENGINE PERMA GLOW
-================================= */
-
-/* glow ตลอดเวลา */
-.engine.red {
-box-shadow:
-0 0 25px rgba(255,0,0,0.35),
-0 0 60px rgba(255,0,0,0.15) inset;
-}
-
-.engine.blue {
-box-shadow:
-0 0 25px rgba(0,255,220,0.35),
-0 0 60px rgba(0,255,220,0.15) inset;
-}
-
-/* active state เพิ่ม glow อีกชั้น */
-.engine.engine-active.red {
-box-shadow:
-0 0 35px rgba(255,0,0,0.7),
-0 0 120px rgba(255,0,0,0.25);
-}
-
-.engine.engine-active.blue {
-box-shadow:
-0 0 35px rgba(0,255,220,0.7),
-0 0 120px rgba(0,255,220,0.25);
-}
-
-/* =================================
-UPLOAD AREA CENTER FIX
-================================= */
-
-.upload-wrap{
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-text-align:center;
-width:100%;
-margin:auto;
-}
-
-.upload-wrap input{
-margin:6px auto;
-display:block;
-}
-/* =================================
-ENGINE FULL PANEL LOCK
-================================= */
-
-.engine{
-min-height: 420px;
-display:flex;
-flex-direction:column;
-justify-content:flex-start;
-padding:24px;
-transition:all .3s ease;
-}
-
-/* ล็อคให้ขนาดไม่เปลี่ยนตาม active */
-.engine.red,
-.engine.blue{
-transform:none !important;
-}
-/* =================================
-PERMANENT DUAL GLOW SYSTEM
-================================= */
-
-.engine.red{
-box-shadow:
-0 0 30px rgba(255,0,0,.35),
-0 0 90px rgba(255,0,0,.15);
-}
-
-.engine.blue{
-box-shadow:
-0 0 30px rgba(0,255,220,.35),
-0 0 90px rgba(0,255,220,.15);
-}
-
-/* active boost */
-.engine.engine-active.red{
-box-shadow:
-0 0 50px rgba(255,0,0,.7),
-0 0 150px rgba(255,0,0,.3);
-}
-
-.engine.engine-active.blue{
-box-shadow:
-0 0 50px rgba(0,255,220,.7),
-0 0 150px rgba(0,255,220,.3);
-}
-/* =================================
-GLOBAL CENTER BALANCE FIX
-================================= */
-
-.section-block,
-.upload-section,
-.status-section,
-.preview-section{
-width:100%;
-max-width:1200px;
-margin:40px auto;
-display:flex;
-flex-direction:column;
-align-items:center;
-text-align:center;
-}
-
-/* preview row */
-.preview-row{
-display:flex;
-justify-content:center;
-gap:20px;
-flex-wrap:wrap;
-}
-/* ===============================
-PERMANENT DUAL GLOW
-=============================== */
-
-.engine{
-min-height:420px;
-padding:24px;
-transition:all .3s ease;
-}
-
-.engine.red{
-box-shadow:
-0 0 30px rgba(255,0,0,.35),
-0 0 90px rgba(255,0,0,.15);
-}
-
-.engine.blue{
-box-shadow:
-0 0 30px rgba(0,255,220,.35),
-0 0 90px rgba(0,255,220,.15);
-}
-
-/* active boost */
-.engine.engine-active.red{
-box-shadow:
-0 0 55px rgba(255,0,0,.7),
-0 0 150px rgba(255,0,0,.35);
-}
-
-.engine.engine-active.blue{
-box-shadow:
-0 0 55px rgba(0,255,220,.7),
-0 0 150px rgba(0,255,220,.35);
-}
-
-/* ===============================
-CENTER BALANCE
-=============================== */
-
-.import-area,
-.preview-row,
-.status-section{
-width:100%;
-max-width:1100px;
-margin:40px auto;
-display:flex;
-flex-direction:column;
-align-items:center;
-text-align:center;
-}
-
-.preview-row{
-flex-direction:row;
-gap:20px;
-justify-content:center;
-flex-wrap:wrap;
-}
-
-/* ===============================
-PROMPT LOWER POSITION
-=============================== */
-
-.prompt-lower{
-width:100%;
-max-width:900px;
-margin:40px auto;
-display:flex;
-justify-content:center;
-}
-
-#prompt{
-width:100%;
-min-height:90px;
-background:#111;
-color:#fff;
-border:1px solid #222;
-border-radius:10px;
-padding:14px;
-}
-/* ===============================
-ENGINE FULL BALANCE
-=============================== */
-
-.engine{
-
-width:100%;
+flex:1 1 420px;
 max-width:520px;
-margin:auto;
-
-display:flex;
-flex-direction:column;
-align-items:stretch;
-
-padding:30px 24px;
-
+margin:20px;
+padding:25px;
+border-radius:20px;
+background:#090909;
 }
-/* ===============================
-PREMIUM CTA STYLE
-=============================== */
 
-.engine button{
+.engine.red{
+box-shadow:
+0 0 25px rgba(255,0,0,.5);
+}
 
+.engine.blue{
+box-shadow:
+0 0 25px rgba(0,255,200,.5);
+}
+
+.mode-list button,
+.model-row button{
 width:100%;
-
-font-size:16px;
-letter-spacing:1px;
-
-padding:14px 18px;
-
-border-radius:10px;
-
-background:linear-gradient(180deg,#1a1a1a,#111);
-
-border:1px solid rgba(255,255,255,0.15);
-
-transition:0.3s;
-
+margin:6px 0;
 }
 
-.engine button:hover{
-
-transform:translateY(-2px);
-box-shadow:0 0 20px rgba(0,255,200,0.35);
-
-}
-/* ===============================
-IMPORT CENTER ALIGN
-=============================== */
-
-.upload-wrap{
-
+.cta-box{
 display:flex;
 justify-content:center;
-gap:20px;
-
-width:100%;
-margin:30px auto;
-
+gap:10px;
+margin:20px auto;
 }
-/* ===============================
-PROMPT BALANCE
-=============================== */
 
-.prompt-box{
+.preview-wrap{
+display:flex;
+flex-wrap:wrap;
+justify-content:center;
+gap:20px;
+margin-top:20px;
+}
 
+.preview-wrap video,
+.preview-wrap img{
+width:300px;
+display:none;
+}
+
+textarea{
 width:100%;
-max-width:900px;
+margin-top:30px;
+padding:15px;
+background:#0b0b0b;
+border:1px solid #333;
+color:#fff;
+}
 
-margin:40px auto 10px;
-
-padding:18px;
-
-font-size:15px;
-
-border-radius:12px;
-
-background:rgba(255,255,255,0.03);
-
+.status-bar{
+margin-top:20px;
+opacity:.8;
 }
