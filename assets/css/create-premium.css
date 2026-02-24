@@ -247,3 +247,124 @@ max-width:420px;
 /* =========================================
 END ULTRA VISUAL BALANCE FIX
 ========================================= */
+/* ===================================
+ULTRA VISUAL SCALE FIX v2
+ADD ONLY — NO LAYOUT CHANGE
+=================================== */
+
+/* GLOBAL SCALE BOOST */
+
+body{
+font-size:16px;
+}
+
+/* TITLE BALANCE */
+
+.title{
+font-size:clamp(22px,4vw,32px);
+margin-bottom:24px;
+}
+
+/* INPUT WIDTH LOCK */
+
+#prompt{
+max-width:720px;
+margin:auto;
+margin-bottom:24px;
+}
+
+/* TYPE SELECTOR SCALE */
+
+.type-selector{
+margin-bottom:28px;
+}
+
+.type-selector button{
+padding:12px 20px;
+font-size:15px;
+}
+
+/* ENGINE CARD SCALE */
+
+.engine{
+padding:22px;
+}
+
+.engine h2{
+font-size:20px;
+margin-bottom:16px;
+}
+
+.engine button{
+font-size:15px;
+padding:14px;
+margin-bottom:10px;
+}
+
+/* ENGINE WRAP BALANCE */
+
+.engine-wrap{
+max-width:900px;
+margin:auto;
+margin-bottom:32px;
+gap:28px;
+}
+
+/* CTA BOX FRAME (VISUAL LOCK) */
+
+.model-preview{
+
+max-width:720px;
+margin:auto;
+
+background:rgba(255,255,255,0.03);
+backdrop-filter:blur(6px);
+
+border:1px solid rgba(255,255,255,0.08);
+
+}
+
+/* PREVIEW MEDIA BALANCE */
+
+.model-preview video,
+.model-preview img{
+
+max-width:520px;
+width:100%;
+
+display:block;
+margin:18px auto;
+
+}
+
+/* META INFO READABILITY */
+
+#model-info{
+font-size:14px;
+margin-top:10px;
+}
+
+/* COST TEXT */
+
+#cost-preview{
+font-size:15px;
+font-weight:600;
+}
+
+/* STATUS SCALE */
+
+#status{
+font-size:14px;
+margin-top:20px;
+}
+
+/* MOBILE VISUAL LOCK */
+
+@media(max-width:720px){
+
+.engine{
+max-width:420px;
+margin:auto;
+}
+
+}
