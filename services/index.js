@@ -16,7 +16,9 @@ app.use("/api/stripe/webhook",
 require("express").raw({ type: "application/json" })
 );
 app.use(express.json());
+const stripeWebhook = require("../routes/stripe.webhook");
 
+app.use("/api/stripe/webhook", stripeWebhook);
 const upload = multer({
   storage: multer.memoryStorage()
 });
