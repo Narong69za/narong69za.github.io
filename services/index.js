@@ -1,5 +1,8 @@
 require("dotenv").config();
 
+console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY);
+console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID);
+
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
