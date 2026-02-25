@@ -1,156 +1,226 @@
+/* ======================================================
+   SN DESIGN ENGINE AI
+   CREATE PREMIUM CSS — ULTRA FINAL LOCK
+====================================================== */
+
 body{
 
-background:#000;
-color:#fff;
-font-family:sans-serif;
+    background:#000;
+    color:#fff;
+    font-family: sans-serif;
 
-display:flex;
-justify-content:center;
-
-}
-
-.main{
-
-width:100%;
-max-width:720px;
-
-padding:80px 20px;
+    margin:0;
+    padding-top:70px; /* space for create-nav.js */
 
 }
 
-.title{
 
-text-align:center;
+/* ======================================================
+   GLOBAL CENTER SYSTEM
+====================================================== */
+
+.center-wrap{
+
+    width:100%;
+    max-width:900px;
+    margin:auto;
+    padding:20px;
 
 }
+
+
+/* ======================================================
+   TITLE
+====================================================== */
+
+h1{
+
+    text-align:center;
+    letter-spacing:2px;
+
+}
+
+
+/* ======================================================
+   PROMPT BOX
+====================================================== */
 
 textarea{
 
-width:100%;
-height:100px;
-margin-top:20px;
+    width:100%;
+    background:#111;
+    border:1px solid #333;
+    color:#fff;
 
-background:#111;
-color:#fff;
-border:1px solid #333;
-
-}
-
-.mode-buttons{
-
-display:flex;
-gap:10px;
-margin-top:10px;
+    padding:16px;
+    font-size:16px;
 
 }
 
-.engine-card{
 
-background:#050505;
-padding:30px;
-margin-top:40px;
+/* ======================================================
+   MAIN BUTTON STYLE
+====================================================== */
 
-border-radius:14px;
-text-align:center;
+button{
+
+    border:none;
+    background:#ddd;
+    padding:10px 14px;
+    margin:5px;
+    cursor:pointer;
+
+}
+
+
+/* ======================================================
+   GREEN GLOW ACTIVE STATE
+====================================================== */
+
+.model-btn.active,
+.cta-btn.active,
+.engine-btn.active{
+
+    background:#00ff88 !important;
+    color:#000 !important;
+
+    box-shadow:
+
+        0 0 10px #00ff88,
+        0 0 20px #00ff88,
+        0 0 35px rgba(0,255,136,0.8);
 
 }
 
-.btn-group{
 
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-justify-content:center;
+/* ======================================================
+   ENGINE BOX COMMON
+====================================================== */
+
+.engine-box{
+
+    background:#050505;
+
+    border-radius:18px;
+
+    padding:30px;
+    margin-top:40px;
+
+    text-align:center;
+
+    position:relative;
 
 }
+
+
+/* ======================================================
+   RED ENGINE (RUNWAY)
+====================================================== */
+
+.engine-red{
+
+    box-shadow:
+
+        0 0 60px rgba(255,0,0,0.4),
+        inset 0 0 30px rgba(255,0,0,0.2);
+
+}
+
+
+/* ======================================================
+   RC ENGINE (REPLICATE)
+====================================================== */
+
+.engine-rc{
+
+    box-shadow:
+
+        0 0 60px rgba(0,255,150,0.35),
+        inset 0 0 30px rgba(0,255,150,0.15);
+
+}
+
+
+/* ======================================================
+   ENGINE TITLE
+====================================================== */
+
+.engine-title{
+
+    font-size:22px;
+    margin-bottom:20px;
+
+}
+
+
+/* ======================================================
+   UPLOAD BOX
+====================================================== */
 
 .upload-box{
 
-margin-top:30px;
-display:flex;
-flex-direction:column;
-gap:10px;
+    background:#111;
+    border-radius:14px;
+    padding:16px;
+    margin-top:20px;
 
-}
-
-.preview-box video,
-.preview-box img{
-
-width:100%;
-margin-top:20px;
-
-}
-
-#status{
-
-margin-top:20px;
-text-align:center;
-
-}
-/* ===============================
-CENTER CONTAINER
-=============================== */
-
-.main{
-
-margin:auto;
-display:flex;
-flex-direction:column;
-align-items:center;
+    border:1px solid #222;
 
 }
 
 
-/* ===============================
-ENGINE CARD BALANCE
-=============================== */
+/* ======================================================
+   FILE INPUT
+====================================================== */
 
-.engine-card{
+input[type="file"]{
 
-width:100%;
-max-width:520px;
-
-margin-left:auto;
-margin-right:auto;
+    color:#fff;
 
 }
 
 
-/* ===============================
-MODEL ACTIVE GREEN
-=============================== */
+/* ======================================================
+   PREVIEW VIDEO
+====================================================== */
 
-.model-btn.active-model{
+.preview-wrap{
 
-background:#00ff88;
-color:#000;
+    margin-top:20px;
 
-box-shadow:
-0 0 8px #00ff88,
-0 0 20px #00ff88;
+}
+
+.preview-wrap video{
+
+    width:100%;
+    border-radius:12px;
 
 }
 
 
-/* ===============================
-PREVIEW CENTER
-=============================== */
+/* ======================================================
+   STATUS TEXT
+====================================================== */
 
-.preview-box{
+.status-text{
 
-display:flex;
-flex-direction:column;
-align-items:center;
+    text-align:center;
+    margin-top:20px;
+    color:#aaa;
 
 }
 
 
-/* ===============================
-HIDE LOWER SECTION TEMP
-=============================== */
+/* ======================================================
+   MOBILE SAFE
+====================================================== */
 
-.blue-engine{
+@media(max-width:600px){
 
-display:none;
+    .engine-box{
+
+        padding:20px;
+
+    }
 
 }
