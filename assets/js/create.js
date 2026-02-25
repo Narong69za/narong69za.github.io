@@ -236,3 +236,34 @@ INIT
 =============================== */
 
 updateUI();
+// ======================================
+// GREEN GLOW ENGINE / MODEL ACTIVE STATE
+// FINAL LOCK
+// ======================================
+
+function initGlowButtons(){
+
+    const buttons = document.querySelectorAll(
+        ".model-btn, .cta-btn, .engine-btn"
+    );
+
+    buttons.forEach(btn => {
+
+        btn.addEventListener("click", function(){
+
+            // จำกัด glow ภายใน box เดียวกัน
+            const group = this.closest(".engine-box") || document;
+
+            group.querySelectorAll(".active")
+                 .forEach(el => el.classList.remove("active"));
+
+            this.classList.add("active");
+
+        });
+
+    });
+
+}
+
+// INIT AFTER UI READY
+initGlowButtons();
