@@ -1,12 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
-
 </head>
 <body>
 
@@ -14,57 +13,107 @@
 
   <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-  <!-- ENGINE WRAP -->
+  <!-- PROMPT -->
+  <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
+
+  <!-- TYPE BAR -->
+  <div class="type-bar">
+    <button class="type-btn active">สร้างวิดีโอ</button>
+    <button class="type-btn">สร้างภาพ</button>
+    <button class="type-btn">Upscale</button>
+  </div>
+
+  <!-- ================== ENGINE SECTION ================== -->
+
   <div class="engine-wrap">
 
     <!-- RED ENGINE -->
     <div class="engine engine-box red-engine">
-      <h2>RED ENGINE</h2>
+
+      <h2>⭐ สร้างวิดีโอ AI</h2>
 
       <div class="mode-row">
-        <button class="mode-btn" data-mode="image_to_video">Dark Viral</button>
-        <button class="mode-btn">AI LipSync</button>
-        <button class="mode-btn">Dance Motion</button>
-        <button class="mode-btn">Face Swap</button>
+
+        <button class="mode-btn" data-alias="image_to_video">
+          🎬 สร้างคลิปไวรัล AI
+        </button>
+
+        <button class="mode-btn" data-alias="lip_sync">
+          🎤 ลิปซิงค์เสียง-คำพูด
+        </button>
+
+        <button class="mode-btn" data-alias="motion_transfer">
+          🕺 โคลนท่าเต้น AI
+        </button>
+
+        <button class="mode-btn" data-alias="face_swap">
+          🧑 เปลี่ยนหน้า AI
+        </button>
+
       </div>
 
-      <button id="generate-red" class="generate-btn">GENERATE RED</button>
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (Runway)
+      </button>
+
     </div>
+
 
     <!-- BLUE ENGINE -->
     <div class="engine engine-box blue-engine">
-      <h2>BLUE ENGINE</h2>
+
+      <h2>⭐ สร้างวิดีโอ AI (Replicate)</h2>
 
       <div class="mode-row">
-        <button class="mode-btn" data-mode="image_to_video">Dark Viral</button>
-        <button class="mode-btn">AI LipSync</button>
-        <button class="mode-btn">Dance Motion</button>
-        <button class="mode-btn">Face Swap</button>
+
+        <button class="mode-btn">
+          🎬 สร้างคลิปไวรัล AI
+        </button>
+
+        <button class="mode-btn">
+          🎤 ลิปซิงค์เสียง-คำพูด
+        </button>
+
+        <button class="mode-btn">
+          🕺 โคลนท่าเต้น AI
+        </button>
+
+        <button class="mode-btn">
+          🧑 เปลี่ยนหน้า AI
+        </button>
+
       </div>
 
-      <button id="generate-blue" class="generate-btn">GENERATE BLUE</button>
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (Replicate)
+      </button>
+
     </div>
 
   </div>
 
-  <!-- UPLOAD -->
+  <!-- ================== UPLOAD SECTION ================== -->
+
   <div class="upload-core-wrapper">
+
     <div class="upload-core">
 
       <div class="upload-box">
-        <span>IMPORT FILE A</span>
+        <span>Upload Motion / Source</span>
         <input type="file" id="fileA" />
       </div>
 
       <div class="upload-box">
-        <span>IMPORT FILE B</span>
+        <span>Upload Character / Target</span>
         <input type="file" id="fileB" />
       </div>
 
     </div>
+
   </div>
 
-  <!-- PREVIEW -->
+  <!-- ================== PREVIEW ================== -->
+
   <div class="preview-dual preview-wrapper">
 
     <div class="preview-box">
@@ -79,9 +128,6 @@
 
   </div>
 
-  <!-- PROMPT -->
-  <textarea id="prompt" placeholder="Enter your prompt..."></textarea>
-
   <!-- STATUS -->
   <div class="status-bar">
     <span id="status">STATUS: IDLE</span>
@@ -91,5 +137,6 @@
 
 <script src="/assets/js/create.js"></script>
 <script src="/assets/js/create-nav.js"></script>
+
 </body>
 </html>
