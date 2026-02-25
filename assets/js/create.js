@@ -1,134 +1,62 @@
-console.log("CREATE JS LOADED");
+// ======================
+// RUNWAY TEST STATE
+// ======================
 
 let STATE = {
-  engine:null,
-  mode:null,
-  type:null
+  engine: "runwayml",
+  mode: null
 };
 
-const statusEl = document.querySelector("#status");
+// ======================
+// SELECT MODEL
+// ======================
 
+document.getElementById("runway-i2v")?.addEventListener("click", () => {
 
-// ---------- TYPE BUTTON ----------
+  STATE.mode = "image_to_video";
 
-document.querySelectorAll(".type-btn").forEach(btn=>{
-
-  btn.onclick = ()=>{
-
-    document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
-
-    btn.classList.add("active");
-
-    STATE.type = btn.innerText;
-
-    console.log("TYPE:",STATE.type);
-
-  };
+  console.log("RUNWAY MODEL SELECTED:", STATE);
 
 });
 
+// ======================
+// GENERATE
+// ======================
 
-// ---------- ENGINE MODE ----------
+document.getElementById("generate-runway")?.addEventListener("click", async () => {
 
-document.querySelectorAll("button").forEach(btn=>{
+  if (!STATE.mode) {
 
-  btn.onclick = (e)=>{
-
-    const text = btn.innerText.toLowerCase();
-
-    if(text.includes("dark") ||
-       text.includes("lipsync") ||
-       text.includes("dance") ||
-       text.includes("face")){
-
-      document.querySelectorAll("button").forEach(b=>b.classList.remove("active"));
-
-      btn.classList.add("active");
-
-      STATE.mode = btn.innerText;
-
-      const parent = btn.closest("div");
-
-      if(parent && parent.innerText.includes("RED")){
-        STATE.engine="red";
-      }
-
-      if(parent && parent.innerText.includes("BLUE")){
-        STATE.engine="blue";
-      }
-
-      console.log("ENGINE:",STATE.engine);
-      console.log("MODE:",STATE.mode);
-
-    }
-
-  };
-
-});
-
-
-// ---------- GENERATE ----------
-
-async function runGenerate(engine){
-
-  console.log("CLICK GENERATE",engine);
-
-  if(!STATE.mode){
-
-    statusEl.innerText="STATUS: SELECT MODE";
+    alert("เลือก runway model ก่อน");
 
     return;
 
   }
 
-  statusEl.innerText="STATUS: PROCESSING...";
+  try {
 
-  try{
-
-    const res = await fetch("/api/render",{
-
-      method:"POST",
-
-      headers:{
-        "Content-Type":"application/json"
-      },
-
-      body:JSON.stringify({
-        engine:engine,
-        mode:STATE.mode,
-        type:STATE.type
-      })
-
-    });
+    const res = await fetch(
+      "https://sn-design-api.onrender.com/render",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":"application/json"
+        },
+        body: JSON.stringify({
+          engine: STATE.engine,
+          mode: STATE.mode,
+          prompt:"TEST RUNWAY"
+        })
+      }
+    );
 
     const data = await res.json();
 
-    console.log(data);
+    console.log("RUNWAY RESULT:", data);
 
-    statusEl.innerText="STATUS: DONE";
-
-  }catch(err){
+  } catch(err) {
 
     console.error(err);
-
-    statusEl.innerText="STATUS ERROR";
-
-  }
-
-}
-
-
-document.querySelectorAll("button").forEach(btn=>{
-
-  if(btn.innerText.includes("GENERATE RED")){
-
-    btn.onclick=()=>runGenerate("red");
-
-  }
-
-  if(btn.innerText.includes("GENERATE BLUE")){
-
-    btn.onclick=()=>runGenerate("blue");
 
   }
 
