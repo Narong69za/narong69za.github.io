@@ -1,63 +1,114 @@
-// ======================================================
-// ULTRA ENGINE - GREEN GLOW CONTROL FINAL
-// SAFE VERSION - EVENT DELEGATION
-// ======================================================
+let STATE = {
+  engine:null,
+  mode:null,
+  type:null
+};
 
-(function(){
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
 
-    let activeButton = null;
+const previewRedVideo = document.getElementById("preview-red-video");
+const previewRedImage = document.getElementById("preview-red-image");
 
-    // selector รวมปุ่มทั้งหมด
-    const TARGET_SELECTOR =
-        ".model-btn, .cta-btn, .engine-btn";
+const previewBlueVideo = document.getElementById("preview-blue-video");
+const previewBlueImage = document.getElementById("preview-blue-image");
 
-    // ===============================
-    // APPLY GLOW
-    // ===============================
+const statusEl = document.getElementById("status");
 
-    function applyGlow(target){
+function preview(file, videoEl, imageEl){
 
-        if(!target) return;
+  if(!file) return;
 
-        // remove old
-        if(activeButton){
+  const url = URL.createObjectURL(file);
 
-            activeButton.classList.remove("active");
+  if(file.type.startsWith("video/")){
+    videoEl.src = url;
+    videoEl.style.display="block";
+    imageEl.style.display="none";
+  }
 
-        }
+  if(file.type.startsWith("image/")){
+    imageEl.src = url;
+    imageEl.style.display="block";
+    videoEl.style.display="none";
+  }
+}
 
-        // set new
-        activeButton = target;
+fileA?.addEventListener("change",()=>{
+  preview(fileA.files[0],previewRedVideo,previewRedImage);
+});
 
-        activeButton.classList.add("active");
+fileB?.addEventListener("change",()=>{
+  preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+});
 
-    }
 
-    // ===============================
-    // GLOBAL CLICK LISTENER
-    // (รองรับ DOM ที่ inject ทีหลัง)
-    // ===============================
+// TYPE SELECT
 
-    document.addEventListener("click", function(e){
+document.querySelectorAll(".type-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    STATE.type = btn.dataset.type;
+    document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+  });
+});
 
-        const btn = e.target.closest(TARGET_SELECTOR);
 
-        if(!btn) return;
+// MODE SELECT
 
-        applyGlow(btn);
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+  btn.addEventListener("click",()=>{
 
+    STATE.engine = btn.dataset.engine;
+    STATE.mode = btn.dataset.mode;
+
+    document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+
+  });
+});
+
+
+// GENERATE
+
+async function generate(engine){
+
+  if(!STATE.mode || !STATE.type){
+
+    statusEl.innerText="STATUS: SELECT MODE & TYPE";
+    return;
+
+  }
+
+  statusEl.innerText="STATUS: PROCESSING...";
+
+  try{
+
+    const res = await fetch("/api/render",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        engine:engine,
+        mode:STATE.mode,
+        type:STATE.type
+      })
     });
 
-    // ===============================
-    // OPTIONAL API (เผื่อเรียกเอง)
-    // ===============================
+    const data = await res.json();
 
-    window.setEngineGlow = function(selector){
+    console.log(data);
 
-        const btn = document.querySelector(selector);
+    statusEl.innerText="STATUS: DONE";
 
-        applyGlow(btn);
+  }catch(e){
 
-    };
+    console.error(e);
+    statusEl.innerText="STATUS: ERROR";
 
-})();
+  }
+}
+
+document.getElementById("generate-red")?.addEventListener("click",()=>generate("red"));
+document.getElementById("generate-blue")?.addEventListener("click",()=>generate("blue"));
