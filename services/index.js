@@ -1,5 +1,4 @@
 require("dotenv").config();
-
 console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY);
 console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID);
 const express = require("express");
@@ -8,6 +7,7 @@ const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
 const { create } = require("../controllers/create.controller.js");
+const stripeRoute = require("../routes/stripe.route");
 
 const app = express();
 
@@ -50,6 +50,11 @@ app.post("/api/auth/google", async (req,res)=>{
 });
 
 
+// ================= STRIPE =================
+
+app.use("/api/stripe", stripeRoute);
+
+
 // ================= RENDER =================
 
 app.post("/api/render", upload.any(), create);
@@ -65,24 +70,9 @@ app.get("/api/status/ai",(req,res)=>{
   res.json({ ai:"ready" });
 });
 
-
-// =================================================
-// ✅ ADD ONLY — NETWORK STATUS (FIX 404 ERROR)
-// =================================================
-
-app.get("/api/status/network",(req,res)=>{
-  res.json({
-    network:"ok"
-  });
-});
-
-
-// ================= ROOT CHECK =================
-
 app.get("/",(req,res)=>{
   res.send("SN DESIGN API RUNNING");
 });
-
 
 const PORT = process.env.PORT || 10000;
 
