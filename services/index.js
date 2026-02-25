@@ -81,7 +81,7 @@ app.get("/",(req,res)=>{
 });
 
 const PORT = process.env.PORT || 10000;
-
+app.use("/api/admin", adminRoutes);
 app.listen(PORT,()=>{
   console.log("ULTRA ENGINE RUNNING:",PORT);
 });
