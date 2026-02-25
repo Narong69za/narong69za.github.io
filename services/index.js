@@ -54,7 +54,6 @@ app.post("/api/auth/google", async (req,res)=>{
 app.post(
   "/api/render",
   upload.any(),
-  checkCredit,
   create
 );
 
