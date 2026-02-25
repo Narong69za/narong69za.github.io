@@ -1,142 +1,216 @@
-RunwaynwayDOCTYPE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
+
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
 <title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
+
 </head>
 <body>
 
 <div class="create-root create-container">
 
-  <h1 class="title">ULTRA ENGINE CONTROL</h1>
-
-  <!-- PROMPT -->
-  <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
-
-  <!-- TYPE BAR -->
-  <div class="type-bar">
-    <button class="type-btn cta-btn active">สร้างวิดีโอ</button>
-    <button class="type-btn cta-btn">สร้างภาพ</button>
-    <button class="type-btn cta-btn">Upscale</button>
-  </div>
-
-  <!-- ================== ENGINE SECTION ================== -->
-
-  <div class="engine-wrap">
-
-    <!-- RED ENGINE -->
-    <div class="engine engine-box red-engine">
-
-      <h2>⭐ สร้างวิดีโอ AI</h2>
-
-      <div class="mode-row">
-
-        <button class="mode-btn model-btn" data-alias="image_to_video">
-          🎬 สร้างคลิปไวรัล AI
-        </button>
-
-        <button class="mode-btn model-btn" data-alias="lip_sync">
-          🎤 ลิปซิงค์เสียง-คำพูด
-        </button>
-
-        <button class="mode-btn model-btn" data-alias="motion_transfer">
-          🕺 โคลนท่าเต้น AI
-        </button>
-
-        <button class="mode-btn model-btn" data-alias="face_swap">
-          🧑 เปลี่ยนหน้า AI
-        </button>
-
-      </div>
-
-      <button class="generate-btn engine-btn">
-        สร้างวิดีโอ AI (RW)
-      </button>
-
-    </div>
+<h1 class="title">ULTRA ENGINE CONTROL</h1>
 
 
-    <!-- BLUE ENGINE -->
-    <div class="engine engine-box blue-engine">
+<!-- PROMPT -->
+<textarea id="prompt" placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
 
-      <h2>⭐ สร้างวิดีโอ AI (RC)</h2>
 
-      <div class="mode-row">
+<!-- TYPE BAR -->
+<div class="type-bar">
 
-        <button class="mode-btn model-btn">
-          🎬 สร้างคลิปไวรัล AI
-        </button>
+<button class="type-btn cta-btn active">
+สร้างวิดีโอ
+</button>
 
-        <button class="mode-btn model-btn">
-          🎤 ลิปซิงค์เสียง-คำพูด
-        </button>
+<button class="type-btn cta-btn">
+สร้างภาพ
+</button>
 
-        <button class="mode-btn model-btn">
-          🕺 โคลนท่าเต้น AI
-        </button>
-
-        <button class="mode-btn model-btn">
-          🧑 เปลี่ยนหน้า AI
-        </button>
-
-      </div>
-
-      <button class="generate-btn engine-btn">
-        สร้างวิดีโอ AI (Replicate)
-      </button>
-
-    </div>
-
-  </div>
-
-  <!-- ================== UPLOAD SECTION ================== -->
-
-  <div class="upload-core-wrapper">
-
-    <div class="upload-core">
-
-      <div class="upload-box">
-        <span>Upload Motion / Source</span>
-        <input type="file" id="fileA" />
-      </div>
-
-      <div class="upload-box">
-        <span>Upload Character / Target</span>
-        <input type="file" id="fileB" />
-      </div>
-
-    </div>
-
-  </div>
-
-  <!-- ================== PREVIEW ================== -->
-
-  <div class="preview-dual preview-wrapper">
-
-    <div class="preview-box">
-      <video id="preview-red-video" controls></video>
-      <img id="preview-red-image"/>
-    </div>
-
-    <div class="preview-box">
-      <video id="preview-blue-video" controls></video>
-      <img id="preview-blue-image"/>
-    </div>
-
-  </div>
-
-  <!-- STATUS -->
-  <div class="status-bar">
-    <span id="status">STATUS: IDLE</span>
-  </div>
+<button class="type-btn cta-btn">
+Upscale
+</button>
 
 </div>
 
+
+<!-- ================== ENGINE SECTION ================== -->
+
+<div class="engine-wrap">
+
+
+<!-- RED ENGINE (RUNWAYML) -->
+<div class="engine engine-box red-engine">
+
+<h2>⭐ สร้างวิดีโอ AI</h2>
+
+<div class="mode-row">
+
+<button class="mode-btn model-btn"
+data-alias="image_to_video">
+
+🎬 สร้างคลิปไวรัล AI
+
+</button>
+
+
+<button class="mode-btn model-btn"
+data-alias="lip_sync">
+
+🎤 ลิปซิงค์เสียง-คำพูด
+
+</button>
+
+
+<button class="mode-btn model-btn"
+data-alias="motion_transfer">
+
+🕺 โคลนท่าเต้น AI
+
+</button>
+
+
+<button class="mode-btn model-btn"
+data-alias="face_swap">
+
+🧑 เปลี่ยนหน้า AI
+
+</button>
+
+</div>
+
+
+<button class="generate-btn engine-btn">
+
+สร้างวิดีโอ AI (RW)
+
+</button>
+
+</div>
+
+
+
+<!-- BLUE ENGINE (RESERVED / REPLICATE) -->
+
+<div class="engine engine-box blue-engine">
+
+<h2>⭐ สร้างวิดีโอ AI (RC)</h2>
+
+<div class="mode-row">
+
+<button class="mode-btn model-btn">
+
+🎬 สร้างคลิปไวรัล AI
+
+</button>
+
+<button class="mode-btn model-btn">
+
+🎤 ลิปซิงค์เสียง-คำพูด
+
+</button>
+
+<button class="mode-btn model-btn">
+
+🕺 โคลนท่าเต้น AI
+
+</button>
+
+<button class="mode-btn model-btn">
+
+🧑 เปลี่ยนหน้า AI
+
+</button>
+
+</div>
+
+<button class="generate-btn engine-btn">
+
+สร้างวิดีโอ AI (Replicate)
+
+</button>
+
+</div>
+
+
+</div>
+
+
+<!-- ================== UPLOAD SECTION ================== -->
+
+<div class="upload-core-wrapper">
+
+<div class="upload-core">
+
+<div class="upload-box">
+
+<span>Upload Motion / Source</span>
+
+<input type="file" id="fileA" />
+
+</div>
+
+<div class="upload-box">
+
+<span>Upload Character / Target</span>
+
+<input type="file" id="fileB" />
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- ================== PREVIEW ================== -->
+
+<div class="preview-dual preview-wrapper">
+
+<div class="preview-box">
+
+<video id="preview-red-video" controls></video>
+
+<img id="preview-red-image"/>
+
+</div>
+
+<div class="preview-box">
+
+<video id="preview-blue-video" controls></video>
+
+<img id="preview-blue-image"/>
+
+</div>
+
+</div>
+
+
+
+<!-- STATUS -->
+
+<div class="status-bar">
+
+<span id="status">STATUS: IDLE</span>
+
+</div>
+
+
+</div>
+
+
+
+<!-- SCRIPTS -->
+
 <script src="/assets/js/create.js"></script>
+
 <script src="/assets/js/create-nav.js"></script>
 
 </body>
-</html>
+  </html>
