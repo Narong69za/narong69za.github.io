@@ -3,6 +3,7 @@ console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY);
 console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID);
 const express = require("express");
 const cors = require("cors");
+const adminRoutes = require("./admin.routes");
 const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
@@ -10,7 +11,7 @@ const { create } = require("../controllers/create.controller.js");
 const stripeRoute = require("../routes/stripe.route");
 
 const app = express();
-
+app.use("/admin-api", adminRoutes);
 app.use(cors());
 app.use("/api/stripe/webhook",
 require("express").raw({ type: "application/json" })
