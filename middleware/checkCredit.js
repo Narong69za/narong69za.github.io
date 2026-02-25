@@ -1,21 +1,33 @@
+// middleware/checkCredit.js
+
+const db = require("../db/db");
+
 module.exports = async (req,res,next)=>{
 
- const userId = req.headers["x-user-id"];
+  try{
 
- if(!userId) return res.status(401).json({error:"NO USER"});
+    const userId = req.headers["x-user-id"];
 
- const user = await db.getUser(userId);
+    if(!userId){
+      return res.status(401).json({error:"NO USER"});
+    }
 
- if(user.credits <= 0){
+    const user = await db.getUser(userId);
 
-   return res.status(402).json({
-      error:"NO CREDIT"
-   });
+    if(!user){
+      return res.status(404).json({error:"USER NOT FOUND"});
+    }
 
- }
+    if(user.credits <= 0){
+      return res.status(402).json({error:"NO CREDIT"});
+    }
 
- req.user = user;
+    req.user = user;
 
- next();
+    next();
+
+  }catch(err){
+    res.status(500).json({error:"CREDIT CHECK FAILED"});
+  }
 
 };
