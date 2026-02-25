@@ -1,118 +1,49 @@
-// =================================================
-// ULTRA ENGINE CONTROL FINAL
-// FINAL LOCK VERSION
-// DO NOT CHANGE UI
-// =================================================
+const API_BASE = "https://sn-design-api.onrender.com";
 
-const API_URL = "https://sn-design-api.onrender.com/api/render";
+const btnGenerate = document.getElementById("generate-red");
+const statusText = document.getElementById("status");
 
-let isRunning = false;
+btnGenerate.addEventListener("click", async ()=>{
 
-
-// ================= STATUS UI =================
-
-function setStatus(text){
-
-    const el = document.getElementById("statusText");
-
-    if(el){
-        el.innerText = "STATUS: " + text;
-    }
-
-}
-
-
-// ================= PREVIEW =================
-
-function updatePreview(fileA,fileB){
-
-    const previewA = document.getElementById("previewA");
-    const previewB = document.getElementById("previewB");
-
-    if(fileA && previewA){
-        previewA.src = URL.createObjectURL(fileA);
-    }
-
-    if(fileB && previewB){
-        previewB.src = URL.createObjectURL(fileB);
-    }
-
-}
-
-
-// ================= RUN AI =================
-
-async function runAI(engine,btn){
-
-    if(isRunning) return;
-
-    const fileA = document.getElementById("fileSource")?.files?.[0];
-    const fileB = document.getElementById("fileTarget")?.files?.[0];
-    const prompt = document.getElementById("prompt")?.value || "";
-
-    if(!fileA){
-
-        alert("ต้องเลือก Source ก่อน");
-
-        return;
-
-    }
-
-    updatePreview(fileA,fileB);
+    statusText.innerText = "STATUS: SENDING RUNWAY REQUEST...";
 
     const formData = new FormData();
 
-    // IMPORTANT — MUST MATCH BACKEND
-    formData.append("engine",engine);
-    formData.append("alias",engine);
-    formData.append("type","video");
-    formData.append("prompt",prompt);
+    const motion = document.getElementById("file-motion").files[0];
+    const character = document.getElementById("file-character").files[0];
+    const prompt = document.getElementById("prompt").value;
 
-    formData.append("fileA",fileA);
+    if(motion) formData.append("motion", motion);
+    if(character) formData.append("character", character);
 
-    if(fileB){
-        formData.append("fileB",fileB);
-    }
+    formData.append("prompt", prompt);
 
     try{
 
-        isRunning = true;
-
-        setStatus("SENDING RUNWAY REQUEST...");
-
-        const res = await fetch(API_URL,{
+        const res = await fetch(API_BASE + "/api/runway/v1/image_to_video",{
             method:"POST",
             body:formData
         });
 
         const data = await res.json();
 
-        console.log("RUNWAY RESULT:",data);
+        if(data.output){
 
-        if(!res.ok){
+            document.getElementById("preview-video").src = data.output;
 
-            throw new Error(data.error || "Render failed");
+            statusText.innerText = "STATUS: SUCCESS";
+
+        }else{
+
+            statusText.innerText = "STATUS: ERROR";
 
         }
 
-        setStatus("SUCCESS");
-
-    }
-    catch(err){
+    }catch(err){
 
         console.error(err);
-
-        setStatus("ERROR");
-
-        alert(err.message);
-
-    }
-    finally{
-
-        isRunning = false;
+        statusText.innerText = "STATUS: FAIL";
 
     }
 
-}
-
-window.runAI = runAI;
+});
