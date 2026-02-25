@@ -1,5 +1,5 @@
 require("dotenv").config();
-
+console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY);
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
