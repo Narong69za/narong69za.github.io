@@ -1,27 +1,23 @@
-// src/models/model.router.js
+// models/model.router.js
 
-const imageToVideo = require("../services/runwayml/v1/image_to_video");
-const videoUpscale = require("../services/runwayml/v1/video_upscale");
+exports.run = async (data)=>{
 
-async function run(payload){
+   const { engine, alias } = data;
 
-  const { engine, mode } = payload;
+   if(engine === "runwayml"){
 
-  if(engine === "runwayml"){
+      if(alias === "image_to_video"){
 
-    if(mode === "image_to_video"){
-      return await imageToVideo(payload);
-    }
+         const service = require("../services/runwayml/v1/image_to_video");
 
-    if(mode === "video_upscale"){
-      return await videoUpscale(payload);
-    }
+         return await service.run(data);
 
-    throw new Error("Unsupported runway mode");
-  }
+      }
 
-  throw new Error("Unsupported engine");
+      throw new Error("RUNWAY MODEL NOT FOUND");
 
-}
+   }
 
-module.exports = { run };
+   throw new Error("ENGINE NOT FOUND");
+
+};
