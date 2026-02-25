@@ -126,7 +126,7 @@ document.querySelectorAll(".model-btn").forEach(btn=>{
 
 
 /* ===============================
-GENERATE RUNWAY
+GENERATE RUNWAY (FIXED)
 =============================== */
 
 async function runGenerate(){
@@ -134,12 +134,6 @@ async function runGenerate(){
     if(!STATE.alias){
 
         alert("เลือก Model ก่อน");
-        return;
-    }
-
-    if(!fileA?.files[0]){
-
-        alert("ต้องเลือกไฟล์ก่อน");
         return;
     }
 
@@ -154,10 +148,20 @@ async function runGenerate(){
         formData.append("type","video");
         formData.append("prompt","DEV RUNWAY");
 
-        formData.append("fileA",fileA.files[0]);
+        // ⭐ TEXT TO VIDEO MODE (NO FILE REQUIRED)
+        if(STATE.alias !== "text_to_video"){
 
-        if(fileB?.files[0]){
-            formData.append("fileB",fileB.files[0]);
+            if(!fileA?.files[0]){
+                alert("ต้องเลือกไฟล์ก่อน");
+                return;
+            }
+
+            formData.append("fileA",fileA.files[0]);
+
+            if(fileB?.files[0]){
+                formData.append("fileB",fileB.files[0]);
+            }
+
         }
 
         const res = await fetch(API_URL,{
