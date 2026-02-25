@@ -4,6 +4,15 @@
 // DO NOT CHANGE UI LAYOUT
 // ===============================
 
+
+// 🔥 ULTRA SAFE LOAD GUARD (กัน script โหลดซ้ำ / DOM ซ้อน)
+if(window.__ULTRA_ENGINE_LOADED__){
+    console.log("ULTRA ENGINE already loaded — skip duplicate");
+}else{
+
+window.__ULTRA_ENGINE_LOADED__ = true;
+
+
 const API_URL = "https://sn-design-api.onrender.com/api/render";
 
 let isRunning = false;
@@ -97,10 +106,8 @@ async function runAI(engine,btnElement){
         lockButtons(true);
 
         const res = await fetch(API_URL,{
-
             method:"POST",
             body:formData
-
         });
 
         const data = await res.json();
@@ -108,9 +115,7 @@ async function runAI(engine,btnElement){
         console.log("AI RESULT:", data);
 
         if(!res.ok){
-
             throw new Error(data.error || "Render failed");
-
         }
 
         console.log("SUCCESS");
@@ -137,3 +142,5 @@ async function runAI(engine,btnElement){
 // ===============================
 
 window.runAI = runAI;
+
+}
