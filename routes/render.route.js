@@ -1,8 +1,10 @@
+// routes/render.route.js
+
 const express = require("express");
 const router = express.Router();
-const db = require("../db/db");
 const multer = require("multer");
-
+const db = require("../db/db");
+const modelRouter = require("../models/model.router");
 
 // ======================
 // MULTER CONFIG
@@ -11,80 +13,121 @@ const multer = require("multer");
 const storage = multer.memoryStorage();
 
 const upload = multer({
-   storage: storage,
-   limits: {
-      fileSize: 1024 * 1024 * 500 // 500MB
-   }
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 500 // 500MB
+  }
 });
 
-
-// รับไฟล์ทุก field
 const uploadAny = upload.any();
-
 
 // ======================
 // RENDER ROUTE
 // ======================
 
-router.post("/render", uploadAny, (req,res)=>{
+router.post("/render", uploadAny, async (req, res) => {
 
-   try{
+  try {
 
-      const engine = req.body.engine;
-      const alias = req.body.alias;
-      const type = req.body.type;
-      const prompt = req.body.prompt || "";
+    const { engine, mode, prompt } = req.body;
 
-      if(!engine || !alias){
+    if (!engine || !mode) {
+      return res.status(400).json({
+        status: "error",
+        message: "Missing engine or mode"
+      });
+    }
 
-         return res.status(400).json({
-            status:"error",
-            message:"missing engine or alias"
-         });
+    const id = Date.now().toString();
+
+    console.log("ENGINE:", engine);
+    console.log("MODE:", mode);
+    console.log("FILES:", req.files?.map(f => f.fieldname));
+
+    // ======================
+    // HANDLE FILE INPUT
+    // ======================
+
+    let imageUrl = null;
+    let videoUri = null;
+
+    if (req.files && req.files.length > 0) {
+
+      const file = req.files[0];
+
+      // ⚠ IMPORTANT:
+      // ตอนนี้ยังไม่มีระบบ upload ไป S3
+      // ดังนั้นถ้าเป็น production จริง ต้องอัปโหลดก่อนแล้วค่อยส่ง URL
+
+      imageUrl = file.originalname;
+      videoUri = file.originalname;
+
+    }
+
+    // ======================
+    // CALL MODEL ROUTER
+    // ======================
+
+    const runwayResponse = await modelRouter.run({
+      engine,
+      mode,
+      prompt,
+      imageUrl,
+      videoUri
+    });
+
+    const externalID = runwayResponse.id || runwayResponse.taskId;
+
+    // ======================
+    // INSERT PROJECT
+    // ======================
+
+    db.run(
+      `
+      INSERT INTO projects
+      (id, engine, mode, prompt, externalID, status)
+      VALUES (?, ?, ?, ?, ?, ?)
+      `,
+      [
+        id,
+        engine,
+        mode,
+        prompt || "",
+        externalID || null,
+        "processing"
+      ],
+      (err) => {
+
+        if (err) {
+
+          console.error(err);
+
+          return res.status(500).json({
+            status: "error",
+            message: err.message
+          });
+
+        }
+
+        res.json({
+          status: "processing",
+          id,
+          externalID
+        });
 
       }
+    );
 
-      const id = Date.now().toString();
+  } catch (err) {
 
-      // DEBUG LOG (สำคัญมาก)
-      console.log("ENGINE:",engine);
-      console.log("ALIAS:",alias);
-      console.log("FILES:",req.files?.map(f=>f.fieldname));
+    console.error("RENDER ERROR:", err.message);
 
-      db.run(
-         "INSERT INTO projects (id,engine,prompt,status) VALUES (?,?,?,?)",
-         [id,engine,prompt,"queued"],
-         (err)=>{
+    res.status(500).json({
+      status: "error",
+      message: err.message
+    });
 
-            if(err){
-
-               console.error(err);
-
-               return res.status(500).json({
-                  status:"error",
-                  message:err.message
-               });
-
-            }
-
-            res.json({
-               status:"queued",
-               id:id
-            });
-
-         }
-      );
-
-   }catch(err){
-
-      console.error(err);
-
-      res.status(500).json({
-         status:"error",
-         message:"internal error"
-      });
-
-   }
+  }
 
 });
 
