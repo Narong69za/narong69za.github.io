@@ -2,7 +2,6 @@ require("dotenv").config();
 
 console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY);
 console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID);
-
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
@@ -64,6 +63,17 @@ app.get("/api/status/server",(req,res)=>{
 
 app.get("/api/status/ai",(req,res)=>{
   res.json({ ai:"ready" });
+});
+
+
+// =================================================
+// ✅ ADD ONLY — NETWORK STATUS (FIX 404 ERROR)
+// =================================================
+
+app.get("/api/status/network",(req,res)=>{
+  res.json({
+    network:"ok"
+  });
 });
 
 
