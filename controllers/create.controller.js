@@ -1,3 +1,5 @@
+// controllers/create.controller.js
+
 const modelRouter = require("../models/model.router");
 
 exports.create = async (req,res)=>{
@@ -6,12 +8,12 @@ exports.create = async (req,res)=>{
 
       const { engine, alias, type, prompt } = req.body;
 
-      const files={};
+      const files = {};
 
       if(req.files){
 
          req.files.forEach(f=>{
-            files[f.fieldname]=f;
+            files[f.fieldname] = f;
          });
 
       }
