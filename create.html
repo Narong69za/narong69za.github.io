@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SN DESIGN ENGINE AI</title>
+<title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="assets/css/create-premium.css">
 
@@ -13,29 +13,34 @@
 
 <body>
 
+
+<!-- NAV -->
 <script src="assets/js/create-nav.js"></script>
 
-<div class="main">
 
-<h1 class="title">ULTRA ENGINE CONTROL</h1>
+<div class="create-wrapper">
+
+<h1 class="title-center">ULTRA ENGINE CONTROL</h1>
+
 
 <textarea id="prompt" placeholder="Enter your prompt..."></textarea>
 
-<div class="mode-buttons">
-<button id="mode-video">สร้างวิดีโอ</button>
-<button id="mode-image">สร้างภาพ</button>
-<button id="mode-upscale">Upscale</button>
+
+<div class="type-buttons">
+
+<button id="btn-video">สร้างวิดีโอ</button>
+<button id="btn-image">สร้างภาพ</button>
+<button id="btn-upscale">Upscale</button>
+
 </div>
 
 
 <!-- RED ENGINE -->
-<div class="engine-card red-engine">
+<div class="engine-box red">
 
 <h2>⭐ สร้างวิดีโอ AI</h2>
 
-<div class="btn-group" id="red-model-group">
-
-<button class="model-btn" data-model="viral">สร้างคลิปไวรัล AI</button>
+<button class="model-btn" data-model="dark-viral">สร้างคลิปไวรัล AI</button>
 
 <button class="model-btn" data-model="lipsync">ลิปซิงค์เสียง-คำพูด</button>
 
@@ -43,57 +48,34 @@
 
 <button class="model-btn" data-model="faceswap">เปลี่ยนหน้า AI</button>
 
-</div>
-
-<button id="generate-red">สร้างวิดีโอ AI (RW)</button>
+<button onclick="runAI()">สร้างวิดีโอ AI (RW)</button>
 
 </div>
 
 
-<!-- BLUE ENGINE (LOCK / DISABLED) -->
-<div class="engine-card">
 
-<h2>⭐ สร้างวิดีโอ AI (Rc)</h2>
-
-<div class="btn-group">
-<button disabled>สร้างคลิปไวรัล AI</button>
-<button disabled>ลิปซิงค์เสียง-คำพูด</button>
-<button disabled>โคลนท่าเต้น AI</button>
-<button disabled>เปลี่ยนหน้า AI</button>
-</div>
-
-<button disabled>สร้างวิดีโอ AI (Replicate)</button>
-
-</div>
-
-
-<!-- UPLOAD -->
-
+<!-- FILE IMPORT -->
 <div class="upload-box">
 
 <label>Upload Motion / Source</label>
-<input type="file" id="file-motion">
+<input id="fileSource" type="file">
 
 <label>Upload Character / Target</label>
-<input type="file" id="file-character">
+<input id="fileTarget" type="file">
 
 </div>
 
 
-<!-- PREVIEW -->
-
-<div class="preview-box">
-
-<video id="preview-video" controls></video>
-<img id="preview-image">
-
-</div>
+<video id="previewA" controls></video>
 
 
 <div id="status">STATUS: IDLE</div>
 
 </div>
 
+
+
+<!-- IMPORTANT: LOAD LAST -->
 <script src="assets/js/create.js"></script>
 
 </body>
