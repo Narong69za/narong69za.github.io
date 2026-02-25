@@ -499,3 +499,91 @@ textarea{
     }
 
 }
+/* ===============================
+ULTRA ENGINE FINAL LAYOUT FIX
+ADD ONLY
+=============================== */
+
+body{
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+
+}
+
+/* CENTER MAIN CONTENT */
+
+.main-container,
+.engine-wrapper,
+.create-container{
+
+    width:100%;
+    max-width:720px;
+    margin:auto;
+
+}
+
+
+/* ENGINE CARD CENTER */
+
+.engine-card{
+
+    margin:40px auto;
+    text-align:center;
+
+}
+
+
+/* TITLE CENTER */
+
+.engine-card h2,
+.engine-card h3{
+
+    text-align:center;
+    width:100%;
+
+}
+
+
+/* BUTTON GROUP CENTER */
+
+.engine-card .btn-group{
+
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+
+}
+
+
+/* UPLOAD BLOCK */
+
+.upload-box{
+
+    width:100%;
+    margin-top:30px;
+
+}
+
+
+/* PREVIEW FIX */
+
+.preview-box video,
+.preview-box img{
+
+    width:100%;
+    border-radius:12px;
+
+}
+
+
+/* STATUS ALIGN */
+
+.status-text{
+
+    text-align:center;
+    margin-top:20px;
+
+}
