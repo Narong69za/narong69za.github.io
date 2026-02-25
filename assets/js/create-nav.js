@@ -33,7 +33,18 @@ const API_BASE = "https://sn-design-api.onrender.com";
     `;
 
     document.body.prepend(nav);
+// ======================
+// FIX CONTENT OFFSET (IMPORTANT)
+// ======================
 
+requestAnimationFrame(()=>{
+
+    const navHeight = nav.offsetHeight;
+
+    // push main content down without touching layout structure
+    document.body.style.paddingTop = navHeight + "px";
+
+});
 })();
 
 
