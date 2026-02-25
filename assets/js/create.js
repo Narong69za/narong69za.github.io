@@ -1,8 +1,8 @@
 // =======================================================
 // ULTRA ENGINE CONTROL
-// FULL RUNWAY TEST VERSION
+// FULL RUNWAY PRODUCTION VERSION
 // RED ENGINE = RUNWAYML
-// BLUE ENGINE = RESERVED (ยังไม่ใช้)
+// BLUE ENGINE = RESERVED
 // =======================================================
 
 
@@ -12,7 +12,8 @@
 
 let STATE = {
   engine: null,
-  mode: "image_to_video"
+  alias: "image_to_video",
+  type: "video"
 };
 
 
@@ -30,6 +31,8 @@ const previewRedImage = document.getElementById("preview-red-image");
 
 const previewBlueVideo = document.getElementById("preview-blue-video");
 const previewBlueImage = document.getElementById("preview-blue-image");
+
+const promptInput = document.querySelector("textarea");
 
 const generateButtons = document.querySelectorAll(".generate-btn");
 
@@ -109,23 +112,33 @@ redGenerateBtn?.addEventListener("click", async () => {
 
   try {
 
+    if (!fileA?.files[0]) {
+      alert("กรุณาเลือกไฟล์ IMPORT FILE A ก่อน");
+      return;
+    }
+
     STATE.engine = "runwayml";
 
     setStatus("SENDING RUNWAY REQUEST...");
 
+    const formData = new FormData();
+
+    formData.append("engine", STATE.engine);
+    formData.append("alias", STATE.alias);
+    formData.append("type", STATE.type);
+    formData.append("prompt", promptInput?.value || "SN DESIGN RUNWAY");
+
+    formData.append("fileA", fileA.files[0]);
+
+    if (fileB?.files[0]) {
+      formData.append("fileB", fileB.files[0]);
+    }
+
     const res = await fetch(
-"https://sn-design-api.onrender.com/api/render",
+      "https://sn-design-api.onrender.com/api/render",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-   engine: "runwayml",
-   alias: "image_to_video",
-   type: "video",
-   prompt: "DEV RUNWAY TEST"
-})
+        body: formData
       }
     );
 
@@ -133,12 +146,15 @@ redGenerateBtn?.addEventListener("click", async () => {
 
     console.log("RUNWAY RESPONSE:", data);
 
-    setStatus("SUCCESS");
+    if (data?.status === "queued") {
+      setStatus("QUEUED");
+    } else {
+      setStatus("ERROR");
+    }
 
   } catch (err) {
 
     console.error(err);
-
     setStatus("ERROR");
 
   }
