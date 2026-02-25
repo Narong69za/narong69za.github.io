@@ -1,58 +1,41 @@
-// =====================================================
-// RUNWAYML TEXT TO VIDEO (GEN4.5)
-// VERSION SAFE FIX
-// =====================================================
+// services/runwayml/v1/text_to_video.js
 
 const axios = require("axios");
 
 const RUNWAY_ENDPOINT = "https://api.dev.runwayml.com/v1/text_to_video";
 
-async function createTextToVideo(payload) {
+async function createTextToVideo({ prompt }) {
 
-    if (!process.env.RUNWAY_API_KEY) {
-        throw new Error("RUNWAY_API_KEY missing");
-    }
+  try {
 
-    try {
+    const response = await axios.post(
+      RUNWAY_ENDPOINT,
+      {
+        promptText: prompt,
+        ratio: "1280:720",
+        duration: 4,
+        model: "gen4.5"
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+          "X-Runway-Version": "2024-11-06",
+          "Content-Type": "application/json"
+        }
+      }
+    );
 
-        const response = await axios.post(
+    return response.data;
 
-            RUNWAY_ENDPOINT,
+  } catch (err) {
 
-            {
-                promptText: payload.prompt || "SN DESIGN TEST",
-                ratio: payload.ratio || "1280:720",
-                duration: payload.duration || 4,
-                seed: payload.seed || Math.floor(Math.random() * 9999999),
-                model: "gen4.5"
-            },
+    console.error("TEXT_TO_VIDEO ERROR:", err.response?.data || err.message);
+    throw err;
 
-            {
-                headers: {
-                    Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
-                    "Content-Type": "application/json"
-                }
-            }
-
-        );
-
-        console.log("RUNWAY TEXT2VIDEO OK:", response.data);
-
-        return response.data;
-
-    } catch (err) {
-
-        console.error(
-            "RUNWAY TEXT2VIDEO ERROR:",
-            err.response?.data || err.message
-        );
-
-        throw err;
-
-    }
+  }
 
 }
 
 module.exports = {
-    createTextToVideo
+  createTextToVideo
 };
