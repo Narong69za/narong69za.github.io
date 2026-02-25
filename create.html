@@ -12,55 +12,48 @@
 
 </head>
 
-
 <body>
 
 
-<div class="ultra-wrapper">
+<div class="ultra-container">
 
-<h1 class="ultra-title">
 
-ULTRA ENGINE CONTROL
-
-</h1>
+<h1 class="ultra-title">ULTRA ENGINE CONTROL</h1>
 
 
 <!-- PROMPT -->
 <textarea id="prompt" placeholder="Enter your prompt..."></textarea>
 
 
-<!-- MODE SELECT -->
 <div class="mode-select">
 
-<button>Generate Video</button>
-<button>Generate Image</button>
+<button>สร้างวิดีโอ</button>
+<button>สร้างภาพ</button>
 <button>Upscale</button>
 
 </div>
 
 
 
-<!-- ENGINE GRID (FINAL LOCK) -->
-<div class="engine-grid">
+<!-- ================= RED ENGINE (RUNWAY) ================= -->
 
-<!-- RED ENGINE -->
-<div class="engine red">
+<div class="engine-card red-engine">
 
-<h2>RED ENGINE</h2>
+<h2>⭐ สร้างวิดีโอ AI</h2>
 
 <div class="engine-options">
 
-<button>Dark Viral</button>
-<button>AI LipSync</button>
-<button>Dance Motion</button>
-<button>Face Swap</button>
+<button>🎬 สร้างคลิปไวรัล AI</button>
+<button>🎤 ลิปซิงค์เสียง-คำพูด</button>
+<button>🕺 โคลนท่าเต้น AI</button>
+<button>🧑 เปลี่ยนหน้า AI</button>
 
 </div>
 
 <button class="generate-btn"
 onclick="runAI('runway',this)">
 
-GENERATE RED
+สร้างวิดีโอ AI (RW)
 
 </button>
 
@@ -68,47 +61,45 @@ GENERATE RED
 
 
 
-<!-- BLUE ENGINE (LOCK — ยังไม่ใช้) -->
-<div class="engine blue">
+<!-- ================= BLUE ENGINE (LOCK) ================= -->
 
-<h2>BLUE ENGINE</h2>
+<div class="engine-card blue-engine">
+
+<h2>⭐ สร้างวิดีโอ AI (Rc)</h2>
 
 <div class="engine-options">
 
-<button>Dark Viral</button>
-<button>AI LipSync</button>
-<button>Dance Motion</button>
-<button>Face Swap</button>
+<button>🎬 สร้างคลิปไวรัล AI</button>
+<button>🎤 ลิปซิงค์เสียง-คำพูด</button>
+<button>🕺 โคลนท่าเต้น AI</button>
+<button>🧑 เปลี่ยนหน้า AI</button>
 
 </div>
 
 <button disabled>
 
-GENERATE BLUE
+สร้างวิดีโอ AI (Replicate)
 
 </button>
-
-</div>
 
 </div>
 
 
 
 <!-- IMPORT FILE -->
-<div class="import-center">
+<div class="import-wrapper">
 
 <label>
 
-IMPORT FILE A
+Upload Motion / Source
 
 <input type="file" id="fileSource">
 
 </label>
 
-
 <label>
 
-IMPORT FILE B
+Upload Character / Target
 
 <input type="file" id="fileTarget">
 
@@ -119,11 +110,11 @@ IMPORT FILE B
 
 
 <!-- PREVIEW -->
-<div class="preview-grid">
+<div class="preview-wrapper">
 
 <video id="previewA" controls></video>
 
-<video id="previewB" controls></video>
+<img id="previewB"/>
 
 </div>
 
@@ -140,7 +131,7 @@ STATUS: IDLE
 
 
 
-<!-- LOAD ORDER สำคัญ -->
+<!-- IMPORTANT ORDER -->
 
 <script src="/assets/js/create-nav.js"></script>
 
@@ -148,4 +139,4 @@ STATUS: IDLE
 
 
 </body>
-  </html>
+</html>
