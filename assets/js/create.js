@@ -1,7 +1,7 @@
 /* =====================================================
 SN DESIGN ENGINE AI
 create.js — FINAL ENGINE CORE
-LOCK UI LAYOUT / FIX LOGIC ONLY
+LOCK UI LAYOUT / ADD ONLY LOGIC
 ===================================================== */
 
 
@@ -36,6 +36,9 @@ const previewBlueVideo = document.getElementById("preview-blue-video");
 const previewBlueImage = document.getElementById("preview-blue-image");
 
 const statusEl = document.getElementById("status");
+
+/* ADD ONLY — prompt input */
+const promptInput = document.getElementById("prompt");
 
 
 /* ===============================
@@ -126,7 +129,7 @@ document.querySelectorAll(".model-btn").forEach(btn=>{
 
 
 /* ===============================
-GENERATE RUNWAY (FIXED)
+GENERATE RUNWAY
 =============================== */
 
 async function runGenerate(){
@@ -146,12 +149,23 @@ async function runGenerate(){
         formData.append("engine","runwayml");
         formData.append("alias",STATE.alias);
         formData.append("type","video");
-        formData.append("prompt","DEV RUNWAY");
 
-        // ⭐ TEXT TO VIDEO MODE (NO FILE REQUIRED)
+        /* ADD ONLY — dynamic prompt */
+        formData.append(
+            "prompt",
+            promptInput?.value?.trim() || "DEV RUNWAY"
+        );
+
+
+        /* ==========================
+        MODE SWITCH (ADD ONLY)
+        ========================== */
+
+        // text_to_video ไม่ต้องใช้ไฟล์
         if(STATE.alias !== "text_to_video"){
 
             if(!fileA?.files[0]){
+
                 alert("ต้องเลือกไฟล์ก่อน");
                 return;
             }
@@ -161,8 +175,8 @@ async function runGenerate(){
             if(fileB?.files[0]){
                 formData.append("fileB",fileB.files[0]);
             }
-
         }
+
 
         const res = await fetch(API_URL,{
             method:"POST",
