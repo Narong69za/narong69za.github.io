@@ -1,105 +1,142 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SN DESIGN ENGINE AI</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
-
 </head>
 <body>
 
-<div class="create-container">
+<div class="create-root create-container">
 
-<h1 class="create-title">ULTRA ENGINE CONTROL</h1>
+  <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<!-- TYPE SELECTOR -->
-<div class="type-selector">
-<button class="type-btn" data-type="video">Generate Video</button>
-<button class="type-btn" data-type="image">Generate Image</button>
-<button class="type-btn" data-type="upscale">Upscale</button>
-</div>
+  <!-- PROMPT -->
+  <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
 
-<!-- ENGINE SECTION -->
-<div class="engine-section">
+  <!-- TYPE BAR -->
+  <div class="type-bar">
+    <button class="type-btn active">สร้างวิดีโอ</button>
+    <button class="type-btn">สร้างภาพ</button>
+    <button class="type-btn">Upscale</button>
+  </div>
 
-<div class="engine-box red-engine" id="red-engine">
-<h2>RED ENGINE</h2>
+  <!-- ================== ENGINE SECTION ================== -->
 
-<div class="mode-group">
-<button class="mode-btn" data-engine="red" data-mode="dark">Dark Viral</button>
-<button class="mode-btn" data-engine="red" data-mode="lipsync">AI LipSync</button>
-<button class="mode-btn" data-engine="red" data-mode="motion">Dance Motion</button>
-<button class="mode-btn" data-engine="red" data-mode="face">Face Swap</button>
-</div>
+  <div class="engine-wrap">
 
-<button id="generate-red" class="generate-btn">GENERATE RED</button>
+    <!-- RED ENGINE -->
+    <div class="engine engine-box red-engine">
 
-</div>
+      <h2>⭐ สร้างวิดีโอ AI</h2>
 
+      <div class="mode-row">
 
-<div class="engine-box blue-engine" id="blue-engine">
-<h2>BLUE ENGINE</h2>
+        <button class="mode-btn" data-alias="image_to_video">
+          🎬 สร้างคลิปไวรัล AI
+        </button>
 
-<div class="mode-group">
-<button class="mode-btn" data-engine="blue" data-mode="dark">Dark Viral</button>
-<button class="mode-btn" data-engine="blue" data-mode="lipsync">AI LipSync</button>
-<button class="mode-btn" data-engine="blue" data-mode="motion">Dance Motion</button>
-<button class="mode-btn" data-engine="blue" data-mode="face">Face Swap</button>
-</div>
+        <button class="mode-btn" data-alias="lip_sync">
+          🎤 ลิปซิงค์เสียง-คำพูด
+        </button>
 
-<button id="generate-blue" class="generate-btn">GENERATE BLUE</button>
+        <button class="mode-btn" data-alias="motion_transfer">
+          🕺 โคลนท่าเต้น AI
+        </button>
 
-</div>
+        <button class="mode-btn" data-alias="face_swap">
+          🧑 เปลี่ยนหน้า AI
+        </button>
 
-</div>
+      </div>
 
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (Runway)
+      </button>
 
-<!-- PREVIEW AREA -->
-<div class="preview-section">
-
-<div class="preview-box">
-
-<label>IMPORT FILE A</label>
-<input type="file" id="fileA" accept="image/*,video/*">
-
-<video id="preview-red-video" class="preview-media" controls></video>
-<img id="preview-red-image" class="preview-media">
-
-</div>
+    </div>
 
 
-<div class="preview-box">
+    <!-- BLUE ENGINE -->
+    <div class="engine engine-box blue-engine">
 
-<label>IMPORT FILE B</label>
-<input type="file" id="fileB" accept="image/*,video/*">
+      <h2>⭐ สร้างวิดีโอ AI (Replicate)</h2>
 
-<video id="preview-blue-video" class="preview-media" controls></video>
-<img id="preview-blue-image" class="preview-media">
+      <div class="mode-row">
 
-</div>
+        <button class="mode-btn">
+          🎬 สร้างคลิปไวรัล AI
+        </button>
 
-</div>
+        <button class="mode-btn">
+          🎤 ลิปซิงค์เสียง-คำพูด
+        </button>
 
+        <button class="mode-btn">
+          🕺 โคลนท่าเต้น AI
+        </button>
 
-<!-- PROMPT -->
-<div class="prompt-section">
-<textarea id="prompt" placeholder="Enter your prompt..."></textarea>
-</div>
+        <button class="mode-btn">
+          🧑 เปลี่ยนหน้า AI
+        </button>
 
+      </div>
 
-<!-- STATUS -->
-<div class="status-section">
-<div id="status">STATUS: IDLE</div>
-<div class="progress-bar">
-<div id="progress-fill"></div>
-</div>
-</div>
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (Replicate)
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- ================== UPLOAD SECTION ================== -->
+
+  <div class="upload-core-wrapper">
+
+    <div class="upload-core">
+
+      <div class="upload-box">
+        <span>Upload Motion / Source</span>
+        <input type="file" id="fileA" />
+      </div>
+
+      <div class="upload-box">
+        <span>Upload Character / Target</span>
+        <input type="file" id="fileB" />
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- ================== PREVIEW ================== -->
+
+  <div class="preview-dual preview-wrapper">
+
+    <div class="preview-box">
+      <video id="preview-red-video" controls></video>
+      <img id="preview-red-image"/>
+    </div>
+
+    <div class="preview-box">
+      <video id="preview-blue-video" controls></video>
+      <img id="preview-blue-image"/>
+    </div>
+
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-bar">
+    <span id="status">STATUS: IDLE</span>
+  </div>
 
 </div>
 
 <script src="/assets/js/create.js"></script>
+<script src="/assets/js/create-nav.js"></script>
 
 </body>
 </html>
