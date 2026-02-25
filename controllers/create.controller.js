@@ -59,18 +59,15 @@ exports.create = async (req, res) => {
       // MODEL ROUTER
       // =====================================================
 
-      const result = await modelRouter.run({
-
-         userId: user.id,
-
-         engine,
-         alias,
-         type,
-         prompt,
-
-         files
-
-      });
+   const result = await modelRouter.run({
+   userId: user.id,
+   engine,
+   payload: {
+      type,
+      prompt,
+      files
+   }
+});
 
       // =====================================================
       // RESPONSE
