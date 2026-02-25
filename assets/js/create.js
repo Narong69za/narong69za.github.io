@@ -1,17 +1,7 @@
 // ===============================
 // ULTRA ENGINE CONTROL FINAL
-// ADD ONLY VERSION
-// DO NOT CHANGE UI LAYOUT
+// LOCKED STRUCTURE
 // ===============================
-
-
-// 🔥 ULTRA SAFE LOAD GUARD (กัน script โหลดซ้ำ / DOM ซ้อน)
-if(window.__ULTRA_ENGINE_LOADED__){
-    console.log("ULTRA ENGINE already loaded — skip duplicate");
-}else{
-
-window.__ULTRA_ENGINE_LOADED__ = true;
-
 
 const API_URL = "https://sn-design-api.onrender.com/api/render";
 
@@ -19,118 +9,105 @@ let isRunning = false;
 
 
 // ===============================
-// UTILITY UI STATE
+// UI STATE
 // ===============================
 
-function lockButtons(lock=true){
+function setStatus(text){
 
-    const buttons = document.querySelectorAll("button");
+    const el = document.querySelector("#statusText");
 
-    buttons.forEach(btn=>{
-
-        if(btn.innerText.includes("สร้าง")){
-            btn.disabled = lock;
-
-            if(lock){
-                btn.style.opacity="0.6";
-                btn.style.pointerEvents="none";
-            }else{
-                btn.style.opacity="1";
-                btn.style.pointerEvents="auto";
-            }
-        }
-
-    });
+    if(el) el.innerText = text;
 
 }
 
-
-// glow แบบไม่พัง event
 function glowActive(button){
 
-    document.querySelectorAll("button").forEach(b=>{
+    document.querySelectorAll(".engine-btn").forEach(b=>{
         b.style.boxShadow="none";
     });
 
     if(button){
         button.style.boxShadow="0 0 20px #00ffea";
     }
+
 }
 
 
 // ===============================
-// RUN AI
+// RUN ENGINE
 // ===============================
 
-async function runAI(engine,btnElement){
+async function runAI(engine,btn){
 
     if(isRunning) return;
-
-    const btn = btnElement || window.event?.target;
-
-    glowActive(btn);
 
     const fileA = document.getElementById("fileSource")?.files?.[0];
     const fileB = document.getElementById("fileTarget")?.files?.[0];
     const prompt = document.getElementById("prompt")?.value || "";
 
-    // ===============================
-    // VALIDATE
-    // ===============================
-
     if(!fileA){
 
-        alert("ต้องเลือกไฟล์ก่อน");
+        alert("ต้องเลือก Source file");
 
         return;
+
     }
 
     const formData = new FormData();
 
     formData.append("engine", engine);
     formData.append("alias", engine);
-    formData.append("type", "video");
-    formData.append("prompt", prompt);
+    formData.append("type","video");
+    formData.append("prompt",prompt);
 
-    // 🔥 ต้องตรง backend multer
-    formData.append("fileA", fileA);
+    formData.append("fileA",fileA);
 
     if(fileB){
-        formData.append("fileB", fileB);
+
+        formData.append("fileB",fileB);
+
     }
 
     try{
 
         isRunning = true;
 
-        lockButtons(true);
+        glowActive(btn);
+
+        setStatus("STATUS: PROCESSING");
 
         const res = await fetch(API_URL,{
+
             method:"POST",
             body:formData
+
         });
 
         const data = await res.json();
 
-        console.log("AI RESULT:", data);
+        console.log(data);
 
         if(!res.ok){
-            throw new Error(data.error || "Render failed");
+
+            throw new Error(data.error || "API ERROR");
+
         }
 
-        console.log("SUCCESS");
+        setStatus("STATUS: SUCCESS");
 
-    }catch(err){
+    }
+    catch(err){
 
-        console.error("ERROR:", err);
+        console.error(err);
+
+        setStatus("STATUS: ERROR");
 
         alert(err.message);
 
-    }finally{
+    }
+    finally{
 
         isRunning = false;
-
-        lockButtons(false);
 
     }
 
@@ -138,9 +115,7 @@ async function runAI(engine,btnElement){
 
 
 // ===============================
-// GLOBAL EXPORT
+// GLOBAL
 // ===============================
 
 window.runAI = runAI;
-
-}
