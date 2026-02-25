@@ -1,4 +1,4 @@
-const ADMIN_KEY = "sn_ultra_admin_2026";
+const ADMIN_KEY = "SN_DESIGN_AI_DEV-2499";
 const API = "https://sn-design-api.onrender.com/admin-api";
 
 async function loadUsers(){
