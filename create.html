@@ -1,87 +1,91 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
 
 </head>
+
+
 <body>
 
-<header>
 
-⭐ SN DESIGN ENGINE AI
+<div class="ultra-wrapper">
 
-<button class="credit-btn">เติมเครดิต</button>
+<h1 class="ultra-title">
 
-</header>
+ULTRA ENGINE CONTROL
 
-
-<h1 class="center">ULTRA ENGINE CONTROL</h1>
+</h1>
 
 
 <!-- PROMPT -->
-<div class="center">
-
 <textarea id="prompt" placeholder="Enter your prompt..."></textarea>
 
-</div>
 
+<!-- MODE SELECT -->
+<div class="mode-select">
 
-<!-- TYPE SELECT -->
-<div class="center">
-
-<button class="mode-btn" data-type="video">Generate Video</button>
-<button class="mode-btn" data-type="image">Generate Image</button>
-<button class="mode-btn" data-type="upscale">Upscale</button>
+<button>Generate Video</button>
+<button>Generate Image</button>
+<button>Upscale</button>
 
 </div>
 
 
 
-<!-- ENGINE AREA (LOCKED STRUCTURE) -->
-<div class="engine-wrapper">
+<!-- ENGINE GRID (FINAL LOCK) -->
+<div class="engine-grid">
 
-<div class="engine-card red">
+<!-- RED ENGINE -->
+<div class="engine red">
 
 <h2>RED ENGINE</h2>
 
 <div class="engine-options">
 
-<button class="opt">Dark Viral</button>
-<button class="opt">AI LipSync</button>
-<button class="opt">Dance Motion</button>
-<button class="opt">Face Swap</button>
+<button>Dark Viral</button>
+<button>AI LipSync</button>
+<button>Dance Motion</button>
+<button>Face Swap</button>
 
 </div>
 
-<button class="engine-btn" onclick="runAI('runway',this)">
+<button class="generate-btn"
+onclick="runAI('runway',this)">
+
 GENERATE RED
+
 </button>
 
 </div>
 
 
 
-<div class="engine-card blue">
+<!-- BLUE ENGINE (LOCK — ยังไม่ใช้) -->
+<div class="engine blue">
 
 <h2>BLUE ENGINE</h2>
 
 <div class="engine-options">
 
-<button class="opt">Dark Viral</button>
-<button class="opt">AI LipSync</button>
-<button class="opt">Dance Motion</button>
-<button class="opt">Face Swap</button>
+<button>Dark Viral</button>
+<button>AI LipSync</button>
+<button>Dance Motion</button>
+<button>Face Swap</button>
 
 </div>
 
-<button class="engine-btn" onclick="runAI('replicate',this)">
+<button disabled>
+
 GENERATE BLUE
+
 </button>
 
 </div>
@@ -90,19 +94,22 @@ GENERATE BLUE
 
 
 
-<!-- IMPORT FILE (CENTER LOCK) -->
-<div class="import-area">
+<!-- IMPORT FILE -->
+<div class="import-center">
 
 <label>
 
 IMPORT FILE A
+
 <input type="file" id="fileSource">
 
 </label>
 
+
 <label>
 
 IMPORT FILE B
+
 <input type="file" id="fileTarget">
 
 </label>
@@ -112,19 +119,33 @@ IMPORT FILE B
 
 
 <!-- PREVIEW -->
-<div class="preview-wrapper">
+<div class="preview-grid">
 
 <video id="previewA" controls></video>
+
 <video id="previewB" controls></video>
 
 </div>
 
 
 
-<div id="statusText" class="center">STATUS: IDLE</div>
+<div id="statusText">
 
+STATUS: IDLE
+
+</div>
+
+
+</div>
+
+
+
+<!-- LOAD ORDER สำคัญ -->
+
+<script src="/assets/js/create-nav.js"></script>
 
 <script src="/assets/js/create.js"></script>
 
+
 </body>
-</html>
+  </html>
