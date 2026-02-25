@@ -7,7 +7,7 @@ services:
   repo: https://github.com/Narong69za/narong69za.github.io
   plan: starter
   envVars:
-  - key: RUNWAY_API
+  - key: RUNWAY_API_KEY
     sync: false
   - key: REPLICATE_API_TOKEN
     sync: false
