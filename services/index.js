@@ -12,6 +12,9 @@ const stripeRoute = require("../routes/stripe.route");
 const app = express();
 
 app.use(cors());
+app.use("/api/stripe/webhook",
+require("express").raw({ type: "application/json" })
+);
 app.use(express.json());
 
 const upload = multer({
