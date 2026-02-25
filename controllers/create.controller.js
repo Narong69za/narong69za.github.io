@@ -1,55 +1,46 @@
-// controllers/create.controller.js
-
 const modelRouter = require("../models/model.router");
-const db = require("../db/db");
-
-const COST_TABLE = {
-  video: 5,
-  lipsync: 4,
-  motion_transfer: 4,
-  face_swap: 3
-};
 
 exports.create = async (req,res)=>{
 
-  try{
+   try{
 
-    const { engine, alias, type, prompt } = req.body;
+      const { engine, alias, type, prompt } = req.body;
 
-    const files = {};
+      // ✅ DEV BYPASS SAFE USER
+      const user = req.user || { id: "DEV-BYPASS" };
 
-    if(req.files){
-      req.files.forEach(f=>{
-        files[f.fieldname] = f;
+      const files={};
+
+      if(req.files){
+
+         req.files.forEach(f=>{
+            files[f.fieldname]=f;
+         });
+
+      }
+
+      const result = await modelRouter.run({
+         userId: user.id,
+         engine,
+         alias,
+         type,
+         prompt,
+         files
       });
-    }
 
-    const cost = COST_TABLE[type] || 5;
+      res.json({
+         status:"queued",
+         result
+      });
 
-    await db.decreaseCredit(req.user.id, cost);
+   }catch(err){
 
-    const result = await modelRouter.run({
-      engine,
-      alias,
-      type,
-      prompt,
-      files
-    });
+      console.error(err);
 
-    res.json({
-      status:"queued",
-      remainingCredit: req.user.credits - cost,
-      result
-    });
+      res.status(500).json({
+         error:err.message
+      });
 
-  }catch(err){
-
-    console.error(err);
-
-    res.status(500).json({
-      error:err.message
-    });
-
-  }
+   }
 
 };
