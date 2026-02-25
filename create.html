@@ -14,13 +14,6 @@
 
   <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-  <!-- TYPE BAR -->
-  <div class="type-bar">
-    <button class="type-btn active">Generate Video</button>
-    <button class="type-btn">Generate Image</button>
-    <button class="type-btn">Upscale</button>
-  </div>
-
   <!-- ENGINE WRAP -->
   <div class="engine-wrap">
 
@@ -29,13 +22,13 @@
       <h2>RED ENGINE</h2>
 
       <div class="mode-row">
-        <button class="mode-btn">Dark Viral</button>
+        <button class="mode-btn" data-mode="image_to_video">Dark Viral</button>
         <button class="mode-btn">AI LipSync</button>
         <button class="mode-btn">Dance Motion</button>
         <button class="mode-btn">Face Swap</button>
       </div>
 
-      <button class="generate-btn">GENERATE RED</button>
+      <button id="generate-red" class="generate-btn">GENERATE RED</button>
     </div>
 
     <!-- BLUE ENGINE -->
@@ -43,13 +36,13 @@
       <h2>BLUE ENGINE</h2>
 
       <div class="mode-row">
-        <button class="mode-btn">Dark Viral</button>
+        <button class="mode-btn" data-mode="image_to_video">Dark Viral</button>
         <button class="mode-btn">AI LipSync</button>
         <button class="mode-btn">Dance Motion</button>
         <button class="mode-btn">Face Swap</button>
       </div>
 
-      <button class="generate-btn">GENERATE BLUE</button>
+      <button id="generate-blue" class="generate-btn">GENERATE BLUE</button>
     </div>
 
   </div>
@@ -87,7 +80,7 @@
   </div>
 
   <!-- PROMPT -->
-  <textarea placeholder="Enter your prompt..."></textarea>
+  <textarea id="prompt" placeholder="Enter your prompt..."></textarea>
 
   <!-- STATUS -->
   <div class="status-bar">
