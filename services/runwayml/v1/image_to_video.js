@@ -7,22 +7,23 @@ const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 exports.run = async ({prompt,files}) => {
 
    if(!RUNWAY_API_KEY){
-
       throw new Error("RUNWAY_API_KEY missing");
-
    }
 
    if(!files.fileA){
-
       throw new Error("fileA missing");
-
    }
 
    const imageFile = files.fileA;
 
-   // NOTE:
-   // ต้องมี public URL จริง (upload storage ก่อน)
-   // ตอนนี้ใช้ path ชั่วคราวสำหรับ test
+   // ======================
+   // DEV TEST MODE
+   // ======================
+   // ใช้ image url test ก่อน
+   // (เพราะ memoryStorage ไม่มี public url)
+
+   const DEV_IMAGE_URL =
+   "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg";
 
    const response = await fetch(
       "https://api.dev.runwayml.com/v1/image_to_video",
@@ -39,7 +40,7 @@ exports.run = async ({prompt,files}) => {
 
             promptImage:[
                {
-                  uri:imageFile.path || "",
+                  uri: DEV_IMAGE_URL,
                   position:"first"
                }
             ],
