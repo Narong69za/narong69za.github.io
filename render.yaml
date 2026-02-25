@@ -1,0 +1,33 @@
+# Exported from Render on 2026-02-25T05:00:23Z
+version: "1"
+services:
+- type: web
+  name: SN DESIGN API
+  runtime: node
+  repo: https://github.com/Narong69za/narong69za.github.io
+  plan: starter
+  envVars:
+  - key: RUNWAY_API
+    sync: false
+  - key: REPLICATE_API_TOKEN
+    sync: false
+  - key: GOOGLE_CLIENT_SECRET
+    sync: false
+  - key: GOOGLE_CALLBACK_URL
+    sync: false
+  - key: GOOGLE_CLIENT_ID
+    sync: false
+  - key: DEV_BYPASS_AUTH
+    sync: false
+  - key: DEV_MODE
+    sync: false
+  - fromGroup: SNDSIGN
+  region: oregon
+  buildCommand: npm install
+  startCommand: node services/index.js
+  domains:
+  - sn-designstudio.dev
+  - www.sn-designstudio.dev
+  autoDeployTrigger: "off"
+  previews:
+    generation: manual
