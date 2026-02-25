@@ -2,42 +2,60 @@
 
 const fetch = require("node-fetch");
 
-const ENDPOINT = "https://api.dev.runwayml.com/v1/image_to_video";
+const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
 
-async function createImageToVideo(options = {}) {
+exports.run = async ({prompt,files}) => {
 
-  const res = await fetch(ENDPOINT, {
+   if(!RUNWAY_API_KEY){
 
-    method: "POST",
+      throw new Error("RUNWAY_API_KEY missing");
 
-    headers: {
-      Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
-      "Content-Type": "application/json",
-      "X-Runway-Version": "2024-11-06"
-    },
+   }
 
-    body: JSON.stringify({
-      model: "gen4.5",
-      promptText: options.prompt,
-      promptImage: [
-        {
-          uri: options.imageUrl,
-          position: "first"
-        }
-      ],
-      ratio: "720:1280",
-      duration: 10
-    })
+   if(!files.fileA){
 
-  });
+      throw new Error("fileA missing");
 
-  const text = await res.text();
+   }
 
-  if (!res.ok) {
-    throw new Error(text);
-  }
+   const imageFile = files.fileA;
 
-  return JSON.parse(text);
-}
+   // NOTE:
+   // ต้องมี public URL จริง (upload storage ก่อน)
+   // ตอนนี้ใช้ path ชั่วคราวสำหรับ test
 
-module.exports = { createImageToVideo };
+   const response = await fetch(
+      "https://api.dev.runwayml.com/v1/image_to_video",
+      {
+         method:"POST",
+         headers:{
+            "Authorization":`Bearer ${RUNWAY_API_KEY}`,
+            "Content-Type":"application/json",
+            "X-Runway-Version":"2024-11-06"
+         },
+         body:JSON.stringify({
+
+            promptText: prompt || "SN DESIGN TEST",
+
+            promptImage:[
+               {
+                  uri:imageFile.path || "",
+                  position:"first"
+               }
+            ],
+
+            model:"gen4.5",
+            ratio:"1280:720",
+            duration:4
+
+         })
+      }
+   );
+
+   const text = await response.text();
+
+   console.log("RUNWAY RAW RESPONSE:", text);
+
+   return text;
+
+};
