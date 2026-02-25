@@ -1,12 +1,14 @@
+// services/runwayml/v1/index.js
+
 const imageToVideo = require("./image_to_video");
 const videoUpscale = require("./video_upscale");
-const textToVideo = require("./text_to_video");
+const textToVideo = require("./text_to_video"); // ⭐ ADD
 
 async function run({ mode, payload }) {
 
   switch (mode) {
 
-    case "text_to_video":
+    case "text_to_video": // ⭐ ADD
       return await textToVideo(payload);
 
     case "image2video":
