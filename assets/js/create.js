@@ -47,3 +47,24 @@ btnGenerate.addEventListener("click", async ()=>{
     }
 
 });
+// ===============================
+// ACTIVE MODEL SELECT (GREEN GLOW)
+// ===============================
+
+let selectedModel = null;
+
+document.querySelectorAll(".model-btn").forEach(btn=>{
+
+    btn.addEventListener("click",()=>{
+
+        document.querySelectorAll(".model-btn").forEach(b=>{
+            b.classList.remove("active-model");
+        });
+
+        btn.classList.add("active-model");
+
+        selectedModel = btn.dataset.model;
+
+    });
+
+});
