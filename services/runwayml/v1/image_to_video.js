@@ -16,7 +16,7 @@ exports.run = async ({ prompt, files }) => {
    const base64Image = file.buffer.toString("base64");
 
    const response = await axios.post(
-      "https://api.runwayml.com/v1/image_to_video",
+      "https://api.dev.runwayml.com/v1/image_to_video",
       {
          model: "gen-3a-turbo",
          prompt: prompt || "cinematic motion",
