@@ -7,6 +7,12 @@ const db = require("../db/db");
 const modelRouter = require("../models/model.router");
 
 // ======================
+// DEV MODE CHECK
+// ======================
+
+const DEV_MODE = process.env.DEV_MODE === "true";
+
+// ======================
 // MULTER CONFIG
 // ======================
 
@@ -40,47 +46,61 @@ router.post("/render", uploadAny, async (req, res) => {
 
     const id = Date.now().toString();
 
+    console.log("===================================");
+    console.log("RENDER REQUEST");
     console.log("ENGINE:", engine);
     console.log("MODE:", mode);
-    console.log("FILES:", req.files?.map(f => f.fieldname));
+    console.log("DEV MODE:", DEV_MODE);
+    console.log("===================================");
 
     // ======================
-    // HANDLE FILE INPUT
+    // DEV SAFE MODE
     // ======================
 
-    let imageUrl = null;
-    let videoUri = null;
+    if (DEV_MODE) {
 
-    if (req.files && req.files.length > 0) {
+      console.log("⚡ DEV MODE ACTIVE - Runway BYPASSED");
 
-      const file = req.files[0];
+      db.run(
+        `
+        INSERT INTO projects
+        (id, engine, mode, prompt, status)
+        VALUES (?, ?, ?, ?, ?)
+        `,
+        [id, engine, mode, prompt || "", "dev-mock"],
+        (err) => {
 
-      // ⚠ IMPORTANT:
-      // ตอนนี้ยังไม่มีระบบ upload ไป S3
-      // ดังนั้นถ้าเป็น production จริง ต้องอัปโหลดก่อนแล้วค่อยส่ง URL
+          if (err) {
+            console.error(err);
+            return res.status(500).json({
+              status: "error",
+              message: err.message
+            });
+          }
 
-      imageUrl = file.originalname;
-      videoUri = file.originalname;
+          return res.json({
+            status: "dev-success",
+            id,
+            message: "Runway bypassed (DEV MODE)"
+          });
 
+        }
+      );
+
+      return;
     }
 
     // ======================
-    // CALL MODEL ROUTER
+    // PRODUCTION MODE
     // ======================
 
     const runwayResponse = await modelRouter.run({
       engine,
       mode,
-      prompt,
-      imageUrl,
-      videoUri
+      prompt
     });
 
-    const externalID = runwayResponse.id || runwayResponse.taskId;
-
-    // ======================
-    // INSERT PROJECT
-    // ======================
+    const externalID = runwayResponse?.id || runwayResponse?.taskId || null;
 
     db.run(
       `
@@ -88,28 +108,18 @@ router.post("/render", uploadAny, async (req, res) => {
       (id, engine, mode, prompt, externalID, status)
       VALUES (?, ?, ?, ?, ?, ?)
       `,
-      [
-        id,
-        engine,
-        mode,
-        prompt || "",
-        externalID || null,
-        "processing"
-      ],
+      [id, engine, mode, prompt || "", externalID, "processing"],
       (err) => {
 
         if (err) {
-
           console.error(err);
-
           return res.status(500).json({
             status: "error",
             message: err.message
           });
-
         }
 
-        res.json({
+        return res.json({
           status: "processing",
           id,
           externalID
@@ -122,7 +132,7 @@ router.post("/render", uploadAny, async (req, res) => {
 
     console.error("RENDER ERROR:", err.message);
 
-    res.status(500).json({
+    return res.status(500).json({
       status: "error",
       message: err.message
     });
