@@ -1,30 +1,90 @@
-// services/runwayml/v1/index.js
+// =====================================================
+// SN DESIGN ENGINE AI
+// ULTRA AUTO RUNWAY ENGINE
+// AUTO DETECT MODE
+// =====================================================
 
+const textToVideo = require("./text_to_video");
 const imageToVideo = require("./image_to_video");
 const videoUpscale = require("./video_upscale");
-const textToVideo = require("./text_to_video"); // ⭐ ADD
+const poller = require("./runway.poller");
 
 async function run({ mode, payload }) {
 
-  switch (mode) {
+   try {
 
-    case "text_to_video": // ⭐ ADD
-      return await textToVideo(payload);
+      const { prompt, files } = payload || {};
 
-    case "image2video":
-    case "motion":
-    case "dance":
-    case "lipsync":
-      return await imageToVideo.createImageToVideo(payload);
+      let result;
 
-    case "upscale":
-      return await videoUpscale.createVideoUpscale(payload);
+      // ==========================================
+      // AUTO DETECT ENGINE
+      // ==========================================
 
-    default:
-      throw new Error("RUNWAY MODE INVALID");
+      // 🔥 TEXT ONLY → GEN4.5
+      if(prompt && (!files || !files.fileA)){
 
-  }
+         console.log("RUNWAY AUTO MODE: TEXT_TO_VIDEO");
 
+         result = await textToVideo({
+
+            prompt,
+            duration: payload.duration || 4,
+            ratio: payload.ratio || "1280:720"
+
+         });
+
+      }
+
+      // 🔥 IMAGE INPUT
+      else if(files && files.fileA){
+
+         console.log("RUNWAY AUTO MODE: IMAGE_TO_VIDEO");
+
+         result = await imageToVideo.createImageToVideo(payload);
+
+      }
+
+      // 🔥 UPSCALE
+      else if(mode === "upscale"){
+
+         console.log("RUNWAY AUTO MODE: UPSCALE");
+
+         result = await videoUpscale.createVideoUpscale(payload);
+
+      }
+
+      else{
+
+         throw new Error("RUNWAY INPUT INVALID");
+
+      }
+
+
+      // ==========================================
+      // AUTO POLL RESULT
+      // ==========================================
+
+      const taskId = result.id;
+
+      if(!taskId){
+
+         throw new Error("RUNWAY TASK ID MISSING");
+
+      }
+
+      console.log("RUNWAY TASK CREATED:", taskId);
+
+      const finalResult = await poller.poll(taskId);
+
+      return finalResult;
+
+   } catch(err){
+
+      console.error("RUNWAY ULTRA ENGINE ERROR:", err.message);
+
+      throw err;
+   }
 }
 
 module.exports = { run };
