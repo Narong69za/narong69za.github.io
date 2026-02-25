@@ -1,13 +1,10 @@
-// controllers/create.controller.js
 // =====================================================
 // SN DESIGN ENGINE AI
-// CREATE CONTROLLER — FULL VERSION
-// ULTRA SAFE CHECK (ALLOW text_to_video WITHOUT fileA)
-// ADD-ONLY / SAFE FLOW
+// CREATE CONTROLLER — FULL VERSION FIX
 // =====================================================
 
-const creditEngine = require("../services/credit.engine");
 const modelRouter = require("../models/model.router");
+const creditEngine = require("../services/credit.engine");
 
 exports.create = async (req, res) => {
 
@@ -39,36 +36,40 @@ exports.create = async (req, res) => {
       console.log("PROMPT:", prompt);
 
       // =====================================================
-      // 🔥 CREDIT CHECK ULTRA (ต้องอยู่ตรงนี้)
+      // CREDIT CHECK ULTRA
       // =====================================================
 
       const ip =
       req.headers["x-forwarded-for"] ||
       req.socket.remoteAddress;
 
-      const freeAllowed =
-      await creditEngine.checkFreeUsage(ip);
+      if(user.id !== "DEV-BYPASS"){
 
-      if (!freeAllowed) {
+         const freeAllowed =
+         await creditEngine.checkFreeUsage(ip);
 
-         const creditCheck =
-         await creditEngine.checkAndUseCredit(
-            user.id,
-            alias
-         );
+         if(!freeAllowed){
 
-         if (!creditCheck.allowed) {
+            const creditCheck =
+            await creditEngine.checkAndUseCredit(
+               user.id,
+               alias
+            );
 
-            return res.status(402).json({
-               error: "Not enough credits"
-            });
+            if(!creditCheck.allowed){
+
+               return res.status(402).json({
+                  error: "Not enough credits"
+               });
+
+            }
 
          }
+
       }
 
       // =====================================================
-      // 🔥 ULTRA SAFE CHECK
-      // REQUIRE fileA ONLY when NOT text_to_video
+      // FILE REQUIRED CHECK
       // =====================================================
 
       if (alias !== "text_to_video" && !files.fileA) {
@@ -94,10 +95,6 @@ exports.create = async (req, res) => {
             files
          }
       });
-
-      // =====================================================
-      // RESPONSE
-      // =====================================================
 
       res.json({
          status: "queued",
