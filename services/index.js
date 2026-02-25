@@ -1,5 +1,3 @@
-// services/index.js
-
 require("dotenv").config();
 
 const express = require("express");
@@ -7,8 +5,8 @@ const cors = require("cors");
 const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
-const { create } = require("../controllers/create.controller");
-const checkCredit = require("../middleware/checkCredit");
+const { create } = require("../controllers/create.controller.js");
+const checkCredit = require("../middleware/checkCredit.js");
 
 const app = express();
 
@@ -20,6 +18,7 @@ const upload = multer({
 });
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 
 // ================= GOOGLE AUTH =================
 
@@ -49,6 +48,7 @@ app.post("/api/auth/google", async (req,res)=>{
 
 });
 
+
 // ================= RENDER =================
 
 app.post(
@@ -57,6 +57,7 @@ app.post(
   checkCredit,
   create
 );
+
 
 // ================= STATUS =================
 
@@ -67,6 +68,7 @@ app.get("/api/status/server",(req,res)=>{
 app.get("/api/status/ai",(req,res)=>{
   res.json({ ai:true });
 });
+
 
 const PORT = process.env.PORT || 4000;
 
