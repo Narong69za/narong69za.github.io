@@ -1,33 +1,42 @@
 require("dotenv").config();
+
 console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY);
 console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID);
+
 const express = require("express");
 const cors = require("cors");
-const adminRoutes = require("./admin.routes");
 const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
-const { create } = require("../controllers/create.controller.js");
+const adminRoutes = require("../routes/admin.routes");
 const stripeRoute = require("../routes/stripe.route");
+const stripeWebhook = require("../routes/stripe.webhook");
+const { create } = require("../controllers/create.controller.js");
 
 const app = express();
-app.use("/admin-api", adminRoutes);
+
 app.use(cors());
-app.use("/api/stripe/webhook",
-require("express").raw({ type: "application/json" })
+
+// ================= STRIPE WEBHOOK (RAW BODY) =================
+
+app.use(
+  "/api/stripe/webhook",
+  express.raw({ type: "application/json" })
 );
-app.use(express.json());
-const stripeWebhook = require("../routes/stripe.webhook");
 
 app.use("/api/stripe/webhook", stripeWebhook);
-const upload = multer({
-  storage: multer.memoryStorage()
-});
 
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+// ================= JSON =================
 
+app.use(express.json());
+
+// ================= ADMIN ROUTES =================
+
+app.use("/api/admin", adminRoutes);
 
 // ================= GOOGLE AUTH =================
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 app.post("/api/auth/google", async (req,res)=>{
 
@@ -50,38 +59,5 @@ app.post("/api/auth/google", async (req,res)=>{
     });
 
   }catch(err){
-    res.status(401).json({error:"INVALID GOOGLE TOKEN"});
-  }
 
-});
-
-
-// ================= STRIPE =================
-
-app.use("/api/stripe", stripeRoute);
-
-
-// ================= RENDER =================
-
-app.post("/api/render", upload.any(), create);
-
-
-// ================= STATUS =================
-
-app.get("/api/status/server",(req,res)=>{
-  res.json({ server:"online" });
-});
-
-app.get("/api/status/ai",(req,res)=>{
-  res.json({ ai:"ready" });
-});
-
-app.get("/",(req,res)=>{
-  res.send("SN DESIGN API RUNNING");
-});
-
-const PORT = process.env.PORT || 10000;
-app.use("/api/admin", adminRoutes);
-app.listen(PORT,()=>{
-  console.log("ULTRA ENGINE RUNNING:",PORT);
-});
+    res.status(401).json({ error:"INVALID GOOGLE TOKEN" });
