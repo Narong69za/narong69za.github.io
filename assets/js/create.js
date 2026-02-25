@@ -1,41 +1,46 @@
-// ===============================
+// =================================================
 // ULTRA ENGINE CONTROL FINAL
-// LOCKED STRUCTURE
-// ===============================
+// FINAL LOCK VERSION
+// DO NOT CHANGE UI
+// =================================================
 
 const API_URL = "https://sn-design-api.onrender.com/api/render";
 
 let isRunning = false;
 
 
-// ===============================
-// UI STATE
-// ===============================
+// ================= STATUS UI =================
 
 function setStatus(text){
 
-    const el = document.querySelector("#statusText");
+    const el = document.getElementById("statusText");
 
-    if(el) el.innerText = text;
-
-}
-
-function glowActive(button){
-
-    document.querySelectorAll(".engine-btn").forEach(b=>{
-        b.style.boxShadow="none";
-    });
-
-    if(button){
-        button.style.boxShadow="0 0 20px #00ffea";
+    if(el){
+        el.innerText = "STATUS: " + text;
     }
 
 }
 
 
-// ===============================
-// RUN ENGINE
-// ===============================
+// ================= PREVIEW =================
+
+function updatePreview(fileA,fileB){
+
+    const previewA = document.getElementById("previewA");
+    const previewB = document.getElementById("previewB");
+
+    if(fileA && previewA){
+        previewA.src = URL.createObjectURL(fileA);
+    }
+
+    if(fileB && previewB){
+        previewB.src = URL.createObjectURL(fileB);
+    }
+
+}
+
+
+// ================= RUN AI =================
 
 async function runAI(engine,btn){
 
@@ -47,60 +52,57 @@ async function runAI(engine,btn){
 
     if(!fileA){
 
-        alert("ต้องเลือก Source file");
+        alert("ต้องเลือก Source ก่อน");
 
         return;
 
     }
 
+    updatePreview(fileA,fileB);
+
     const formData = new FormData();
 
-    formData.append("engine", engine);
-    formData.append("alias", engine);
+    // IMPORTANT — MUST MATCH BACKEND
+    formData.append("engine",engine);
+    formData.append("alias",engine);
     formData.append("type","video");
     formData.append("prompt",prompt);
 
     formData.append("fileA",fileA);
 
     if(fileB){
-
         formData.append("fileB",fileB);
-
     }
 
     try{
 
         isRunning = true;
 
-        glowActive(btn);
-
-        setStatus("STATUS: PROCESSING");
+        setStatus("SENDING RUNWAY REQUEST...");
 
         const res = await fetch(API_URL,{
-
             method:"POST",
             body:formData
-
         });
 
         const data = await res.json();
 
-        console.log(data);
+        console.log("RUNWAY RESULT:",data);
 
         if(!res.ok){
 
-            throw new Error(data.error || "API ERROR");
+            throw new Error(data.error || "Render failed");
 
         }
 
-        setStatus("STATUS: SUCCESS");
+        setStatus("SUCCESS");
 
     }
     catch(err){
 
         console.error(err);
 
-        setStatus("STATUS: ERROR");
+        setStatus("ERROR");
 
         alert(err.message);
 
@@ -112,10 +114,5 @@ async function runAI(engine,btn){
     }
 
 }
-
-
-// ===============================
-// GLOBAL
-// ===============================
 
 window.runAI = runAI;
