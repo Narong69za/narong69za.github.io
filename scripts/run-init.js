@@ -1,35 +1,28 @@
-// ========================================
-// SN DESIGN STUDIO DB INIT RUNNER
-// FULL VERSION
-// ========================================
-
 require("dotenv").config();
+
 const fs = require("fs");
 const path = require("path");
-const pool = require("../src/db/db"); // ใช้ db.js เดิม
+const sqlite3 = require("sqlite3").verbose();
 
-async function run() {
+const DB_PATH = process.env.DB_PATH || "./db/database.sqlite";
 
-   try {
+const sqlPath = path.join(__dirname, "init.sql");
 
-      const sqlPath = path.join(__dirname, "init.sql");
+const sql = fs.readFileSync(sqlPath, "utf8");
 
-      const sql = fs.readFileSync(sqlPath, "utf8");
+const db = new sqlite3.Database(DB_PATH);
 
-      await pool.query(sql);
+console.log("INIT DB START...");
 
-      console.log("✅ DATABASE INIT COMPLETE");
+db.exec(sql, (err) => {
 
-      process.exit();
+    if (err) {
 
-   } catch (err) {
+        console.error("INIT ERROR:", err.message);
+        process.exit(1);
+    }
 
-      console.error("❌ INIT ERROR:", err);
+    console.log("DB INIT SUCCESS");
 
-      process.exit(1);
-
-   }
-
-}
-
-run();
+    db.close();
+});
