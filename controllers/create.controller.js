@@ -19,16 +19,31 @@ exports.create = async (req, res) => {
       }
 
       console.log("FILES DEBUG:", Object.keys(files));
+      console.log("ALIAS:", alias);
+      console.log("PROMPT:", prompt);
 
-      // 🔥 ULTRA SAFE CHECK
-      if (!files.fileA) {
 
-         return res.status(400).json({
-            error: "fileA missing",
-            received: Object.keys(files)
-         });
+      /* ===================================================
+         MODE VALIDATION FIX
+         text_to_video → ไม่ต้องมี file
+         mode อื่น → ต้องมี fileA
+      =================================================== */
+
+      if (alias !== "text_to_video") {
+
+         if (!files.fileA) {
+
+            return res.status(400).json({
+               error: "fileA missing",
+               received: Object.keys(files),
+               alias
+            });
+
+         }
 
       }
+
+      /* =================================================== */
 
       const result = await modelRouter.run({
          userId: user.id,
