@@ -1,6 +1,4 @@
-// middleware/checkCredit.js
-
-const db = require("../db/db");
+const db = require("../db/db.js");
 
 module.exports = async (req,res,next)=>{
 
