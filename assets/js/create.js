@@ -8,6 +8,7 @@ const API_URL = "https://sn-design-api.onrender.com/api/render";
 
 let isRunning = false;
 
+
 // ===============================
 // UTILITY UI STATE
 // ===============================
@@ -34,13 +35,17 @@ function lockButtons(lock=true){
 
 }
 
+
+// glow แบบไม่พัง event
 function glowActive(button){
 
     document.querySelectorAll("button").forEach(b=>{
         b.style.boxShadow="none";
     });
 
-    button.style.boxShadow="0 0 20px #00ffea";
+    if(button){
+        button.style.boxShadow="0 0 20px #00ffea";
+    }
 }
 
 
@@ -48,16 +53,17 @@ function glowActive(button){
 // RUN AI
 // ===============================
 
-async function runAI(engine){
+async function runAI(engine,btnElement){
 
     if(isRunning) return;
 
-    const btn = event.target;
+    // รองรับ onclick="runAI('runway',this)"
+    const btn = btnElement || window.event?.target;
 
     glowActive(btn);
 
-    const fileA = document.getElementById("fileSource")?.files[0];
-    const fileB = document.getElementById("fileTarget")?.files[0];
+    const fileA = document.getElementById("fileSource")?.files?.[0];
+    const fileB = document.getElementById("fileTarget")?.files?.[0];
     const prompt = document.getElementById("prompt")?.value || "";
 
     // ===============================
@@ -78,12 +84,11 @@ async function runAI(engine){
     formData.append("type", "video");
     formData.append("prompt", prompt);
 
+    // 🔥 ต้องตรง multer backend
     formData.append("fileA", fileA);
 
     if(fileB){
-
         formData.append("fileB", fileB);
-
     }
 
     try{
@@ -93,10 +98,8 @@ async function runAI(engine){
         lockButtons(true);
 
         const res = await fetch(API_URL,{
-
             method:"POST",
             body:formData
-
         });
 
         const data = await res.json();
@@ -104,9 +107,7 @@ async function runAI(engine){
         console.log("AI RESULT:", data);
 
         if(!res.ok){
-
             throw new Error(data.error || "Render failed");
-
         }
 
         console.log("SUCCESS");
