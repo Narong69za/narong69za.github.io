@@ -87,3 +87,70 @@ margin-top:20px;
 text-align:center;
 
 }
+/* ===============================
+CENTER CONTAINER
+=============================== */
+
+.main{
+
+margin:auto;
+display:flex;
+flex-direction:column;
+align-items:center;
+
+}
+
+
+/* ===============================
+ENGINE CARD BALANCE
+=============================== */
+
+.engine-card{
+
+width:100%;
+max-width:520px;
+
+margin-left:auto;
+margin-right:auto;
+
+}
+
+
+/* ===============================
+MODEL ACTIVE GREEN
+=============================== */
+
+.model-btn.active-model{
+
+background:#00ff88;
+color:#000;
+
+box-shadow:
+0 0 8px #00ff88,
+0 0 20px #00ff88;
+
+}
+
+
+/* ===============================
+PREVIEW CENTER
+=============================== */
+
+.preview-box{
+
+display:flex;
+flex-direction:column;
+align-items:center;
+
+}
+
+
+/* ===============================
+HIDE LOWER SECTION TEMP
+=============================== */
+
+.blue-engine{
+
+display:none;
+
+}
