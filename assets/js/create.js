@@ -1,121 +1,63 @@
-// =======================================================
-// ULTRA ENGINE CONTROL
-// FULL RUNWAY PRODUCTION VERSION
-// =======================================================
+// ======================================================
+// ULTRA ENGINE - GREEN GLOW CONTROL FINAL
+// SAFE VERSION - EVENT DELEGATION
+// ======================================================
 
-let STATE = {
-  engine: null,
-  mode: "image_to_video"
-};
+(function(){
 
-const statusEl = document.getElementById("status");
+    let activeButton = null;
 
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
+    // selector รวมปุ่มทั้งหมด
+    const TARGET_SELECTOR =
+        ".model-btn, .cta-btn, .engine-btn";
 
-const previewRedVideo = document.getElementById("preview-red-video");
-const previewRedImage = document.getElementById("preview-red-image");
+    // ===============================
+    // APPLY GLOW
+    // ===============================
 
-const previewBlueVideo = document.getElementById("preview-blue-video");
-const previewBlueImage = document.getElementById("preview-blue-image");
+    function applyGlow(target){
 
-const generateButtons = document.querySelectorAll(".generate-btn");
+        if(!target) return;
 
-function setStatus(text){
-  if(statusEl){
-    statusEl.innerText = "STATUS: " + text;
-  }
-}
+        // remove old
+        if(activeButton){
 
-// ======================
-// PREVIEW
-// ======================
+            activeButton.classList.remove("active");
 
-fileA?.addEventListener("change",()=>{
-  const file = fileA.files[0];
-  if(!file) return;
+        }
 
-  const url = URL.createObjectURL(file);
+        // set new
+        activeButton = target;
 
-  if(file.type.startsWith("video")){
-    previewRedVideo.src = url;
-    previewRedVideo.style.display="block";
-    previewRedImage.style.display="none";
-  }
+        activeButton.classList.add("active");
 
-  if(file.type.startsWith("image")){
-    previewRedImage.src = url;
-    previewRedImage.style.display="block";
-    previewRedVideo.style.display="none";
-  }
-});
+    }
 
-fileB?.addEventListener("change",()=>{
-  const file = fileB.files[0];
-  if(!file) return;
+    // ===============================
+    // GLOBAL CLICK LISTENER
+    // (รองรับ DOM ที่ inject ทีหลัง)
+    // ===============================
 
-  const url = URL.createObjectURL(file);
+    document.addEventListener("click", function(e){
 
-  if(file.type.startsWith("video")){
-    previewBlueVideo.src = url;
-    previewBlueVideo.style.display="block";
-    previewBlueImage.style.display="none";
-  }
+        const btn = e.target.closest(TARGET_SELECTOR);
 
-  if(file.type.startsWith("image")){
-    previewBlueImage.src = url;
-    previewBlueImage.style.display="block";
-    previewBlueVideo.style.display="none";
-  }
-});
+        if(!btn) return;
 
+        applyGlow(btn);
 
-// ======================
-// ENGINE
-// ======================
+    });
 
-const redGenerateBtn = generateButtons[0];
+    // ===============================
+    // OPTIONAL API (เผื่อเรียกเอง)
+    // ===============================
 
-redGenerateBtn?.addEventListener("click", async ()=>{
+    window.setEngineGlow = function(selector){
 
-  try{
+        const btn = document.querySelector(selector);
 
-    STATE.engine="runwayml";
+        applyGlow(btn);
 
-    setStatus("SENDING RUNWAY REQUEST...");
+    };
 
-    // ⭐ จำลอง user login ก่อน (temporary)
-    const userId = localStorage.getItem("USER_ID") || "dev-test-user";
-
-    const res = await fetch(
-      "https://sn-design-api.onrender.com/api/render",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "x-user-id": userId
-        },
-        body: JSON.stringify({
-          engine:"runwayml",
-          alias:"image_to_video",
-          type:"video",
-          prompt:"DEV RUNWAY TEST"
-        })
-      }
-    );
-
-    const data = await res.json();
-
-    console.log(data);
-
-    setStatus("SUCCESS");
-
-  }catch(err){
-
-    console.error(err);
-
-    setStatus("ERROR");
-
-  }
-
-});
+})();
