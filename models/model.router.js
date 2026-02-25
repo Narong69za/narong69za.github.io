@@ -1,81 +1,37 @@
-// models/model.router.js
+//models/model.router.js
 
-const runway = require("../services/runwayml/v1");
+const runwayEngine = require("../services/runwayml/v1");
 
-async function run({
+async function run({ userId, engine, payload }) {
 
-    userId,
-    engine,
-    alias,
-    type,
-    prompt,
-    files
+   try {
 
-}){
+      if (!engine) {
+         throw new Error("ENGINE NOT SPECIFIED");
+      }
 
-    /* ===============================
-       RUNWAY ENGINE
-    =============================== */
+      /* ===============================
+         RUNWAY AUTO ENGINE
+      =============================== */
 
-    if(engine === "runwayml"){
+      if (engine === "runwayml") {
 
-        switch(alias){
+         console.log("MODEL ROUTER → RUNWAY AUTO");
 
-            /* ======================
-               TEXT TO VIDEO (NEW)
-            ====================== */
+         return await runwayEngine.run({
+            payload
+         });
 
-            case "text_to_video":
+      }
 
-                return await runway.run({
-                    mode:"text_to_video",
-                    payload:{
-                        prompt: prompt
-                    }
-                });
+      throw new Error("RUNWAY MODEL NOT FOUND");
 
-            /* ======================
-               IMAGE TO VIDEO
-            ====================== */
+   } catch (err) {
 
-            case "image_to_video":
+      console.error("MODEL ROUTER ERROR:", err.message);
+      throw err;
 
-                return await runway.run({
-                    mode:"image2video",
-                    payload:{
-                        file: files.fileA
-                    }
-                });
-
-            case "motion":
-            case "dance":
-            case "lipsync":
-
-                return await runway.run({
-                    mode:alias,
-                    payload:{
-                        file: files.fileA
-                    }
-                });
-
-            case "upscale":
-
-                return await runway.run({
-                    mode:"upscale",
-                    payload:{
-                        file: files.fileA
-                    }
-                });
-
-            default:
-
-                throw new Error("RUNWAY MODEL NOT FOUND");
-
-        }
-
-    }
-
-    throw new Error("ENGINE NOT FOUND");
+   }
 
 }
 
