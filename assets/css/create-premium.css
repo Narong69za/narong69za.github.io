@@ -409,3 +409,93 @@ max-height:60vh; /* จำกัดความสูงมือถือ */
 video::-webkit-media-controls{
 max-width:100%;
 }
+/* ===============================
+ULTRA FINAL FIX — LAYOUT CENTER
+DO NOT REMOVE EXISTING STYLE
+=============================== */
+
+/* fix nav overlay */
+body{
+    padding-top:60px;
+}
+
+/* main container center */
+.ultra-engine-wrapper,
+.engine-wrapper,
+main{
+
+    max-width:920px;
+    margin:0 auto;
+    padding-left:14px;
+    padding-right:14px;
+
+}
+
+/* center engine blocks */
+.engine-box,
+.red-engine,
+.blue-engine,
+.create-engine-card{
+
+    margin-left:auto;
+    margin-right:auto;
+    width:100%;
+    max-width:720px;
+
+}
+
+/* fix buttons row alignment */
+.engine-box button,
+.create-engine-card button{
+
+    display:inline-flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* file import zone */
+.import-zone,
+.upload-zone{
+
+    max-width:720px;
+    margin:20px auto;
+    display:flex;
+    flex-direction:column;
+    gap:14px;
+
+}
+
+/* prevent overflow mobile */
+video,
+img,
+.preview-frame{
+
+    width:100%;
+    max-width:720px;
+    border-radius:14px;
+    overflow:hidden;
+
+}
+
+/* prompt area */
+textarea{
+
+    width:100%;
+    max-width:720px;
+    margin-left:auto;
+    margin-right:auto;
+    display:block;
+
+}
+
+/* mobile spacing */
+@media(max-width:768px){
+
+    .engine-box,
+    .create-engine-card{
+
+        padding:18px;
+
+    }
+
+}
