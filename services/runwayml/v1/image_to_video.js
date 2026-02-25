@@ -1,62 +1,34 @@
-// services/runwayml/v1/image_to_video.js
+const axios = require("axios");
 
-const fetch = require("node-fetch");
+exports.run = async ({ prompt, files }) => {
 
-const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
-
-exports.run = async ({prompt,files}) => {
-
-   if(!RUNWAY_API_KEY){
-      throw new Error("RUNWAY_API_KEY missing");
+   if (!files || Object.keys(files).length === 0) {
+      throw new Error("No file uploaded");
    }
 
-   if(!files.fileA){
-      throw new Error("fileA missing");
+   // 🔥 AUTO PICK FILE (ไม่ต้องสนชื่อ fileA แล้ว)
+   const file = files.fileA || Object.values(files)[0];
+
+   if (!file) {
+      throw new Error("Image file missing");
    }
 
-   const imageFile = files.fileA;
+   const base64Image = file.buffer.toString("base64");
 
-   // ======================
-   // DEV TEST MODE
-   // ======================
-   // ใช้ image url test ก่อน
-   // (เพราะ memoryStorage ไม่มี public url)
-
-   const DEV_IMAGE_URL =
-   "https://upload.wikimedia.org/wikipedia/commons/3/3f/Fronalpstock_big.jpg";
-
-   const response = await fetch(
-      "https://api.dev.runwayml.com/v1/image_to_video",
+   const response = await axios.post(
+      "https://api.runwayml.com/v1/image_to_video",
       {
-         method:"POST",
-         headers:{
-            "Authorization":`Bearer ${RUNWAY_API_KEY}`,
-            "Content-Type":"application/json",
-            "X-Runway-Version":"2024-11-06"
-         },
-         body:JSON.stringify({
-
-            promptText: prompt || "SN DESIGN TEST",
-
-            promptImage:[
-               {
-                  uri: DEV_IMAGE_URL,
-                  position:"first"
-               }
-            ],
-
-            model:"gen4.5",
-            ratio:"1280:720",
-            duration:4
-
-         })
+         model: "gen-3a-turbo",
+         prompt: prompt || "cinematic motion",
+         image: `data:${file.mimetype};base64,${base64Image}`
+      },
+      {
+         headers: {
+            Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+            "Content-Type": "application/json"
+         }
       }
    );
 
-   const text = await response.text();
-
-   console.log("RUNWAY RAW RESPONSE:", text);
-
-   return text;
-
+   return response.data;
 };
