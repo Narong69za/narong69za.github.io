@@ -114,7 +114,7 @@ redGenerateBtn?.addEventListener("click", async () => {
     setStatus("SENDING RUNWAY REQUEST...");
 
     const res = await fetch(
-      "https://sn-design-api.onrender.com/render",
+      "https://sn-design-api.onrender.com/api/render",
       {
         method: "POST",
         headers: {
