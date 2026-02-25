@@ -121,10 +121,11 @@ redGenerateBtn?.addEventListener("click", async () => {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          engine: STATE.engine,
-          mode: STATE.mode,
-          prompt: "DEV RUNWAY TEST"
-        })
+   engine: "runwayml",
+   alias: "image_to_video",
+   type: "video",
+   prompt: "DEV RUNWAY TEST"
+})
       }
     );
 
