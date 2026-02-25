@@ -6,10 +6,10 @@ exports.create = async (req,res)=>{
 
       const { engine, alias, type, prompt } = req.body;
 
-      // ✅ DEV BYPASS SAFE USER
-      const user = req.user || { id: "DEV-BYPASS" };
+      // DEV BYPASS
+      const user = req.user || { id:"DEV-BYPASS" };
 
-      const files={};
+      const files = {};
 
       if(req.files){
 
@@ -17,10 +17,17 @@ exports.create = async (req,res)=>{
             files[f.fieldname]=f;
          });
 
+         // 🔥 AUTO FIX FILEA
+         if(!files.fileA && req.files.length>0){
+            files.fileA = req.files[0];
+         }
+
       }
 
+      console.log("FILES DEBUG:", files);
+
       const result = await modelRouter.run({
-         userId: user.id,
+         userId:user.id,
          engine,
          alias,
          type,
