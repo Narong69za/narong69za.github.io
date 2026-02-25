@@ -57,7 +57,6 @@ async function runAI(engine,btnElement){
 
     if(isRunning) return;
 
-    // รองรับ onclick="runAI('runway',this)"
     const btn = btnElement || window.event?.target;
 
     glowActive(btn);
@@ -84,7 +83,7 @@ async function runAI(engine,btnElement){
     formData.append("type", "video");
     formData.append("prompt", prompt);
 
-    // 🔥 ต้องตรง multer backend
+    // 🔥 ต้องตรง backend multer
     formData.append("fileA", fileA);
 
     if(fileB){
@@ -98,8 +97,10 @@ async function runAI(engine,btnElement){
         lockButtons(true);
 
         const res = await fetch(API_URL,{
+
             method:"POST",
             body:formData
+
         });
 
         const data = await res.json();
@@ -107,7 +108,9 @@ async function runAI(engine,btnElement){
         console.log("AI RESULT:", data);
 
         if(!res.ok){
+
             throw new Error(data.error || "Render failed");
+
         }
 
         console.log("SUCCESS");
