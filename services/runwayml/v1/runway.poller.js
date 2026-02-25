@@ -1,55 +1,94 @@
-// services/runwayml/v1/runway.poller.js
+// =====================================================
+// SN DESIGN ENGINE AI
+// RUNWAY POLLER — FULL VERSION
+// CHECK TASK STATUS UNTIL COMPLETE
+// =====================================================
 
-const fetch = require("node-fetch");
-const db = require("../../../db/db");
+const axios = require("axios");
 
-const STATUS_ENDPOINT = "https://api.dev.runwayml.com/v1/tasks/";
+const RUNWAY_STATUS_ENDPOINT =
+  "https://api.dev.runwayml.com/v1/tasks";
 
-async function checkTask(id) {
+const HEADERS = {
 
-  const res = await fetch(`${STATUS_ENDPOINT}${id}`, {
-    headers: {
-      Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
-      "X-Runway-Version": "2024-11-06"
-    }
-  });
+   Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+   "X-Runway-Version": "2024-11-06",
+   "Content-Type": "application/json"
 
-  return await res.json();
+};
+
+
+// =====================================================
+// GET TASK STATUS
+// =====================================================
+
+async function getTask(taskId){
+
+   const res = await axios.get(
+
+      `${RUNWAY_STATUS_ENDPOINT}/${taskId}`,
+
+      { headers: HEADERS }
+
+   );
+
+   return res.data;
 }
 
-async function poll() {
 
-  const jobs = await db.getProcessingRunwayJobs();
+// =====================================================
+// POLL UNTIL COMPLETE
+// =====================================================
 
-  for (const job of jobs) {
+async function poll(taskId, {
 
-    try {
+   interval = 5000,     // เช็คทุก 5 วิ
+   timeout = 300000     // timeout 5 นาที
 
-      const result = await checkTask(job.externalID);
+} = {}){
 
-      if (result.status === "SUCCEEDED") {
+   const start = Date.now();
 
-        await db.completeJob(
-          job.id,
-          result.output?.videoUri || null
-        );
+   while(true){
 
+      const task = await getTask(taskId);
+
+      console.log("RUNWAY STATUS:", task.status);
+
+      // ===============================
+      // SUCCESS
+      // ===============================
+
+      if(task.status === "SUCCEEDED"){
+
+         return task;
       }
 
-      if (result.status === "FAILED") {
-        await db.failJob(job.id);
+      // ===============================
+      // FAIL
+      // ===============================
+
+      if(task.status === "FAILED"){
+
+         throw new Error("RUNWAY TASK FAILED");
       }
 
-    } catch (err) {
-      console.error(err.message);
-    }
+      // ===============================
+      // TIMEOUT
+      // ===============================
 
-  }
+      if(Date.now() - start > timeout){
 
+         throw new Error("RUNWAY POLLER TIMEOUT");
+      }
+
+      await new Promise(r => setTimeout(r, interval));
+   }
 }
 
-function start() {
-  setInterval(poll, 8000);
-}
 
-module.exports = { start };
+module.exports = {
+
+   poll
+
+};
