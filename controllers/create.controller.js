@@ -6,6 +6,7 @@
 // ADD-ONLY / SAFE FLOW
 // =====================================================
 
+const creditEngine = require("../services/credit.engine");
 const modelRouter = require("../models/model.router");
 
 exports.create = async (req, res) => {
@@ -38,11 +39,36 @@ exports.create = async (req, res) => {
       console.log("PROMPT:", prompt);
 
       // =====================================================
+      // 🔥 CREDIT CHECK ULTRA (ต้องอยู่ตรงนี้)
+      // =====================================================
+
+      const ip =
+      req.headers["x-forwarded-for"] ||
+      req.socket.remoteAddress;
+
+      const freeAllowed =
+      await creditEngine.checkFreeUsage(ip);
+
+      if (!freeAllowed) {
+
+         const creditCheck =
+         await creditEngine.checkAndUseCredit(
+            user.id,
+            alias
+         );
+
+         if (!creditCheck.allowed) {
+
+            return res.status(402).json({
+               error: "Not enough credits"
+            });
+
+         }
+      }
+
+      // =====================================================
       // 🔥 ULTRA SAFE CHECK
-      //
       // REQUIRE fileA ONLY when NOT text_to_video
-      //
-      // text_to_video = PROMPT ONLY MODE
       // =====================================================
 
       if (alias !== "text_to_video" && !files.fileA) {
@@ -59,25 +85,23 @@ exports.create = async (req, res) => {
       // MODEL ROUTER
       // =====================================================
 
-   const result = await modelRouter.run({
-   userId: user.id,
-   engine,
-   payload: {
-      type,
-      prompt,
-      files
-   }
-});
+      const result = await modelRouter.run({
+         userId: user.id,
+         engine,
+         payload: {
+            type,
+            prompt,
+            files
+         }
+      });
 
       // =====================================================
       // RESPONSE
       // =====================================================
 
       res.json({
-
          status: "queued",
          result
-
       });
 
    } catch (err) {
