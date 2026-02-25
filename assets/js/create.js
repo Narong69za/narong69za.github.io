@@ -1,121 +1,135 @@
-// =======================================================
-// ULTRA ENGINE CONTROL
-// FULL RUNWAY PRODUCTION VERSION
-// =======================================================
+// ===============================
+// ULTRA ENGINE CONTROL FINAL
+// ADD ONLY VERSION
+// DO NOT CHANGE UI LAYOUT
+// ===============================
 
-let STATE = {
-  engine: null,
-  mode: "image_to_video"
-};
+const API_URL = "https://sn-design-api.onrender.com/api/render";
 
-const statusEl = document.getElementById("status");
+let isRunning = false;
 
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
+// ===============================
+// UTILITY UI STATE
+// ===============================
 
-const previewRedVideo = document.getElementById("preview-red-video");
-const previewRedImage = document.getElementById("preview-red-image");
+function lockButtons(lock=true){
 
-const previewBlueVideo = document.getElementById("preview-blue-video");
-const previewBlueImage = document.getElementById("preview-blue-image");
+    const buttons = document.querySelectorAll("button");
 
-const generateButtons = document.querySelectorAll(".generate-btn");
+    buttons.forEach(btn=>{
 
-function setStatus(text){
-  if(statusEl){
-    statusEl.innerText = "STATUS: " + text;
-  }
+        if(btn.innerText.includes("สร้าง")){
+            btn.disabled = lock;
+
+            if(lock){
+                btn.style.opacity="0.6";
+                btn.style.pointerEvents="none";
+            }else{
+                btn.style.opacity="1";
+                btn.style.pointerEvents="auto";
+            }
+        }
+
+    });
+
 }
 
-// ======================
-// PREVIEW
-// ======================
+function glowActive(button){
 
-fileA?.addEventListener("change",()=>{
-  const file = fileA.files[0];
-  if(!file) return;
+    document.querySelectorAll("button").forEach(b=>{
+        b.style.boxShadow="none";
+    });
 
-  const url = URL.createObjectURL(file);
-
-  if(file.type.startsWith("video")){
-    previewRedVideo.src = url;
-    previewRedVideo.style.display="block";
-    previewRedImage.style.display="none";
-  }
-
-  if(file.type.startsWith("image")){
-    previewRedImage.src = url;
-    previewRedImage.style.display="block";
-    previewRedVideo.style.display="none";
-  }
-});
-
-fileB?.addEventListener("change",()=>{
-  const file = fileB.files[0];
-  if(!file) return;
-
-  const url = URL.createObjectURL(file);
-
-  if(file.type.startsWith("video")){
-    previewBlueVideo.src = url;
-    previewBlueVideo.style.display="block";
-    previewBlueImage.style.display="none";
-  }
-
-  if(file.type.startsWith("image")){
-    previewBlueImage.src = url;
-    previewBlueImage.style.display="block";
-    previewBlueVideo.style.display="none";
-  }
-});
+    button.style.boxShadow="0 0 20px #00ffea";
+}
 
 
-// ======================
-// ENGINE
-// ======================
+// ===============================
+// RUN AI
+// ===============================
 
-const redGenerateBtn = generateButtons[0];
+async function runAI(engine){
 
-redGenerateBtn?.addEventListener("click", async ()=>{
+    if(isRunning) return;
 
-  try{
+    const btn = event.target;
 
-    STATE.engine="runwayml";
+    glowActive(btn);
 
-    setStatus("SENDING RUNWAY REQUEST...");
+    const fileA = document.getElementById("fileSource")?.files[0];
+    const fileB = document.getElementById("fileTarget")?.files[0];
+    const prompt = document.getElementById("prompt")?.value || "";
 
-    // ⭐ จำลอง user login ก่อน (temporary)
-    const userId = localStorage.getItem("USER_ID") || "dev-test-user";
+    // ===============================
+    // VALIDATE
+    // ===============================
 
-    const res = await fetch(
-      "https://sn-design-api.onrender.com/api/render",
-      {
-        method:"POST",
-        headers:{
-          "Content-Type":"application/json",
-          "x-user-id": userId
-        },
-        body: JSON.stringify({
-          engine:"runwayml",
-          alias:"image_to_video",
-          type:"video",
-          prompt:"DEV RUNWAY TEST"
-        })
-      }
-    );
+    if(!fileA){
 
-    const data = await res.json();
+        alert("ต้องเลือกไฟล์ก่อน");
 
-    console.log(data);
+        return;
+    }
 
-    setStatus("SUCCESS");
+    const formData = new FormData();
 
-  }catch(err){
+    formData.append("engine", engine);
+    formData.append("alias", engine);
+    formData.append("type", "video");
+    formData.append("prompt", prompt);
 
-    console.error(err);
+    formData.append("fileA", fileA);
 
-    setStatus("ERROR");
+    if(fileB){
 
-  }
+        formData.append("fileB", fileB);
 
-});
+    }
+
+    try{
+
+        isRunning = true;
+
+        lockButtons(true);
+
+        const res = await fetch(API_URL,{
+
+            method:"POST",
+            body:formData
+
+        });
+
+        const data = await res.json();
+
+        console.log("AI RESULT:", data);
+
+        if(!res.ok){
+
+            throw new Error(data.error || "Render failed");
+
+        }
+
+        console.log("SUCCESS");
+
+    }catch(err){
+
+        console.error("ERROR:", err);
+
+        alert(err.message);
+
+    }finally{
+
+        isRunning = false;
+
+        lockButtons(false);
+
+    }
+
+}
+
+
+// ===============================
+// GLOBAL EXPORT
+// ===============================
+
+window.runAI = runAI;
