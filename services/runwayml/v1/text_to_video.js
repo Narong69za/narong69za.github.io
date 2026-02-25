@@ -1,6 +1,6 @@
 // =====================================================
 // RUNWAYML TEXT TO VIDEO (GEN4.5)
-// FINAL PRODUCTION VERSION
+// VERSION SAFE FIX
 // =====================================================
 
 const axios = require("axios");
@@ -9,11 +9,11 @@ const RUNWAY_ENDPOINT = "https://api.dev.runwayml.com/v1/text_to_video";
 
 async function createTextToVideo(payload) {
 
-    if(!process.env.RUNWAY_API_KEY){
+    if (!process.env.RUNWAY_API_KEY) {
         throw new Error("RUNWAY_API_KEY missing");
     }
 
-    try{
+    try {
 
         const response = await axios.post(
 
@@ -23,15 +23,14 @@ async function createTextToVideo(payload) {
                 promptText: payload.prompt || "SN DESIGN TEST",
                 ratio: payload.ratio || "1280:720",
                 duration: payload.duration || 4,
-                seed: payload.seed || Math.floor(Math.random()*9999999),
+                seed: payload.seed || Math.floor(Math.random() * 9999999),
                 model: "gen4.5"
             },
 
             {
-                headers:{
+                headers: {
                     Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
-                    "X-Runway-Version":"2024-11-06",
-                    "Content-Type":"application/json"
+                    "Content-Type": "application/json"
                 }
             }
 
@@ -41,7 +40,7 @@ async function createTextToVideo(payload) {
 
         return response.data;
 
-    }catch(err){
+    } catch (err) {
 
         console.error(
             "RUNWAY TEXT2VIDEO ERROR:",
