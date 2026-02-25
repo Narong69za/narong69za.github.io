@@ -1,122 +1,111 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>ULTRA ENGINE CONTROL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SN DESIGN ENGINE AI</title>
 
 <link rel="stylesheet" href="assets/css/create.css">
 
 </head>
+
 <body>
 
+
+<!-- ================= HEADER ================= -->
+
 <header>
-<h3>⭐ SN DESIGN ENGINE AI</h3>
+⭐ SN DESIGN ENGINE AI
 </header>
+
+
+<!-- ================= TITLE ================= -->
 
 <h1>ULTRA ENGINE CONTROL</h1>
 
-<!-- ===============================
-PROMPT
-=============================== -->
+
+<!-- ================= PROMPT ================= -->
 
 <textarea id="prompt" placeholder="ป้อนคำสั่ง AI..."></textarea>
 
-<!-- ===============================
-TYPE SELECT (เดิม)
-=============================== -->
+<div class="type-buttons">
 
-<div>
-<button>สร้างวิดีโอ</button>
-<button>สร้างภาพ</button>
-<button>Upscale</button>
-</div>
-
-<!-- ===============================
-INFO BOX (ADD ONLY)
-=============================== -->
-
-<div style="
-background:#0b0b0b;
-border:1px solid #222;
-padding:14px;
-margin:15px 0;
-border-radius:10px;
-font-size:13px;
-color:#aaa;
-">
-
-<strong style="color:#00ffea;">ขั้นตอนใช้งาน</strong><br>
-1. เลือกไฟล์ Source<br>
-2. เลือก Target (ถ้ามี)<br>
-3. กดปุ่มสร้าง AI
+<button type="button">สร้างวิดีโอ</button>
+<button type="button">สร้างภาพ</button>
+<button type="button">Upscale</button>
 
 </div>
 
-<!-- ===============================
-RUNWAY ENGINE (RED ENGINE)
-=============================== -->
 
-<div>
+<!-- ================= INFO BOX ================= -->
+
+<div class="info-box">
+
+<b>ขั้นตอนใช้งาน</b>
+
+<ol>
+<li>เลือกไฟล์ Source</li>
+<li>เลือก Target (ถ้ามี)</li>
+<li>กดปุ่มสร้าง AI</li>
+</ol>
+
+</div>
+
+
+
+<!-- ================= RUNWAY ENGINE ================= -->
 
 <h3>⭐ สร้างวิดีโอ AI (Runway)</h3>
 
-<button onclick="runAI('runway',this)">
+<button type="button" onclick="runAI('runway',this)">
 สร้างวิดีโอ AI
 </button>
 
-</div>
 
-<!-- ===============================
-REPLICATE ENGINE (BLUE ENGINE)
-=============================== -->
 
-<div>
+<!-- ================= REPLICATE ENGINE ================= -->
 
 <h3>⭐ สร้างวิดีโอ AI (Replicate)</h3>
 
-<button onclick="runAI('replicate',this)">
+<button type="button" onclick="runAI('replicate',this)">
 สร้างวิดีโอ AI
 </button>
 
-</div>
 
-<!-- ===============================
-UPLOAD SECTION
-=============================== -->
 
-<div style="margin-top:20px;">
+<!-- ================= FILE UPLOAD ================= -->
 
-<label>Upload Media / Source</label><br>
-<input id="fileSource" type="file">
+<h3>Upload Media / Source</h3>
 
-</div>
+<input id="fileSource" type="file" accept="image/*,video/*">
 
-<div style="margin-top:15px;">
+<h3>Upload Character / Target</h3>
 
-<label>Upload Character / Target</label><br>
-<input id="fileTarget" type="file">
+<input id="fileTarget" type="file" accept="image/*,video/*">
 
-</div>
 
-<!-- ===============================
-PREVIEW AREA (ไม่แก้ layout)
-=============================== -->
 
-<div style="margin-top:20px;">
-<video id="previewVideo" controls width="100%"></video>
-</div>
+<!-- ================= PREVIEW ================= -->
 
-<div style="margin-top:10px;">
-<img id="previewImage" src="assets/images/demo.jpg" width="100%">
-</div>
+<video id="previewVideo" controls style="width:100%;margin-top:20px;"></video>
 
-<!-- ===============================
-SCRIPT CONNECT
-=============================== -->
+
+
+<!-- ================= STATUS ================= -->
+
+<div id="statusText"></div>
+
+
+
+<!-- ================= SCRIPT ================= -->
 
 <script src="assets/js/create.js"></script>
 
+
+
 </body>
+
 </html>
