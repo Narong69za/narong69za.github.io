@@ -1,8 +1,25 @@
+/* =====================================================
+SN DESIGN ENGINE AI
+create.js — FINAL ENGINE CORE
+LOCK UI LAYOUT / PATCH STATE ONLY
+===================================================== */
+
+
+/* ===============================
+STATE SYSTEM
+=============================== */
+
 let STATE = {
-  engine:null,
-  mode:null,
-  type:null
+engine: null,
+model: null,
+mode: null,
+type: null
 };
+
+
+/* ===============================
+DOM REFERENCES
+=============================== */
 
 const fileA = document.getElementById("fileA");
 const fileB = document.getElementById("fileB");
@@ -13,102 +30,209 @@ const previewRedImage = document.getElementById("preview-red-image");
 const previewBlueVideo = document.getElementById("preview-blue-video");
 const previewBlueImage = document.getElementById("preview-blue-image");
 
-const statusEl = document.getElementById("status");
+const progressFill = document.getElementById("progress-fill");
+
+const info = document.getElementById("model-info");
+
+
+/* ===============================
+UPDATE UI STATUS
+=============================== */
+
+function updateUI(){
+
+if(!info) return;
+
+info.innerText =
+`ENGINE: ${STATE.engine || "-"} | MODEL: ${STATE.model || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
+
+}
+
+
+/* ===============================
+ENGINE MODEL SELECT (FINAL LOCK)
+=============================== */
+
+document.querySelectorAll("[data-engine-model]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const engine = btn.dataset.engine;
+const model = btn.dataset.model;
+
+/* remove active only inside same engine */
+
+document.querySelectorAll(
+`[data-engine-model][data-engine="${engine}"]`
+).forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+/* prevent dual engine active */
+
+document.querySelectorAll(
+`[data-engine-model]:not([data-engine="${engine}"])`
+).forEach(b=>b.classList.remove("active"));
+
+STATE.engine = engine;
+STATE.model = model;
+
+updateUI();
+
+});
+
+});
+
+
+/* ===============================
+MODE SELECT
+=============================== */
+
+document.querySelectorAll("[data-mode]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+document.querySelectorAll(
+`[data-mode][data-engine="${btn.dataset.engine}"]`
+).forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+STATE.mode = btn.dataset.mode;
+
+updateUI();
+
+});
+
+});
+
+
+/* ===============================
+TYPE SELECT
+=============================== */
+
+document.querySelectorAll("[data-type]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+document.querySelectorAll("[data-type]").forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+STATE.type = btn.dataset.type;
+
+updateUI();
+
+});
+
+});
+
+
+/* ===============================
+FILE PREVIEW SYSTEM (FINAL FIX)
+=============================== */
 
 function preview(file, videoEl, imageEl){
 
-  if(!file) return;
+if(!file) return;
 
-  const url = URL.createObjectURL(file);
+const url = URL.createObjectURL(file);
 
-  if(file.type.startsWith("video/")){
-    videoEl.src = url;
-    videoEl.style.display="block";
-    imageEl.style.display="none";
-  }
-
-  if(file.type.startsWith("image/")){
-    imageEl.src = url;
-    imageEl.style.display="block";
-    videoEl.style.display="none";
-  }
+if(videoEl){
+videoEl.pause?.();
+videoEl.style.display="none";
 }
 
-fileA?.addEventListener("change",()=>{
-  preview(fileA.files[0],previewRedVideo,previewRedImage);
+if(imageEl){
+imageEl.style.display="none";
+}
+
+if(file.type.startsWith("video/") && videoEl){
+
+videoEl.src = url;
+videoEl.load();
+videoEl.style.display="block";
+
+}
+
+else if(file.type.startsWith("image/") && imageEl){
+
+imageEl.src = url;
+imageEl.style.display="block";
+
+}
+
+}
+
+
+/* FILE INPUT LISTENER */
+
+if(fileA){
+fileA.addEventListener("change",()=>{
+preview(
+fileA.files[0],
+previewRedVideo,
+previewRedImage
+);
 });
+}
 
-fileB?.addEventListener("change",()=>{
-  preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+if(fileB){
+fileB.addEventListener("change",()=>{
+preview(
+fileB.files[0],
+previewBlueVideo,
+previewBlueImage
+);
 });
+}
 
 
-// TYPE SELECT
-
-document.querySelectorAll(".type-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    STATE.type = btn.dataset.type;
-    document.querySelectorAll(".type-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-  });
-});
-
-
-// MODE SELECT
-
-document.querySelectorAll(".mode-btn").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-
-    STATE.engine = btn.dataset.engine;
-    STATE.mode = btn.dataset.mode;
-
-    document.querySelectorAll(".mode-btn").forEach(b=>b.classList.remove("active"));
-    btn.classList.add("active");
-
-  });
-});
-
-
-// GENERATE
+/* ===============================
+GENERATE SIMULATION (UI ONLY)
+=============================== */
 
 async function generate(engine){
 
-  if(!STATE.mode || !STATE.type){
+const status = document.getElementById("status");
 
-    statusEl.innerText="STATUS: SELECT MODE & TYPE";
-    return;
-
-  }
-
-  statusEl.innerText="STATUS: PROCESSING...";
-
-  try{
-
-    const res = await fetch("/api/render",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        engine:engine,
-        mode:STATE.mode,
-        type:STATE.type
-      })
-    });
-
-    const data = await res.json();
-
-    console.log(data);
-
-    statusEl.innerText="STATUS: DONE";
-
-  }catch(e){
-
-    console.error(e);
-    statusEl.innerText="STATUS: ERROR";
-
-  }
+if(status){
+status.innerText="STATUS: PROCESSING";
 }
 
+let p = 0;
+
+const timer = setInterval(()=>{
+
+p += 10;
+
+if(progressFill){
+progressFill.style.width = p + "%";
+}
+
+if(p>=100){
+
+clearInterval(timer);
+
+if(status){
+status.innerText="STATUS: COMPLETE";
+}
+
+}
+
+},300);
+
+}
+
+
 document.getElementById("generate-red")?.addEventListener("click",()=>generate("red"));
+
 document.getElementById("generate-blue")?.addEventListener("click",()=>generate("blue"));
+
+
+
+/* ===============================
+INIT
+=============================== */
+
+updateUI();
