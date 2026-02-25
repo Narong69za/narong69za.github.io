@@ -1,109 +1,156 @@
+// =======================================================
+// ULTRA ENGINE CONTROL
+// FULL RUNWAY TEST VERSION
+// RED ENGINE = RUNWAYML
+// BLUE ENGINE = RESERVED (ยังไม่ใช้)
+// =======================================================
+
+
 // ======================
 // STATE
 // ======================
 
 let STATE = {
-  engine: "runwayml",
-  mode: null
+  engine: null,
+  mode: "image_to_video"
 };
 
-// ======================
-// SELECT MODE (mode-btn)
-// ======================
-
-document.querySelectorAll(".mode-btn").forEach(btn => {
-
-  btn.addEventListener("click", () => {
-
-    // ลบ active เดิม
-    document.querySelectorAll(".mode-btn").forEach(b => b.classList.remove("active"));
-
-    btn.classList.add("active");
-
-    STATE.mode = btn.dataset.mode;
-
-    console.log("MODE SELECTED:", STATE.mode);
-
-  });
-
-});
 
 // ======================
-// GENERATE RED
+// DOM
 // ======================
 
-document.getElementById("generate-red")?.addEventListener("click", async () => {
+const statusEl = document.getElementById("status");
 
-  await runRender("red");
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
 
-});
+const previewRedVideo = document.getElementById("preview-red-video");
+const previewRedImage = document.getElementById("preview-red-image");
 
-// ======================
-// GENERATE BLUE
-// ======================
+const previewBlueVideo = document.getElementById("preview-blue-video");
+const previewBlueImage = document.getElementById("preview-blue-image");
 
-document.getElementById("generate-blue")?.addEventListener("click", async () => {
+const generateButtons = document.querySelectorAll(".generate-btn");
 
-  await runRender("blue");
-
-});
 
 // ======================
-// RUN RENDER
+// STATUS
 // ======================
 
-async function runRender(side){
+function setStatus(text) {
+  if (statusEl) {
+    statusEl.innerText = "STATUS: " + text;
+  }
+}
 
-  if (!STATE.mode) {
 
-    alert("เลือก Model ก่อน");
+// ======================
+// PREVIEW SYSTEM
+// ======================
 
-    return;
+fileA?.addEventListener("change", () => {
 
+  const file = fileA.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+
+  if (file.type.startsWith("video")) {
+    previewRedVideo.src = url;
+    previewRedVideo.style.display = "block";
+    previewRedImage.style.display = "none";
   }
 
-  const prompt = document.getElementById("prompt")?.value || "";
-
-  const fileInput = document.getElementById("fileA");
-
-  const formData = new FormData();
-
-  formData.append("engine", STATE.engine);
-  formData.append("mode", STATE.mode);
-  formData.append("prompt", prompt);
-
-  if (fileInput?.files[0]) {
-    formData.append("fileA", fileInput.files[0]);
+  if (file.type.startsWith("image")) {
+    previewRedImage.src = url;
+    previewRedImage.style.display = "block";
+    previewRedVideo.style.display = "none";
   }
+
+});
+
+
+fileB?.addEventListener("change", () => {
+
+  const file = fileB.files[0];
+  if (!file) return;
+
+  const url = URL.createObjectURL(file);
+
+  if (file.type.startsWith("video")) {
+    previewBlueVideo.src = url;
+    previewBlueVideo.style.display = "block";
+    previewBlueImage.style.display = "none";
+  }
+
+  if (file.type.startsWith("image")) {
+    previewBlueImage.src = url;
+    previewBlueImage.style.display = "block";
+    previewBlueVideo.style.display = "none";
+  }
+
+});
+
+
+// ======================
+// ENGINE SELECT
+// ======================
+
+const redGenerateBtn = generateButtons[0];
+const blueGenerateBtn = generateButtons[1];
+
+
+// ======================
+// RED ENGINE → RUNWAYML
+// ======================
+
+redGenerateBtn?.addEventListener("click", async () => {
 
   try {
 
-    document.getElementById("status").innerText = "STATUS: PROCESSING";
+    STATE.engine = "runwayml";
+
+    setStatus("SENDING RUNWAY REQUEST...");
 
     const res = await fetch(
       "https://sn-design-api.onrender.com/render",
       {
         method: "POST",
-        body: formData
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          engine: STATE.engine,
+          mode: STATE.mode,
+          prompt: "DEV RUNWAY TEST"
+        })
       }
     );
 
     const data = await res.json();
 
-    console.log("RENDER RESPONSE:", data);
+    console.log("RUNWAY RESPONSE:", data);
 
-    if (data.status === "processing") {
-      document.getElementById("status").innerText = "STATUS: QUEUED";
-    } else {
-      document.getElementById("status").innerText = "STATUS: ERROR";
-    }
+    setStatus("SUCCESS");
 
   } catch (err) {
 
     console.error(err);
 
-    document.getElementById("status").innerText = "STATUS: ERROR";
+    setStatus("ERROR");
 
   }
 
-}
+});
+
+
+// ======================
+// BLUE ENGINE (DISABLED)
+// ======================
+
+blueGenerateBtn?.addEventListener("click", () => {
+
+  alert("BLUE ENGINE ยังไม่เปิด (Replicate ยังไม่ bind)");
+
+});
