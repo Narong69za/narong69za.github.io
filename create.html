@@ -1,111 +1,130 @@
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>SN DESIGN ENGINE AI</title>
+<title>ULTRA ENGINE CONTROL</title>
 
-<link rel="stylesheet" href="assets/css/create-premium.css">
+<link rel="stylesheet" href="/assets/css/create-premium.css">
 
 </head>
-
 <body>
 
-
-<!-- ================= HEADER ================= -->
-
 <header>
+
 ⭐ SN DESIGN ENGINE AI
+
+<button class="credit-btn">เติมเครดิต</button>
+
 </header>
 
 
-<!-- ================= TITLE ================= -->
-
-<h1>ULTRA ENGINE CONTROL</h1>
+<h1 class="center">ULTRA ENGINE CONTROL</h1>
 
 
-<!-- ================= PROMPT ================= -->
+<!-- PROMPT -->
+<div class="center">
 
-<textarea id="prompt" placeholder="ป้อนคำสั่ง AI..."></textarea>
-
-<div class="type-buttons">
-
-<button type="button">สร้างวิดีโอ</button>
-<button type="button">สร้างภาพ</button>
-<button type="button">Upscale</button>
+<textarea id="prompt" placeholder="Enter your prompt..."></textarea>
 
 </div>
 
 
-<!-- ================= INFO BOX ================= -->
+<!-- TYPE SELECT -->
+<div class="center">
 
-<div class="info-box">
-
-<b>ขั้นตอนใช้งาน</b>
-
-<ol>
-<li>เลือกไฟล์ Source</li>
-<li>เลือก Target (ถ้ามี)</li>
-<li>กดปุ่มสร้าง AI</li>
-</ol>
+<button class="mode-btn" data-type="video">Generate Video</button>
+<button class="mode-btn" data-type="image">Generate Image</button>
+<button class="mode-btn" data-type="upscale">Upscale</button>
 
 </div>
 
 
 
-<!-- ================= RUNWAY ENGINE ================= -->
+<!-- ENGINE AREA (LOCKED STRUCTURE) -->
+<div class="engine-wrapper">
 
-<h3>⭐ สร้างวิดีโอ AI (Runway)</h3>
+<div class="engine-card red">
 
-<button type="button" onclick="runAI('runway',this)">
-สร้างวิดีโอ AI
+<h2>RED ENGINE</h2>
+
+<div class="engine-options">
+
+<button class="opt">Dark Viral</button>
+<button class="opt">AI LipSync</button>
+<button class="opt">Dance Motion</button>
+<button class="opt">Face Swap</button>
+
+</div>
+
+<button class="engine-btn" onclick="runAI('runway',this)">
+GENERATE RED
 </button>
 
+</div>
 
 
-<!-- ================= REPLICATE ENGINE ================= -->
 
-<h3>⭐ สร้างวิดีโอ AI (Replicate)</h3>
+<div class="engine-card blue">
 
-<button type="button" onclick="runAI('replicate',this)">
-สร้างวิดีโอ AI
+<h2>BLUE ENGINE</h2>
+
+<div class="engine-options">
+
+<button class="opt">Dark Viral</button>
+<button class="opt">AI LipSync</button>
+<button class="opt">Dance Motion</button>
+<button class="opt">Face Swap</button>
+
+</div>
+
+<button class="engine-btn" onclick="runAI('replicate',this)">
+GENERATE BLUE
 </button>
 
+</div>
 
-
-<!-- ================= FILE UPLOAD ================= -->
-
-<h3>Upload Media / Source</h3>
-
-<input id="fileSource" type="file" accept="image/*,video/*">
-
-<h3>Upload Character / Target</h3>
-
-<input id="fileTarget" type="file" accept="image/*,video/*">
+</div>
 
 
 
-<!-- ================= PREVIEW ================= -->
+<!-- IMPORT FILE (CENTER LOCK) -->
+<div class="import-area">
 
-<video id="previewVideo" controls style="width:100%;margin-top:20px;"></video>
+<label>
+
+IMPORT FILE A
+<input type="file" id="fileSource">
+
+</label>
+
+<label>
+
+IMPORT FILE B
+<input type="file" id="fileTarget">
+
+</label>
+
+</div>
 
 
 
-<!-- ================= STATUS ================= -->
+<!-- PREVIEW -->
+<div class="preview-wrapper">
 
-<div id="statusText"></div>
+<video id="previewA" controls></video>
+<video id="previewB" controls></video>
 
-
-
-<!-- ================= SCRIPT ================= -->
-
-<script src="assets/js/create.js"></script>
+</div>
 
 
+
+<div id="statusText" class="center">STATUS: IDLE</div>
+
+
+<script src="/assets/js/create.js"></script>
 
 </body>
-
 </html>
