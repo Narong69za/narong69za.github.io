@@ -1,12 +1,16 @@
 // ======================================================
-// STRIPE WEBHOOK
+// STRIPE WEBHOOK - ULTRA SAFE VERSION
 // ======================================================
 
 const express = require("express");
 const router = express.Router();
 
 const stripeService = require("../services/stripe.service");
-const db = require("../db/db"); // ใช้ sqlite ของคุณ
+const db = require("../db/db");
+
+// ======================================================
+// STRIPE WEBHOOK
+// ======================================================
 
 router.post("/", async (req,res)=>{
 
@@ -28,20 +32,41 @@ router.post("/", async (req,res)=>{
 
   }
 
+  // ======================================================
+  // CHECKOUT SUCCESS
+  // ======================================================
+
   if(event.type === "checkout.session.completed"){
 
     const session = event.data.object;
 
-    const userId = session.metadata.userId;
-    const credits = parseInt(session.metadata.credits);
+    const userId = session?.metadata?.userId;
+    const credits = parseInt(session?.metadata?.credits || 0);
 
-    console.log("Payment Success:", userId, credits);
+    if(!userId || !credits){
 
-    // เติมเครดิตเข้า DB
-    db.run(
-      "UPDATE users SET credits = credits + ? WHERE id = ?",
-      [credits, userId]
-    );
+      console.error("Invalid metadata in webhook");
+      return res.json({ received:true });
+
+    }
+
+    console.log("💰 PAYMENT SUCCESS:", userId, credits);
+
+    try{
+
+      // ======================================================
+      // ADD CREDIT SAFELY
+      // ======================================================
+
+      await db.addCredit(userId, credits);
+
+      console.log("✅ CREDIT ADDED:", credits);
+
+    }catch(err){
+
+      console.error("DB CREDIT ERROR:", err);
+
+    }
 
   }
 
