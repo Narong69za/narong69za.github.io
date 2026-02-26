@@ -1,31 +1,43 @@
 /* =====================================================
 SN DESIGN ENGINE AI
-ULTRA AUTO LOGIN STATE + RUNWAY ENGINE
-FULL VERSION FINAL
+CREATE.JS — ULTRA FINAL RENDER VERSION
+LOCK UI LAYOUT
 ===================================================== */
+
+
+/* ===============================
+CONFIG
+=============================== */
 
 const API_URL = "https://sn-design-api.onrender.com/api/render";
 
-let STATE = {
-    engine:null,
-    alias:null
-};
 
 /* ===============================
-LOGIN STATE ULTRA
+LOGIN STATE (สำคัญมาก)
 =============================== */
 
 function getUserId(){
 
-    // DEV BYPASS
-    const dev = localStorage.getItem("DEV_BYPASS");
+   // DEV BYPASS (Owner Test Mode)
+   const DEV_MODE = true;
 
-    if(dev === "true"){
-        return "DEV-BYPASS";
-    }
+   if(DEV_MODE){
+      return "DEV-BYPASS";
+   }
 
-    return localStorage.getItem("USER_ID");
+   return localStorage.getItem("userId");
+
 }
+
+
+/* ===============================
+STATE
+=============================== */
+
+let STATE = {
+   engine: "runwayml",
+   alias: null
+};
 
 
 /* ===============================
@@ -45,70 +57,66 @@ const statusEl = document.getElementById("status");
 
 
 /* ===============================
-PREVIEW
+FILE PREVIEW
 =============================== */
 
 function preview(file, videoEl, imageEl){
 
-    if(!file) return;
+   if(!file) return;
 
-    const url = URL.createObjectURL(file);
+   const url = URL.createObjectURL(file);
 
-    if(videoEl){
-        videoEl.pause?.();
-        videoEl.style.display="none";
-    }
+   videoEl.style.display="none";
+   imageEl.style.display="none";
 
-    if(imageEl){
-        imageEl.style.display="none";
-    }
+   if(file.type.startsWith("video/")){
+      videoEl.src = url;
+      videoEl.style.display="block";
+   }
 
-    if(file.type.startsWith("video/")){
-        videoEl.src=url;
-        videoEl.load();
-        videoEl.style.display="block";
-    }
-    else if(file.type.startsWith("image/")){
-        imageEl.src=url;
-        imageEl.style.display="block";
-    }
+   if(file.type.startsWith("image/")){
+      imageEl.src = url;
+      imageEl.style.display="block";
+   }
 }
 
 fileA?.addEventListener("change",()=>{
-    preview(fileA.files[0],previewRedVideo,previewRedImage);
+   preview(fileA.files[0],previewRedVideo,previewRedImage);
 });
 
 fileB?.addEventListener("change",()=>{
-    preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+   preview(fileB.files[0],previewBlueVideo,previewBlueImage);
 });
 
 
 /* ===============================
-GLOW ACTIVE FINAL
+GREEN GLOW ACTIVE
 =============================== */
 
 function initGlowButtons(){
 
-    const buttons = document.querySelectorAll(
-        ".model-btn, .cta-btn, .engine-btn"
-    );
+   const buttons = document.querySelectorAll(
+      ".model-btn, .cta-btn, .engine-btn"
+   );
 
-    buttons.forEach(btn=>{
+   buttons.forEach(btn=>{
 
-        btn.addEventListener("click",function(){
+      btn.addEventListener("click",function(){
 
-            const group = this.closest(".engine-box") || document;
+         const group = this.closest(".engine-box") || document;
 
-            group.querySelectorAll(".active")
-                 .forEach(el=>el.classList.remove("active"));
+         group.querySelectorAll(".active")
+         .forEach(el=>el.classList.remove("active"));
 
-            this.classList.add("active");
+         this.classList.add("active");
 
-        });
+      });
 
-    });
+   });
 
 }
+
+initGlowButtons();
 
 
 /* ===============================
@@ -117,154 +125,95 @@ MODEL SELECT
 
 document.querySelectorAll(".model-btn").forEach(btn=>{
 
-    btn.addEventListener("click",()=>{
+   btn.addEventListener("click",()=>{
 
-        STATE.engine="runwayml";
-        STATE.alias=btn.dataset.alias;
+      STATE.alias = btn.dataset.alias;
 
-        console.log("MODEL:",STATE);
+      console.log("MODEL SELECT:",STATE);
 
-    });
+   });
 
 });
 
 
 /* ===============================
-GENERATE RUNWAY
+RUNWAY GENERATE
 =============================== */
 
 async function runGenerate(){
 
-    const userId = getUserId();
+   const userId = getUserId();
 
-    if(!userId){
+   if(!userId){
+      alert("ยังไม่ได้ Login");
+      return;
+   }
 
-        alert("ยังไม่ได้ Login Google");
-        return;
-    }
+   if(!STATE.alias){
+      alert("เลือก Model ก่อน");
+      return;
+   }
 
-    if(!STATE.alias){
-
-        alert("เลือก Model ก่อน");
-        return;
-    }
-
-    try{
-
-        statusEl.innerText="STATUS: PROCESSING";
-
-        const formData = new FormData();
-
-        formData.append("engine","runwayml");
-        formData.append("alias",STATE.alias);
-        formData.append("type","video");
-
-        const promptEl = document.querySelector("textarea");
-
-        formData.append(
-            "prompt",
-            promptEl?.value || "SN DESIGN TEST"
-        );
-
-        if(fileA?.files[0]){
-            formData.append("fileA",fileA.files[0]);
-        }
-
-        if(fileB?.files[0]){
-            formData.append("fileB",fileB.files[0]);
-        }
-
-        const res = await fetch(API_URL,{
-
-            method:"POST",
-
-            headers:{
-                "x-user-id": userId
-            },
-
-            body:formData
-
-        });
-
-        const data = await res.json();
-
-        console.log("RUNWAY RESPONSE:",data);
-
-        statusEl.innerText="STATUS: SUCCESS";
-
-    }catch(err){
-
-        console.error(err);
-        statusEl.innerText="STATUS: ERROR";
-
-    }
-
-}
-
-document.querySelectorAll(".engine-btn")[0]
-?.addEventListener("click",runGenerate);
-
-
-/* ===============================
-INIT
-=============================== */
-
-initGlowButtons();
-// ======================================
-// ULTRA SaaS LOGIN + CREDIT SYNC
-// ======================================
-
-async function loadUserStatus(){
+   if(!fileA?.files[0] && STATE.alias !== "text_to_video"){
+      alert("ต้อง import fileA");
+      return;
+   }
 
    try{
 
-      const userId = localStorage.getItem("userId");
+      statusEl.innerText="STATUS: PROCESSING";
 
-      if(!userId){
+      const formData = new FormData();
 
-         document.getElementById("userEmail").innerText="Guest";
-         document.getElementById("userCredits").innerText="Free Mode";
-         return;
+      formData.append("engine","runwayml");
+      formData.append("alias",STATE.alias);
+      formData.append("type","video");
+      formData.append("prompt",
+         document.querySelector("textarea")?.value || "SN TEST"
+      );
 
+      if(fileA?.files[0]){
+         formData.append("fileA",fileA.files[0]);
       }
 
-      const res = await fetch("/api/user/me",{
+      if(fileB?.files[0]){
+         formData.append("fileB",fileB.files[0]);
+      }
+
+      const res = await fetch(API_URL,{
+         method:"POST",
          headers:{
-            "x-user-id": userId
-         }
+            "Authorization": userId
+         },
+         body:formData
       });
 
       const data = await res.json();
 
-      document.getElementById("userEmail").innerText =
-         data.email || "User";
+      console.log("RUNWAY RESPONSE:",data);
 
-      document.getElementById("userCredits").innerText =
-         data.credits ?? 0;
-
-      if(data.credits <= 0){
-
-         lockGenerateButtons();
-
+      if(!res.ok){
+         throw new Error(data.error || "Render Failed");
       }
+
+      statusEl.innerText="STATUS: SUCCESS";
 
    }catch(err){
 
-      console.error("USER STATUS ERROR",err);
+      console.error(err);
+
+      statusEl.innerText="STATUS: ERROR";
+
+      alert(err.message);
 
    }
 
 }
 
-function lockGenerateButtons(){
 
-   document.querySelectorAll(".engine-btn")
-      .forEach(btn=>{
-         btn.disabled = true;
-         btn.style.opacity="0.4";
-      });
+/* ===============================
+ENGINE BUTTON
+=============================== */
 
-}
-
-// AUTO LOAD
-document.addEventListener("DOMContentLoaded",loadUserStatus);
+document.querySelectorAll(".engine-btn")[0]
+?.addEventListener("click",runGenerate);
