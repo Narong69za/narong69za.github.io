@@ -1,48 +1,24 @@
-// =====================================================
-// SN DESIGN ENGINE AI
-// ADMIN ROUTES — ULTRA CONTROL
-// =====================================================
-
 const express = require("express");
 const router = express.Router();
 
+const admin = require("../controllers/admin.controller");
 
-// ===============================
-// ADMIN AUTH CHECK
-// ===============================
+const ADMIN_SECRET = process.env.ADMIN_SECRET;
 
-function adminAuth(req,res,next){
+function guard(req,res,next){
 
-   const key = req.headers["x-admin-key"];
+  const key = req.headers["x-admin-key"];
 
-   if(!key || key !== process.env.ADMIN_SECRET){
+  if(!key || key !== ADMIN_SECRET){
+    return res.status(403).json({error:"Unauthorized"});
+  }
 
-      return res.status(403).json({
-         error:"Unauthorized"
-      });
-
-   }
-
-   next();
+  next();
 }
 
-
-// ===============================
-// ADMIN STATUS TEST
-// ===============================
-
-router.get("/status", adminAuth, (req,res)=>{
-
-   res.json({
-      admin:true,
-      message:"ADMIN ACCESS OK"
-   });
-
-});
-
-
-// ===============================
-// EXPORT
-// ===============================
+router.get("/users", guard, admin.getUsers);
+router.post("/credit/add", guard, admin.addCredit);
+router.post("/credit/remove", guard, admin.removeCredit);
+router.get("/overview", guard, admin.getOverview);
 
 module.exports = router;
