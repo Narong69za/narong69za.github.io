@@ -8,7 +8,7 @@ const cors = require("cors");
 const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
-const adminRoutes = require("../routes/admin.routes");
+const adminRoutes = require("./admin.routes");
 const stripeRoute = require("../routes/stripe.route");
 const stripeWebhook = require("../routes/stripe.webhook");
 const { create } = require("../controllers/create.controller.js");
