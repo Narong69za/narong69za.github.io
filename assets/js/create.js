@@ -1,77 +1,239 @@
-// ======================================================
-// STRIPE WEBHOOK - ULTRA SAFE VERSION
-// ======================================================
+/* =====================================================
+SN DESIGN ENGINE AI
+create.js — FINAL ENGINE CORE
+LOCK UI LAYOUT / PATCH STATE ONLY
+===================================================== */
 
-const express = require("express");
-const router = express.Router();
 
-const stripeService = require("../services/stripe.service");
-const db = require("../db/db");
+/* ===============================
+STATE SYSTEM
+=============================== */
 
-// ======================================================
-// STRIPE WEBHOOK
-// ======================================================
+let STATE = {
+engine: null,
+model: null,
+mode: null,
+type: null
+};
 
-router.post("/", async (req,res)=>{
 
-  const sig = req.headers["stripe-signature"];
+/* ===============================
+DOM REFERENCES
+=============================== */
 
-  let event;
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
 
-  try{
+const previewRedVideo = document.getElementById("preview-red-video");
+const previewRedImage = document.getElementById("preview-red-image");
 
-    event = stripeService.constructWebhookEvent(
-      req.body,
-      sig
-    );
+const previewBlueVideo = document.getElementById("preview-blue-video");
+const previewBlueImage = document.getElementById("preview-blue-image");
 
-  }catch(err){
+const progressFill = document.getElementById("progress-fill");
 
-    console.error("Webhook signature error:", err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+const info = document.getElementById("model-info");
 
-  }
 
-  // ======================================================
-  // CHECKOUT SUCCESS
-  // ======================================================
+/* ===============================
+UPDATE UI STATUS
+=============================== */
 
-  if(event.type === "checkout.session.completed"){
+function updateUI(){
 
-    const session = event.data.object;
+if(!info) return;
 
-    const userId = session?.metadata?.userId;
-    const credits = parseInt(session?.metadata?.credits || 0);
+info.innerText =
+`ENGINE: ${STATE.engine || "-"} | MODEL: ${STATE.model || "-"} | MODE: ${STATE.mode || "-"} | TYPE: ${STATE.type || "-"}`;
 
-    if(!userId || !credits){
+}
 
-      console.error("Invalid metadata in webhook");
-      return res.json({ received:true });
 
-    }
+/* ===============================
+ENGINE MODEL SELECT (FINAL LOCK)
+=============================== */
 
-    console.log("💰 PAYMENT SUCCESS:", userId, credits);
+document.querySelectorAll("[data-engine-model]").forEach(btn=>{
 
-    try{
+btn.addEventListener("click",()=>{
 
-      // ======================================================
-      // ADD CREDIT SAFELY
-      // ======================================================
+const engine = btn.dataset.engine;
+const model = btn.dataset.model;
 
-      await db.addCredit(userId, credits);
+/* remove active only inside same engine */
 
-      console.log("✅ CREDIT ADDED:", credits);
+document.querySelectorAll(
+`[data-engine-model][data-engine="${engine}"]`
+).forEach(b=>b.classList.remove("active"));
 
-    }catch(err){
+btn.classList.add("active");
 
-      console.error("DB CREDIT ERROR:", err);
+/* prevent dual engine active */
 
-    }
+document.querySelectorAll(
+`[data-engine-model]:not([data-engine="${engine}"])`
+).forEach(b=>b.classList.remove("active"));
 
-  }
+STATE.engine = engine;
+STATE.model = model;
 
-  res.json({ received: true });
+updateUI();
 
 });
 
-module.exports = router;
+});
+
+
+/* ===============================
+MODE SELECT
+=============================== */
+
+document.querySelectorAll("[data-mode]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+document.querySelectorAll(
+`[data-mode][data-engine="${btn.dataset.engine}"]`
+).forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+STATE.mode = btn.dataset.mode;
+
+updateUI();
+
+});
+
+});
+
+
+/* ===============================
+TYPE SELECT
+=============================== */
+
+document.querySelectorAll("[data-type]").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+document.querySelectorAll("[data-type]").forEach(b=>b.classList.remove("active"));
+
+btn.classList.add("active");
+
+STATE.type = btn.dataset.type;
+
+updateUI();
+
+});
+
+});
+
+
+/* ===============================
+FILE PREVIEW SYSTEM (FINAL FIX)
+=============================== */
+
+function preview(file, videoEl, imageEl){
+
+if(!file) return;
+
+const url = URL.createObjectURL(file);
+
+if(videoEl){
+videoEl.pause?.();
+videoEl.style.display="none";
+}
+
+if(imageEl){
+imageEl.style.display="none";
+}
+
+if(file.type.startsWith("video/") && videoEl){
+
+videoEl.src = url;
+videoEl.load();
+videoEl.style.display="block";
+
+}
+
+else if(file.type.startsWith("image/") && imageEl){
+
+imageEl.src = url;
+imageEl.style.display="block";
+
+}
+
+}
+
+
+/* FILE INPUT LISTENER */
+
+if(fileA){
+fileA.addEventListener("change",()=>{
+preview(
+fileA.files[0],
+previewRedVideo,
+previewRedImage
+);
+});
+}
+
+if(fileB){
+fileB.addEventListener("change",()=>{
+preview(
+fileB.files[0],
+previewBlueVideo,
+previewBlueImage
+);
+});
+}
+
+
+/* ===============================
+GENERATE SIMULATION (UI ONLY)
+=============================== */
+
+async function generate(engine){
+
+const status = document.getElementById("status");
+
+if(status){
+status.innerText="STATUS: PROCESSING";
+}
+
+let p = 0;
+
+const timer = setInterval(()=>{
+
+p += 10;
+
+if(progressFill){
+progressFill.style.width = p + "%";
+}
+
+if(p>=100){
+
+clearInterval(timer);
+
+if(status){
+status.innerText="STATUS: COMPLETE";
+}
+
+}
+
+},300);
+
+}
+
+
+document.getElementById("generate-red")?.addEventListener("click",()=>generate("red"));
+
+document.getElementById("generate-blue")?.addEventListener("click",()=>generate("blue"));
+
+
+
+/* ===============================
+INIT
+=============================== */
+
+updateUI();
+  
