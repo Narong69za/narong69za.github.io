@@ -1,47 +1,146 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
+/* =====================================================
+SN DESIGN PAYMENT CENTER
+CONTROL FILE: payment.js
+ULTRA CLEAN STABLE
+===================================================== */
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+const API_BASE = window.location.origin.includes("sn-designstudio.dev")
+    ? "https://sn-design-api.onrender.com"
+    : "https://sn-design-api.onrender.com";
 
-<title>SN DESIGN PAYMENT CENTER</title>
+const paymentBox = document.getElementById("paymentBox");
+const statusEl = document.getElementById("paymentStatus");
 
-<link rel="stylesheet" href="/assets/css/payment.css">
+/* =====================================================
+LOGIN CHECK
+===================================================== */
 
-</head>
+function getUserId(){
 
-<body>
+    const userId = localStorage.getItem("userId");
 
-<div class="payment-root">
+    if(!userId){
 
-<h1>SN DESIGN PAYMENT CENTER</h1>
+        alert("กรุณา Login ก่อน");
 
-<div class="payment-methods">
+        window.location.href="/login.html";
 
-<button class="pay-btn" data-method="stripe">💳 Stripe</button>
+        return null;
+    }
 
-<button class="pay-btn" data-method="promptpay">📱 PromptPay QR</button>
+    return userId;
+}
 
-<button class="pay-btn" data-method="truemoney">🟠 TrueMoney Wallet</button>
+function setStatus(text){
 
-<button class="pay-btn" data-method="crypto">🪙 Crypto</button>
+    if(statusEl){
+        statusEl.innerText = "STATUS: " + text;
+    }
+}
 
-</div>
+/* =====================================================
+PAYMENT HANDLER
+===================================================== */
 
-<div class="payment-box" id="paymentBox">
+document.querySelectorAll(".pay-btn").forEach(btn=>{
 
-<p>เลือกช่องทางชำระเงิน</p>
+    btn.addEventListener("click", async ()=>{
 
-</div>
+        const method = btn.dataset.method;
+        const userId = getUserId();
 
-<div class="status" id="paymentStatus">
-STATUS: IDLE
-</div>
+        if(!userId) return;
 
-</div>
+        setStatus("PROCESSING");
 
-<script src="/assets/js/payment.js"></script>
+        paymentBox.innerHTML="กำลังดำเนินการ...";
 
-</body>
-</html>
+        try{
+
+            let endpoint = "";
+            let payload = {
+                amount:100,
+                userId:userId
+            };
+
+            if(method==="stripe"){
+                endpoint="/api/stripe/create-checkout";
+                payload.product="credit_pack_1";
+            }
+
+            if(method==="promptpay"){
+                endpoint="/api/thai-payment/promptpay";
+            }
+
+            if(method==="truemoney"){
+                endpoint="/api/thai-payment/truemoney";
+            }
+
+            if(method==="crypto"){
+                endpoint="/api/crypto-payment/create";
+            }
+
+            const res = await fetch(API_BASE + endpoint,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization": userId
+                },
+                body:JSON.stringify(payload)
+            });
+
+            const data = await res.json();
+
+            console.log("PAYMENT RESPONSE:",data);
+
+            /* ================= STRIPE ================= */
+
+            if(method==="stripe" && data.url){
+
+                window.location.href=data.url;
+                return;
+            }
+
+            /* ================= PROMPTPAY ================= */
+
+            if(method==="promptpay" && data.qr){
+
+                paymentBox.innerHTML=`
+                    <h3>สแกน QR เพื่อชำระเงิน</h3>
+                    <img src="${data.qr}" style="max-width:260px;margin-top:15px;" />
+                `;
+
+                setStatus("WAITING PAYMENT");
+                return;
+            }
+
+            /* ================= TRUEMONEY ================= */
+
+            if(method==="truemoney" && data.redirectUrl){
+
+                window.location.href=data.redirectUrl;
+                return;
+            }
+
+            /* ================= CRYPTO ================= */
+
+            if(method==="crypto" && data.redirectUrl){
+
+                window.location.href=data.redirectUrl;
+                return;
+            }
+
+            throw new Error("Invalid payment response");
+
+        }catch(err){
+
+            console.error("PAYMENT ERROR:",err);
+
+            paymentBox.innerHTML="เกิดข้อผิดพลาด";
+
+            setStatus("ERROR");
+        }
+
+    });
+
+});
