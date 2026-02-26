@@ -13,20 +13,18 @@ const API_URL = "https://sn-design-api.onrender.com/api/render";
 
 
 /* ===============================
-LOGIN STATE (สำคัญมาก)
+LOGIN STATE
 =============================== */
 
-function getUserId(){
+const DEV_MODE = true;
 
-   // DEV BYPASS (Owner Test Mode)
-   const DEV_MODE = true;
+function getUserId(){
 
    if(DEV_MODE){
       return "DEV-BYPASS";
    }
 
    return localStorage.getItem("userId");
-
 }
 
 
@@ -183,7 +181,7 @@ async function runGenerate(){
       const res = await fetch(API_URL,{
          method:"POST",
          headers:{
-            "Authorization": userId
+            "x-user-id": userId
          },
          body:formData
       });
@@ -217,35 +215,28 @@ ENGINE BUTTON
 
 document.querySelectorAll(".engine-btn")[0]
 ?.addEventListener("click",runGenerate);
-// =====================================================
-// ULTRA AUTO LOGIN LOCK (ADD ONLY)
-// =====================================================
+
+
+/* ===============================
+ULTRA AUTO LOGIN LOCK (SAFE)
+=============================== */
 
 async function ultraCheckLogin(){
 
+    if(DEV_MODE) return;
+
     const userId = localStorage.getItem("userId");
 
-    // ถ้ามี session อยู่แล้ว
     if(userId){
-
-        console.log("LOGIN OK:", userId);
         return;
-
     }
 
-    console.log("NO LOGIN → FORCE LOGIN");
-
-    // ⭐ popup login แบบง่าย (ยังไม่แตะ UI)
     const login = confirm("ต้อง login ก่อนใช้งาน");
 
     if(login){
-
-        // redirect ไปหน้า login เดิมของคุณ
         window.location.href = "/login.html";
-
     }
 
 }
 
-// run auto
 ultraCheckLogin();
