@@ -22,14 +22,19 @@ router.post("/create-checkout", async (req,res)=>{
         // DEV BYPASS USER (ถ้ายังไม่ใช้ login)
         const userId = req.headers["x-user-id"] || "DEV";
 
-        const session = await stripeService.createCheckout({
-            product,
-            userId
-        });
+        const session = await stripe.checkout.sessions.create({
 
-        res.json({
-            url: session.url
-        });
+   payment_method_types:["card"],
+
+   line_items:[ ... ],
+
+   mode:"payment",
+
+   success_url:"https://sn-designstudio.dev/create.html?payment=success",
+
+   cancel_url:"https://sn-designstudio.dev/create.html?payment=cancel"
+
+});
 
     }catch(err){
 
