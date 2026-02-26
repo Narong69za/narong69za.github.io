@@ -1,35 +1,28 @@
-//models/model.router.js
+const registry = require("./model.registry");
+const runway = require("../services/runwayml/v1");
 
-const runwayEngine = require("../services/runwayml/v1");
+async function run({ engine, alias, payload }) {
 
-async function run({ userId, engine, payload }) {
+   const model = registry[alias];
 
-   try {
+   if(!model){
+      throw new Error("MODEL NOT FOUND");
+   }
 
-      if (!engine) {
-         throw new Error("ENGINE NOT SPECIFIED");
-      }
+   switch(model.engine){
 
-      /* ===============================
-         RUNWAY AUTO ENGINE
-      =============================== */
+      case "runwayml":
 
-      if (engine === "runwayml") {
+         return await runway.run({
 
-         console.log("MODEL ROUTER → RUNWAY AUTO");
-
-         return await runwayEngine.run({
+            mode: model.mode,
             payload
+
          });
 
-      }
+      default:
 
-      throw new Error("RUNWAY MODEL NOT FOUND");
-
-   } catch (err) {
-
-      console.error("MODEL ROUTER ERROR:", err.message);
-      throw err;
+         throw new Error("ENGINE NOT SUPPORTED");
 
    }
 
