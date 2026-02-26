@@ -1,85 +1,157 @@
-// =====================================================
-// SN DESIGN PAYMENT ENGINE
-// =====================================================
+/* =====================================================
+SN DESIGN PAYMENT CENTER
+CONTROL FILE: payment.js
+DO NOT TOUCH LAYOUT
+===================================================== */
 
-const API = "https://sn-design-api.onrender.com";
+const API_BASE = "https://sn-design-api.onrender.com";
 
-const box = document.querySelector(".payment-content");
-const status = document.querySelector(".payment-status");
+const paymentBox = document.getElementById("paymentBox");
+const statusEl = document.getElementById("paymentStatus");
 
-// ========================
-// CLICK SELECT PAYMENT
-// ========================
+function getUserId(){
 
-document.addEventListener("click", async (e)=>{
+    const userId = localStorage.getItem("userId");
 
-    // STRIPE
-    if(e.target.closest(".pay-stripe")){
-
-        status.innerText = "STATUS: LOADING STRIPE";
-
-        const res = await fetch(API+"/api/stripe/create-checkout",{
-            method:"POST",
-            headers:{ "Content-Type":"application/json" },
-            body: JSON.stringify({ amount:100 })
-        });
-
-        const data = await res.json();
-
-        window.location.href = data.url;
-
+    if(!userId){
+        alert("กรุณา Login ก่อน");
+        window.location.href = "/login.html";
+        return null;
     }
 
-    // PROMPTPAY
-    if(e.target.closest(".pay-promptpay")){
+    return userId;
+}
 
-        status.innerText = "STATUS: GENERATING QR";
+function setStatus(text){
+    statusEl.innerText = "STATUS: " + text;
+}
 
-        const res = await fetch(API+"/api/thai-payment/promptpay",{
-            method:"POST",
-            headers:{ "Content-Type":"application/json" },
-            body: JSON.stringify({ amount:100 })
-        });
+/* =====================================================
+HANDLE BUTTON CLICK
+===================================================== */
 
-        const data = await res.json();
+document.querySelectorAll(".pay-btn").forEach(btn => {
 
-        box.innerHTML = `
-            <img src="${data.qr}" style="width:260px;">
-            <p>สแกนเพื่อชำระเงิน</p>
-        `;
+    btn.addEventListener("click", async () => {
 
-    }
+        const method = btn.dataset.method;
+        const userId = getUserId();
 
-    // TRUEMONEY
-    if(e.target.closest(".pay-truemoney")){
+        if(!userId) return;
 
-        status.innerText = "STATUS: WALLET MODE";
+        setStatus("PROCESSING");
 
-        box.innerHTML = `
-            <p>Redirect Wallet...</p>
-        `;
+        paymentBox.innerHTML = "กำลังดำเนินการ...";
 
-        window.location.href = API+"/api/thai-payment/wallet";
+        try{
 
-    }
+            if(method === "stripe"){
 
-    // CRYPTO
-    if(e.target.closest(".pay-crypto")){
+                const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        product:"credit_pack_1",
+                        userId:userId
+                    })
+                });
 
-        status.innerText = "STATUS: CRYPTO MODE";
+                const data = await res.json();
 
-        box.innerHTML = `
-            <p>Generating crypto address...</p>
-        `;
+                if(data.url){
+                    window.location.href = data.url;
+                }else{
+                    throw new Error("Stripe Error");
+                }
 
-        const res = await fetch(API+"/api/crypto/create");
+            }
 
-        const data = await res.json();
+            if(method === "promptpay"){
 
-        box.innerHTML = `
-            <p>Send USDT to:</p>
-            <b>${data.address}</b>
-        `;
-    }
+                const res = await fetch(API_BASE + "/api/thai-payment/promptpay",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        amount:100,
+                        userId:userId
+                    })
+                });
+
+                const data = await res.json();
+
+                if(data.qr){
+
+                    paymentBox.innerHTML = `
+                        <h3>สแกน QR เพื่อชำระเงิน</h3>
+                        <img src="${data.qr}" style="max-width:250px;margin-top:15px;" />
+                    `;
+
+                    setStatus("WAITING PAYMENT");
+
+                }else{
+                    throw new Error("QR Error");
+                }
+
+            }
+
+            if(method === "truemoney"){
+
+                const res = await fetch(API_BASE + "/api/thai-payment/truemoney",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        amount:100,
+                        userId:userId
+                    })
+                });
+
+                const data = await res.json();
+
+                if(data.redirectUrl){
+                    window.location.href = data.redirectUrl;
+                }else{
+                    throw new Error("TrueMoney Error");
+                }
+
+            }
+
+            if(method === "crypto"){
+
+                const res = await fetch(API_BASE + "/api/crypto-payment/create",{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        amount:100,
+                        userId:userId
+                    })
+                });
+
+                const data = await res.json();
+
+                if(data.redirectUrl){
+                    window.location.href = data.redirectUrl;
+                }else{
+                    throw new Error("Crypto Error");
+                }
+
+            }
+
+        }catch(err){
+
+            console.error(err);
+            paymentBox.innerHTML = "เกิดข้อผิดพลาด";
+            setStatus("ERROR");
+
+        }
+
+    });
 
 });
