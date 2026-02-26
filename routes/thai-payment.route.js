@@ -1,49 +1,79 @@
+// =====================================================
+// THAI PAYMENT ROUTE (PROMPTPAY + TRUEMONEY)
+// =====================================================
+
 const express = require("express");
 const router = express.Router();
 
-const thaiQR = require("../services/thaiqr.service");
-const trueMoney = require("../services/truemoney.service");
+const generatePayload = require("promptpay-qr");
+const QRCode = require("qrcode");
 
-// ======================================================
-// CREATE THAI PAYMENT
-// ======================================================
 
-router.post("/create", async (req,res)=>{
+// =====================================================
+// PROMPTPAY QR
+// =====================================================
 
-   const { method, amount, userId } = req.body;
+router.post("/promptpay", async (req,res)=>{
 
    try{
 
-      if(method==="promptpay"){
+      const { amount } = req.body;
 
-         const qr = await thaiQR.createPromptPayQR({
-            amount,
-            userId
-         });
+      const mobileNumber = process.env.PROMPTPAY_NUMBER;
 
-         return res.json(qr);
+      const payload = generatePayload(mobileNumber, {
+         amount: amount
+      });
 
-      }
+      const qrImage = await QRCode.toDataURL(payload);
 
-      if(method==="truemoney"){
-
-         const pay = await trueMoney.createTrueMoneyPayment({
-            amount,
-            userId
-         });
-
-         return res.json(pay);
-
-      }
-
-      res.status(400).json({error:"invalid method"});
+      res.json({
+         success:true,
+         qr: qrImage
+      });
 
    }catch(err){
 
-      res.status(500).json({error:err.message});
+      console.error(err);
+
+      res.status(500).json({
+         error:"PROMPTPAY FAILED"
+      });
 
    }
 
 });
+
+
+// =====================================================
+// TRUEMONEY WALLET
+// =====================================================
+
+router.post("/truemoney", async (req,res)=>{
+
+   try{
+
+      const { amount } = req.body;
+
+      // simple redirect link (test phase)
+      const link = `https://wallet.truemoney.com/pay?amount=${amount}`;
+
+      res.json({
+         success:true,
+         url: link
+      });
+
+   }catch(err){
+
+      console.error(err);
+
+      res.status(500).json({
+         error:"TRUEMONEY FAILED"
+      });
+
+   }
+
+});
+
 
 module.exports = router;
