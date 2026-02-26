@@ -1,69 +1,85 @@
-const API_BASE="https://sn-design-api.onrender.com";
+// =====================================================
+// SN DESIGN PAYMENT ENGINE
+// =====================================================
 
-const box=document.getElementById("paymentBox");
-const status=document.getElementById("paymentStatus");
+const API = "https://sn-design-api.onrender.com";
 
-document.querySelectorAll(".pay-btn").forEach(btn=>{
+const box = document.querySelector(".payment-content");
+const status = document.querySelector(".payment-status");
 
-btn.addEventListener("click",async()=>{
+// ========================
+// CLICK SELECT PAYMENT
+// ========================
 
-document.querySelectorAll(".pay-btn").forEach(b=>b.classList.remove("active"));
-btn.classList.add("active");
+document.addEventListener("click", async (e)=>{
 
-const method=btn.dataset.method;
+    // STRIPE
+    if(e.target.closest(".pay-stripe")){
 
-status.innerText="STATUS: LOADING";
+        status.innerText = "STATUS: LOADING STRIPE";
 
-try{
+        const res = await fetch(API+"/api/stripe/create-checkout",{
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({ amount:100 })
+        });
 
-if(method==="stripe"){
+        const data = await res.json();
 
-const res=await fetch(API_BASE+"/api/stripe/create-checkout",{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({product:"credit_pack_1"})
-});
+        window.location.href = data.url;
 
-const data=await res.json();
+    }
 
-window.location.href=data.url;
+    // PROMPTPAY
+    if(e.target.closest(".pay-promptpay")){
 
-}
+        status.innerText = "STATUS: GENERATING QR";
 
-if(method==="promptpay"){
+        const res = await fetch(API+"/api/thai-payment/promptpay",{
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify({ amount:100 })
+        });
 
-const res=await fetch(API_BASE+"/api/thaiqr/create",{
-method:"POST",
-headers:{ "Content-Type":"application/json" },
-body:JSON.stringify({ amount:49 })
-});
+        const data = await res.json();
 
-const data=await res.json();
+        box.innerHTML = `
+            <img src="${data.qr}" style="width:260px;">
+            <p>สแกนเพื่อชำระเงิน</p>
+        `;
 
-box.innerHTML=`<img src="${data.qr}" width="250">`;
+    }
 
-status.innerText="WAITING PAYMENT...";
+    // TRUEMONEY
+    if(e.target.closest(".pay-truemoney")){
 
-}
+        status.innerText = "STATUS: WALLET MODE";
 
-if(method==="truemoney"){
+        box.innerHTML = `
+            <p>Redirect Wallet...</p>
+        `;
 
-box.innerHTML="<p>TrueMoney Payment Init...</p>";
+        window.location.href = API+"/api/thai-payment/wallet";
 
-}
+    }
 
-if(method==="crypto"){
+    // CRYPTO
+    if(e.target.closest(".pay-crypto")){
 
-box.innerHTML="<p>Crypto Payment Coming...</p>";
+        status.innerText = "STATUS: CRYPTO MODE";
 
-}
+        box.innerHTML = `
+            <p>Generating crypto address...</p>
+        `;
 
-}catch(e){
+        const res = await fetch(API+"/api/crypto/create");
 
-status.innerText="ERROR";
+        const data = await res.json();
 
-}
-
-});
+        box.innerHTML = `
+            <p>Send USDT to:</p>
+            <b>${data.address}</b>
+        `;
+    }
 
 });
