@@ -27,6 +27,9 @@ const userRoutes = require("../routes/user.routes");
 // ⭐ FREE LIMIT CHECK (ADD ONLY)
 const usageCheck = require("../services/usage-check");
 
+// ⭐ ADD ONLY — THAI PAYMENT ROUTE (PromptPay + TrueMoney)
+const thaiPaymentRoutes = require("../routes/thai-payment.route");
+
 // =====================================================
 // CONTROLLERS
 // =====================================================
@@ -74,6 +77,12 @@ app.use("/api/admin", adminRoutes);
 // =====================================================
 
 app.use("/api/user", userRoutes);
+
+// =====================================================
+// THAI PAYMENT ROUTES (ADD ONLY)
+// =====================================================
+
+app.use("/api/thai-payment", thaiPaymentRoutes);
 
 // =====================================================
 // GOOGLE AUTH (AUTO USER CREATE + LOGIN STATE)
@@ -156,16 +165,6 @@ app.get("/", (req, res) => {
 });
 
 // =====================================================
-// START SERVER
-// =====================================================
-
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log("ULTRA ENGINE RUNNING:", PORT);
-});
-
-// =====================================================
 // USER SELF DATA (ADD ONLY)
 // =====================================================
 
@@ -196,4 +195,14 @@ app.get("/api/user/me", async (req,res)=>{
 
     }
 
+});
+
+// =====================================================
+// START SERVER
+// =====================================================
+
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT, () => {
+  console.log("ULTRA ENGINE RUNNING:", PORT);
 });
