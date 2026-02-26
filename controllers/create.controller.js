@@ -1,112 +1,91 @@
 // =====================================================
-// SN DESIGN ENGINE AI
-// CREATE CONTROLLER — FULL VERSION FIX
+// CREATE CONTROLLER — ULTRA CREDIT INTEGRATION
 // =====================================================
 
 const modelRouter = require("../models/model.router");
 const creditEngine = require("../services/credit.engine");
 
-exports.create = async (req, res) => {
+exports.create = async (req,res)=>{
 
-   try {
+   try{
 
-      // ===============================
-      // BODY
-      // ===============================
       const { engine, alias, type, prompt } = req.body;
 
-      // DEV SAFE USER
-      const user = req.user || { id: "DEV-BYPASS" };
+      const user = req.user || { id:"DEV-BYPASS" };
 
-      // ===============================
-      // FILE PARSER
-      // ===============================
       const files = {};
 
-      if (req.files && Array.isArray(req.files)) {
-
-         req.files.forEach(f => {
+      if(req.files && Array.isArray(req.files)){
+         req.files.forEach(f=>{
             files[f.fieldname] = f;
          });
-
       }
-
-      console.log("FILES DEBUG:", Object.keys(files));
-      console.log("ALIAS:", alias);
-      console.log("PROMPT:", prompt);
-
-      // =====================================================
-      // CREDIT CHECK ULTRA
-      // =====================================================
 
       const ip =
       req.headers["x-forwarded-for"] ||
       req.socket.remoteAddress;
 
-      if(user.id !== "DEV-BYPASS"){
+      // ===============================
+      // FREE CHECK
+      // ===============================
 
-         const freeAllowed =
-         await creditEngine.checkFreeUsage(ip);
+      const freeAllowed =
+      await creditEngine.checkFreeUsage(ip);
 
-         if(!freeAllowed){
+      if(!freeAllowed){
 
-            const creditCheck =
-            await creditEngine.checkAndUseCredit(
-               user.id,
-               alias
-            );
+         const creditCheck =
+         await creditEngine.checkAndUseCredit(
+            user.id,
+            alias
+         );
 
-            if(!creditCheck.allowed){
+         if(!creditCheck.allowed){
 
-               return res.status(402).json({
-                  error: "Not enough credits"
-               });
-
-            }
+            return res.status(402).json({
+               error:"Not enough credits"
+            });
 
          }
 
       }
 
-      // =====================================================
-      // FILE REQUIRED CHECK
-      // =====================================================
+      // ===============================
+      // FILE CHECK
+      // ===============================
 
-      if (alias !== "text_to_video" && !files.fileA) {
+      if(alias !== "text_to_video" && !files.fileA){
 
          return res.status(400).json({
-            error: "fileA missing",
-            alias: alias,
-            received: Object.keys(files)
+            error:"fileA missing"
          });
 
       }
 
-      // =====================================================
-      // MODEL ROUTER
-      // =====================================================
+      // ===============================
+      // RUN MODEL
+      // ===============================
 
       const result = await modelRouter.run({
-         userId: user.id,
+         userId:user.id,
          engine,
-         payload: {
-            type,
-            prompt,
-            files
-         }
+         alias,
+         type,
+         prompt,
+         files
       });
 
       res.json({
-         status: "queued",
+         status:"queued",
          result
       });
 
-   } catch (err) {
+   }catch(err){
 
-      console.error("CREATE ERROR:", err);
+      console.error("CREATE ERROR:",err);
 
       res.status(500).json({
-         error: err.message || "CREATE FAILED"
+         error:err.message
       });
 
    }
