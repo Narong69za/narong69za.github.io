@@ -1,7 +1,7 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER - CLEAN STABLE VERSION
-// =====================================================
+// ==============================AI=====================
 
 require("dotenv").config();
 
@@ -81,7 +81,7 @@ app.use("/api/user", userRoutes);
 // =====================================================
 // THAI PAYMENT ROUTES (ADD ONLY)
 // =====================================================
-
+const thaiPaymentRoutes = require("../routes/thai-payment.route");
 app.use("/api/thai-payment", thaiPaymentRoutes);
 
 // =====================================================
