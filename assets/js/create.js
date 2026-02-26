@@ -1,137 +1,219 @@
-// ======================================================
-// SN DESIGN AI ENGINE
-// CREATE PAGE CORE
-// ======================================================
-
-const API = "/api";
-
-const statusEl = document.getElementById("status");
-const emailEl = document.getElementById("userEmail");
-const creditEl = document.getElementById("userCredits");
-
-const promptInput = document.getElementById("prompt");
-
-let CURRENT_USER = null;
+/* =====================================================
+SN DESIGN ENGINE AI
+CREATE.JS — ULTRA FINAL RENDER VERSION
+LOCK UI LAYOUT
+===================================================== */
 
 
-// ======================================================
-// LOAD USER STATE
-// ======================================================
+/* ===============================
+CONFIG
+=============================== */
 
-async function loadUserState(){
+const API_URL = "https://sn-design-api.onrender.com/api/render";
 
-   const userId = localStorage.getItem("userId");
 
-   if(!userId){
+/* ===============================
+LOGIN STATE (สำคัญมาก)
+=============================== */
 
-      emailEl.innerText = "Guest";
-      creditEl.innerText = "Free Mode";
+function getUserId(){
 
-      CURRENT_USER = null;
-      return;
+   // DEV BYPASS (Owner Test Mode)
+   const DEV_MODE = true;
 
+   if(DEV_MODE){
+      return "DEV-BYPASS";
    }
 
-   try{
-
-      const res = await fetch(API+"/user/profile?userId="+userId);
-      const data = await res.json();
-
-      CURRENT_USER = data;
-
-      emailEl.innerText = data.email || userId;
-      creditEl.innerText = data.credits+" Credits";
-
-   }catch(err){
-
-      console.log("LOAD USER FAIL",err);
-
-      emailEl.innerText = "Guest";
-      creditEl.innerText = "-";
-
-   }
+   return localStorage.getItem("userId");
 
 }
 
 
-// ======================================================
-// MODEL SELECT
-// ======================================================
+/* ===============================
+STATE
+=============================== */
 
-let selectedAlias = null;
+let STATE = {
+   engine: "runwayml",
+   alias: null
+};
+
+
+/* ===============================
+DOM
+=============================== */
+
+const fileA = document.getElementById("fileA");
+const fileB = document.getElementById("fileB");
+
+const previewRedVideo = document.getElementById("preview-red-video");
+const previewRedImage = document.getElementById("preview-red-image");
+
+const previewBlueVideo = document.getElementById("preview-blue-video");
+const previewBlueImage = document.getElementById("preview-blue-image");
+
+const statusEl = document.getElementById("status");
+
+
+/* ===============================
+FILE PREVIEW
+=============================== */
+
+function preview(file, videoEl, imageEl){
+
+   if(!file) return;
+
+   const url = URL.createObjectURL(file);
+
+   videoEl.style.display="none";
+   imageEl.style.display="none";
+
+   if(file.type.startsWith("video/")){
+      videoEl.src = url;
+      videoEl.style.display="block";
+   }
+
+   if(file.type.startsWith("image/")){
+      imageEl.src = url;
+      imageEl.style.display="block";
+   }
+}
+
+fileA?.addEventListener("change",()=>{
+   preview(fileA.files[0],previewRedVideo,previewRedImage);
+});
+
+fileB?.addEventListener("change",()=>{
+   preview(fileB.files[0],previewBlueVideo,previewBlueImage);
+});
+
+
+/* ===============================
+GREEN GLOW ACTIVE
+=============================== */
+
+function initGlowButtons(){
+
+   const buttons = document.querySelectorAll(
+      ".model-btn, .cta-btn, .engine-btn"
+   );
+
+   buttons.forEach(btn=>{
+
+      btn.addEventListener("click",function(){
+
+         const group = this.closest(".engine-box") || document;
+
+         group.querySelectorAll(".active")
+         .forEach(el=>el.classList.remove("active"));
+
+         this.classList.add("active");
+
+      });
+
+   });
+
+}
+
+initGlowButtons();
+
+
+/* ===============================
+MODEL SELECT
+=============================== */
 
 document.querySelectorAll(".model-btn").forEach(btn=>{
 
    btn.addEventListener("click",()=>{
 
-      document.querySelectorAll(".model-btn")
-      .forEach(b=>b.classList.remove("active"));
+      STATE.alias = btn.dataset.alias;
 
-      btn.classList.add("active");
-
-      selectedAlias = btn.dataset.alias;
+      console.log("MODEL SELECT:",STATE);
 
    });
 
 });
 
 
-// ======================================================
-// GENERATE
-// ======================================================
+/* ===============================
+RUNWAY GENERATE
+=============================== */
 
-document.querySelectorAll(".generate-btn").forEach(btn=>{
+async function runGenerate(){
 
-   btn.addEventListener("click", async ()=>{
+   const userId = getUserId();
 
-      if(!CURRENT_USER){
+   if(!userId){
+      alert("ยังไม่ได้ Login");
+      return;
+   }
 
-         alert("ยังไม่ได้ Login Google");
-         return;
+   if(!STATE.alias){
+      alert("เลือก Model ก่อน");
+      return;
+   }
 
+   if(!fileA?.files[0] && STATE.alias !== "text_to_video"){
+      alert("ต้อง import fileA");
+      return;
+   }
+
+   try{
+
+      statusEl.innerText="STATUS: PROCESSING";
+
+      const formData = new FormData();
+
+      formData.append("engine","runwayml");
+      formData.append("alias",STATE.alias);
+      formData.append("type","video");
+      formData.append("prompt",
+         document.querySelector("textarea")?.value || "SN TEST"
+      );
+
+      if(fileA?.files[0]){
+         formData.append("fileA",fileA.files[0]);
       }
 
-      if(!selectedAlias){
-
-         alert("เลือกโหมดก่อน");
-         return;
-
+      if(fileB?.files[0]){
+         formData.append("fileB",fileB.files[0]);
       }
 
-      const prompt = promptInput.value.trim();
+      const res = await fetch(API_URL,{
+         method:"POST",
+         headers:{
+            "Authorization": userId
+         },
+         body:formData
+      });
 
-      if(!prompt){
+      const data = await res.json();
 
-         alert("ใส่ prompt");
-         return;
+      console.log("RUNWAY RESPONSE:",data);
 
+      if(!res.ok){
+         throw new Error(data.error || "Render Failed");
       }
 
-      statusEl.innerText = "STATUS: PROCESSING...";
+      statusEl.innerText="STATUS: SUCCESS";
 
-      try{
+   }catch(err){
 
-         const form = new FormData();
+      console.error(err);
 
-         form.append("prompt",prompt);
-         form.append("alias",selectedAlias);
-         form.append("userId",CURRENT_USER.id);
+      statusEl.innerText="STATUS: ERROR";
 
-         const fileA = document.getElementById("fileA").files[0];
-         const fileB = document.getElementById("fileB").files[0];
+      alert(err.message);
 
-         if(fileA) form.append("fileA",fileA);
-         if(fileB) form.append("fileB",fileB);
+   }
 
-         const res = await fetch(API+"/render",{
-            method:"POST",
-            body:form
-         });
+}
 
-         const data = await res.json();
 
-         console.log("RENDER RESULT",data);
+/* ===============================
+ENGINE BUTTON
+=============================== */
 
-         statusEl.innerText = "STATUS: DONE";
-
-      }catch(err){
+document.querySelectorAll(".engine-btn")[0]
+?.addEventListener("click",runGenerate);
