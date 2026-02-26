@@ -164,3 +164,36 @@ const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
   console.log("ULTRA ENGINE RUNNING:", PORT);
 });
+
+// =====================================================
+// USER SELF DATA (ADD ONLY)
+// =====================================================
+
+const authService = require("./auth.service");
+const db = require("../db/db");
+
+app.get("/api/user/me", async (req,res)=>{
+
+    try{
+
+        const user = await authService.check(req);
+
+        db.get(
+            "SELECT id,email,credits FROM users WHERE id=?",
+            [user.id],
+            (err,row)=>{
+
+                if(err) return res.status(500).json({error:"DB ERROR"});
+
+                res.json(row || { id:user.id, credits:0 });
+
+            }
+        );
+
+    }catch(err){
+
+        res.status(401).json({error:"AUTH FAIL"});
+
+    }
+
+});
