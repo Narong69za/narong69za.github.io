@@ -1,14 +1,27 @@
-// ======================================================
-// TRUE MONEY WALLET SERVICE
-// ======================================================
+// =====================================================
+// TRUEMONEY SERVICE (STRUCTURE READY)
+// =====================================================
 
-exports.createTrueMoneyPayment = async ({amount,userId})=>{
+const { v4: uuidv4 } = require("uuid");
 
-   // placeholder API integration
+async function initWalletPayment(amount) {
 
-   return {
-      type:"truemoney",
-      paymentUrl:`https://truemoney.fake/pay?user=${userId}&amount=${amount}`
-   };
+    if (!amount) {
+        throw new Error("AMOUNT_REQUIRED");
+    }
 
+    const sessionId = uuidv4();
+
+    // ตอนนี้ยังไม่มี provider จริง
+    // ทำโครงสร้าง session ไว้ก่อน
+
+    return {
+        success: true,
+        sessionId,
+        redirectUrl: "https://example-wallet-gateway.com/pay/" + sessionId
+    };
+}
+
+module.exports = {
+    initWalletPayment
 };
