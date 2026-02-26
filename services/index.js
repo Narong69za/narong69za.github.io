@@ -61,3 +61,43 @@ app.post("/api/auth/google", async (req,res)=>{
   }catch(err){
 
     res.status(401).json({ error:"INVALID GOOGLE TOKEN" });
+
+  }
+
+}); // ⭐ ตรงนี้ที่หาย
+
+// ================= STRIPE ROUTES =================
+
+app.use("/api/stripe", stripeRoute);
+
+// ================= UPLOAD =================
+
+const upload = multer({
+  storage: multer.memoryStorage()
+});
+
+// ================= RENDER =================
+
+app.post("/api/render", upload.any(), create);
+
+// ================= STATUS =================
+
+app.get("/api/status/server",(req,res)=>{
+  res.json({ server:"online" });
+});
+
+app.get("/api/status/ai",(req,res)=>{
+  res.json({ ai:"ready" });
+});
+
+app.get("/",(req,res)=>{
+  res.send("SN DESIGN API RUNNING");
+});
+
+// ================= START SERVER =================
+
+const PORT = process.env.PORT || 10000;
+
+app.listen(PORT,()=>{
+  console.log("ULTRA ENGINE RUNNING:",PORT);
+});
