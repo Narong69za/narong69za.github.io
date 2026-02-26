@@ -1,60 +1,68 @@
-// ======================================================
+// =====================================================
 // STRIPE SERVICE
-// ======================================================
+// =====================================================
 
-require("dotenv").config();
 const Stripe = require("stripe");
-
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.error("❌ STRIPE_SECRET_KEY NOT FOUND");
-}
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
-const CREDIT_PRODUCTS = {
-  credit_pack_1: {
-    name: "AI Credit Pack 100",
-    credits: 100,
-    price: 19900
-  }
-};
 
-exports.createCheckout = async ({ product, userId }) => {
+// =====================================================
+// CREATE CHECKOUT
+// =====================================================
 
-  if (!CREDIT_PRODUCTS[product]) {
-    throw new Error("INVALID PRODUCT");
-  }
+exports.createCheckout = async function(data){
 
-  const item = CREDIT_PRODUCTS[product];
+   const session = await stripe.checkout.sessions.create({
 
-  const session = await stripe.checkout.sessions.create({
+      payment_method_types:["card"],
 
-    payment_method_types: ["card"],
+      line_items:[{
 
-    mode: "payment",
+         price_data:{
 
-    line_items: [
-      {
-        price_data: {
-          currency: "thb",
-          product_data: {
-            name: item.name
-          },
-          unit_amount: item.price
-        },
-        quantity: 1
+            currency:"thb",
+
+            product_data:{
+               name:data.name
+            },
+
+            unit_amount:data.price
+
+         },
+
+         quantity:1
+
+      }],
+
+      mode:"payment",
+
+      success_url:"https://sn-designstudio.dev/create.html?payment=success",
+
+      cancel_url:"https://sn-designstudio.dev/create.html?payment=cancel",
+
+      metadata:{
+         userId:data.userId,
+         credits:data.credits
       }
-    ],
 
-    success_url: process.env.STRIPE_SUCCESS_URL,
-    cancel_url: process.env.STRIPE_CANCEL_URL,
+   });
 
-    metadata: {
-      userId: userId || "DEV",
-      credits: item.credits
-    }
+   return session;
 
-  });
+}
 
-  return session;
-};
+
+// =====================================================
+// WEBHOOK CONSTRUCT
+// =====================================================
+
+exports.constructWebhookEvent = function(body,sig){
+
+   return stripe.webhooks.constructEvent(
+      body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
+   );
+
+}
