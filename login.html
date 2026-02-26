@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>SN DESIGN LOGIN</title>
+
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<style>
+
+body{
+background:#000;
+color:#fff;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+font-family:sans-serif;
+}
+
+.login-box{
+text-align:center;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-box">
+
+<h1>SN DESIGN LOGIN</h1>
+
+<div id="g_id_onload"
+     data-client_id="YOUR_GOOGLE_CLIENT_ID"
+     data-callback="handleCredentialResponse">
+</div>
+
+<div class="g_id_signin"></div>
+
+</div>
+
+<script>
+
+const API="https://sn-design-api.onrender.com";
+
+async function handleCredentialResponse(response){
+
+    const
