@@ -178,3 +178,73 @@ document.addEventListener("click", async (e)=>{
     }
 
 });
+
+// =====================================================
+// ULTRA CREDIT AUTO REFRESH (ADD ONLY)
+// =====================================================
+
+async function ultraRefreshUser(){
+
+    try{
+
+        const userId = localStorage.getItem("userId") || "DEV-BYPASS";
+
+        const res = await fetch(API_BASE + "/api/user/me",{
+            method:"GET",
+            headers:{
+                "Authorization": userId
+            }
+        });
+
+        if(!res.ok) return;
+
+        const data = await res.json();
+
+        const emailEl = document.getElementById("userEmail");
+        const creditEl = document.getElementById("userCredits");
+
+        if(emailEl && data.email){
+            emailEl.innerText = data.email;
+        }
+
+        if(creditEl && typeof data.credits !== "undefined"){
+            creditEl.innerText = data.credits;
+        }
+
+    }catch(err){
+        console.log("REFRESH FAIL");
+    }
+
+}
+
+
+// =====================================================
+// AUTO REFRESH LOOP
+// =====================================================
+
+setInterval(()=>{
+
+    ultraRefreshUser();
+
+},5000);
+
+
+// =====================================================
+// STRIPE RETURN DETECT
+// =====================================================
+
+(function(){
+
+    const url = new URL(window.location.href);
+
+    if(url.searchParams.get("payment") === "success"){
+
+        setTimeout(()=>{
+
+            ultraRefreshUser();
+
+        },2000);
+
+    }
+
+})();
