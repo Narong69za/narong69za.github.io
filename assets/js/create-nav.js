@@ -113,7 +113,40 @@ document.addEventListener("click", async (e)=>{
     if(e.target.id === "btn-credit"){
 
         try{
+            const userId = localStorage.getItem("userId"); // ⭐ ADD ONLY
 
+            const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body: JSON.stringify({
+                    product:"credit_pack_1",
+                    userId: userId // ⭐ ADD ONLY
+                })
+            });
+
+            const data = await res.json();
+
+            if(data.url){
+
+                window.location.href = data.url;
+
+            }else{
+
+                alert("Stripe error");
+
+            }
+
+        }catch(err){
+
+            console.error(err);
+
+        }
+
+    }
+
+});
             const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
                 method:"POST",
                 headers:{
