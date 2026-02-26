@@ -13,13 +13,27 @@ const cors = require("cors");
 const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
+// =====================================================
 // ROUTES
+// =====================================================
+
 const adminRoutes = require("./admin.routes");
 const stripeRoute = require("../routes/stripe.route");
 const stripeWebhook = require("../routes/stripe.webhook");
 
+// ⭐ ADD ONLY — USER ROUTE (Dashboard / Credit API)
+const userRoutes = require("../routes/user.routes");
+
+// =====================================================
 // CONTROLLERS
+// =====================================================
+
 const { create } = require("../controllers/create.controller.js");
+
+// ⭐ ADD ONLY — AUTO USER LOGIN STATE
+const { googleLogin } = require("../controllers/auth.controller");
+
+// =====================================================
 
 const app = express();
 
@@ -53,17 +67,27 @@ app.use(express.json());
 app.use("/api/admin", adminRoutes);
 
 // =====================================================
-// GOOGLE AUTH
+// USER ROUTES (DASHBOARD)
+// =====================================================
+
+app.use("/api/user", userRoutes);
+
+// =====================================================
+// GOOGLE AUTH (AUTO USER CREATE + LOGIN STATE)
 // =====================================================
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 app.post("/api/auth/google", async (req, res) => {
+
   try {
+
     const { token } = req.body;
 
     if (!token) {
+
       return res.status(400).json({ error: "Missing token" });
+
     }
 
     const ticket = await googleClient.verifyIdToken({
@@ -73,17 +97,19 @@ app.post("/api/auth/google", async (req, res) => {
 
     const payload = ticket.getPayload();
 
-    return res.json({
-      id: payload.sub,
-      email: payload.email,
-      name: payload.name,
-      picture: payload.picture,
-    });
+    // ⭐ AUTO CREATE USER + LOGIN STATE
+    const user = await googleLogin(payload);
+
+    return res.json(user);
 
   } catch (err) {
+
     console.error("GOOGLE AUTH ERROR:", err.message);
+
     return res.status(401).json({ error: "INVALID GOOGLE TOKEN" });
+
   }
+
 });
 
 // =====================================================
