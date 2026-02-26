@@ -1,219 +1,77 @@
-/* =====================================================
-SN DESIGN ENGINE AI
-CREATE.JS — ULTRA FINAL RENDER VERSION
-LOCK UI LAYOUT
-===================================================== */
+// ======================================================
+// STRIPE WEBHOOK - ULTRA SAFE VERSION
+// ======================================================
 
+const express = require("express");
+const router = express.Router();
 
-/* ===============================
-CONFIG
-=============================== */
+const stripeService = require("../services/stripe.service");
+const db = require("../db/db");
 
-const API_URL = "https://sn-design-api.onrender.com/api/render";
+// ======================================================
+// STRIPE WEBHOOK
+// ======================================================
 
+router.post("/", async (req,res)=>{
 
-/* ===============================
-LOGIN STATE (สำคัญมาก)
-=============================== */
+  const sig = req.headers["stripe-signature"];
 
-function getUserId(){
+  let event;
 
-   // DEV BYPASS (Owner Test Mode)
-   const DEV_MODE = true;
+  try{
 
-   if(DEV_MODE){
-      return "DEV-BYPASS";
-   }
+    event = stripeService.constructWebhookEvent(
+      req.body,
+      sig
+    );
 
-   return localStorage.getItem("userId");
+  }catch(err){
 
-}
+    console.error("Webhook signature error:", err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
 
+  }
 
-/* ===============================
-STATE
-=============================== */
+  // ======================================================
+  // CHECKOUT SUCCESS
+  // ======================================================
 
-let STATE = {
-   engine: "runwayml",
-   alias: null
-};
+  if(event.type === "checkout.session.completed"){
 
+    const session = event.data.object;
 
-/* ===============================
-DOM
-=============================== */
+    const userId = session?.metadata?.userId;
+    const credits = parseInt(session?.metadata?.credits || 0);
 
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
+    if(!userId || !credits){
 
-const previewRedVideo = document.getElementById("preview-red-video");
-const previewRedImage = document.getElementById("preview-red-image");
+      console.error("Invalid metadata in webhook");
+      return res.json({ received:true });
 
-const previewBlueVideo = document.getElementById("preview-blue-video");
-const previewBlueImage = document.getElementById("preview-blue-image");
+    }
 
-const statusEl = document.getElementById("status");
+    console.log("💰 PAYMENT SUCCESS:", userId, credits);
 
+    try{
 
-/* ===============================
-FILE PREVIEW
-=============================== */
+      // ======================================================
+      // ADD CREDIT SAFELY
+      // ======================================================
 
-function preview(file, videoEl, imageEl){
+      await db.addCredit(userId, credits);
 
-   if(!file) return;
+      console.log("✅ CREDIT ADDED:", credits);
 
-   const url = URL.createObjectURL(file);
+    }catch(err){
 
-   videoEl.style.display="none";
-   imageEl.style.display="none";
+      console.error("DB CREDIT ERROR:", err);
 
-   if(file.type.startsWith("video/")){
-      videoEl.src = url;
-      videoEl.style.display="block";
-   }
+    }
 
-   if(file.type.startsWith("image/")){
-      imageEl.src = url;
-      imageEl.style.display="block";
-   }
-}
+  }
 
-fileA?.addEventListener("change",()=>{
-   preview(fileA.files[0],previewRedVideo,previewRedImage);
-});
-
-fileB?.addEventListener("change",()=>{
-   preview(fileB.files[0],previewBlueVideo,previewBlueImage);
-});
-
-
-/* ===============================
-GREEN GLOW ACTIVE
-=============================== */
-
-function initGlowButtons(){
-
-   const buttons = document.querySelectorAll(
-      ".model-btn, .cta-btn, .engine-btn"
-   );
-
-   buttons.forEach(btn=>{
-
-      btn.addEventListener("click",function(){
-
-         const group = this.closest(".engine-box") || document;
-
-         group.querySelectorAll(".active")
-         .forEach(el=>el.classList.remove("active"));
-
-         this.classList.add("active");
-
-      });
-
-   });
-
-}
-
-initGlowButtons();
-
-
-/* ===============================
-MODEL SELECT
-=============================== */
-
-document.querySelectorAll(".model-btn").forEach(btn=>{
-
-   btn.addEventListener("click",()=>{
-
-      STATE.alias = btn.dataset.alias;
-
-      console.log("MODEL SELECT:",STATE);
-
-   });
+  res.json({ received: true });
 
 });
 
-
-/* ===============================
-RUNWAY GENERATE
-=============================== */
-
-async function runGenerate(){
-
-   const userId = getUserId();
-
-   if(!userId){
-      alert("ยังไม่ได้ Login");
-      return;
-   }
-
-   if(!STATE.alias){
-      alert("เลือก Model ก่อน");
-      return;
-   }
-
-   if(!fileA?.files[0] && STATE.alias !== "text_to_video"){
-      alert("ต้อง import fileA");
-      return;
-   }
-
-   try{
-
-      statusEl.innerText="STATUS: PROCESSING";
-
-      const formData = new FormData();
-
-      formData.append("engine","runwayml");
-      formData.append("alias",STATE.alias);
-      formData.append("type","video");
-      formData.append("prompt",
-         document.querySelector("textarea")?.value || "SN TEST"
-      );
-
-      if(fileA?.files[0]){
-         formData.append("fileA",fileA.files[0]);
-      }
-
-      if(fileB?.files[0]){
-         formData.append("fileB",fileB.files[0]);
-      }
-
-      const res = await fetch(API_URL,{
-         method:"POST",
-         headers:{
-            "Authorization": userId
-         },
-         body:formData
-      });
-
-      const data = await res.json();
-
-      console.log("RUNWAY RESPONSE:",data);
-
-      if(!res.ok){
-         throw new Error(data.error || "Render Failed");
-      }
-
-      statusEl.innerText="STATUS: SUCCESS";
-
-   }catch(err){
-
-      console.error(err);
-
-      statusEl.innerText="STATUS: ERROR";
-
-      alert(err.message);
-
-   }
-
-}
-
-
-/* ===============================
-ENGINE BUTTON
-=============================== */
-
-document.querySelectorAll(".engine-btn")[0]
-?.addEventListener("click",runGenerate);
+module.exports = router;
