@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SN DESIGN AI ENGINE</title>
+<title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
 </head>
@@ -11,64 +11,49 @@
 
 <div class="create-root create-container">
 
-  <h1 class="title">SN DESIGN AI ENGINE</h1>
-  <!-- ================= USER STATUS ================= -->
+  <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<div class="user-status-box" id="userStatusBox">
-  <div>USER: <span id="userEmail">-</span></div>
-  <div>CREDITS: <span id="userCredits">-</span></div>
-  </div>
   <!-- PROMPT -->
-  <textarea id="prompt" placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
+  <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
 
   <!-- TYPE BAR -->
   <div class="type-bar">
-    <button class="type-btn cta-btn active">สร้างวิดีโอ</button>
-    <button class="type-btn cta-btn">สร้างภาพ</button>
-    <button class="type-btn cta-btn">Upscale</button>
+    <button class="type-btn active">สร้างวิดีโอ</button>
+    <button class="type-btn">สร้างภาพ</button>
+    <button class="type-btn">Upscale</button>
   </div>
 
-  <!-- ENGINE SECTION -->
+  <!-- ================== ENGINE SECTION ================== -->
 
   <div class="engine-wrap">
 
-    <!-- RED ENGINE (RUNWAY) -->
+    <!-- RED ENGINE -->
     <div class="engine engine-box red-engine">
 
       <h2>⭐ สร้างวิดีโอ AI</h2>
 
       <div class="mode-row">
 
-        <!-- ⭐ เพิ่ม TEXT TO VIDEO -->
-        <button class="mode-btn model-btn"
-        data-alias="text_to_video">
-        ✨ สร้างวิดีโอจากข้อความ (V4.5)
+        <button class="mode-btn" data-alias="image_to_video">
+          🎬 สร้างคลิปไวรัล AI
         </button>
 
-        <button class="mode-btn model-btn"
-        data-alias="image_to_video">
-        🎬 สร้างคลิปไวรัล AI
+        <button class="mode-btn" data-alias="lip_sync">
+          🎤 ลิปซิงค์เสียง-คำพูด
         </button>
 
-        <button class="mode-btn model-btn"
-        data-alias="lip_sync">
-        🎤 ลิปซิงค์เสียง-คำพูด
+        <button class="mode-btn" data-alias="motion_transfer">
+          🕺 โคลนท่าเต้น AI
         </button>
 
-        <button class="mode-btn model-btn"
-        data-alias="motion_transfer">
-        🕺 โคลนท่าเต้น AI
-        </button>
-
-        <button class="mode-btn model-btn"
-        data-alias="face_swap">
-        🧑 เปลี่ยนหน้า AI
+        <button class="mode-btn" data-alias="face_swap">
+          🧑 เปลี่ยนหน้า AI
         </button>
 
       </div>
 
-      <button class="generate-btn engine-btn">
-        สร้างวิดีโอ AI (RW)
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (Runway)
       </button>
 
     </div>
@@ -77,26 +62,37 @@
     <!-- BLUE ENGINE -->
     <div class="engine engine-box blue-engine">
 
-      <h2>⭐ สร้างวิดีโอ AI (RC)</h2>
+      <h2>⭐ สร้างวิดีโอ AI (Replicate)</h2>
 
       <div class="mode-row">
 
-        <button class="mode-btn model-btn">🎬 สร้างคลิปไวรัล AI</button>
-        <button class="mode-btn model-btn">🎤 ลิปซิงค์เสียง-คำพูด</button>
-        <button class="mode-btn model-btn">🕺 โคลนท่าเต้น AI</button>
-        <button class="mode-btn model-btn">🧑 เปลี่ยนหน้า AI</button>
+        <button class="mode-btn">
+          🎬 สร้างคลิปไวรัล AI
+        </button>
+
+        <button class="mode-btn">
+          🎤 ลิปซิงค์เสียง-คำพูด
+        </button>
+
+        <button class="mode-btn">
+          🕺 โคลนท่าเต้น AI
+        </button>
+
+        <button class="mode-btn">
+          🧑 เปลี่ยนหน้า AI
+        </button>
 
       </div>
 
-      <button class="generate-btn engine-btn">
-        สร้างวิดีโอ AI (RC)
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (Replicate)
       </button>
 
     </div>
 
   </div>
 
-  <!-- UPLOAD -->
+  <!-- ================== UPLOAD SECTION ================== -->
 
   <div class="upload-core-wrapper">
 
@@ -116,7 +112,7 @@
 
   </div>
 
-  <!-- PREVIEW -->
+  <!-- ================== PREVIEW ================== -->
 
   <div class="preview-dual preview-wrapper">
 
@@ -132,6 +128,7 @@
 
   </div>
 
+  <!-- STATUS -->
   <div class="status-bar">
     <span id="status">STATUS: IDLE</span>
   </div>
