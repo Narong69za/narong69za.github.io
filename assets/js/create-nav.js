@@ -121,10 +121,9 @@ document.addEventListener("click", async (e)=>{
                     "Content-Type":"application/json"
                 },
                 body: JSON.stringify({
-                    product:"credit_pack_1",
-                    userId: userId // ⭐ ADD ONLY
-                })
-            });
+   product:"credit_pack_1",
+   userId: localStorage.getItem("userId")
+})
 
             const data = await res.json();
 
