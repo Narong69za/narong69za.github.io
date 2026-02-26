@@ -24,11 +24,8 @@ const stripeWebhook = require("../routes/stripe.webhook");
 // ⭐ USER ROUTE (Dashboard / Credit API)
 const userRoutes = require("../routes/user.routes");
 
-// ⭐ FREE LIMIT CHECK
+// ⭐ FREE LIMIT CHECK (ADD ONLY)
 const usageCheck = require("../services/usage-check");
-
-// ⭐ THAI PAYMENT ROUTE (ADD CONNECT HERE)
-const thaiPaymentRoute = require("../routes/thai-payment.route");
 
 // =====================================================
 // CONTROLLERS
@@ -79,12 +76,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 
 // =====================================================
-// THAI PAYMENT ROUTE (REGISTER)
-// =====================================================
-
-app.use("/api/thai-payment", thaiPaymentRoute);
-
-// =====================================================
 // GOOGLE AUTH (AUTO USER CREATE + LOGIN STATE)
 // =====================================================
 
@@ -107,6 +98,7 @@ app.post("/api/auth/google", async (req, res) => {
 
     const payload = ticket.getPayload();
 
+    // AUTO CREATE USER + LOGIN STATE
     const user = await googleLogin(payload);
 
     return res.json(user);
@@ -139,6 +131,7 @@ const upload = multer({
 // RENDER ENGINE
 // =====================================================
 
+// ⭐ ADD usageCheck ก่อน create
 app.post(
   "/api/render",
   usageCheck,
