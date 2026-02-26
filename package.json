@@ -17,6 +17,9 @@
     "replicate": "^0.34.0",
     "sqlite3": "^5.1.6",
     "uuid": "^9.0.1",
-    "stripe": "^14.0.0"
+    "stripe": "^14.0.0",
+
+    "promptpay-qr": "^1.0.6",
+    "qrcode": "^1.5.4"
   }
 }
