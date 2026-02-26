@@ -408,33 +408,4 @@ max-height:60vh; /* จำกัดความสูงมือถือ */
 /* fix Android Chrome scaling */
 video::-webkit-media-controls{
 max-width:100%;
-   }
-/* ======================================================
-   GREEN GLOW ACTIVE STATE
-====================================================== */
-
-.model-btn.active,
-.cta-btn.active,
-.engine-btn.active{
-
-    background:#00ff88 !important;
-    color:#000 !important;
-
-    box-shadow:
-
-        0 0 10px #00ff88,
-        0 0 20px #00ff88,
-        0 0 35px rgba(0,255,136,0.8);
-
 }
-.user-status-box{
-   background:#111;
-   border:1px solid #222;
-   padding:12px 16px;
-   margin-bottom:15px;
-   display:flex;
-   justify-content:space-between;
-   color:#00ff88;
-   font-size:14px;
-   border-radius:8px;
-   }
