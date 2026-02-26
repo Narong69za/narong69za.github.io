@@ -111,56 +111,16 @@ function getUser(){
     return userId;
 }
 
+// ======================
+// CREDIT NAVIGATION (FINAL)
+// ======================
 
-// =====================================================
-// STRIPE CREDIT FLOW (SYNC)
-// =====================================================
-
-document.addEventListener("click", async (e)=>{
+document.addEventListener("click",(e)=>{
 
     if(e.target.id === "btn-credit"){
 
-        try{
-
-            const userId = getUser();
-
-            if(!userId) return;
-
-            const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
-
-                method:"POST",
-
-                headers:{
-                    "Content-Type":"application/json"
-                },
-
-                body: JSON.stringify({
-
-                    product:"credit_pack_1",
-                    userId:userId
-
-                })
-
-            });
-
-            const data = await res.json();
-
-            if(data.url){
-
-                window.location.href = data.url;
-
-            }else{
-
-                alert("Stripe error");
-
-            }
-
-        }catch(err){
-
-            console.error(err);
-            alert("Payment connection error");
-
-        }
+        // ไปหน้า Payment Center
+        window.location.href = "/payment.html";
 
     }
 
