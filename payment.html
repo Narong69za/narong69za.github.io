@@ -1,1 +1,47 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
 
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SN DESIGN PAYMENT CENTER</title>
+
+<link rel="stylesheet" href="/assets/css/payment.css">
+
+</head>
+
+<body>
+
+<div class="payment-root">
+
+<h1>SN DESIGN PAYMENT CENTER</h1>
+
+<div class="payment-methods">
+
+<button class="pay-btn" data-method="stripe">💳 Stripe</button>
+
+<button class="pay-btn" data-method="promptpay">📱 PromptPay QR</button>
+
+<button class="pay-btn" data-method="truemoney">🟠 TrueMoney Wallet</button>
+
+<button class="pay-btn" data-method="crypto">🪙 Crypto</button>
+
+</div>
+
+<div class="payment-box" id="paymentBox">
+
+<p>เลือกช่องทางชำระเงิน</p>
+
+</div>
+
+<div class="status" id="paymentStatus">
+STATUS: IDLE
+</div>
+
+</div>
+
+<script src="/assets/js/payment.js"></script>
+
+</body>
+</html>
