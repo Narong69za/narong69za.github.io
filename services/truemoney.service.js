@@ -1,27 +1,8 @@
-// =====================================================
-// TRUEMONEY SERVICE (STRUCTURE READY)
-// =====================================================
+exports.createPayment = async(amount,userId)=>{
 
-const { v4: uuidv4 } = require("uuid");
+    // placeholder true money redirect
+    // ใส่ API จริงของคุณที่นี่
 
-async function initWalletPayment(amount) {
+    return "https://example-truemoney-redirect.com";
 
-    if (!amount) {
-        throw new Error("AMOUNT_REQUIRED");
-    }
-
-    const sessionId = uuidv4();
-
-    // ตอนนี้ยังไม่มี provider จริง
-    // ทำโครงสร้าง session ไว้ก่อน
-
-    return {
-        success: true,
-        sessionId,
-        redirectUrl: "https://example-wallet-gateway.com/pay/" + sessionId
-    };
-}
-
-module.exports = {
-    initWalletPayment
 };
