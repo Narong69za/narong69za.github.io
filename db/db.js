@@ -118,3 +118,8 @@ exports.incrementFreeUsage = async (ip, date)=>{
 
 exports._debugUsers = ()=>users;
 exports._debugFreeUsage = ()=>freeUsage;
+exports.addCredit = async (id,amount)=>{
+   if(users[id]){
+      users[id].credits += amount;
+   }
+};
