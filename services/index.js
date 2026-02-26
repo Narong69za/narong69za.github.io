@@ -21,8 +21,11 @@ const adminRoutes = require("./admin.routes");
 const stripeRoute = require("../routes/stripe.route");
 const stripeWebhook = require("../routes/stripe.webhook");
 
-// ⭐ ADD ONLY — USER ROUTE (Dashboard / Credit API)
+// ⭐ USER ROUTE (Dashboard / Credit API)
 const userRoutes = require("../routes/user.routes");
+
+// ⭐ FREE LIMIT CHECK (ADD ONLY)
+const usageCheck = require("../services/usage-check");
 
 // =====================================================
 // CONTROLLERS
@@ -30,7 +33,7 @@ const userRoutes = require("../routes/user.routes");
 
 const { create } = require("../controllers/create.controller.js");
 
-// ⭐ ADD ONLY — AUTO USER LOGIN STATE
+// ⭐ AUTO USER LOGIN STATE
 const { googleLogin } = require("../controllers/auth.controller");
 
 // =====================================================
@@ -85,9 +88,7 @@ app.post("/api/auth/google", async (req, res) => {
     const { token } = req.body;
 
     if (!token) {
-
       return res.status(400).json({ error: "Missing token" });
-
     }
 
     const ticket = await googleClient.verifyIdToken({
@@ -97,7 +98,7 @@ app.post("/api/auth/google", async (req, res) => {
 
     const payload = ticket.getPayload();
 
-    // ⭐ AUTO CREATE USER + LOGIN STATE
+    // AUTO CREATE USER + LOGIN STATE
     const user = await googleLogin(payload);
 
     return res.json(user);
@@ -130,7 +131,13 @@ const upload = multer({
 // RENDER ENGINE
 // =====================================================
 
-app.post("/api/render", upload.any(), create);
+// ⭐ ADD usageCheck ก่อน create
+app.post(
+  "/api/render",
+  usageCheck,
+  upload.any(),
+  create
+);
 
 // =====================================================
 // STATUS CHECK
