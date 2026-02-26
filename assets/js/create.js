@@ -217,3 +217,35 @@ ENGINE BUTTON
 
 document.querySelectorAll(".engine-btn")[0]
 ?.addEventListener("click",runGenerate);
+// =====================================================
+// ULTRA AUTO LOGIN LOCK (ADD ONLY)
+// =====================================================
+
+async function ultraCheckLogin(){
+
+    const userId = localStorage.getItem("userId");
+
+    // ถ้ามี session อยู่แล้ว
+    if(userId){
+
+        console.log("LOGIN OK:", userId);
+        return;
+
+    }
+
+    console.log("NO LOGIN → FORCE LOGIN");
+
+    // ⭐ popup login แบบง่าย (ยังไม่แตะ UI)
+    const login = confirm("ต้อง login ก่อนใช้งาน");
+
+    if(login){
+
+        // redirect ไปหน้า login เดิมของคุณ
+        window.location.href = "/login.html";
+
+    }
+
+}
+
+// run auto
+ultraCheckLogin();
