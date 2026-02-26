@@ -1,11 +1,11 @@
-export default async function handler(req, res) {
+// =====================================================
+// SN DESIGN ENGINE AI
+// FREE USAGE CHECK (EXPRESS VERSION)
+// =====================================================
 
-if (req.method !== "POST") {
+module.exports = async function usageCheck(req,res,next){
 
-return res.status(405).json({ error: "Method not allowed" });
-
-}
-
+try{
 
 // ======================
 // GET CLIENT IP
@@ -17,31 +17,14 @@ req.socket.remoteAddress;
 
 
 // ======================
-// GET GOOGLE TOKEN
+// DEV BYPASS
 // ======================
 
-const { token } = req.body;
+if(process.env.DEV_MODE === "true"){
 
-if(!token){
+   console.log("DEV BYPASS FREE LIMIT");
 
-return res.status(401).json({ error:"NO LOGIN TOKEN" });
-
-}
-
-
-// ======================
-// VERIFY GOOGLE LOGIN
-// ======================
-
-const verify = await fetch(
-
-`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`
-
-);
-
-if(!verify.ok){
-
-return res.status(401).json({ error:"INVALID GOOGLE LOGIN" });
+   return next();
 
 }
 
@@ -52,41 +35,37 @@ return res.status(401).json({ error:"INVALID GOOGLE LOGIN" });
 
 const today = new Date().toISOString().slice(0,10);
 
-// ⚠️ ตัวอย่าง memory store (เปลี่ยน DB จริงภายหลัง)
-
 global.usageStore = global.usageStore || {};
 
 const key = ip + "_" + today;
 
 if(!global.usageStore[key]){
 
-global.usageStore[key] = 0;
+   global.usageStore[key] = 0;
 
 }
 
 if(global.usageStore[key] >= 3){
 
-return res.status(403).json({
-
-limit:true,
-message:"FREE LIMIT REACHED"
-
-});
+   return res.status(403).json({
+      limit:true,
+      message:"FREE LIMIT REACHED"
+   });
 
 }
 
 global.usageStore[key]++;
 
+console.log("FREE COUNT:",global.usageStore[key]);
 
-// ======================
-// OK
-// ======================
+next();
 
-return res.status(200).json({
+}catch(err){
 
-success:true,
-count:global.usageStore[key]
+console.log("USAGE CHECK ERROR:",err);
 
-});
+next();
+
+}
 
 }
