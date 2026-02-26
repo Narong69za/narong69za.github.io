@@ -1,14 +1,14 @@
 // =====================================================
 // SN DESIGN ENGINE NAV (CREATE PAGE ONLY)
-// DO NOT TOUCH GLOBAL nav.js
+// ULTRA PAYMENT SYNC FIX
 // =====================================================
 
 const API_BASE = "https://sn-design-api.onrender.com";
 
 
-// ======================
+// =====================================================
 // CREATE NAV BAR
-// ======================
+// =====================================================
 
 (function(){
 
@@ -17,7 +17,6 @@ const API_BASE = "https://sn-design-api.onrender.com";
     nav.className = "create-top-nav";
 
     nav.innerHTML = `
-    
         <div class="create-nav-left">
             ⭐ SN DESIGN ENGINE AI
         </div>
@@ -29,28 +28,23 @@ const API_BASE = "https://sn-design-api.onrender.com";
             </button>
 
         </div>
-    
     `;
 
     document.body.prepend(nav);
-// ======================
-// FIX CONTENT OFFSET (IMPORTANT)
-// ======================
 
-requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
 
-    const navHeight = nav.offsetHeight;
+        const navHeight = nav.offsetHeight;
+        document.body.style.paddingTop = navHeight + "px";
 
-    // push main content down without touching layout structure
-    document.body.style.paddingTop = navHeight + "px";
+    });
 
-});
 })();
 
 
-// ======================
-// STYLE (LOCAL ONLY)
-// ======================
+// =====================================================
+// STYLE
+// =====================================================
 
 const style = document.createElement("style");
 
@@ -77,16 +71,8 @@ style.innerHTML = `
 }
 
 .create-nav-left{
-
     color:#fff;
     font-weight:600;
-    letter-spacing:1px;
-
-}
-
-.create-nav-right{
-    display:flex;
-    gap:10px;
 }
 
 .create-nav-btn{
@@ -104,56 +90,57 @@ style.innerHTML = `
 document.head.appendChild(style);
 
 
-// ======================
-// STRIPE CREDIT
-// ======================
+// =====================================================
+// ULTRA LOGIN CHECK (SYNC)
+// =====================================================
+
+function getUser(){
+
+    const userId = localStorage.getItem("userId");
+
+    if(!userId){
+
+        alert("กรุณา Login ก่อน");
+
+        window.location.href="/login.html";
+
+        return null;
+
+    }
+
+    return userId;
+}
+
+
+// =====================================================
+// STRIPE CREDIT FLOW (SYNC)
+// =====================================================
 
 document.addEventListener("click", async (e)=>{
 
     if(e.target.id === "btn-credit"){
 
         try{
-            const userId = localStorage.getItem("userId"); // ⭐ ADD ONLY
+
+            const userId = getUser();
+
+            if(!userId) return;
 
             const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
+
                 method:"POST",
+
                 headers:{
                     "Content-Type":"application/json"
                 },
+
                 body: JSON.stringify({
-   product:"credit_pack_1",
-   userId: localStorage.getItem("userId")
-})
 
-            const data = await res.json();
+                    product:"credit_pack_1",
+                    userId:userId
 
-            if(data.url){
-
-                window.location.href = data.url;
-
-            }else{
-
-                alert("Stripe error");
-
-            }
-
-        }catch(err){
-
-            console.error(err);
-
-        }
-
-    }
-
-});
-            const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body: JSON.stringify({
-                    product:"credit_pack_1"
                 })
+
             });
 
             const data = await res.json();
@@ -171,6 +158,7 @@ document.addEventListener("click", async (e)=>{
         }catch(err){
 
             console.error(err);
+            alert("Payment connection error");
 
         }
 
@@ -178,71 +166,34 @@ document.addEventListener("click", async (e)=>{
 
 });
 
-// =====================================================
-// ULTRA CREDIT AUTO REFRESH (ADD ONLY)
-// =====================================================
-
-async function ultraRefreshUser(){
-
-    try{
-
-        const userId = localStorage.getItem("userId") || "DEV-BYPASS";
-
-        const res = await fetch(API_BASE + "/api/user/me",{
-            method:"GET",
-            headers:{
-                "Authorization": userId
-            }
-        });
-
-        if(!res.ok) return;
-
-        const data = await res.json();
-
-        const emailEl = document.getElementById("userEmail");
-        const creditEl = document.getElementById("userCredits");
-
-        if(emailEl && data.email){
-            emailEl.innerText = data.email;
-        }
-
-        if(creditEl && typeof data.credits !== "undefined"){
-            creditEl.innerText = data.credits;
-        }
-
-    }catch(err){
-        console.log("REFRESH FAIL");
-    }
-
-}
-
 
 // =====================================================
-// AUTO REFRESH LOOP
-// =====================================================
-
-setInterval(()=>{
-
-    ultraRefreshUser();
-
-},5000);
-
-
-// =====================================================
-// STRIPE RETURN DETECT
+// PAYMENT RETURN SYNC
 // =====================================================
 
 (function(){
 
-    const url = new URL(window.location.href);
+    const params = new URLSearchParams(window.location.search);
 
-    if(url.searchParams.get("payment") === "success"){
+    const paymentStatus = params.get("payment");
 
-        setTimeout(()=>{
+    if(!paymentStatus) return;
 
-            ultraRefreshUser();
+    if(paymentStatus === "success"){
 
-        },2000);
+        alert("เติมเครดิตสำเร็จ");
+
+        window.history.replaceState({}, document.title, "/create.html");
+
+        location.reload();
+
+    }
+
+    if(paymentStatus === "cancel"){
+
+        alert("ยกเลิกการชำระเงิน");
+
+        window.history.replaceState({}, document.title, "/create.html");
 
     }
 
