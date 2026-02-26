@@ -1,32 +1,32 @@
 // =====================================================
-// SN DESIGN ENGINE NAV (CREATE PAGE ONLY)
-// ULTRA PAYMENT SYNC FIX
+// SN DESIGN ENGINE NAV
+// FINAL LOGIN + PAYMENT CONTROL
 // =====================================================
 
 const API_BASE = "https://sn-design-api.onrender.com";
 
 
 // =====================================================
-// CREATE NAV BAR
+// NAV BUILD
 // =====================================================
 
 (function(){
 
-    const nav = document.createElement("div");
+    if(document.querySelector(".create-top-nav")) return;
 
-    nav.className = "create-top-nav";
+    const nav=document.createElement("div");
 
-    nav.innerHTML = `
+    nav.className="create-top-nav";
+
+    nav.innerHTML=`
         <div class="create-nav-left">
             ⭐ SN DESIGN ENGINE AI
         </div>
 
         <div class="create-nav-right">
-
             <button id="btn-credit" class="create-nav-btn">
                 เติมเครดิต
             </button>
-
         </div>
     `;
 
@@ -34,8 +34,8 @@ const API_BASE = "https://sn-design-api.onrender.com";
 
     requestAnimationFrame(()=>{
 
-        const navHeight = nav.offsetHeight;
-        document.body.style.paddingTop = navHeight + "px";
+        document.body.style.paddingTop =
+        nav.offsetHeight+"px";
 
     });
 
@@ -43,55 +43,7 @@ const API_BASE = "https://sn-design-api.onrender.com";
 
 
 // =====================================================
-// STYLE
-// =====================================================
-
-const style = document.createElement("style");
-
-style.innerHTML = `
-
-.create-top-nav{
-
-    position:fixed;
-    top:0;
-    left:0;
-    width:100%;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-
-    padding:14px 20px;
-
-    background:#000;
-    border-bottom:1px solid rgba(255,255,255,0.08);
-
-    z-index:9999;
-
-}
-
-.create-nav-left{
-    color:#fff;
-    font-weight:600;
-}
-
-.create-nav-btn{
-
-    background:#00ff88;
-    border:none;
-    padding:8px 14px;
-    font-weight:bold;
-    cursor:pointer;
-
-}
-
-`;
-
-document.head.appendChild(style);
-
-
-// =====================================================
-// ULTRA LOGIN CHECK (SYNC)
+// LOGIN STATE (ONLY HERE)
 // =====================================================
 
 function getUser(){
@@ -100,27 +52,31 @@ function getUser(){
 
     if(!userId){
 
-        alert("กรุณา Login ก่อน");
+        console.log("NO LOGIN → redirect");
 
         window.location.href="/login.html";
 
         return null;
-
     }
 
     return userId;
 }
 
-// ======================
-// CREDIT NAVIGATION (FINAL)
-// ======================
+
+// RUN LOGIN CHECK AUTO
+
+getUser();
+
+
+// =====================================================
+// CREDIT NAVIGATION
+// =====================================================
 
 document.addEventListener("click",(e)=>{
 
-    if(e.target.id === "btn-credit"){
+    if(e.target.id==="btn-credit"){
 
-        // ไปหน้า Payment Center
-        window.location.href = "/payment.html";
+        window.location.href="/payment.html";
 
     }
 
@@ -133,27 +89,25 @@ document.addEventListener("click",(e)=>{
 
 (function(){
 
-    const params = new URLSearchParams(window.location.search);
+    const params=new URLSearchParams(window.location.search);
 
-    const paymentStatus = params.get("payment");
+    const payment=params.get("payment");
 
-    if(!paymentStatus) return;
+    if(!payment) return;
 
-    if(paymentStatus === "success"){
+    if(payment==="success"){
 
         alert("เติมเครดิตสำเร็จ");
 
-        window.history.replaceState({}, document.title, "/create.html");
-
-        location.reload();
+        history.replaceState({},document.title,"/create.html");
 
     }
 
-    if(paymentStatus === "cancel"){
+    if(payment==="cancel"){
 
         alert("ยกเลิกการชำระเงิน");
 
-        window.history.replaceState({}, document.title, "/create.html");
+        history.replaceState({},document.title,"/create.html");
 
     }
 
