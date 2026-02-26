@@ -1,7 +1,6 @@
-// ======================================================
-// STRIPE ROUTE
-// FINAL PRODUCTION
-// ======================================================
+// =====================================================
+// STRIPE CHECKOUT ROUTE
+// =====================================================
 
 const express = require("express");
 const router = express.Router();
@@ -9,42 +8,67 @@ const router = express.Router();
 const stripeService = require("../services/stripe.service");
 
 
-// ============================================
+// =====================================================
 // CREATE CHECKOUT SESSION
-// ============================================
+// =====================================================
 
 router.post("/create-checkout", async (req,res)=>{
 
-    try{
+   try{
 
-        const { product } = req.body;
+      const { product, userId } = req.body;
 
-        // DEV BYPASS USER (ถ้ายังไม่ใช้ login)
-        const userId = req.headers["x-user-id"] || "DEV";
+      if(!product){
 
-        const session = await stripe.checkout.sessions.create({
+         return res.status(400).json({ error:"NO PRODUCT" });
 
-   payment_method_types:["card"],
+      }
 
-   line_items:[ ... ],
+      // ⭐ map credit pack
+      const PRODUCT_MAP = {
 
-   mode:"payment",
+         credit_pack_1:{
+            name:"Credit Pack",
+            price:10000, // 100 THB (satang)
+            credits:100
+         }
 
-   success_url:"https://sn-designstudio.dev/create.html?payment=success",
+      };
 
-   cancel_url:"https://sn-designstudio.dev/create.html?payment=cancel"
+      const item = PRODUCT_MAP[product];
 
-});
+      if(!item){
 
-    }catch(err){
+         return res.status(400).json({ error:"INVALID PRODUCT" });
 
-        console.error(err);
+      }
 
-        res.status(500).json({
-            error: err.message
-        });
+      const session = await stripeService.createCheckout({
 
-    }
+         name:item.name,
+         price:item.price,
+         credits:item.credits,
+         userId:userId || "guest"
+
+      });
+
+      res.json({
+
+         url: session.url
+
+      });
+
+   }catch(err){
+
+      console.error(err);
+
+      res.status(500).json({
+
+         error:"STRIPE CREATE FAILED"
+
+      });
+
+   }
 
 });
 
