@@ -409,3 +409,14 @@ max-height:60vh; /* จำกัดความสูงมือถือ */
 video::-webkit-media-controls{
 max-width:100%;
 }
+.user-status-box{
+   background:#111;
+   border:1px solid #222;
+   padding:12px 16px;
+   margin-bottom:15px;
+   display:flex;
+   justify-content:space-between;
+   color:#00ff88;
+   font-size:14px;
+   border-radius:8px;
+}
