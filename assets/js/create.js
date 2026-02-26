@@ -1,242 +1,138 @@
-/* =====================================================
-SN DESIGN ENGINE AI
-CREATE.JS — ULTRA FINAL RENDER VERSION
-LOCK UI LAYOUT
-===================================================== */
+// =====================================================
+// SN DESIGN ENGINE NAV (CREATE PAGE ONLY)
+// RESTORE STABLE VERSION
+// DO NOT TOUCH GLOBAL nav.js
+// =====================================================
 
+const API_BASE = "https://sn-design-api.onrender.com";
 
-/* ===============================
-CONFIG
-=============================== */
+// =====================================================
+// INIT NAV AFTER DOM READY (สำคัญ)
+// =====================================================
 
-const API_URL = "https://sn-design-api.onrender.com/api/render";
+document.addEventListener("DOMContentLoaded", () => {
 
+    // ป้องกันสร้าง nav ซ้ำ
+    if(document.querySelector(".create-top-nav")) return;
 
-/* ===============================
-LOGIN STATE
-=============================== */
+    const nav = document.createElement("div");
+    nav.className = "create-top-nav";
 
-const DEV_MODE = true;
+    nav.innerHTML = `
+        <div class="create-nav-left">
+            ⭐ SN DESIGN ENGINE AI
+        </div>
 
-function getUserId(){
+        <div class="create-nav-right">
+            <button id="btn-credit" class="create-nav-btn">
+                เติมเครดิต
+            </button>
+        </div>
+    `;
 
-   if(DEV_MODE){
-      return "DEV-BYPASS";
-   }
+    document.body.prepend(nav);
 
-   return localStorage.getItem("userId");
-}
+    // =====================================================
+    // FIX CONTENT OFFSET
+    // =====================================================
 
-
-/* ===============================
-STATE
-=============================== */
-
-let STATE = {
-   engine: "runwayml",
-   alias: null
-};
-
-
-/* ===============================
-DOM
-=============================== */
-
-const fileA = document.getElementById("fileA");
-const fileB = document.getElementById("fileB");
-
-const previewRedVideo = document.getElementById("preview-red-video");
-const previewRedImage = document.getElementById("preview-red-image");
-
-const previewBlueVideo = document.getElementById("preview-blue-video");
-const previewBlueImage = document.getElementById("preview-blue-image");
-
-const statusEl = document.getElementById("status");
-
-
-/* ===============================
-FILE PREVIEW
-=============================== */
-
-function preview(file, videoEl, imageEl){
-
-   if(!file) return;
-
-   const url = URL.createObjectURL(file);
-
-   videoEl.style.display="none";
-   imageEl.style.display="none";
-
-   if(file.type.startsWith("video/")){
-      videoEl.src = url;
-      videoEl.style.display="block";
-   }
-
-   if(file.type.startsWith("image/")){
-      imageEl.src = url;
-      imageEl.style.display="block";
-   }
-}
-
-fileA?.addEventListener("change",()=>{
-   preview(fileA.files[0],previewRedVideo,previewRedImage);
-});
-
-fileB?.addEventListener("change",()=>{
-   preview(fileB.files[0],previewBlueVideo,previewBlueImage);
-});
-
-
-/* ===============================
-GREEN GLOW ACTIVE
-=============================== */
-
-function initGlowButtons(){
-
-   const buttons = document.querySelectorAll(
-      ".model-btn, .cta-btn, .engine-btn"
-   );
-
-   buttons.forEach(btn=>{
-
-      btn.addEventListener("click",function(){
-
-         const group = this.closest(".engine-box") || document;
-
-         group.querySelectorAll(".active")
-         .forEach(el=>el.classList.remove("active"));
-
-         this.classList.add("active");
-
-      });
-
-   });
-
-}
-
-initGlowButtons();
-
-
-/* ===============================
-MODEL SELECT
-=============================== */
-
-document.querySelectorAll(".model-btn").forEach(btn=>{
-
-   btn.addEventListener("click",()=>{
-
-      STATE.alias = btn.dataset.alias;
-
-      console.log("MODEL SELECT:",STATE);
-
-   });
+    requestAnimationFrame(() => {
+        const navHeight = nav.offsetHeight;
+        document.body.style.paddingTop = navHeight + "px";
+    });
 
 });
 
+// =====================================================
+// STYLE (LOCAL ISOLATED)
+// =====================================================
 
-/* ===============================
-RUNWAY GENERATE
-=============================== */
+(function(){
 
-async function runGenerate(){
+    if(document.getElementById("create-nav-style")) return;
 
-   const userId = getUserId();
+    const style = document.createElement("style");
+    style.id = "create-nav-style";
 
-   if(!userId){
-      alert("ยังไม่ได้ Login");
-      return;
-   }
-
-   if(!STATE.alias){
-      alert("เลือก Model ก่อน");
-      return;
-   }
-
-   if(!fileA?.files[0] && STATE.alias !== "text_to_video"){
-      alert("ต้อง import fileA");
-      return;
-   }
-
-   try{
-
-      statusEl.innerText="STATUS: PROCESSING";
-
-      const formData = new FormData();
-
-      formData.append("engine","runwayml");
-      formData.append("alias",STATE.alias);
-      formData.append("type","video");
-      formData.append("prompt",
-         document.querySelector("textarea")?.value || "SN TEST"
-      );
-
-      if(fileA?.files[0]){
-         formData.append("fileA",fileA.files[0]);
-      }
-
-      if(fileB?.files[0]){
-         formData.append("fileB",fileB.files[0]);
-      }
-
-      const res = await fetch(API_URL,{
-         method:"POST",
-         headers:{
-            "x-user-id": userId
-         },
-         body:formData
-      });
-
-      const data = await res.json();
-
-      console.log("RUNWAY RESPONSE:",data);
-
-      if(!res.ok){
-         throw new Error(data.error || "Render Failed");
-      }
-
-      statusEl.innerText="STATUS: SUCCESS";
-
-   }catch(err){
-
-      console.error(err);
-
-      statusEl.innerText="STATUS: ERROR";
-
-      alert(err.message);
-
-   }
-
-}
-
-
-/* ===============================
-ENGINE BUTTON
-=============================== */
-
-document.querySelectorAll(".engine-btn")[0]
-?.addEventListener("click",runGenerate);
-
-
-/* ===============================
-ULTRA AUTO LOGIN LOCK (SAFE)
-=============================== */
-
-async function ultraCheckLogin(){
-
-    if(DEV_MODE) return;
-
-    const userId = localStorage.getItem("userId");
-
-    if(userId){
-        return;
+    style.innerHTML = `
+    .create-top-nav{
+        position:fixed;
+        top:0;
+        left:0;
+        width:100%;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:14px 20px;
+        background:#000;
+        border-bottom:1px solid rgba(255,255,255,0.08);
+        z-index:9999;
     }
 
-    const login = confirm("ต้อง login ก่อนใช้งาน");
-
-    if(login){
-        window.location.href = "/login.html";
+    .create-nav-left{
+        color:#fff;
+        font-weight:600;
+        letter-spacing:1px;
     }
 
-}
+    .create-nav-right{
+        display:flex;
+        gap:10px;
+    }
 
-ultraCheckLogin();
+    .create-nav-btn{
+        background:#00ff88;
+        border:none;
+        padding:8px 14px;
+        font-weight:bold;
+        cursor:pointer;
+    }
+
+    .create-nav-btn:hover{
+        opacity:0.85;
+    }
+    `;
+
+    document.head.appendChild(style);
+
+})();
+
+// =====================================================
+// STRIPE CREDIT TRIGGER (SAFE)
+// =====================================================
+
+document.addEventListener("click", async (e) => {
+
+    if(e.target && e.target.id === "btn-credit"){
+
+        try{
+
+            const userId = localStorage.getItem("userId") || "DEV-BYPASS";
+
+            const res = await fetch(API_BASE + "/api/stripe/create-checkout", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    product: "credit_pack_1",
+                    userId: userId
+                })
+            });
+
+            const data = await res.json();
+
+            if(data.url){
+                window.location.href = data.url;
+            } else {
+                alert("Stripe error");
+            }
+
+        }catch(err){
+            console.error("PAYMENT ERROR:", err);
+            alert("Payment Failed");
+        }
+
+    }
+
+});
