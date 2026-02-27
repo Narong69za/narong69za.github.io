@@ -1,11 +1,10 @@
-/* =====================================================
-SN DESIGN PAYMENT CENTER
-FILE: payment.js
-VERSION: 2.0.0
-STATUS: FINAL LOCK (JWT AUTH UNIFIED)
-LAST UPDATE: AUTH SYSTEM CLEANED
-NOTE: ใช้ JWT TOKEN เท่านั้น ห้ามใช้ userId อีกต่อไป
-===================================================== */
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: payment.js
+ * VERSION: v3.0.0
+ * STATUS: production
+ * LAST FIX: migrate from localStorage JWT to cookie-based auth
+ */
 
 const API_BASE = "https://sn-design-api.onrender.com";
 
@@ -13,34 +12,39 @@ const paymentBox = document.getElementById("paymentBox");
 const statusEl = document.getElementById("paymentStatus");
 
 /* =====================================================
-JWT AUTH CHECK (FINAL)
+AUTH CHECK (COOKIE MODE)
 ===================================================== */
 
-function getToken(){
+async function checkAuth(){
 
-    const token = localStorage.getItem("token");
+    try{
 
-    if(!token){
+        const res = await fetch(`${API_BASE}/auth/me`,{
+            credentials:"include",
+            cache:"no-store"
+        });
 
-        alert("กรุณา Login ก่อน");
+        if(res.status !== 200){
+            window.location.replace("/login.html");
+            return false;
+        }
 
-        window.location.href="/login.html";
+        return true;
 
-        return null;
+    }catch(err){
+        console.error("AUTH CHECK ERROR:",err);
+        return false;
     }
-
-    return token;
 }
 
 function setStatus(text){
-
     if(statusEl){
         statusEl.innerText = "STATUS: " + text;
     }
 }
 
 /* =====================================================
-PAYMENT HANDLER (JWT MODE)
+PAYMENT HANDLER (COOKIE MODE)
 ===================================================== */
 
 document.querySelectorAll(".pay-btn").forEach(btn=>{
@@ -48,9 +52,9 @@ document.querySelectorAll(".pay-btn").forEach(btn=>{
     btn.addEventListener("click", async ()=>{
 
         const method = btn.dataset.method;
-        const token = getToken();
 
-        if(!token) return;
+        const authOk = await checkAuth();
+        if(!authOk) return;
 
         setStatus("PROCESSING");
 
@@ -61,9 +65,7 @@ document.querySelectorAll(".pay-btn").forEach(btn=>{
         try{
 
             let endpoint = "";
-            let payload = {
-                amount:100
-            };
+            let payload = { amount:100 };
 
             if(method==="stripe"){
                 endpoint="/api/stripe/create-checkout";
@@ -85,9 +87,9 @@ document.querySelectorAll(".pay-btn").forEach(btn=>{
             const res = await fetch(API_BASE + endpoint,{
                 method:"POST",
                 headers:{
-                    "Content-Type":"application/json",
-                    "Authorization": "Bearer " + token
+                    "Content-Type":"application/json"
                 },
+                credentials:"include",
                 body:JSON.stringify(payload)
             });
 
@@ -95,14 +97,10 @@ document.querySelectorAll(".pay-btn").forEach(btn=>{
 
             console.log("PAYMENT RESPONSE:",data);
 
-            /* ================= STRIPE ================= */
-
             if(method==="stripe" && data.url){
                 window.location.href=data.url;
                 return;
             }
-
-            /* ================= PROMPTPAY ================= */
 
             if(method==="promptpay" && data.qr){
 
@@ -117,16 +115,7 @@ document.querySelectorAll(".pay-btn").forEach(btn=>{
                 return;
             }
 
-            /* ================= TRUEMONEY ================= */
-
-            if(method==="truemoney" && data.redirectUrl){
-                window.location.href=data.redirectUrl;
-                return;
-            }
-
-            /* ================= CRYPTO ================= */
-
-            if(method==="crypto" && data.redirectUrl){
+            if((method==="truemoney" || method==="crypto") && data.redirectUrl){
                 window.location.href=data.redirectUrl;
                 return;
             }
