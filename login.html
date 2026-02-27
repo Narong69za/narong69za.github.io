@@ -67,14 +67,15 @@ button:hover{
 async function checkAuth(){
   try{
     const res = await fetch("https://sn-design-api.onrender.com/auth/me",{
-      credentials:"include"
+      credentials:"include",
+      cache:"no-store"
     });
 
-    if(res.ok){
-      window.location.href = "/create.html";
+    if(res.status === 200){
+      window.location.replace("/create.html");
     }
-  }catch(err){
-    console.error(err);
+  }catch(e){
+    console.log("not logged in");
   }
 }
 
