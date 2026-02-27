@@ -108,7 +108,12 @@ const upload = multer({
 // RENDER ENGINE
 // =====================================================
 
-const usageCheck = require("../services/usage-check");
+app.post(
+  "/api/render",
+  usageCheck,
+  upload.any(),
+  create
+);
 
 // =====================================================
 // STATUS
