@@ -1,6 +1,6 @@
 // =====================================================
 // SN DESIGN ENGINE AI
-// ULTRA ENGINE SERVER - CLEAN STABLE VERSION
+// ULTRA ENGINE SERVER - AUTH INTEGRATION VERSION
 // =====================================================
 
 require("dotenv").config();
@@ -11,25 +11,22 @@ console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID ? "OK" : "MISSING");
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
-const { OAuth2Client } = require("google-auth-library");
+const cookieParser = require("cookie-parser");
 
 // =====================================================
 // ROUTES / SERVICES / CONTROLLERS
 // =====================================================
 
-const adminRoutes = require("./admin.routes");
+const adminRoutes = require("../routes/admin.routes");
 const stripeRoute = require("../routes/stripe.route");
 const stripeWebhook = require("../routes/stripe.webhook");
 const userRoutes = require("../routes/user.routes");
 const thaiPaymentRoutes = require("../routes/thai-payment.route");
+const authRoutes = require("../routes/auth.route");
 
 const usageCheck = require("../services/usage-check");
 
 const { create } = require("../controllers/create.controller.js");
-const { googleLogin } = require("../controllers/auth.controller");
-
-const authService = require("./auth.service");
-const db = require("../db/db");
 
 const app = express();
 
@@ -38,6 +35,9 @@ const app = express();
 // =====================================================
 
 app.use(cors());
+app.use(cookieParser());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // =====================================================
 // STRIPE WEBHOOK (RAW BODY FIRST)
@@ -51,12 +51,6 @@ app.use(
 app.use("/api/stripe/webhook", stripeWebhook);
 
 // =====================================================
-// JSON PARSER
-// =====================================================
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-// =====================================================
 // ROUTE REGISTER
 // =====================================================
 
@@ -65,36 +59,8 @@ app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
 
-// =====================================================
-// GOOGLE AUTH
-// =====================================================
-
-const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
-
-app.post("/api/auth/google", async (req, res) => {
-  try {
-
-    const { token } = req.body;
-
-    if (!token) {
-      return res.status(400).json({ error: "Missing token" });
-    }
-
-    const ticket = await googleClient.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
-
-    const payload = ticket.getPayload();
-    const user = await googleLogin(payload);
-
-    return res.json(user);
-
-  } catch (err) {
-    console.error("GOOGLE AUTH ERROR:", err.message);
-    return res.status(401).json({ error: "INVALID GOOGLE TOKEN" });
-  }
-});
+// 🔐 AUTH ROUTES (NEW)
+app.use("/auth", authRoutes);
 
 // =====================================================
 // FILE UPLOAD
@@ -114,37 +80,6 @@ app.post(
   upload.any(),
   create
 );
-
-// =====================================================
-// USER SELF DATA
-// =====================================================
-
-app.get("/api/user/me", async (req, res) => {
-  try {
-
-    const user = await authService.check(req);
-
-    db.get(
-      "SELECT id,email,credits FROM users WHERE id=?",
-      [user.id],
-      (err, row) => {
-
-        if (err) {
-          return res.status(500).json({ error: "DB ERROR" });
-        }
-
-        return res.json(row || {
-          id: user.id,
-          credits: 0
-        });
-
-      }
-    );
-
-  } catch (err) {
-    return res.status(401).json({ error: "AUTH FAIL" });
-  }
-});
 
 // =====================================================
 // STATUS
