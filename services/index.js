@@ -27,6 +27,9 @@ const usageCheck = require("../services/usage-check");
 const { create } = require("../controllers/create.controller.js");
 const { googleLogin } = require("../controllers/auth.controller");
 
+const authService = require("./auth.service");
+const db = require("../db/db");
+
 const app = express();
 
 // =====================================================
@@ -134,9 +137,6 @@ app.get("/", (req, res) => {
 // =====================================================
 // USER SELF DATA
 // =====================================================
-
-const authService = require("./auth.service");
-const db = require("../db/db");
 
 app.get("/api/user/me", async (req,res)=>{
 
