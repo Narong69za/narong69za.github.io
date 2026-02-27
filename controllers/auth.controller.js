@@ -10,10 +10,10 @@ exports.googleLogin = async (req, res) => {
 
   try {
 
-    const { token } = req.body;
+    const { token: googleToken } = req.body;
 
     const ticket = await client.verifyIdToken({
-      idToken: credential,
+      idToken: googleToken,
       audience: "322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
     });
 
