@@ -1,19 +1,45 @@
+const { OAuth2Client } = require('google-auth-library');
+const jwt = require('jsonwebtoken');
 const db = require("../db/db");
 
-exports.googleLogin = async (payload)=>{
+const client = new OAuth2Client(
+  "322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
+);
 
-   let user = await db.getUser(payload.sub);
+exports.googleLogin = async (req, res) => {
 
-   if(!user){
+  try {
 
+    const { credential } = req.body;
+
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+      audience: "322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
+    });
+
+    const payload = ticket.getPayload();
+
+    let user = await db.getUser(payload.sub);
+
+    if (!user) {
       user = await db.createUser({
-         id: payload.sub,
-         email: payload.email,
-         name: payload.name
+        id: payload.sub,
+        email: payload.email,
+        name: payload.name
       });
+    }
 
-   }
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "7d" }
+    );
 
-   return user;
+    res.json({ token });
+
+  } catch (err) {
+    console.error(err);
+    res.status(401).json({ message: "Invalid Google token" });
+  }
 
 };
