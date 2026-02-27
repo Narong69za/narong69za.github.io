@@ -34,7 +34,6 @@
     </div>
 
     <div class="g_id_signin"></div>
-
   </div>
 
   <script>
@@ -42,12 +41,13 @@
 
     async function handleCredentialResponse(response){
         try {
-            const res = await fetch(`${API}/auth/google`, {
+
+            const res = await fetch(`${API}/api/auth/google`, {   // ✅ แก้ตรงนี้
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
-    token: response.credential
-})
+                    token: response.credential
+                })
             });
 
             const data = await res.json();
@@ -58,7 +58,9 @@
             }
 
             localStorage.setItem("token", data.token);
-            window.location.href="/templates.html";
+
+            // ไปหน้า create หรือ templates ตามที่คุณใช้จริง
+            window.location.href="/create.html";
 
         } catch(err){
             console.error(err);
