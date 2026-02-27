@@ -1,73 +1,122 @@
+<!-- ===================================================== -->
+<!-- SN DESIGN STUDIO -->
+<!-- FILE: login.html -->
+<!-- VERSION: V3.2 FINAL AUTH REDIRECT FIX -->
+<!-- STATUS: FINAL - GOOGLE LOGIN + JWT STORE + REDIRECT OK -->
+<!-- DO NOT MODIFY WITHOUT AUTHORIZATION -->
+<!-- ===================================================== -->
+
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>SN DESIGN LOGIN</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SN DESIGN LOGIN</title>
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 
-  <style>
-    body{
-      background:#000;
-      color:#fff;
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      height:100vh;
-      font-family:sans-serif;
-    }
-
-    .login-box{
-      text-align:center;
-    }
-  </style>
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  flex-direction:column;
+}
+h1{
+  letter-spacing:2px;
+}
+</style>
 </head>
 
 <body>
 
-  <div class="login-box">
-    <h1>SN DESIGN LOGIN</h1>
+<h1>SN DESIGN LOGIN</h1>
 
-    <div id="g_id_onload"
-         data-client_id="322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
-         data-callback="handleCredentialResponse">
-    </div>
+<div id="g_id_onload"
+     data-client_id="YOUR_GOOGLE_CLIENT_ID"
+     data-callback="handleCredentialResponse"
+     data-auto_prompt="false">
+</div>
 
-    <div class="g_id_signin"></div>
-  </div>
+<div class="g_id_signin"
+     data-type="standard"
+     data-size="large"
+     data-theme="outline"
+     data-text="sign_in_with"
+     data-shape="rectangular"
+     data-logo_alignment="left">
+</div>
 
-  <script>
-    const API = "https://sn-design-api.onrender.com";
+<script>
 
-    async function handleCredentialResponse(response){
-        try {
+// =====================================================
+// VERSION LOCK
+// =====================================================
+const AUTH_VERSION = "V3.2 FINAL";
 
-            const res = await fetch(`${API}/api/auth/google`, {   // ✅ แก้ตรงนี้
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    token: response.credential
-                })
-            });
+// =====================================================
+// GOOGLE LOGIN HANDLER
+// =====================================================
+async function handleCredentialResponse(response){
 
-            const data = await res.json();
+  try{
 
-            if(!res.ok){
-                alert("Login failed");
-                return;
-            }
+    const res = await fetch("/api/auth/google",{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        token: response.credential
+      })
+    });
 
-            localStorage.setItem("token", data.token);
-
-            // ไปหน้า create หรือ templates ตามที่คุณใช้จริง
-            window.location.href="/create.html";
-
-        } catch(err){
-            console.error(err);
-            alert("Server error");
-        }
+    if(!res.ok){
+      alert("Login failed");
+      return;
     }
-  </script>
+
+    const data = await res.json();
+
+    // =====================================================
+    // STORE JWT TOKEN
+    // =====================================================
+    if(data.token){
+      localStorage.setItem("token", data.token);
+    }else{
+      alert("Token missing");
+      return;
+    }
+
+    // =====================================================
+    // VERIFY LOGIN SUCCESS
+    // =====================================================
+    const check = await fetch("/api/user/me",{
+      headers:{
+        Authorization: "Bearer " + localStorage.getItem("token")
+      }
+    });
+
+    if(check.ok){
+      window.location.href = "/templates.html";
+    }else{
+      localStorage.removeItem("token");
+      alert("Auth verification failed");
+    }
+
+  }catch(err){
+    console.error(err);
+    alert("Login error");
+  }
+
+}
+
+</script>
 
 </body>
 </html>
