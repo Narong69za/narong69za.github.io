@@ -1,19 +1,16 @@
 <!-- ===================================================== -->
 <!-- SN DESIGN STUDIO -->
 <!-- FILE: login.html -->
-<!-- VERSION: V3.2 FINAL AUTH REDIRECT FIX -->
-<!-- STATUS: FINAL - GOOGLE LOGIN + JWT STORE + REDIRECT OK -->
-<!-- DO NOT MODIFY WITHOUT AUTHORIZATION -->
+<!-- VERSION: V4.0 OAUTH COOKIE FLOW -->
+<!-- STATUS: PRODUCTION STABLE -->
 <!-- ===================================================== -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>SN DESIGN LOGIN</title>
-
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <style>
 body{
@@ -29,6 +26,25 @@ body{
 }
 h1{
   letter-spacing:2px;
+  margin-bottom:30px;
+}
+button{
+  padding:14px 28px;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+  background:#fff;
+  color:#000;
+  border-radius:4px;
+  font-weight:bold;
+}
+button:hover{
+  opacity:.8;
+}
+.status{
+  margin-top:20px;
+  font-size:14px;
+  opacity:.7;
 }
 </style>
 </head>
@@ -37,83 +53,38 @@ h1{
 
 <h1>SN DESIGN LOGIN</h1>
 
-<div id="g_id_onload"
-     data-client_id="322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
-     data-callback="handleCredentialResponse"
-     data-auto_prompt="false">
-</div>
+<button onclick="loginWithGoogle()">
+  LOGIN WITH GOOGLE
+</button>
 
-<div class="g_id_signin"
-     data-type="standard"
-     data-size="large"
-     data-theme="outline"
-     data-text="sign_in_with"
-     data-shape="rectangular"
-     data-logo_alignment="left">
-</div>
+<div class="status" id="status"></div>
 
 <script>
 
 // =====================================================
-// VERSION LOCK
+// AUTO CHECK IF ALREADY LOGGED IN
 // =====================================================
-const AUTH_VERSION = "V3.2 FINAL";
-
-// =====================================================
-// GOOGLE LOGIN HANDLER
-// =====================================================
-async function handleCredentialResponse(response){
-
+async function checkAuth(){
   try{
-
-    const res = await fetch("/api/auth/google",{
-      method:"POST",
-      headers:{
-        "Content-Type":"application/json"
-      },
-      body:JSON.stringify({
-        token: response.credential
-      })
+    const res = await fetch("https://sn-design-api.onrender.com/auth/me",{
+      credentials:"include"
     });
 
-    if(!res.ok){
-      alert("Login failed");
-      return;
+    if(res.ok){
+      window.location.href = "/create.html";
     }
-
-    const data = await res.json();
-
-    // =====================================================
-    // STORE JWT TOKEN
-    // =====================================================
-    if(data.token){
-      localStorage.setItem("token", data.token);
-    }else{
-      alert("Token missing");
-      return;
-    }
-
-    // =====================================================
-    // VERIFY LOGIN SUCCESS
-    // =====================================================
-    const check = await fetch("/api/user/me",{
-      headers:{
-        Authorization: "Bearer " + localStorage.getItem("token")
-      }
-    });
-
-    if(check.ok){
-      window.location.href = "/templates.html";
-    }else{
-      localStorage.removeItem("token");
-      alert("Auth verification failed");
-    }
-
   }catch(err){
     console.error(err);
-    alert("Login error");
   }
+}
 
+checkAuth();
+
+// =====================================================
+// REDIRECT TO BACKEND OAUTH
+// =====================================================
+function loginWithGoogle(){
+  window.location.href = "https://sn-design-api.onrender.com/auth/google";
 }
 
 </script>
