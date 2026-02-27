@@ -1,38 +1,11 @@
-const { OAuth2Client } = require('google-auth-library');
-const jwt = require('jsonwebtoken');
-const db = require("../db/db");
-
-const client = new OAuth2Client(
-  "322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
-);
-
-exports.googleLogin = async (req, res) => {
-
-  try {
-
-    const { token: googleToken } = req.body;
-
-    const ticket = await client.verifyIdToken({
-      idToken: googleToken,
-      audience: "322233270752-6itdqaskdsdbc7lu2t3fchm792slct4n.apps.googleusercontent.com"
-    });
-
-    const payload = ticket.getPayload();
-
-    let user = await db.getUser(payload.sub);
-
-    if (!user) {
-      user = await db.createUser({
-        id: payload.sub,
-        email: payload.email,
-        name: payload.name
-      });
-    }
-
-    const jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const db = require("../db/db");
 
 exports.googleLogin = async (payload) => {
+
+  if (!payload || !payload.sub) {
+    throw new Error("Invalid Google payload");
+  }
 
   const existingUser = await db.getUser(payload.sub);
 
