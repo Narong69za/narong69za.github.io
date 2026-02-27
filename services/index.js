@@ -91,10 +91,8 @@ app.post("/api/auth/google", async (req, res) => {
     return res.json(user);
 
   } catch (err) {
-
     console.error("GOOGLE AUTH ERROR:", err.message);
     return res.status(401).json({ error: "INVALID GOOGLE TOKEN" });
-
   }
 });
 
@@ -118,22 +116,6 @@ app.post(
 );
 
 // =====================================================
-// STATUS
-// =====================================================
-
-app.get("/api/status/server", (req, res) => {
-  res.json({ server: "online" });
-});
-
-app.get("/api/status/ai", (req, res) => {
-  res.json({ ai: "ready" });
-});
-
-app.get("/", (req, res) => {
-  res.send("SN DESIGN API RUNNING");
-});
-
-// =====================================================
 // USER SELF DATA
 // =====================================================
 
@@ -147,15 +129,37 @@ app.get("/api/user/me", async (req, res) => {
       [user.id],
       (err, row) => {
 
-        if (err) return res.status(500).json({ error: "DB ERROR" });
-        res.json(row || { id: user.id, credits: 0 });
+        if (err) {
+          return res.status(500).json({ error: "DB ERROR" });
+        }
+
+        return res.json(row || {
+          id: user.id,
+          credits: 0
+        });
 
       }
     );
 
   } catch (err) {
-    res.status(401).json({ error: "AUTH FAIL" });
+    return res.status(401).json({ error: "AUTH FAIL" });
   }
+});
+
+// =====================================================
+// STATUS
+// =====================================================
+
+app.get("/api/status/server", (req, res) => {
+  res.json({ server: "online" });
+});
+
+app.get("/api/status/ai", (req, res) => {
+  res.json({ ai: "ready" });
+});
+
+app.get("/", (req, res) => {
+  res.send("SN DESIGN API RUNNING");
 });
 
 // =====================================================
