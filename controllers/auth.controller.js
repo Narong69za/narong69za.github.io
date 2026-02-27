@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: auth.controller.js
- * VERSION: v2.1.0
+ * VERSION: v2.2.0
  * STATUS: production
- * LAST FIX: align with production DB schema + safe JWT payload
+ * LAST FIX: enable cross-domain cookie (SameSite=None) for frontend domain
  */
 
 const crypto = require("crypto");
@@ -22,7 +22,7 @@ exports.googleRedirect = async (req, res) => {
   res.cookie("oauth_state", state, {
     httpOnly: true,
     secure: true,
-    sameSite: "lax"
+    sameSite: "none" // 🔥 FIX: cross-domain support
   });
 
   const url = googleService.generateAuthUrl(state);
@@ -56,10 +56,12 @@ exports.googleCallback = async (req, res) => {
       role = "dev";
     }
 
-    // 🔎 เช็ค user จาก email ก่อน
+    // ===============================
+    // CHECK EXISTING USER
+    // ===============================
+
     let user = await db.getUserByEmail(googleUser.email);
 
-    // 🆕 ถ้าไม่มี → สร้างใหม่
     if (!user) {
       user = await db.createUser({
         id: uuidv4(),
@@ -69,13 +71,12 @@ exports.googleCallback = async (req, res) => {
       });
     }
 
-    // 🧠 ถ้ามีอยู่แล้ว แต่ role ต้อง upgrade
     if (user && role !== user.role) {
       user.role = role;
     }
 
     // ===============================
-    // JWT
+    // JWT GENERATION
     // ===============================
 
     const accessToken = tokenUtil.generateAccessToken({
@@ -88,16 +89,22 @@ exports.googleCallback = async (req, res) => {
       id: user.id
     });
 
+    // ===============================
+    // COOKIE FIX (CRITICAL)
+    // ===============================
+
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax"
+      sameSite: "none", // 🔥 FIX
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "lax"
+      sameSite: "none", // 🔥 FIX
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     return res.redirect("https://sn-designstudio.dev/create.html");
@@ -121,7 +128,17 @@ exports.me = async (req, res) => {
 // ===============================
 
 exports.logout = async (req, res) => {
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
+  res.clearCookie("access_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+
+  res.clearCookie("refresh_token", {
+    httpOnly: true,
+    secure: true,
+    sameSite: "none"
+  });
+
   return res.json({ message: "Logged out" });
 };
