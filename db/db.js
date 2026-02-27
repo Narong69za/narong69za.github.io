@@ -34,8 +34,8 @@ function getUserByGoogleId(googleId) {
       "SELECT * FROM users WHERE googleId = ?",
       [googleId],
       (err, row) => {
-        if (err) reject(err);
-        else resolve(row);
+        if (err) return reject(err);
+        resolve(row);
       }
     );
   });
@@ -46,4 +46,23 @@ function getUserByGoogleId(googleId) {
 // ==============================
 
 function createUser({ googleId, email }) {
-  return new Promise((resolve,
+  return new Promise((resolve, reject) => {
+    sqlite.run(
+      "INSERT INTO users (googleId, email, credits) VALUES (?, ?, 0)",
+      [googleId, email],
+      function (err) {
+        if (err) return reject(err);
+        resolve(this.lastID);
+      }
+    );
+  });
+}
+
+// ==============================
+// EXPORT
+// ==============================
+
+module.exports = {
+  getUserByGoogleId,
+  createUser
+};
