@@ -14,7 +14,7 @@ const multer = require("multer");
 const { OAuth2Client } = require("google-auth-library");
 
 // =====================================================
-// ROUTES
+// ROUTES / SERVICES / CONTROLLERS
 // =====================================================
 
 const adminRoutes = require("./admin.routes");
@@ -22,6 +22,7 @@ const stripeRoute = require("../routes/stripe.route");
 const stripeWebhook = require("../routes/stripe.webhook");
 const userRoutes = require("../routes/user.routes");
 const thaiPaymentRoutes = require("../routes/thai-payment.route");
+
 const usageCheck = require("../services/usage-check");
 
 const { create } = require("../controllers/create.controller.js");
@@ -71,7 +72,6 @@ app.use("/api/thai-payment", thaiPaymentRoutes);
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 app.post("/api/auth/google", async (req, res) => {
-
   try {
 
     const { token } = req.body;
@@ -96,7 +96,6 @@ app.post("/api/auth/google", async (req, res) => {
     return res.status(401).json({ error: "INVALID GOOGLE TOKEN" });
 
   }
-
 });
 
 // =====================================================
@@ -138,29 +137,25 @@ app.get("/", (req, res) => {
 // USER SELF DATA
 // =====================================================
 
-app.get("/api/user/me", async (req,res)=>{
+app.get("/api/user/me", async (req, res) => {
+  try {
 
-    try{
+    const user = await authService.check(req);
 
-        const user = await authService.check(req);
+    db.get(
+      "SELECT id,email,credits FROM users WHERE id=?",
+      [user.id],
+      (err, row) => {
 
-        db.get(
-            "SELECT id,email,credits FROM users WHERE id=?",
-            [user.id],
-            (err,row)=>{
+        if (err) return res.status(500).json({ error: "DB ERROR" });
+        res.json(row || { id: user.id, credits: 0 });
 
-                if(err) return res.status(500).json({error:"DB ERROR"});
-                res.json(row || { id:user.id, credits:0 });
+      }
+    );
 
-            }
-        );
-
-    }catch(err){
-
-        res.status(401).json({error:"AUTH FAIL"});
-
-    }
-
+  } catch (err) {
+    res.status(401).json({ error: "AUTH FAIL" });
+  }
 });
 
 // =====================================================
