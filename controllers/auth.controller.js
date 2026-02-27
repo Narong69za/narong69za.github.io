@@ -22,7 +22,7 @@ exports.googleRedirect = async (req, res) => {
   res.cookie("oauth_state", state, {
     httpOnly: true,
     secure: true,
-    sameSite: "strict"
+    sameSite: "lax"
   });
 
   const url = googleService.generateAuthUrl(state);
@@ -91,13 +91,13 @@ exports.googleCallback = async (req, res) => {
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict"
+      sameSite: "lax"
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "strict"
+      sameSite: "lax"
     });
 
     return res.redirect("https://sn-designstudio.dev/create.html");
