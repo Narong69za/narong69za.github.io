@@ -1,4 +1,12 @@
-const { google } = require('googleapis');
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: google.service.js
+ * VERSION: v1.0.0
+ * STATUS: production
+ * LAST FIX: OAuth2 Authorization Code Flow
+ */
+
+const { google } = require("googleapis");
 
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
@@ -8,28 +16,20 @@ const oauth2Client = new google.auth.OAuth2(
 
 exports.generateAuthUrl = (state) => {
   return oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: [
-      'openid',
-      'email',
-      'profile'
-    ],
+    access_type: "offline",
+    scope: ["openid", "email", "profile"],
     include_granted_scopes: true,
     state
   });
 };
 
-exports.getTokens = async (code) => {
+exports.getUserFromCode = async (code) => {
   const { tokens } = await oauth2Client.getToken(code);
-  return tokens;
-};
-
-exports.getUserProfile = async (accessToken) => {
-  oauth2Client.setCredentials({ access_token: accessToken });
+  oauth2Client.setCredentials(tokens);
 
   const oauth2 = google.oauth2({
     auth: oauth2Client,
-    version: 'v2'
+    version: "v2"
   });
 
   const { data } = await oauth2.userinfo.get();
