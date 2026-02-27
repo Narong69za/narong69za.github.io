@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const db = require("../db/db");
 
 // =====================================================
-// GOOGLE LOGIN CONTROLLER
+// GOOGLE LOGIN CONTROLLER (CLEAN VERSION)
 // =====================================================
 
 exports.googleLogin = async (payload) => {
@@ -11,10 +11,8 @@ exports.googleLogin = async (payload) => {
     throw new Error("Invalid Google payload");
   }
 
-  // ตรวจสอบว่ามี user หรือยัง
   let user = await db.getUserByGoogleId(payload.sub);
 
-  // ถ้ายังไม่มี → สร้างใหม่
   if (!user) {
     const newId = await db.createUser({
       googleId: payload.sub,
@@ -27,7 +25,6 @@ exports.googleLogin = async (payload) => {
     };
   }
 
-  // สร้าง JWT
   const token = jwt.sign(
     {
       id: user.id,
