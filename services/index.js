@@ -55,7 +55,7 @@ app.use("/api/stripe/webhook", stripeWebhook);
 // =====================================================
 
 app.use(express.json());
-
+app.use(express.urlencoded({ extended: true }));
 // =====================================================
 // ROUTE REGISTER
 // =====================================================
