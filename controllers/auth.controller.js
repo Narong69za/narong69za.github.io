@@ -1,22 +1,16 @@
 /**
- * =====================================================
- * SN DESIGN STUDIO AUTH CONTROLLER
- * VERSION: v1.0.1-production-fixed
- * =====================================================
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: auth.controller.js
+ * VERSION: v2.0.0
+ * STATUS: production
+ * LAST FIX: add OWNER/DEV role system + JWT cookie
  */
 
 const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
 const googleService = require("../services/google.service");
 const tokenUtil = require("../utils/token.util");
-const sqlite3 = require("sqlite3").verbose();
-
-const DB_PATH = process.env.DB_PATH || "./db/database.sqlite";
-const db = new sqlite3.Database(DB_PATH);
-
-// ===============================
-// GOOGLE REDIRECT
-// ===============================
+const db = require("../db/db");
 
 exports.googleRedirect = async (req, res) => {
   const state = crypto.randomBytes(32).toString("hex");
@@ -24,16 +18,12 @@ exports.googleRedirect = async (req, res) => {
   res.cookie("oauth_state", state, {
     httpOnly: true,
     secure: true,
-    sameSite: "lax"
+    sameSite: "strict"
   });
 
   const url = googleService.generateAuthUrl(state);
   return res.redirect(url);
 };
-
-// ===============================
-// GOOGLE CALLBACK
-// ===============================
 
 exports.googleCallback = async (req, res) => {
   try {
@@ -44,88 +34,62 @@ exports.googleCallback = async (req, res) => {
       return res.status(400).json({ error: "Invalid state" });
     }
 
-    const tokens = await googleService.getTokens(code);
-    const profile = await googleService.getUserProfile(tokens.access_token);
+    const googleUser = await googleService.getUserFromCode(code);
 
-    if (!profile.verified_email) {
-      return res.status(403).json({ error: "Email not verified" });
+    let role = "user";
+
+    if (googleUser.email === process.env.OWNER_EMAIL) {
+      role = "owner";
+    } else if (googleUser.email === process.env.DEV_EMAIL) {
+      role = "dev";
     }
 
-    const userId = uuidv4();
+    let user = await db.getUserByEmail(googleUser.email);
 
-    db.get(
-      "SELECT * FROM users WHERE google_id = ?",
-      [profile.id],
-      (err, existingUser) => {
-        if (err) return res.status(500).json({ error: err.message });
-
-        if (existingUser) {
-          issueToken(existingUser);
-        } else {
-          db.run(
-            `INSERT INTO users (id, google_id, email)
-             VALUES (?, ?, ?)`,
-            [userId, profile.id, profile.email],
-            function (err) {
-              if (err)
-                return res.status(500).json({ error: err.message });
-
-              db.run(
-                `INSERT INTO user_credits (user_id, credits)
-                 VALUES (?, 0)`,
-                [userId]
-              );
-
-              issueToken({
-                id: userId,
-                email: profile.email,
-                role: "user",
-                subscription: "free"
-              });
-            }
-          );
-        }
-      }
-    );
-
-    function issueToken(user) {
-      const accessToken = tokenUtil.generateAccessToken(user);
-      const refreshToken = tokenUtil.generateRefreshToken(user);
-
-      res.cookie("access_token", accessToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 15
+    if (!user) {
+      user = await db.createUser({
+        id: uuidv4(),
+        email: googleUser.email,
+        role
       });
-
-      res.cookie("refresh_token", refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "strict",
-        maxAge: 1000 * 60 * 60 * 24 * 7
-      });
-
-      res.clearCookie("oauth_state");
-
-      return res.redirect("/dashboard");
     }
+
+    const accessToken = tokenUtil.generateAccessToken({
+      id: user.id,
+      email: user.email,
+      role: user.role
+    });
+
+    const refreshToken = tokenUtil.generateRefreshToken({
+      id: user.id
+    });
+
+    res.cookie("access_token", accessToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict"
+    });
+
+    res.cookie("refresh_token", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict"
+    });
+
+    return res.redirect("https://sn-designstudio.dev/create.html");
+
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Authentication failed" });
+    console.error("AUTH CALLBACK ERROR:", err.message);
+    return res.status(500).json({ error: "Auth failed" });
   }
 };
 
-// ===============================
-// CURRENT USER
-// ===============================
-
-exports.me = (req, res) => {
-  res.json({ user: req.user });
+exports.me = async (req, res) => {
+  return res.json(req.user);
 };
 
-exports.logout = (req, res) => {
+exports.logout = async (req, res) => {
   res.clearCookie("access_token");
   res.clearCookie("refresh_token");
-  res.json({ message: "Logged out" });
+  return res.json({ message: "Logged out" });
 };
