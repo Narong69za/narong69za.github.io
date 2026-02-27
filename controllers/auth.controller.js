@@ -24,7 +24,7 @@ exports.googleRedirect = async (req, res) => {
   res.cookie("oauth_state", state, {
     httpOnly: true,
     secure: true,
-    sameSite: "strict"
+    sameSite: "lax"
   });
 
   const url = googleService.generateAuthUrl(state);
