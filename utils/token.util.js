@@ -1,24 +1,21 @@
-const jwt = require('jsonwebtoken');
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: token.util.js
+ * VERSION: v1.0.0
+ * STATUS: production
+ * LAST FIX: JWT Access + Refresh
+ */
 
-exports.generateAccessToken = (user) => {
-  return jwt.sign(
-    {
-      user_id: user.id,
-      email: user.email,
-      role: user.role,
-      subscription: user.subscription
-    },
-    process.env.JWT_ACCESS_SECRET,
-    { expiresIn: '15m' }
-  );
+const jwt = require("jsonwebtoken");
+
+exports.generateAccessToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_ACCESS_SECRET, {
+    expiresIn: "1h"
+  });
 };
 
-exports.generateRefreshToken = (user) => {
-  return jwt.sign(
-    {
-      user_id: user.id
-    },
-    process.env.JWT_REFRESH_SECRET,
-    { expiresIn: '7d' }
-  );
+exports.generateRefreshToken = (payload) => {
+  return jwt.sign(payload, process.env.JWT_REFRESH_SECRET, {
+    expiresIn: "7d"
+  });
 };
