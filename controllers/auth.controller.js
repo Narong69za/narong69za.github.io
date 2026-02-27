@@ -10,7 +10,7 @@ exports.googleLogin = async (req, res) => {
 
   try {
 
-    const { credential } = req.body;
+    const { token } = req.body;
 
     const ticket = await client.verifyIdToken({
       idToken: credential,
