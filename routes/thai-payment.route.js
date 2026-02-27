@@ -3,6 +3,9 @@
 // PROMPTPAY QR PURE VERSION (PHONE + ID SUPPORT)
 // =====================================================
 
+const express = require("express");
+const router = express.Router();
+
 function crc16(str) {
 
     let crc = 0xFFFF;
@@ -68,16 +71,41 @@ function buildPromptPayPayload(idOrPhone, amount){
     return payload + crc;
 }
 
-exports.generate = async(amount,userId)=>{
+// =====================================================
+// CREATE PROMPTPAY QR
+// =====================================================
 
-    const idOrPhone = process.env.PROMPTPAY_NUMBER;
+router.post("/create", async (req,res)=>{
 
-    if(!idOrPhone){
-        throw new Error("PROMPTPAY_NUMBER NOT SET");
+    try{
+
+        const { amount } = req.body;
+
+        if(!amount){
+            return res.status(400).json({ error:"NO AMOUNT" });
+        }
+
+        const idOrPhone = process.env.PROMPTPAY_NUMBER;
+
+        if(!idOrPhone){
+            return res.status(500).json({ error:"PROMPTPAY_NUMBER NOT SET" });
+        }
+
+        const payload = buildPromptPayPayload(idOrPhone, amount);
+
+        const qrUrl =
+            "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
+            encodeURIComponent(payload);
+
+        res.json({ qrUrl });
+
+    }catch(err){
+
+        console.error(err);
+        res.status(500).json({ error:"PROMPTPAY FAILED" });
+
     }
 
-    const payload = buildPromptPayPayload(idOrPhone, amount);
+});
 
-    return "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=" +
-           encodeURIComponent(payload);
-};
+module.exports = router;
