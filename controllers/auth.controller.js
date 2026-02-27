@@ -29,17 +29,32 @@ exports.googleLogin = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: user.id, email: user.email },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    const jwt = require("jsonwebtoken");
+const db = require("../db/db");
 
-    res.json({ token });
+exports.googleLogin = async (payload) => {
 
-  } catch (err) {
-    console.error(err);
-    res.status(401).json({ message: "Invalid Google token" });
+  const existingUser = await db.getUser(payload.sub);
+
+  let user = existingUser;
+
+  if (!user) {
+    user = await db.createUser({
+      id: payload.sub,
+      email: payload.email,
+      name: payload.name
+    });
   }
+
+  const token = jwt.sign(
+    {
+      id: user.id,
+      email: user.email
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: "7d" }
+  );
+
+  return { token };
 
 };
