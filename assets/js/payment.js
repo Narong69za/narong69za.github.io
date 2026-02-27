@@ -1,7 +1,10 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-CONTROL FILE: payment.js
-DO NOT TOUCH LAYOUT
+FILE: payment.js
+VERSION: 2.0.0
+STATUS: FINAL LOCK (JWT AUTH UNIFIED)
+LAST UPDATE: AUTH SYSTEM CLEANED
+NOTE: ใช้ JWT TOKEN เท่านั้น ห้ามใช้ userId อีกต่อไป
 ===================================================== */
 
 const API_BASE = "https://sn-design-api.onrender.com";
@@ -9,147 +12,136 @@ const API_BASE = "https://sn-design-api.onrender.com";
 const paymentBox = document.getElementById("paymentBox");
 const statusEl = document.getElementById("paymentStatus");
 
-function getUserId(){
+/* =====================================================
+JWT AUTH CHECK (FINAL)
+===================================================== */
 
-    const userId = localStorage.getItem("userId");
+function getToken(){
 
-    if(!userId){
+    const token = localStorage.getItem("token");
+
+    if(!token){
+
         alert("กรุณา Login ก่อน");
-        window.location.href = "/login.html";
+
+        window.location.href="/login.html";
+
         return null;
     }
 
-    return userId;
+    return token;
 }
 
 function setStatus(text){
-    statusEl.innerText = "STATUS: " + text;
+
+    if(statusEl){
+        statusEl.innerText = "STATUS: " + text;
+    }
 }
 
 /* =====================================================
-HANDLE BUTTON CLICK
+PAYMENT HANDLER (JWT MODE)
 ===================================================== */
 
-document.querySelectorAll(".pay-btn").forEach(btn => {
+document.querySelectorAll(".pay-btn").forEach(btn=>{
 
-    btn.addEventListener("click", async () => {
+    btn.addEventListener("click", async ()=>{
 
         const method = btn.dataset.method;
-        const userId = getUserId();
+        const token = getToken();
 
-        if(!userId) return;
+        if(!token) return;
 
         setStatus("PROCESSING");
 
-        paymentBox.innerHTML = "กำลังดำเนินการ...";
+        if(paymentBox){
+            paymentBox.innerHTML="กำลังดำเนินการ...";
+        }
 
         try{
 
-            if(method === "stripe"){
+            let endpoint = "";
+            let payload = {
+                amount:100
+            };
 
-                const res = await fetch(API_BASE + "/api/stripe/create-checkout",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        product:"credit_pack_1",
-                        userId:userId
-                    })
-                });
-
-                const data = await res.json();
-
-                if(data.url){
-                    window.location.href = data.url;
-                }else{
-                    throw new Error("Stripe Error");
-                }
-
+            if(method==="stripe"){
+                endpoint="/api/stripe/create-checkout";
+                payload.product="credit_pack_1";
             }
 
-            if(method === "promptpay"){
+            if(method==="promptpay"){
+                endpoint="/api/thai-payment/promptpay";
+            }
 
-                const res = await fetch(API_BASE + "/api/thai-payment/promptpay",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        amount:100,
-                        userId:userId
-                    })
-                });
+            if(method==="truemoney"){
+                endpoint="/api/thai-payment/truemoney";
+            }
 
-                const data = await res.json();
+            if(method==="crypto"){
+                endpoint="/api/crypto-payment/create";
+            }
 
-                if(data.qr){
+            const res = await fetch(API_BASE + endpoint,{
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json",
+                    "Authorization": "Bearer " + token
+                },
+                body:JSON.stringify(payload)
+            });
 
-                    paymentBox.innerHTML = `
+            const data = await res.json();
+
+            console.log("PAYMENT RESPONSE:",data);
+
+            /* ================= STRIPE ================= */
+
+            if(method==="stripe" && data.url){
+                window.location.href=data.url;
+                return;
+            }
+
+            /* ================= PROMPTPAY ================= */
+
+            if(method==="promptpay" && data.qr){
+
+                if(paymentBox){
+                    paymentBox.innerHTML=`
                         <h3>สแกน QR เพื่อชำระเงิน</h3>
-                        <img src="${data.qr}" style="max-width:250px;margin-top:15px;" />
+                        <img src="${data.qr}" style="max-width:260px;margin-top:15px;" />
                     `;
-
-                    setStatus("WAITING PAYMENT");
-
-                }else{
-                    throw new Error("QR Error");
                 }
 
+                setStatus("WAITING PAYMENT");
+                return;
             }
 
-            if(method === "truemoney"){
+            /* ================= TRUEMONEY ================= */
 
-                const res = await fetch(API_BASE + "/api/thai-payment/truemoney",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        amount:100,
-                        userId:userId
-                    })
-                });
-
-                const data = await res.json();
-
-                if(data.redirectUrl){
-                    window.location.href = data.redirectUrl;
-                }else{
-                    throw new Error("TrueMoney Error");
-                }
-
+            if(method==="truemoney" && data.redirectUrl){
+                window.location.href=data.redirectUrl;
+                return;
             }
 
-            if(method === "crypto"){
+            /* ================= CRYPTO ================= */
 
-                const res = await fetch(API_BASE + "/api/crypto-payment/create",{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify({
-                        amount:100,
-                        userId:userId
-                    })
-                });
-
-                const data = await res.json();
-
-                if(data.redirectUrl){
-                    window.location.href = data.redirectUrl;
-                }else{
-                    throw new Error("Crypto Error");
-                }
-
+            if(method==="crypto" && data.redirectUrl){
+                window.location.href=data.redirectUrl;
+                return;
             }
+
+            throw new Error("Invalid payment response");
 
         }catch(err){
 
-            console.error(err);
-            paymentBox.innerHTML = "เกิดข้อผิดพลาด";
-            setStatus("ERROR");
+            console.error("PAYMENT ERROR:",err);
 
+            if(paymentBox){
+                paymentBox.innerHTML="เกิดข้อผิดพลาด";
+            }
+
+            setStatus("ERROR");
         }
 
     });
