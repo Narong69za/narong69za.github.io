@@ -19,7 +19,7 @@ const { OAuth2Client } = require("google-auth-library");
 
 const adminRoutes = require("./admin.routes").router;
 const stripeRoute = require("../routes/stripe.route").router;
-const stripeWebhook = require("../routes/stripe.webhook").router;
+const stripeWebhook = require("../routes/stripe.webhook"); // ✅ แก้ตรงนี้
 const userRoutes = require("../routes/user.routes").router;
 const thaiPaymentRoutes = require("../routes/thai-payment.route").router;
 const usageCheck = require("../services/usage-check").middleware;
