@@ -1,28 +1,19 @@
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: db/db.js
+ * VERSION: v2.0.0
+ * STATUS: production
+ * LAST FIX: migrate to production schema + env db path
+ */
+
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 
-// ==============================
-// DATABASE INIT
-// ==============================
+const dbPath = process.env.DB_PATH || path.join(__dirname, "database.sqlite");
 
-const dbPath = path.join(__dirname, "database.sqlite");
+console.log("DB PATH:", dbPath);
 
 const sqlite = new sqlite3.Database(dbPath);
-
-// ==============================
-// CREATE TABLE IF NOT EXISTS
-// ==============================
-
-sqlite.serialize(() => {
-  sqlite.run(`
-    CREATE TABLE IF NOT EXISTS users (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      googleId TEXT UNIQUE,
-      email TEXT,
-      credits INTEGER DEFAULT 0
-    )
-  `);
-});
 
 // ==============================
 // GET USER BY GOOGLE ID
@@ -31,7 +22,7 @@ sqlite.serialize(() => {
 function getUserByGoogleId(googleId) {
   return new Promise((resolve, reject) => {
     sqlite.get(
-      "SELECT * FROM users WHERE googleId = ?",
+      "SELECT * FROM users WHERE google_id = ?",
       [googleId],
       (err, row) => {
         if (err) return reject(err);
@@ -45,24 +36,22 @@ function getUserByGoogleId(googleId) {
 // CREATE USER
 // ==============================
 
-function createUser({ googleId, email }) {
+function createUser({ id, googleId, email, role }) {
   return new Promise((resolve, reject) => {
     sqlite.run(
-      "INSERT INTO users (googleId, email, credits) VALUES (?, ?, 0)",
-      [googleId, email],
+      `INSERT INTO users (id, google_id, email, role) 
+       VALUES (?, ?, ?, ?)`,
+      [id, googleId, email, role || "user"],
       function (err) {
         if (err) return reject(err);
-        resolve(this.lastID);
+        resolve(id);
       }
     );
   });
 }
 
-// ==============================
-// EXPORT
-// ==============================
-
 module.exports = {
+  sqlite,
   getUserByGoogleId,
   createUser
 };
