@@ -1,10 +1,12 @@
-// =====================================================
-// SN DESIGN ENGINE NAV
-// FINAL LOGIN + PAYMENT CONTROL
-// =====================================================
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: create-nav.js
+ * VERSION: v2.0.0
+ * STATUS: production
+ * LAST FIX: replace localStorage login check with cookie-based auth (/auth/me)
+ */
 
 const API_BASE = "https://sn-design-api.onrender.com";
-
 
 // =====================================================
 // NAV BUILD
@@ -33,39 +35,47 @@ const API_BASE = "https://sn-design-api.onrender.com";
     document.body.prepend(nav);
 
     requestAnimationFrame(()=>{
-
         document.body.style.paddingTop =
         nav.offsetHeight+"px";
-
     });
 
 })();
 
 
 // =====================================================
-// LOGIN STATE (ONLY HERE)
+// AUTH CHECK (COOKIE BASED)
 // =====================================================
 
-function getUser(){
+async function checkAuth(){
 
-    const userId = localStorage.getItem("userId");
+    try{
 
-    if(!userId){
+        const res = await fetch(`${API_BASE}/auth/me`,{
+            credentials:"include",
+            cache:"no-store"
+        });
 
-        console.log("NO LOGIN → redirect");
+        if(res.status !== 200){
+            window.location.replace("/login.html");
+            return;
+        }
 
-        window.location.href="/login.html";
+        const user = await res.json();
 
-        return null;
+        // แสดง user email ถ้ามี element
+        const emailEl = document.getElementById("userEmail");
+        if(emailEl && user.email){
+            emailEl.textContent = user.email;
+        }
+
+    }catch(err){
+        console.error("AUTH CHECK ERROR:",err);
+        window.location.replace("/login.html");
     }
-
-    return userId;
 }
 
-
-// RUN LOGIN CHECK AUTO
-
-getUser();
+// RUN AUTH CHECK
+checkAuth();
 
 
 // =====================================================
@@ -75,9 +85,7 @@ getUser();
 document.addEventListener("click",(e)=>{
 
     if(e.target.id==="btn-credit"){
-
         window.location.href="/payment.html";
-
     }
 
 });
@@ -96,19 +104,13 @@ document.addEventListener("click",(e)=>{
     if(!payment) return;
 
     if(payment==="success"){
-
         alert("เติมเครดิตสำเร็จ");
-
         history.replaceState({},document.title,"/create.html");
-
     }
 
     if(payment==="cancel"){
-
         alert("ยกเลิกการชำระเงิน");
-
         history.replaceState({},document.title,"/create.html");
-
     }
 
 })();
