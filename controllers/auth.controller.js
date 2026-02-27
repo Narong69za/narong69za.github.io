@@ -7,27 +7,50 @@ exports.googleLogin = async (payload) => {
     throw new Error("Invalid Google payload");
   }
 
-  const existingUser = await db.getUser(payload.sub);
+  return new Promise((resolve, reject) => {
 
-  let user = existingUser;
+    db.get(
+      "SELECT * FROM users WHERE id = ?",
+      [payload.sub],
+      (err, row) => {
 
-  if (!user) {
-    user = await db.createUser({
-      id: payload.sub,
-      email: payload.email,
-      name: payload.name
-    });
-  }
+        if (err) {
+          return reject(err);
+        }
 
-  const token = jwt.sign(
-    {
-      id: user.id,
-      email: user.email
-    },
-    process.env.JWT_SECRET,
-    { expiresIn: "7d" }
-  );
+        if (row) {
+          const token = jwt.sign(
+            { id: row.id, email: row.email },
+            process.env.JWT_SECRET,
+            { expiresIn: "7d" }
+          );
 
-  return { token };
+          return resolve({ token });
+        }
+
+        // ถ้าไม่มี user → สร้างใหม่
+        db.run(
+          "INSERT INTO users (id, email, name, credits) VALUES (?, ?, ?, ?)",
+          [payload.sub, payload.email, payload.name, 0],
+          function (err2) {
+
+            if (err2) {
+              return reject(err2);
+            }
+
+            const token = jwt.sign(
+              { id: payload.sub, email: payload.email },
+              process.env.JWT_SECRET,
+              { expiresIn: "7d" }
+            );
+
+            return resolve({ token });
+          }
+        );
+
+      }
+    );
+
+  });
 
 };
