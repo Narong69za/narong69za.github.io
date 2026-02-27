@@ -43,8 +43,39 @@ text-align:center;
 
 <script>
 
-const API="https://sn-design-api.onrender.com";
+const API = "https://sn-design-api.onrender.com";
 
-async function handleCredentialResponse(response){
+async function handleCredentialResponse(response) {
 
-    const
+    try {
+
+        const res = await fetch(`${API}/auth/google`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                credential: response.credential
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            alert("Login failed");
+            return;
+        }
+
+        // เก็บ token
+        localStorage.setItem("token", data.token);
+
+        // redirect
+        window.location.href = "/templates.html";
+
+    } catch (err) {
+        console.error(err);
+        alert("Server error");
+    }
+}
+
+</script>
