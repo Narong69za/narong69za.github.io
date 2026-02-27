@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v2.0.0
+ * VERSION: v2.1.0
  * STATUS: production
- * LAST FIX: replace localStorage login check with cookie-based auth (/auth/me)
+ * LAST FIX: prevent auth race condition + retry logic before redirect
  */
 
 const API_BASE = "https://sn-design-api.onrender.com";
@@ -43,10 +43,10 @@ const API_BASE = "https://sn-design-api.onrender.com";
 
 
 // =====================================================
-// AUTH CHECK (COOKIE BASED)
+// AUTH CHECK (SAFE VERSION)
 // =====================================================
 
-async function checkAuth(){
+async function checkAuth(retry = true){
 
     try{
 
@@ -55,22 +55,32 @@ async function checkAuth(){
             cache:"no-store"
         });
 
-        if(res.status !== 200){
-            window.location.replace("/login.html");
+        if(res.status === 200){
+
+            const user = await res.json();
+
+            const emailEl = document.getElementById("userEmail");
+            if(emailEl && user.email){
+                emailEl.textContent = user.email;
+            }
+
             return;
         }
 
-        const user = await res.json();
+        // ถ้า 401 และยังไม่ได้ retry → รอ 300ms แล้วลองใหม่
+        if(res.status === 401 && retry){
+            setTimeout(()=> checkAuth(false), 300);
+            return;
+        }
 
-        // แสดง user email ถ้ามี element
-        const emailEl = document.getElementById("userEmail");
-        if(emailEl && user.email){
-            emailEl.textContent = user.email;
+        // 401 รอบสอง → ค่อย redirect
+        if(res.status === 401){
+            window.location.replace("/login.html");
         }
 
     }catch(err){
-        console.error("AUTH CHECK ERROR:",err);
-        window.location.replace("/login.html");
+        console.error("AUTH CHECK NETWORK ERROR:",err);
+        // ไม่ redirect ทันทีถ้า network issue
     }
 }
 
@@ -98,7 +108,6 @@ document.addEventListener("click",(e)=>{
 (function(){
 
     const params=new URLSearchParams(window.location.search);
-
     const payment=params.get("payment");
 
     if(!payment) return;
