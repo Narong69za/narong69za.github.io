@@ -17,12 +17,12 @@ const { OAuth2Client } = require("google-auth-library");
 // ROUTES
 // =====================================================
 
-const adminRoutes = require("./admin.routes");
-const stripeRoute = require("../routes/stripe.route");
-const stripeWebhook = require("../routes/stripe.webhook");
-const userRoutes = require("../routes/user.routes");
-const thaiPaymentRoutes = require("../routes/thai-payment.route");
-const usageCheck = require("../services/usage-check");
+const adminRoutes = require("./admin.routes").router;
+const stripeRoute = require("../routes/stripe.route").router;
+const stripeWebhook = require("../routes/stripe.webhook").router;
+const userRoutes = require("../routes/user.routes").router;
+const thaiPaymentRoutes = require("../routes/thai-payment.route").router;
+const usageCheck = require("../services/usage-check").middleware;
 
 const { create } = require("../controllers/create.controller.js");
 const { googleLogin } = require("../controllers/auth.controller");
