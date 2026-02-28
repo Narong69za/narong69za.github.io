@@ -224,3 +224,45 @@ background:rgba(0,255,136,0.08);
 color:#00ffae;
 
                 }
+
+/* ===== USER HEADER ===== */
+
+.user-header{
+  text-align:center;
+  font-size:18px;
+  letter-spacing:2px;
+  color:#00ffb3;
+  margin-bottom:15px;
+  font-weight:600;
+}
+
+/* ===== ACCOUNT CARD ===== */
+
+.account-card{
+  background:rgba(0,255,180,0.05);
+  border:1px solid rgba(0,255,180,0.2);
+  border-radius:14px;
+  padding:20px;
+  margin-bottom:25px;
+  backdrop-filter:blur(10px);
+}
+
+.account-title{
+  font-size:14px;
+  letter-spacing:2px;
+  color:#00ffb3;
+  margin-bottom:15px;
+  text-align:center;
+}
+
+.account-row{
+  display:flex;
+  justify-content:space-between;
+  padding:6px 0;
+  font-size:14px;
+  color:#d0fff3;
+}
+
+.account-row span:first-child{
+  opacity:0.7;
+}
