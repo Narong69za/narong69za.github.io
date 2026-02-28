@@ -8,7 +8,7 @@
 
  /* ================= DEV MODE FLAG ================= */
  /* true = ไม่บังคับ login redirect */
-const DEV_MODE = true;
+const DEV_MODE = false;
 
 /* ================= NAV BUILD ================= */
 
