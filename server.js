@@ -12,7 +12,12 @@ const db = require("./db/db");
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://sn-designstudio.dev"
+  ],
+  credentials: true
+}));
 app.use(bodyParser.json());
 
 app.use(paymentWebhook);
