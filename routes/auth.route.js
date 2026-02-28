@@ -13,6 +13,7 @@ router.get('/google/callback', authController.googleCallback);
 router.get('/me', jwtMiddleware.verifyAccessToken, authController.me);
 
 // Logout
+router.get('/logout', authController.logout);
 router.post('/logout', authController.logout);
 
 module.exports = router;
