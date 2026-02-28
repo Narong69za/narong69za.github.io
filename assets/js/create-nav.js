@@ -1,15 +1,13 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.1.0
+ * VERSION: v3.2.0
  * STATUS: production
- * LAST FIX: dev-safe auth mode + stable user status + no redirect
+ * LAST FIX: remove hardcoded API URL (use API_BASE from config.js)
  */
 
-const API_BASE = "https://sn-design-api.onrender.com";
-
-/* ================= DEV MODE FLAG ================= */
-/* true = ไม่บังคับ login redirect */
+ /* ================= DEV MODE FLAG ================= */
+ /* true = ไม่บังคับ login redirect */
 const DEV_MODE = true;
 
 /* ================= NAV BUILD ================= */
@@ -51,6 +49,11 @@ async function loadUserStatus(){
     const creditEl = document.getElementById("userCredits");
 
     try{
+
+        if (typeof API_BASE === "undefined") {
+            console.error("API_BASE not found. Ensure config.js is loaded first.");
+            return;
+        }
 
         const res = await fetch(`${API_BASE}/auth/me`,{
             credentials:"include",
