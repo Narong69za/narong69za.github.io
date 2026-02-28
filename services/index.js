@@ -34,7 +34,12 @@ const app = express();
 // GLOBAL MIDDLEWARE
 // =====================================================
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    "https://sn-designstudio.dev"
+  ],
+  credentials: true
+}));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
