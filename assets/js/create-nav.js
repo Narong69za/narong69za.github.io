@@ -21,16 +21,16 @@ const DEV_MODE = false;
     nav.className="create-top-nav";
 
     nav.innerHTML=`
-        <div class="create-nav-left">
-            ⭐ SN DESIGN ENGINE AI
-        </div>
+    <div class="create-nav-left">
+        ⭐ SN DESIGN ENGINE AI
+    </div>
 
-        <div class="create-nav-right">
-            <button id="btn-credit" class="create-nav-btn">
-                เติมเครดิต
-            </button>
-        </div>
-    `;
+    <div class="create-nav-right">
+        <button id="btn-credit" class="credit-btn-premium">
+            💎 เติมเครดิต
+        </button>
+    </div>
+`;
 
     document.body.prepend(nav);
 
@@ -81,11 +81,6 @@ async function loadUserStatus(){
         const user = await res.json();
 
         /* ===== EMAIL ===== */
-        if(emailEl){
-            emailEl.textContent = user.email || "-";
-        }
-
-        /* ===== SHORT USERNAME (ก่อน @) ===== */
         if(shortEl){
 
     const baseName = user.email
@@ -95,17 +90,11 @@ async function loadUserStatus(){
     const brandName = "SN DESIGN";
 
     if(user.role && user.role.toLowerCase() === "owner"){
-        shortEl.textContent = "👑 OWNER · " + brandName;
-    }else{
-        shortEl.textContent = brandName;
-    }
-
+    shortEl.textContent = "👑 OWNER · " + brandName;
+    shortEl.classList.add("owner-header");
 }
 
-        /* ===== ROLE ===== */
-        if(roleEl){
-            roleEl.textContent = (user.role || "-").toUpperCase();
-        }
+}
 
         /* ===== CREDITS ===== */
         if(creditEl){
