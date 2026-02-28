@@ -1,10 +1,9 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 4.0.0
-COOKIE AUTH FINAL
+VERSION: 4.1.0
+COOKIE AUTH FINAL (API_BASE FROM config.js)
+LAST FIX: remove hardcoded onrender URL
 ===================================================== */
-
-const API_BASE = "https://sn-design-api.onrender.com";
 
 const paymentBox = document.getElementById("paymentBox");
 const statusEl = document.getElementById("paymentStatus");
@@ -39,6 +38,11 @@ async function checkAuth(){
 
 async function init(){
 
+    if (typeof API_BASE === "undefined") {
+        console.error("API_BASE not found. Ensure config.js is loaded first.");
+        return;
+    }
+
     const ok = await checkAuth();
     if(!ok) return;
 
@@ -70,4 +74,61 @@ async function init(){
                 }
 
                 if(method==="crypto"){
-                    endpoint="/api/crypto
+                    endpoint="/api/crypto-payment/create";
+                }
+
+                const res = await fetch(API_BASE + endpoint,{
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    credentials:"include",
+                    body:JSON.stringify(payload)
+                });
+
+                const data = await res.json();
+
+                console.log("PAYMENT RESPONSE:",data);
+
+                if(method==="stripe" && data.url){
+                    window.location.href=data.url;
+                    return;
+                }
+
+                if(method==="promptpay" && data.qr){
+
+                    paymentBox.innerHTML=`
+                        <h3>สแกน QR เพื่อชำระเงิน</h3>
+                        <img src="${data.qr}" style="max-width:260px;margin-top:15px;" />
+                    `;
+
+                    setStatus("WAITING PAYMENT");
+                    return;
+                }
+
+                if(method==="truemoney" && data.redirectUrl){
+                    window.location.href=data.redirectUrl;
+                    return;
+                }
+
+                if(method==="crypto" && data.redirectUrl){
+                    window.location.href=data.redirectUrl;
+                    return;
+                }
+
+                throw new Error("Invalid payment response");
+
+            }catch(err){
+
+                console.error("PAYMENT ERROR:",err);
+                paymentBox.innerHTML="เกิดข้อผิดพลาด";
+                setStatus("ERROR");
+            }
+
+        });
+
+    });
+
+}
+
+document.addEventListener("DOMContentLoaded", init);
