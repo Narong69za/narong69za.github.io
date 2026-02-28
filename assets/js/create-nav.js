@@ -1,13 +1,11 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.3.0
+ * VERSION: v3.4.0
  * STATUS: production
- * LAST FIX: premium dashboard display (short username + role support)
+ * LAST FIX: removed duplicated broken logic + stable account rendering
  */
 
-/* ================= DEV MODE FLAG ================= */
-/* true = ไม่บังคับ login redirect */
 const DEV_MODE = false;
 
 /* ================= NAV BUILD ================= */
@@ -17,20 +15,19 @@ const DEV_MODE = false;
     if(document.querySelector(".create-top-nav")) return;
 
     const nav=document.createElement("div");
-
     nav.className="create-top-nav";
 
     nav.innerHTML=`
-    <div class="create-nav-left">
-        ⭐ SN DESIGN ENGINE AI
-    </div>
+        <div class="create-nav-left">
+            ⭐ SN DESIGN ENGINE AI
+        </div>
 
-    <div class="create-nav-right">
-        <button id="btn-credit" class="credit-btn-premium">
-            💎 เติมเครดิต
-        </button>
-    </div>
-`;
+        <div class="create-nav-right">
+            <button id="btn-credit" class="credit-btn-premium">
+                💎 เติมเครดิต
+            </button>
+        </div>
+    `;
 
     document.body.prepend(nav);
 
@@ -52,51 +49,43 @@ async function loadUserStatus(){
 
     try{
 
-        if (typeof API_BASE === "undefined") {
-            console.error("API_BASE not found. Ensure config.js is loaded first.");
-            return;
-        }
-
         const res = await fetch(`${API_BASE}/auth/me`,{
             credentials:"include",
             cache:"no-store"
         });
 
         if(!res.ok){
-
-            console.warn("AUTH STATUS:", res.status);
-
-            if(emailEl) emailEl.textContent = "NOT LOGGED";
-            if(creditEl) creditEl.textContent = "-";
-            if(roleEl) roleEl.textContent = "-";
-            if(shortEl) shortEl.textContent = "-";
-
-            if(!DEV_MODE && res.status === 401){
+            if(!DEV_MODE && res.status===401){
                 window.location.href="/login.html";
             }
-
             return;
         }
 
         const user = await res.json();
 
-        /* ===== EMAIL ===== */
+        /* ===== HEADER BRAND ===== */
+
+        const brandName = "SN DESIGN";
+
         if(shortEl){
+            if(user.role && user.role.toLowerCase()==="owner"){
+                shortEl.textContent="👑 OWNER · "+brandName;
+                shortEl.classList.add("owner-header");
+            }else{
+                shortEl.textContent=brandName;
+            }
+        }
 
-    const baseName = user.email
-        ? user.email.split("@")[0].split(".")[0]
-        : "USER";
+        /* ===== ACCOUNT CARD ===== */
 
-    const brandName = "SN DESIGN";
+        if(emailEl){
+            emailEl.textContent = user.email || "-";
+        }
 
-    if(user.role && user.role.toLowerCase() === "owner"){
-    shortEl.textContent = "👑 OWNER · " + brandName;
-    shortEl.classList.add("owner-header");
-}
+        if(roleEl){
+            roleEl.textContent = (user.role || "-").toUpperCase();
+        }
 
-}
-
-        /* ===== CREDITS ===== */
         if(creditEl){
             creditEl.textContent = user.credits ?? 0;
         }
@@ -104,16 +93,8 @@ async function loadUserStatus(){
         console.log("USER LOADED:", user);
 
     }catch(err){
-
-        console.warn("USER LOAD ERROR:", err);
-
-        if(emailEl) emailEl.textContent = "ERROR";
-        if(creditEl) creditEl.textContent = "-";
-        if(roleEl) roleEl.textContent = "-";
-        if(shortEl) shortEl.textContent = "-";
-
+        console.warn("USER LOAD ERROR:",err);
     }
-
 }
 
 document.addEventListener("DOMContentLoaded", loadUserStatus);
@@ -121,9 +102,7 @@ document.addEventListener("DOMContentLoaded", loadUserStatus);
 /* ================= CREDIT BUTTON ================= */
 
 document.addEventListener("click",(e)=>{
-
     if(e.target.id==="btn-credit"){
         window.location.href="/payment.html";
     }
-
 });
