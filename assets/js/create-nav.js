@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.0.0
+ * VERSION: v3.0.1
  * STATUS: production
- * LAST FIX: show user + credits from /auth/me
+ * LAST FIX: remove forced login redirect, stabilize user status load
  */
 
 const API_BASE = "https://sn-design-api.onrender.com";
@@ -39,7 +39,7 @@ const API_BASE = "https://sn-design-api.onrender.com";
 
 })();
 
-/* ================= AUTH + USER STATUS ================= */
+/* ================= USER STATUS LOAD (NO REDIRECT) ================= */
 
 async function loadUserStatus(){
 
@@ -50,34 +50,31 @@ async function loadUserStatus(){
             cache:"no-store"
         });
 
-        if(res.status !== 200){
-            window.location.replace("/login.html");
-            return;
+        if(!res.ok){
+            console.warn("AUTH STATUS:", res.status);
+            return; // ❌ ไม่ redirect
         }
 
         const user = await res.json();
 
-        // USER EMAIL
         const emailEl = document.getElementById("userEmail");
         if(emailEl){
             emailEl.textContent = user.email || "-";
         }
 
-        // USER CREDITS
         const creditEl = document.getElementById("userCredits");
         if(creditEl){
             creditEl.textContent = user.credits ?? 0;
         }
 
     }catch(err){
-
-        console.error("USER LOAD ERROR:",err);
-        window.location.replace("/login.html");
+        console.warn("USER LOAD ERROR:", err);
+        // ❌ ไม่ redirect
     }
 
 }
 
-loadUserStatus();
+document.addEventListener("DOMContentLoaded", loadUserStatus);
 
 /* ================= CREDIT BUTTON ================= */
 
