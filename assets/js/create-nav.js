@@ -1,13 +1,13 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.2.0
+ * VERSION: v3.3.0
  * STATUS: production
- * LAST FIX: remove hardcoded API URL (use API_BASE from config.js)
+ * LAST FIX: premium dashboard display (short username + role support)
  */
 
- /* ================= DEV MODE FLAG ================= */
- /* true = ไม่บังคับ login redirect */
+/* ================= DEV MODE FLAG ================= */
+/* true = ไม่บังคับ login redirect */
 const DEV_MODE = false;
 
 /* ================= NAV BUILD ================= */
@@ -47,6 +47,8 @@ async function loadUserStatus(){
 
     const emailEl = document.getElementById("userEmail");
     const creditEl = document.getElementById("userCredits");
+    const roleEl = document.getElementById("userRole");
+    const shortEl = document.getElementById("userShort");
 
     try{
 
@@ -66,6 +68,8 @@ async function loadUserStatus(){
 
             if(emailEl) emailEl.textContent = "NOT LOGGED";
             if(creditEl) creditEl.textContent = "-";
+            if(roleEl) roleEl.textContent = "-";
+            if(shortEl) shortEl.textContent = "-";
 
             if(!DEV_MODE && res.status === 401){
                 window.location.href="/login.html";
@@ -76,10 +80,22 @@ async function loadUserStatus(){
 
         const user = await res.json();
 
+        /* ===== EMAIL ===== */
         if(emailEl){
             emailEl.textContent = user.email || "-";
         }
 
+        /* ===== SHORT USERNAME (ก่อน @) ===== */
+        if(shortEl && user.email){
+            shortEl.textContent = user.email.split("@")[0];
+        }
+
+        /* ===== ROLE ===== */
+        if(roleEl){
+            roleEl.textContent = (user.role || "-").toUpperCase();
+        }
+
+        /* ===== CREDITS ===== */
         if(creditEl){
             creditEl.textContent = user.credits ?? 0;
         }
@@ -92,6 +108,8 @@ async function loadUserStatus(){
 
         if(emailEl) emailEl.textContent = "ERROR";
         if(creditEl) creditEl.textContent = "-";
+        if(roleEl) roleEl.textContent = "-";
+        if(shortEl) shortEl.textContent = "-";
 
     }
 
