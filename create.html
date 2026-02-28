@@ -1,3 +1,11 @@
+<!-- =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: create.html
+VERSION: v1.1.0
+STATUS: production
+LAST FIX: added config.js (API_BASE centralization)
+===================================================== -->
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
@@ -12,10 +20,12 @@
 <div class="create-root create-container">
 
   <h1 class="title">ULTRA ENGINE CONTROL</h1>
-<div class="user-status-box">
-  <div>USER: <span id="userEmail">-</span></div>
-  <div>CREDITS: <span id="userCredits">0</span></div>
-</div>
+
+  <div class="user-status-box">
+    <div>USER: <span id="userEmail">-</span></div>
+    <div>CREDITS: <span id="userCredits">0</span></div>
+  </div>
+
   <!-- PROMPT -->
   <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
 
@@ -36,7 +46,6 @@
       <h2>⭐ สร้างวิดีโอ AI</h2>
 
       <div class="mode-row">
-
         <button class="mode-btn" data-alias="image_to_video">
           🎬 สร้างคลิปไวรัล AI
         </button>
@@ -52,7 +61,6 @@
         <button class="mode-btn" data-alias="face_swap">
           🧑 เปลี่ยนหน้า AI
         </button>
-
       </div>
 
       <button class="generate-btn">
@@ -61,30 +69,16 @@
 
     </div>
 
-
     <!-- BLUE ENGINE -->
     <div class="engine engine-box blue-engine">
 
       <h2>⭐ สร้างวิดีโอ AI (RC)</h2>
 
       <div class="mode-row">
-
-        <button class="mode-btn">
-          🎬 สร้างคลิปไวรัล AI
-        </button>
-
-        <button class="mode-btn">
-          🎤 ลิปซิงค์เสียง-คำพูด
-        </button>
-
-        <button class="mode-btn">
-          🕺 โคลนท่าเต้น AI
-        </button>
-
-        <button class="mode-btn">
-          🧑 เปลี่ยนหน้า AI
-        </button>
-
+        <button class="mode-btn">🎬 สร้างคลิปไวรัล AI</button>
+        <button class="mode-btn">🎤 ลิปซิงค์เสียง-คำพูด</button>
+        <button class="mode-btn">🕺 โคลนท่าเต้น AI</button>
+        <button class="mode-btn">🧑 เปลี่ยนหน้า AI</button>
       </div>
 
       <button class="generate-btn">
@@ -98,7 +92,6 @@
   <!-- ================== UPLOAD SECTION ================== -->
 
   <div class="upload-core-wrapper">
-
     <div class="upload-core">
 
       <div class="upload-box">
@@ -112,7 +105,6 @@
       </div>
 
     </div>
-
   </div>
 
   <!-- ================== PREVIEW ================== -->
@@ -138,6 +130,8 @@
 
 </div>
 
+<!-- IMPORTANT: config.js must load before any file using API_BASE -->
+<script src="/assets/js/config.js"></script>
 <script src="/assets/js/create.js"></script>
 <script src="/assets/js/create-nav.js"></script>
 
