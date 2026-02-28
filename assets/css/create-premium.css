@@ -345,3 +345,15 @@ color:#00ffae;
 .account-row span:first-child{
   opacity:0.6;
 }
+.user-header{
+  font-size:18px;
+  letter-spacing:2px;
+  margin-bottom:20px;
+  font-weight:600;
+  color:#00ffb3;
+}
+
+/* OWNER HEADER GLOW */
+.user-header:has(#userShort:contains("OWNER")){
+  color:#ffd700;
+}
