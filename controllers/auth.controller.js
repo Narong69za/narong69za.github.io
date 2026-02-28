@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: auth.controller.js
- * VERSION: v2.3.0
+ * VERSION: v2.4.0
  * STATUS: production
- * LAST FIX: /auth/me now fetch credits from users table instead of JWT payload
+ * LAST FIX: /auth/me returns credits from database (no structure removed)
  */
 
 const crypto = require("crypto");
@@ -102,7 +102,7 @@ exports.googleCallback = async (req, res) => {
 };
 
 // ===============================
-// ME (FIXED)
+// ME (DATABASE SYNC)
 // ===============================
 
 exports.me = async (req, res) => {
@@ -118,7 +118,7 @@ exports.me = async (req, res) => {
       id: user.id,
       email: user.email,
       role: user.role,
-      credits: user.credits || 0
+      credits: user.credits ?? 0
     });
 
   } catch (err) {
