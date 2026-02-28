@@ -1,3 +1,11 @@
+/* =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: create-premium.css
+VERSION: v3.1.0
+STATUS: production
+LAST FIX: visual refinement only (no layout / no layer change)
+COMPATIBLE WITH: create.html (ULTRA ENGINE CONTROL)
+===================================================== */
 *{
 box-sizing:border-box;
 }
@@ -447,4 +455,21 @@ max-width:100%;
 .user-status-box span{
     color:#00ffae;
     font-weight:600;
+}
+/* ===============================
+ENGINE DEPTH REFINEMENT (SAFE)
+================================ */
+
+.engine-box{
+background:linear-gradient(
+180deg,
+rgba(15,15,15,0.95),
+rgba(5,5,5,0.95)
+);
+border:1px solid rgba(255,255,255,0.04);
+transition:0.3s ease;
+}
+
+.engine-box:hover{
+transform:translateY(-4px);
 }
