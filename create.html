@@ -1,9 +1,9 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.html
-VERSION: v1.1.0
+VERSION: v1.2.0
 STATUS: production
-LAST FIX: added config.js (API_BASE centralization)
+LAST FIX: premium account layout (remove duplicated IDs)
 ===================================================== -->
 
 <!DOCTYPE html>
@@ -21,45 +21,54 @@ LAST FIX: added config.js (API_BASE centralization)
 
   <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-  <!-- ===== USER HEADER ===== -->
-<div class="user-header">
-  <span id="userShort"></span>
-<span id="userEmail"></span>
-<span id="userRole"></span>
-<span id="userCredits"></span>
-</div>
+  <!-- ================= PREMIUM ACCOUNT SECTION ================= -->
 
-<!-- ===== ACCOUNT DETAIL CARD ===== -->
-<div class="account-card">
-  <div class="account-title">ACCOUNT STATUS</div>
+  <div class="account-wrapper">
 
-  <div class="account-row">
-    <span>EMAIL</span>
-    <span id="userEmail">-</span>
+    <!-- USER SHORT NAME (บนสุด) -->
+    <div class="user-header">
+      <span id="userShort">-</span>
+    </div>
+
+    <!-- ACCOUNT CARD -->
+    <div class="account-card">
+
+      <div class="account-title">
+        ACCOUNT STATUS
+      </div>
+
+      <div class="account-row">
+        <span>EMAIL</span>
+        <span id="userEmail">-</span>
+      </div>
+
+      <div class="account-row">
+        <span>ROLE</span>
+        <span id="userRole">-</span>
+      </div>
+
+      <div class="account-row">
+        <span>CREDITS</span>
+        <span id="userCredits">0</span>
+      </div>
+
+    </div>
+
   </div>
 
-  <div class="account-row">
-    <span>ROLE</span>
-    <span id="userRole">-</span>
-  </div>
+  <!-- ================= PROMPT ================= -->
 
-  <div class="account-row">
-    <span>CREDITS</span>
-    <span id="userCredits">0</span>
-  </div>
-</div>
-
-  <!-- PROMPT -->
   <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
 
-  <!-- TYPE BAR -->
+  <!-- ================= TYPE BAR ================= -->
+
   <div class="type-bar">
     <button class="type-btn active">สร้างวิดีโอ</button>
     <button class="type-btn">สร้างภาพ</button>
     <button class="type-btn">Upscale</button>
   </div>
 
-  <!-- ================== ENGINE SECTION ================== -->
+  <!-- ================= ENGINE SECTION ================= -->
 
   <div class="engine-wrap">
 
@@ -112,7 +121,7 @@ LAST FIX: added config.js (API_BASE centralization)
 
   </div>
 
-  <!-- ================== UPLOAD SECTION ================== -->
+  <!-- ================= UPLOAD SECTION ================= -->
 
   <div class="upload-core-wrapper">
     <div class="upload-core">
@@ -130,7 +139,7 @@ LAST FIX: added config.js (API_BASE centralization)
     </div>
   </div>
 
-  <!-- ================== PREVIEW ================== -->
+  <!-- ================= PREVIEW ================= -->
 
   <div class="preview-dual preview-wrapper">
 
@@ -154,9 +163,9 @@ LAST FIX: added config.js (API_BASE centralization)
 </div>
 
 <!-- IMPORTANT: config.js must load before any file using API_BASE -->
-<script src="/assets/js/config.js?v=6.0.0"></script>
-<script src="/assets/js/create.js?v=6.0.0"></script>
-<script src="/assets/js/create-nav.js?v=6.0.0"></script>
+<script src="/assets/js/config.js?v=6.1.0"></script>
+<script src="/assets/js/create.js?v=6.1.0"></script>
+<script src="/assets/js/create-nav.js?v=6.1.0"></script>
 
 </body>
 </html>
