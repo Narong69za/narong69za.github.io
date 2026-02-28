@@ -473,3 +473,29 @@ transition:0.3s ease;
 .engine-box:hover{
 transform:translateY(-4px);
 }
+/* =====================================
+FINAL ACTIVE SYSTEM FIX (NO LAYOUT CHANGE)
+===================================== */
+
+/* reset conflict */
+.engine-box button{
+border:1px solid rgba(255,255,255,0.08);
+transition:0.2s ease;
+}
+
+/* unified active state */
+.engine-box button.active-model,
+.engine-box button.active-mode,
+.engine-box button.active-select{
+
+border:1px solid #00ff88 !important;
+
+box-shadow:
+0 0 12px #00ff88,
+0 0 25px rgba(0,255,136,0.4);
+
+background:rgba(0,255,136,0.08);
+
+color:#00ffae;
+
+}
