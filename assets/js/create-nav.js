@@ -1,12 +1,16 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.0.1
+ * VERSION: v3.1.0
  * STATUS: production
- * LAST FIX: remove forced login redirect, stabilize user status load
+ * LAST FIX: dev-safe auth mode + stable user status + no redirect
  */
 
 const API_BASE = "https://sn-design-api.onrender.com";
+
+/* ================= DEV MODE FLAG ================= */
+/* true = ไม่บังคับ login redirect */
+const DEV_MODE = true;
 
 /* ================= NAV BUILD ================= */
 
@@ -39,9 +43,12 @@ const API_BASE = "https://sn-design-api.onrender.com";
 
 })();
 
-/* ================= USER STATUS LOAD (NO REDIRECT) ================= */
+/* ================= USER STATUS LOAD ================= */
 
 async function loadUserStatus(){
+
+    const emailEl = document.getElementById("userEmail");
+    const creditEl = document.getElementById("userCredits");
 
     try{
 
@@ -51,25 +58,38 @@ async function loadUserStatus(){
         });
 
         if(!res.ok){
+
             console.warn("AUTH STATUS:", res.status);
-            return; // ❌ ไม่ redirect
+
+            if(emailEl) emailEl.textContent = "NOT LOGGED";
+            if(creditEl) creditEl.textContent = "-";
+
+            if(!DEV_MODE && res.status === 401){
+                window.location.href="/login.html";
+            }
+
+            return;
         }
 
         const user = await res.json();
 
-        const emailEl = document.getElementById("userEmail");
         if(emailEl){
             emailEl.textContent = user.email || "-";
         }
 
-        const creditEl = document.getElementById("userCredits");
         if(creditEl){
             creditEl.textContent = user.credits ?? 0;
         }
 
+        console.log("USER LOADED:", user);
+
     }catch(err){
+
         console.warn("USER LOAD ERROR:", err);
-        // ❌ ไม่ redirect
+
+        if(emailEl) emailEl.textContent = "ERROR";
+        if(creditEl) creditEl.textContent = "-";
+
     }
 
 }
