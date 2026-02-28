@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: auth.controller.js
- * VERSION: v2.2.0
+ * VERSION: v2.3.0
  * STATUS: production
- * LAST FIX: enable cross-domain cookie (SameSite=None) for frontend domain
+ * LAST FIX: /auth/me now fetch credits from users table instead of JWT payload
  */
 
 const crypto = require("crypto");
@@ -22,7 +22,7 @@ exports.googleRedirect = async (req, res) => {
   res.cookie("oauth_state", state, {
     httpOnly: true,
     secure: true,
-    sameSite: "none" // 🔥 FIX: cross-domain support
+    sameSite: "none"
   });
 
   const url = googleService.generateAuthUrl(state);
@@ -56,28 +56,18 @@ exports.googleCallback = async (req, res) => {
       role = "dev";
     }
 
-    // ===============================
-    // CHECK EXISTING USER
-    // ===============================
-
     let user = await db.getUserByEmail(googleUser.email);
 
     if (!user) {
-      user = await db.createUser({
+      await db.createUser({
         id: uuidv4(),
         googleId: googleUser.id,
         email: googleUser.email,
         role
       });
-    }
 
-    if (user && role !== user.role) {
-      user.role = role;
+      user = await db.getUserByEmail(googleUser.email);
     }
-
-    // ===============================
-    // JWT GENERATION
-    // ===============================
 
     const accessToken = tokenUtil.generateAccessToken({
       id: user.id,
@@ -89,21 +79,17 @@ exports.googleCallback = async (req, res) => {
       id: user.id
     });
 
-    // ===============================
-    // COOKIE FIX (CRITICAL)
-    // ===============================
-
     res.cookie("access_token", accessToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "none", // 🔥 FIX
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.cookie("refresh_token", refreshToken, {
       httpOnly: true,
       secure: true,
-      sameSite: "none", // 🔥 FIX
+      sameSite: "none",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -116,11 +102,29 @@ exports.googleCallback = async (req, res) => {
 };
 
 // ===============================
-// ME
+// ME (FIXED)
 // ===============================
 
 exports.me = async (req, res) => {
-  return res.json(req.user);
+  try {
+
+    const user = await db.getUserByEmail(req.user.email);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    return res.json({
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      credits: user.credits || 0
+    });
+
+  } catch (err) {
+    console.error("ME ERROR:", err);
+    return res.status(500).json({ error: "Server error" });
+  }
 };
 
 // ===============================
