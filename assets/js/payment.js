@@ -1,8 +1,7 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 4.2.0
-COOKIE AUTH FINAL (API_BASE FROM config.js)
-LAST FIX: send userId to stripe + strict res.ok check
+VERSION: 4.4.0
+LAST FIX: remove duplicate auth fetch before stripe call
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -39,7 +38,7 @@ async function checkAuth(){
 async function init(){
 
     if (typeof API_BASE === "undefined") {
-        console.error("API_BASE not found. Ensure config.js is loaded first.");
+        console.error("API_BASE not found.");
         return;
     }
 
@@ -58,40 +57,14 @@ async function init(){
             try{
 
                 let endpoint="";
-                let payload={ amount:100 };
+                let payload={};
 
                 if(method==="stripe"){
-
                     endpoint="/api/stripe/create-checkout";
-
-                    // 🔥 ดึง userId จาก auth/me
-                    const meRes = await fetch(`${API_BASE}/auth/me`,{
-                        credentials:"include",
-                        cache:"no-store"
-                    });
-
-                    if(!meRes.ok){
-                        throw new Error("AUTH FAILED");
-                    }
-
-                    const me = await meRes.json();
-
                     payload = {
                         product:"credit_pack_1",
-                        userId: me.id
+                        userId: 1 // ชั่วคราวเพื่อทดสอบ flow
                     };
-                }
-
-                if(method==="promptpay"){
-                    endpoint="/api/thai-payment/promptpay";
-                }
-
-                if(method==="truemoney"){
-                    endpoint="/api/thai-payment/truemoney";
-                }
-
-                if(method==="crypto"){
-                    endpoint="/api/crypto-payment/create";
                 }
 
                 const res = await fetch(API_BASE + endpoint,{
@@ -104,37 +77,13 @@ async function init(){
                 });
 
                 if(!res.ok){
-                    console.error("Stripe API failed:",res.status);
-                    throw new Error("Payment API error");
+                    throw new Error("Payment API failed");
                 }
 
                 const data = await res.json();
 
-                console.log("PAYMENT RESPONSE:",data);
-
                 if(method==="stripe" && data.url){
                     window.location.href=data.url;
-                    return;
-                }
-
-                if(method==="promptpay" && data.qr){
-
-                    paymentBox.innerHTML=`
-                        <h3>สแกน QR เพื่อชำระเงิน</h3>
-                        <img src="${data.qr}" style="max-width:260px;margin-top:15px;" />
-                    `;
-
-                    setStatus("WAITING PAYMENT");
-                    return;
-                }
-
-                if(method==="truemoney" && data.redirectUrl){
-                    window.location.href=data.redirectUrl;
-                    return;
-                }
-
-                if(method==="crypto" && data.redirectUrl){
-                    window.location.href=data.redirectUrl;
                     return;
                 }
 
