@@ -1,8 +1,8 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 4.1.0
+VERSION: 4.2.0
 COOKIE AUTH FINAL (API_BASE FROM config.js)
-LAST FIX: remove hardcoded onrender URL
+LAST FIX: send userId to stripe + strict res.ok check
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -61,8 +61,25 @@ async function init(){
                 let payload={ amount:100 };
 
                 if(method==="stripe"){
+
                     endpoint="/api/stripe/create-checkout";
-                    payload.product="credit_pack_1";
+
+                    // 🔥 ดึง userId จาก auth/me
+                    const meRes = await fetch(`${API_BASE}/auth/me`,{
+                        credentials:"include",
+                        cache:"no-store"
+                    });
+
+                    if(!meRes.ok){
+                        throw new Error("AUTH FAILED");
+                    }
+
+                    const me = await meRes.json();
+
+                    payload = {
+                        product:"credit_pack_1",
+                        userId: me.id
+                    };
                 }
 
                 if(method==="promptpay"){
@@ -85,6 +102,11 @@ async function init(){
                     credentials:"include",
                     body:JSON.stringify(payload)
                 });
+
+                if(!res.ok){
+                    console.error("Stripe API failed:",res.status);
+                    throw new Error("Payment API error");
+                }
 
                 const data = await res.json();
 
