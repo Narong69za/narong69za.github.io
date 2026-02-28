@@ -21,10 +21,30 @@ LAST FIX: added config.js (API_BASE centralization)
 
   <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-  <div class="user-status-box">
-    <div>USER: <span id="userEmail">-</span></div>
-    <div>CREDITS: <span id="userCredits">0</span></div>
+  <!-- ===== USER HEADER ===== -->
+<div class="user-header">
+  <span id="userShort">-</span>
+</div>
+
+<!-- ===== ACCOUNT DETAIL CARD ===== -->
+<div class="account-card">
+  <div class="account-title">ACCOUNT STATUS</div>
+
+  <div class="account-row">
+    <span>EMAIL</span>
+    <span id="userEmail">-</span>
   </div>
+
+  <div class="account-row">
+    <span>ROLE</span>
+    <span id="userRole">-</span>
+  </div>
+
+  <div class="account-row">
+    <span>CREDITS</span>
+    <span id="userCredits">0</span>
+  </div>
+</div>
 
   <!-- PROMPT -->
   <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
