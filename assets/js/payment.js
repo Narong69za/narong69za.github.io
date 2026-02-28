@@ -1,8 +1,7 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-FILE: payment.js
-VERSION: 3.0.0
-STATUS: FINAL - COOKIE BASED AUTH
+VERSION: 4.0.0
+COOKIE AUTH FINAL
 ===================================================== */
 
 const API_BASE = "https://sn-design-api.onrender.com";
@@ -10,9 +9,11 @@ const API_BASE = "https://sn-design-api.onrender.com";
 const paymentBox = document.getElementById("paymentBox");
 const statusEl = document.getElementById("paymentStatus");
 
-/* =====================================================
-AUTH CHECK (COOKIE BASED)
-===================================================== */
+function setStatus(text){
+    if(statusEl){
+        statusEl.innerText = "STATUS: " + text;
+    }
+}
 
 async function checkAuth(){
 
@@ -25,34 +26,21 @@ async function checkAuth(){
 
         if(res.status !== 200){
             window.location.replace("/login.html");
-            return null;
+            return false;
         }
 
-        return await res.json();
+        return true;
 
     }catch(err){
-
-        console.error("AUTH ERROR:",err);
         window.location.replace("/login.html");
-        return null;
+        return false;
     }
 }
 
-function setStatus(text){
+async function init(){
 
-    if(statusEl){
-        statusEl.innerText = "STATUS: " + text;
-    }
-}
-
-/* =====================================================
-PAYMENT HANDLER
-===================================================== */
-
-async function initPayment(){
-
-    const user = await checkAuth();
-    if(!user) return;
+    const ok = await checkAuth();
+    if(!ok) return;
 
     document.querySelectorAll(".pay-btn").forEach(btn=>{
 
@@ -61,10 +49,7 @@ async function initPayment(){
             const method = btn.dataset.method;
 
             setStatus("PROCESSING");
-
-            if(paymentBox){
-                paymentBox.innerHTML="กำลังดำเนินการ...";
-            }
+            paymentBox.innerHTML="กำลังดำเนินการ...";
 
             try{
 
@@ -85,65 +70,4 @@ async function initPayment(){
                 }
 
                 if(method==="crypto"){
-                    endpoint="/api/crypto-payment/create";
-                }
-
-                const res = await fetch(API_BASE + endpoint,{
-                    method:"POST",
-                    credentials:"include",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    body:JSON.stringify(payload)
-                });
-
-                const data = await res.json();
-
-                console.log("PAYMENT RESPONSE:",data);
-
-                /* STRIPE */
-                if(method==="stripe" && data.url){
-                    window.location.href=data.url;
-                    return;
-                }
-
-                /* PROMPTPAY */
-                if(method==="promptpay" && data.qr){
-
-                    if(paymentBox){
-                        paymentBox.innerHTML=`
-                            <h3>สแกน QR เพื่อชำระเงิน</h3>
-                            <img src="${data.qr}" style="max-width:260px;margin-top:15px;" />
-                        `;
-                    }
-
-                    setStatus("WAITING PAYMENT");
-                    return;
-                }
-
-                /* TRUEMONEY / CRYPTO */
-                if(data.redirectUrl){
-                    window.location.href=data.redirectUrl;
-                    return;
-                }
-
-                throw new Error("Invalid payment response");
-
-            }catch(err){
-
-                console.error("PAYMENT ERROR:",err);
-
-                if(paymentBox){
-                    paymentBox.innerHTML="เกิดข้อผิดพลาด";
-                }
-
-                setStatus("ERROR");
-            }
-
-        });
-
-    });
-
-}
-
-initPayment();
+                    endpoint="/api/crypto
