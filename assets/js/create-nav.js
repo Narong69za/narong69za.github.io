@@ -86,9 +86,21 @@ async function loadUserStatus(){
         }
 
         /* ===== SHORT USERNAME (ก่อน @) ===== */
-        if(shortEl && user.email){
-            shortEl.textContent = user.email.split("@")[0];
-        }
+        if(shortEl){
+
+    const baseName = user.email
+        ? user.email.split("@")[0].split(".")[0]
+        : "USER";
+
+    const brandName = "SN DESIGN";
+
+    if(user.role && user.role.toLowerCase() === "owner"){
+        shortEl.textContent = "👑 OWNER · " + brandName;
+    }else{
+        shortEl.textContent = brandName;
+    }
+
+}
 
         /* ===== ROLE ===== */
         if(roleEl){
