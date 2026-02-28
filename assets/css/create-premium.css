@@ -357,3 +357,42 @@ color:#00ffae;
 .user-header:has(#userShort:contains("OWNER")){
   color:#ffd700;
 }
+/* ================= NAV LAYOUT ================= */
+
+.create-top-nav{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 20px;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  z-index:1000;
+  background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid rgba(0,255,180,0.2);
+}
+
+/* ================= PREMIUM CREDIT BUTTON ================= */
+
+.credit-btn-premium{
+  background:linear-gradient(135deg,#00ffb3,#00c8ff);
+  border:none;
+  padding:8px 16px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:1px;
+  cursor:pointer;
+  color:#000;
+  transition:all 0.3s ease;
+  box-shadow:0 0 12px rgba(0,255,180,0.6);
+}
+
+.credit-btn-premium:hover{
+  transform:scale(1.05);
+  box-shadow:
+    0 0 20px rgba(0,255,180,1),
+    0 0 35px rgba(0,255,180,0.7);
+}
