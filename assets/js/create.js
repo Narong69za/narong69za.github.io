@@ -42,3 +42,25 @@ document.addEventListener("click",(e)=>{
     }
 
 });
+// ================= ACTIVE MODE FIX =================
+
+document.querySelectorAll(".mode-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        btn.closest(".engine-box")
+           .querySelectorAll(".mode-btn")
+           .forEach(b=>b.classList.remove("active-mode"));
+
+        btn.classList.add("active-mode");
+    });
+});
+
+// TYPE BAR
+
+document.querySelectorAll(".type-btn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+        document.querySelectorAll(".type-btn")
+        .forEach(b=>b.classList.remove("active-model"));
+
+        btn.classList.add("active-model");
+    });
+});
