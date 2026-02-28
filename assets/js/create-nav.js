@@ -1,16 +1,14 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v2.1.0
+ * VERSION: v3.0.0
  * STATUS: production
- * LAST FIX: prevent auth race condition + retry logic before redirect
+ * LAST FIX: show user + credits from /auth/me
  */
 
 const API_BASE = "https://sn-design-api.onrender.com";
 
-// =====================================================
-// NAV BUILD
-// =====================================================
+/* ================= NAV BUILD ================= */
 
 (function(){
 
@@ -41,12 +39,9 @@ const API_BASE = "https://sn-design-api.onrender.com";
 
 })();
 
+/* ================= AUTH + USER STATUS ================= */
 
-// =====================================================
-// AUTH CHECK (SAFE VERSION)
-// =====================================================
-
-async function checkAuth(retry = true){
+async function loadUserStatus(){
 
     try{
 
@@ -55,42 +50,36 @@ async function checkAuth(retry = true){
             cache:"no-store"
         });
 
-        if(res.status === 200){
-
-            const user = await res.json();
-
-            const emailEl = document.getElementById("userEmail");
-            if(emailEl && user.email){
-                emailEl.textContent = user.email;
-            }
-
-            return;
-        }
-
-        // ถ้า 401 และยังไม่ได้ retry → รอ 300ms แล้วลองใหม่
-        if(res.status === 401 && retry){
-            setTimeout(()=> checkAuth(false), 300);
-            return;
-        }
-
-        // 401 รอบสอง → ค่อย redirect
-        if(res.status === 401){
+        if(res.status !== 200){
             window.location.replace("/login.html");
+            return;
+        }
+
+        const user = await res.json();
+
+        // USER EMAIL
+        const emailEl = document.getElementById("userEmail");
+        if(emailEl){
+            emailEl.textContent = user.email || "-";
+        }
+
+        // USER CREDITS
+        const creditEl = document.getElementById("userCredits");
+        if(creditEl){
+            creditEl.textContent = user.credits ?? 0;
         }
 
     }catch(err){
-        console.error("AUTH CHECK NETWORK ERROR:",err);
-        // ไม่ redirect ทันทีถ้า network issue
+
+        console.error("USER LOAD ERROR:",err);
+        window.location.replace("/login.html");
     }
+
 }
 
-// RUN AUTH CHECK
-checkAuth();
+loadUserStatus();
 
-
-// =====================================================
-// CREDIT NAVIGATION
-// =====================================================
+/* ================= CREDIT BUTTON ================= */
 
 document.addEventListener("click",(e)=>{
 
@@ -99,27 +88,3 @@ document.addEventListener("click",(e)=>{
     }
 
 });
-
-
-// =====================================================
-// PAYMENT RETURN SYNC
-// =====================================================
-
-(function(){
-
-    const params=new URLSearchParams(window.location.search);
-    const payment=params.get("payment");
-
-    if(!payment) return;
-
-    if(payment==="success"){
-        alert("เติมเครดิตสำเร็จ");
-        history.replaceState({},document.title,"/create.html");
-    }
-
-    if(payment==="cancel"){
-        alert("ยกเลิกการชำระเงิน");
-        history.replaceState({},document.title,"/create.html");
-    }
-
-})();
