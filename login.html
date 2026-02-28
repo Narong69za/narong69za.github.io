@@ -66,7 +66,7 @@ button:hover{
 // =====================================================
 async function checkAuth(){
   try{
-    const res = await fetch("https://sn-design-api.onrender.com/auth/me",{
+    const res = await fetch("https://api.sn-designstudio.dev/auth/me",{
       credentials:"include",
       cache:"no-store"
     });
@@ -85,7 +85,7 @@ checkAuth();
 // REDIRECT TO BACKEND OAUTH
 // =====================================================
 function loginWithGoogle(){
-  window.location.href = "https://sn-design-api.onrender.com/auth/google";
+  window.location.href = "https://api.sn-designstudio.dev/auth/google";
 }
 
 </script>
