@@ -1,8 +1,12 @@
 // =====================================================
 // STRIPE SERVICE
+// VERSION: 1.1.0
+// LAST FIX: add env debug log
 // =====================================================
 
 const Stripe = require("stripe");
+
+console.log("STRIPE KEY:", process.env.STRIPE_SECRET_KEY ? "OK" : "MISSING");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -12,6 +16,10 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 // =====================================================
 
 exports.createCheckout = async function(data){
+
+   if(!process.env.STRIPE_SECRET_KEY){
+      throw new Error("STRIPE_SECRET_KEY MISSING");
+   }
 
    const session = await stripe.checkout.sessions.create({
 
