@@ -6,19 +6,20 @@
     "start": "node services/index.js"
   },
   "dependencies": {
-    "axios": "^1.6.0",
-    "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.19.2",
-    "google-auth-library": "^9.0.0",
-    "googleapis": "^134.0.0",
-    "multer": "^1.4.5-lts.1",
-    "node-fetch": "^2.6.9",
-    "replicate": "^0.34.0",
-    "sqlite3": "^5.1.6",
-    "uuid": "^9.0.1",
-    "stripe": "^14.0.0",
-    "jsonwebtoken": "^9.0.0",
-    "cookie-parser": "^1.4.6"
-  }
+  "axios": "^1.6.0",
+  "cors": "^2.8.5",
+  "dotenv": "^16.4.5",
+  "express": "^4.19.2",
+  "google-auth-library": "^9.0.0",
+  "googleapis": "^134.0.0",
+  "multer": "^1.4.5-lts.1",
+  "node-fetch": "^2.6.9",
+  "replicate": "^0.34.0",
+  "sqlite3": "^5.1.6",
+  "uuid": "^9.0.1",
+  "stripe": "^14.0.0",
+  "jsonwebtoken": "^9.0.0",
+  "cookie-parser": "^1.4.6",
+  "omise": "^0.8.0"
 }
+  
