@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: auth.controller.js
- * VERSION: v2.4.0
+ * VERSION: v2.5.0
  * STATUS: production
- * LAST FIX: /auth/me returns credits from database (no structure removed)
+ * LAST FIX: add cookie domain for cross-subdomain auth
  */
 
 const crypto = require("crypto");
@@ -22,7 +22,8 @@ exports.googleRedirect = async (req, res) => {
   res.cookie("oauth_state", state, {
     httpOnly: true,
     secure: true,
-    sameSite: "none"
+    sameSite: "none",
+    domain: ".sn-designstudio.dev"
   });
 
   const url = googleService.generateAuthUrl(state);
@@ -83,6 +84,7 @@ exports.googleCallback = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: ".sn-designstudio.dev",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -90,6 +92,7 @@ exports.googleCallback = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
+      domain: ".sn-designstudio.dev",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
@@ -135,13 +138,15 @@ exports.logout = async (req, res) => {
   res.clearCookie("access_token", {
     httpOnly: true,
     secure: true,
-    sameSite: "none"
+    sameSite: "none",
+    domain: ".sn-designstudio.dev"
   });
 
   res.clearCookie("refresh_token", {
     httpOnly: true,
     secure: true,
-    sameSite: "none"
+    sameSite: "none",
+    domain: ".sn-designstudio.dev"
   });
 
   return res.json({ message: "Logged out" });
