@@ -25,7 +25,7 @@ async function handleCredentialResponse(response){
       const token = response.credential; // JWT จาก Google
 
       const verify = await fetch(
-         "https://api.sn-designstudio.dev/api/auth/google",
+         "https://sn-designstudio.dev/api/auth/google",
          {
             method:"POST",
             headers:{
