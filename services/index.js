@@ -1,9 +1,9 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER
-// VERSION: 2.3.0
+// VERSION: 2.4.0
 // STATUS: production
-// LAST FIX: ADD PROMPTPAY AUTO SLIP ROUTE + CLEAN STRUCTURE
+// LAST FIX: ADD OMISE ROUTE (TEST/LIVE READY) - NO STRUCTURE CHANGE
 // =====================================================
 
 require("dotenv").config();
@@ -23,9 +23,11 @@ const stripeWebhook = require("../routes/stripe.webhook");
 const userRoutes = require("../routes/user.routes");
 const thaiPaymentRoutes = require("../routes/thai-payment.route");
 const authRoutes = require("../routes/auth.route");
-
-// 🔥 NEW: PROMPTPAY AUTO SLIP VERIFY
 const promptpayRoute = require("../routes/promptpay.route");
+
+// 🔥 ADD OMISE
+const omiseRoute = require("../routes/omise.route");
+const omiseWebhook = require("../routes/omise.webhook");
 
 const usageCheck = require("../services/usage-check");
 const { create } = require("../controllers/create.controller.js");
@@ -70,7 +72,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
 
-// 🔥 NEW
+// 🔥 ADD OMISE (INSERTED HERE)
+app.use("/api/omise", omiseRoute);
+app.use("/api/omise/webhook", omiseWebhook);
+
 app.use("/api/promptpay", promptpayRoute);
 
 app.use("/auth", authRoutes);
