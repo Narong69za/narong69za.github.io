@@ -4,7 +4,6 @@
   "main": "services/index.js",
   "scripts": {
     "start": "node services/index.js"
-  },
   "dependencies": {
   "axios": "^1.6.0",
   "cors": "^2.8.5",
@@ -19,7 +18,7 @@
   "uuid": "^9.0.1",
   "stripe": "^14.0.0",
   "jsonwebtoken": "^9.0.0",
-  "cookie-parser": "^1.4.6"
-  "omise": "^0.8.0",
+  "cookie-parser": "^1.4.6",
+  "omise": "^0.8.0"
 }
   
