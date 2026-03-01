@@ -1,33 +1,36 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.route.js
- * VERSION: v2.3.0
+ * VERSION: v2.4.0
  * STATUS: production
- * LAST FIX: require auth middleware to fix req.user undefined
+ * LAST FIX: remove auth middleware, use x-user-id header (match project structure)
  */
 
 const express = require("express");
 const router = express.Router();
 const Omise = require("omise");
-
-const { addCredit } = require("../db/db");
-
-// 🔥 IMPORT AUTH MIDDLEWARE (ใช้ของที่คุณมีอยู่แล้ว)
-const requireAuth = require("../middlewares/auth.middleware");
+const db = require("../db/db");
 
 const omise = Omise({
   secretKey: process.env.OMISE_SECRET_KEY
 });
 
 // =====================================================
-// CREATE CHARGE (AUTH REQUIRED)
+// CREATE CHARGE
 // =====================================================
-router.post("/create-charge", requireAuth, async (req, res) => {
+router.post("/create-charge", async (req, res) => {
 
   try {
 
     console.log("BODY:", req.body);
-    console.log("USER:", req.user);
+
+    const userId = req.headers["x-user-id"];
+
+    console.log("USER ID:", userId);
+
+    if (!userId) {
+      return res.status(400).json({ error: "NO_USER_ID" });
+    }
 
     const { token, product } = req.body;
 
@@ -35,6 +38,7 @@ router.post("/create-charge", requireAuth, async (req, res) => {
       return res.status(400).json({ error: "NO_TOKEN" });
     }
 
+    // คุณปรับตาม product ได้เอง
     const amount = 9900;
     const creditAmount = 100;
 
@@ -48,9 +52,12 @@ router.post("/create-charge", requireAuth, async (req, res) => {
 
     if (charge.status === "successful") {
 
-      await addCredit(req.user.id, creditAmount);
+      await db.addCredit(userId, creditAmount);
 
-      return res.json({ success: true });
+      return res.json({
+        success: true,
+        credit_added: creditAmount
+      });
     }
 
     return res.json({ success: false });
