@@ -159,3 +159,67 @@ module.exports = {
   checkSlipReference,
   saveSlipReference
 };
+
+// ==============================
+// ADD CREDIT
+// ==============================
+
+function addCredit(userId, amount) {
+  return new Promise((resolve, reject) => {
+    sqlite.serialize(() => {
+      sqlite.run("BEGIN TRANSACTION");
+      sqlite.run(
+        "UPDATE users SET credit = COALESCE(credit,0) + ? WHERE id = ?",
+        [amount, userId]
+      );
+      sqlite.run(
+        `INSERT INTO transactions (id, user_id, type, amount, status)
+         VALUES (?, ?, 'topup', ?, 'success')`,
+        [require("uuid").v4(), userId, amount]
+      );
+      sqlite.run("COMMIT", (err) => {
+        if (err) return reject(err);
+        resolve(true);
+      });
+    });
+  });
+}
+
+// ==============================
+// DEDUCT CREDIT (ATOMIC)
+// ==============================
+
+function deductCredit(userId, amount, engine) {
+  return new Promise((resolve, reject) => {
+    sqlite.serialize(() => {
+      sqlite.get(
+        "SELECT credit FROM users WHERE id = ?",
+        [userId],
+        (err, row) => {
+          if (err) return reject(err);
+          if (!row || row.credit < amount)
+            return reject(new Error("INSUFFICIENT_CREDIT"));
+
+          sqlite.run("BEGIN TRANSACTION");
+          sqlite.run(
+            "UPDATE users SET credit = credit - ? WHERE id = ?",
+            [amount, userId]
+          );
+          sqlite.run(
+            `INSERT INTO transactions
+             (id, user_id, type, amount, engine, status)
+             VALUES (?, ?, 'render', ?, ?, 'success')`,
+            [require("uuid").v4(), userId, amount, engine]
+          );
+          sqlite.run("COMMIT", (err2) => {
+            if (err2) return reject(err2);
+            resolve(true);
+          });
+        }
+      );
+    });
+  });
+}
+
+module.exports.addCredit = addCredit;
+module.exports.deductCredit = deductCredit;
