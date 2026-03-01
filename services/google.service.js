@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: google.service.js
- * VERSION: v1.0.0
+ * VERSION: v1.0.1
  * STATUS: production
- * LAST FIX: OAuth2 Authorization Code Flow
+ * LAST FIX: fix redirect env variable mismatch
  */
 
 const { google } = require("googleapis");
@@ -11,7 +11,7 @@ const { google } = require("googleapis");
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI
+  process.env.GOOGLE_CALLBACK_URL
 );
 
 exports.generateAuthUrl = (state) => {
