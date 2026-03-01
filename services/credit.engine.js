@@ -96,3 +96,33 @@ module.exports = {
    checkAndUseCredit,
    addCredit
 };
+
+// =====================================================
+// CREDIT PACKAGE MAPPING
+// VERSION: v1.0.0
+// =====================================================
+
+exports.addCreditFromPackage = async (userId, packageName, amount) => {
+
+   const mapping = {
+      "starter-100": 100,
+      "pro-300": 300,
+      "elite-1000": 1000
+   };
+
+   const credit = mapping[packageName];
+
+   if (!credit) return;
+
+   await new Promise((resolve, reject) => {
+      sqlite.run(
+         "UPDATE users SET credits = credits + ? WHERE id = ?",
+         [credit, userId],
+         (err) => {
+            if (err) return reject(err);
+            resolve();
+         }
+      );
+   });
+
+};
