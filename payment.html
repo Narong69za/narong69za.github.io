@@ -1,9 +1,11 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.html
-VERSION: v1.1.0
+VERSION: v1.2.0
 STATUS: production
-LAST FIX: ensure config.js load before payment.js
+LAST FIX:
+- add userId + packageName hidden mapping
+- prepare metadata for Omise credit system
 ===================================================== -->
 
 <!DOCTYPE html>
@@ -39,9 +41,39 @@ STATUS: IDLE
 
 </div>
 
+<!-- =====================================================
+🔥 CREDIT SYSTEM MAPPING (HIDDEN)
+===================================================== -->
+
+<input type="hidden" id="userId" value="">
+<input type="hidden" id="packageName" value="starter-100">
+
+<script>
+// =====================================================
+// AUTO INJECT USER ID FROM LOCAL STORAGE (SAFE)
+// =====================================================
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const storedUser = localStorage.getItem("sn_user");
+
+  if (storedUser) {
+    try {
+      const parsed = JSON.parse(storedUser);
+      if (parsed.id) {
+        document.getElementById("userId").value = parsed.id;
+      }
+    } catch (e) {
+      console.warn("User parse error");
+    }
+  }
+
+});
+</script>
+
 <!-- 🔥 FORCE RELOAD VERSION -->
 <script src="/assets/js/config.js?v=7.0.0"></script>
-<script src="/assets/js/payment.js?v=4.3.0"></script>
+<script src="/assets/js/payment.js?v=4.4.0"></script>
 
 </body>
 </html>
