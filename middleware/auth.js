@@ -1,16 +1,15 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: auth.js
-// VERSION: v3.0.0
+// VERSION: v3.2.0
 // STATUS: production
-// LAST FIX: switch to JWT cookie authentication
+// LAST FIX: use JWT_ACCESS_SECRET (match token.util)
 // =====================================================
 
 const jwt = require("jsonwebtoken");
 
 async function authMiddleware(req, res, next) {
 
-  // DEV MODE
   if (req.query.dev === "true") {
     req.user = {
       id: 1,
@@ -22,12 +21,10 @@ async function authMiddleware(req, res, next) {
 
   let token = null;
 
-  // 1. Try cookie
   if (req.cookies?.access_token) {
     token = req.cookies.access_token;
   }
 
-  // 2. Try Authorization header
   if (!token && req.headers.authorization?.startsWith("Bearer ")) {
     token = req.headers.authorization.split("Bearer ")[1];
   }
@@ -38,7 +35,10 @@ async function authMiddleware(req, res, next) {
 
   try {
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_ACCESS_SECRET   // 🔥 แก้ตรงนี้
+    );
 
     req.user = decoded;
 
