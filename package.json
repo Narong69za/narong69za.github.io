@@ -19,7 +19,7 @@
   "uuid": "^9.0.1",
   "stripe": "^14.0.0",
   "jsonwebtoken": "^9.0.0",
-  "cookie-parser": "^1.4.6",
-  "omise": "^0.8.0"
+  "cookie-parser": "^1.4.6"
+  "omise": "^0.8.0",
 }
   
