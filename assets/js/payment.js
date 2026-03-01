@@ -1,10 +1,7 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 4.5.0
-LAST FIX:
-- add omise create-charge support
-- send packageName + userId for metadata
-- keep original structure intact (add-only)
+VERSION: 5.0.0
+LAST FIX: implement real Omise token flow (card)
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -59,76 +56,78 @@ async function init(){
 
             try{
 
-                let endpoint="";
-                let payload={};
-
-                // =====================================================
-                // STRIPE (ORIGINAL - UNTOUCHED)
-                // =====================================================
-
+                // =============================
+                // 💳 OMISE CARD FLOW (REAL)
+                // =============================
                 if(method==="stripe"){
-                    endpoint="/api/stripe/create-checkout";
-                    payload = {
-                        product:"credit_pack_1"
-                    };
-                }
 
-                // =====================================================
-                // 🔥 OMISE (ADD-ONLY)
-                // =====================================================
+                    if(typeof Omise === "undefined"){
+                        setStatus("OMISE JS NOT LOADED");
+                        paymentBox.innerHTML="Omise.js โหลดไม่สำเร็จ";
+                        return;
+                    }
 
-                if(method==="truemoney"){
+                    Omise.setPublicKey("pkey_test_66os44r1xiuuit0qvcn"); // 🔥 ใส่ของจริง
 
-                    endpoint="/api/omise/create-charge";
+                    Omise.createToken("card", {
+                        name: "Test User",
+                        number: "4242424242424242",
+                        expiration_month: 12,
+                        expiration_year: 2030,
+                        security_code: "123"
+                    }, async function(statusCode, response){
 
-                    const packageName =
-                        document.getElementById("packageName")?.value || "starter-100";
+                        if(response.object !== "token"){
+                            setStatus("TOKEN ERROR");
+                            paymentBox.innerHTML="สร้าง Token ไม่สำเร็จ";
+                            return;
+                        }
 
-                    // userId ดึงจาก cookie-based auth
-                    const me = await fetch(`${API_BASE}/auth/me`,{
-                        credentials:"include"
+                        try{
+
+                            const res = await fetch(API_BASE + "/api/omise/create-charge",{
+                                method:"POST",
+                                headers:{
+                                    "Content-Type":"application/json"
+                                },
+                                credentials:"include",
+                                body:JSON.stringify({
+                                    token: response.id,
+                                    product:"credit_pack_1"
+                                })
+                            });
+
+                            if(!res.ok){
+                                throw new Error("Charge API Failed");
+                            }
+
+                            const data = await res.json();
+
+                            if(data.success){
+                                setStatus("SUCCESS");
+                                paymentBox.innerHTML="ชำระเงินสำเร็จ เติมเครดิตแล้ว";
+                            }else{
+                                setStatus("FAILED");
+                                paymentBox.innerHTML="ชำระเงินไม่สำเร็จ";
+                            }
+
+                        }catch(err){
+                            console.error("CHARGE ERROR:",err);
+                            setStatus("ERROR");
+                            paymentBox.innerHTML="เกิดข้อผิดพลาดในการเรียก Charge";
+                        }
+
                     });
 
-                    const user = await me.json();
-
-                    payload = {
-                        amount: 10000, // 100 บาทตัวอย่าง (แก้ตามแพ็กเกจได้)
-                        token: "tokn_test_4242424242424242", // TEST MODE ONLY
-                        packageName: packageName,
-                        userId: user.id
-                    };
-
-                }
-
-                // =====================================================
-
-                const res = await fetch(API_BASE + endpoint,{
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json"
-                    },
-                    credentials:"include",
-                    body:JSON.stringify(payload)
-                });
-
-                if(!res.ok){
-                    throw new Error("Payment API failed");
-                }
-
-                const data = await res.json();
-
-                if(method==="stripe" && data.url){
-                    window.location.href=data.url;
                     return;
                 }
 
-                if(method==="truemoney"){
-                    paymentBox.innerHTML="สร้างรายการชำระเงินสำเร็จ (Test Mode)";
-                    setStatus("CHARGE CREATED");
-                    return;
-                }
+                // =============================
+                // OTHER METHODS (PLACEHOLDER)
+                // =============================
 
-                throw new Error("Invalid payment response");
+                paymentBox.innerHTML="ช่องทางนี้ยังไม่เปิดใช้งาน";
+                setStatus("NOT AVAILABLE");
 
             }catch(err){
 
