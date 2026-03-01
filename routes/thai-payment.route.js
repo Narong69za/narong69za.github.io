@@ -85,7 +85,7 @@ router.post("/create", async (req,res)=>{
             return res.status(400).json({ error:"NO AMOUNT" });
         }
 
-        const idOrPhone = process.env.PROMPTPAY_ID;
+        const idOrPhone = "3100503536486";
 
         if(!idOrPhone){
             return res.status(500).json({ error:"PROMPTPAY_NUMBER NOT SET" });
