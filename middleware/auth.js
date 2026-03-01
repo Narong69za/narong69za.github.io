@@ -1,53 +1,52 @@
-// middleware/auth.js
+// =====================================================
+// PROJECT: SN DESIGN STUDIO
+// MODULE: auth.js
+// VERSION: v3.0.0
+// STATUS: production
+// LAST FIX: switch to JWT cookie authentication
+// =====================================================
 
-const { OAuth2Client } = require("google-auth-library");
-const db = require("../db/db");
+const jwt = require("jsonwebtoken");
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+async function authMiddleware(req, res, next) {
 
-async function authMiddleware(req,res,next){
-
-  if(req.query.dev === "true"){
+  // DEV MODE
+  if (req.query.dev === "true") {
     req.user = {
       id: 1,
-      googleId: "dev_user",
-      email: "dev@local"
+      email: "dev@local",
+      role: "dev"
     };
     return next();
   }
 
-  const token = req.headers.authorization?.split("Bearer ")[1];
+  let token = null;
 
-  if(!token){
-    return res.status(401).json({error:"No token"});
+  // 1. Try cookie
+  if (req.cookies?.access_token) {
+    token = req.cookies.access_token;
   }
 
-  try{
+  // 2. Try Authorization header
+  if (!token && req.headers.authorization?.startsWith("Bearer ")) {
+    token = req.headers.authorization.split("Bearer ")[1];
+  }
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID
-    });
+  if (!token) {
+    return res.status(401).json({ error: "No token" });
+  }
 
-    const payload = ticket.getPayload();
+  try {
 
-    let user = await db.getUserByGoogleId(payload.sub);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    if(!user){
-      const id = await db.createUser({
-        googleId: payload.sub,
-        email: payload.email
-      });
-      user = { id };
-    }
+    req.user = decoded;
 
-    req.user = user;
     next();
 
-  }catch(err){
-    res.status(401).json({error:"Invalid token"});
+  } catch (err) {
+    return res.status(401).json({ error: "Invalid token" });
   }
-
 }
 
 module.exports = authMiddleware;
