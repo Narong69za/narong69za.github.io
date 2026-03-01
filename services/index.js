@@ -1,9 +1,9 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER
-// VERSION: 2.4.0
+// VERSION: 2.5.0
 // STATUS: production
-// LAST FIX: ADD OMISE ROUTE (TEST/LIVE READY) - NO STRUCTURE CHANGE
+// LAST FIX: HARDEN OMISE BODY PARSER + WEBHOOK RAW FIX (NO STRUCTURE CHANGE)
 // =====================================================
 
 require("dotenv").config();
@@ -57,11 +57,26 @@ app.use(
 app.use("/api/stripe/webhook", stripeWebhook);
 
 // =====================================================
-// BODY PARSER (AFTER WEBHOOK)
+// 🔴 OMISE WEBHOOK (RAW BODY REQUIRED BY PLATFORM)
 // =====================================================
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(
+  "/api/omise/webhook",
+  express.raw({ type: "application/json" })
+);
+
+// =====================================================
+// BODY PARSER (AFTER WEBHOOKS ONLY)
+// =====================================================
+
+app.use(express.json({
+  limit: "10mb"
+}));
+
+app.use(express.urlencoded({
+  extended: true,
+  limit: "10mb"
+}));
 
 // =====================================================
 // ROUTE REGISTER
@@ -72,8 +87,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
 
-// 🔥 ADD OMISE (INSERTED HERE)
+// 🔥 OMISE ROUTE (NORMAL JSON ROUTE)
 app.use("/api/omise", omiseRoute);
+
+// 🔥 OMISE WEBHOOK HANDLER (AFTER RAW)
 app.use("/api/omise/webhook", omiseWebhook);
 
 app.use("/api/promptpay", promptpayRoute);
@@ -122,5 +139,6 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
+  console.log("OMISE KEY LOADED:", !!process.env.OMISE_SECRET_KEY);
   console.log("ULTRA ENGINE RUNNING:", PORT);
 });
