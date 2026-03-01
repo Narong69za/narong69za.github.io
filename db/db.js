@@ -1,13 +1,19 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: db/db.js
- * VERSION: v2.1.0
+ * VERSION: v2.2.0
  * STATUS: production
- * LAST FIX: add credit system + slip reference protection
+ * LAST FIX:
+ * - unified credits column
+ * - fixed duplicate addCredit
+ * - added transactions table
+ * - added omise_events table
+ * - fixed atomic credit system
  */
 
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
+const { v4: uuidv4 } = require("uuid");
 
 const dbPath = process.env.DB_PATH || path.join(__dirname, "database.sqlite");
 
@@ -21,7 +27,7 @@ const sqlite = new sqlite3.Database(dbPath);
 
 sqlite.serialize(() => {
 
-  // เพิ่มคอลัมน์ credits ถ้ายังไม่มี
+  // USERS
   sqlite.run(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -32,7 +38,7 @@ sqlite.serialize(() => {
     )
   `);
 
-  // ตารางกันสลิปซ้ำ
+  // SLIP PROTECTION
   sqlite.run(`
     CREATE TABLE IF NOT EXISTS slip_references (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -41,10 +47,32 @@ sqlite.serialize(() => {
     )
   `);
 
+  // TRANSACTIONS LEDGER
+  sqlite.run(`
+    CREATE TABLE IF NOT EXISTS transactions (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      type TEXT,
+      amount INTEGER,
+      engine TEXT,
+      status TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  // OMISE IDEMPOTENCY LOCK
+  sqlite.run(`
+    CREATE TABLE IF NOT EXISTS omise_events (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      event_id TEXT UNIQUE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
 });
 
 // ==============================
-// GET USER BY GOOGLE ID
+// USER FUNCTIONS
 // ==============================
 
 function getUserByGoogleId(googleId) {
@@ -60,9 +88,18 @@ function getUserByGoogleId(googleId) {
   });
 }
 
-// ==============================
-// CREATE USER
-// ==============================
+function getUserByEmail(email) {
+  return new Promise((resolve, reject) => {
+    sqlite.get(
+      "SELECT * FROM users WHERE email = ?",
+      [email],
+      (err, row) => {
+        if (err) return reject(err);
+        resolve(row);
+      }
+    );
+  });
+}
 
 function createUser({ id, googleId, email, role }) {
   return new Promise((resolve, reject) => {
@@ -78,44 +115,82 @@ function createUser({ id, googleId, email, role }) {
   });
 }
 
-// ==============================
-// GET USER BY EMAIL
-// ==============================
-
-function getUserByEmail(email) {
-  return new Promise((resolve, reject) => {
-    sqlite.get(
-      "SELECT * FROM users WHERE email = ?",
-      [email],
-      (err, row) => {
-        if (err) return reject(err);
-        resolve(row);
-      }
-    );
-  });
-}
-
 // =====================================================
-// 🔥 ADD CREDIT (SAFE INCREMENT)
+// CREDIT SYSTEM (ATOMIC SAFE)
 // =====================================================
 
 function addCredit(userId, amount) {
   return new Promise((resolve, reject) => {
-    sqlite.run(
-      `UPDATE users 
-       SET credits = COALESCE(credits,0) + ? 
-       WHERE id = ?`,
-      [amount, userId],
-      function (err) {
+
+    sqlite.serialize(() => {
+
+      sqlite.run("BEGIN TRANSACTION");
+
+      sqlite.run(
+        "UPDATE users SET credits = COALESCE(credits,0) + ? WHERE id = ?",
+        [amount, userId]
+      );
+
+      sqlite.run(
+        `INSERT INTO transactions
+         (id, user_id, type, amount, status)
+         VALUES (?, ?, 'topup', ?, 'success')`,
+        [uuidv4(), userId, amount]
+      );
+
+      sqlite.run("COMMIT", (err) => {
         if (err) return reject(err);
         resolve(true);
-      }
-    );
+      });
+
+    });
+
+  });
+}
+
+function deductCredit(userId, amount, engine) {
+  return new Promise((resolve, reject) => {
+
+    sqlite.serialize(() => {
+
+      sqlite.get(
+        "SELECT credits FROM users WHERE id = ?",
+        [userId],
+        (err, row) => {
+
+          if (err) return reject(err);
+          if (!row || row.credits < amount)
+            return reject(new Error("INSUFFICIENT_CREDIT"));
+
+          sqlite.run("BEGIN TRANSACTION");
+
+          sqlite.run(
+            "UPDATE users SET credits = credits - ? WHERE id = ?",
+            [amount, userId]
+          );
+
+          sqlite.run(
+            `INSERT INTO transactions
+             (id, user_id, type, amount, engine, status)
+             VALUES (?, ?, 'render', ?, ?, 'success')`,
+            [uuidv4(), userId, amount, engine]
+          );
+
+          sqlite.run("COMMIT", (err2) => {
+            if (err2) return reject(err2);
+            resolve(true);
+          });
+
+        }
+      );
+
+    });
+
   });
 }
 
 // =====================================================
-// 🔥 CHECK SLIP USED
+// SLIP FUNCTIONS
 // =====================================================
 
 function checkSlipReference(ref) {
@@ -130,10 +205,6 @@ function checkSlipReference(ref) {
     );
   });
 }
-
-// =====================================================
-// 🔥 SAVE SLIP REF
-// =====================================================
 
 function saveSlipReference(ref) {
   return new Promise((resolve, reject) => {
@@ -153,73 +224,8 @@ module.exports = {
   getUserByGoogleId,
   getUserByEmail,
   createUser,
-
-  // 🔥 NEW EXPORTS
   addCredit,
+  deductCredit,
   checkSlipReference,
   saveSlipReference
 };
-
-// ==============================
-// ADD CREDIT
-// ==============================
-
-function addCredit(userId, amount) {
-  return new Promise((resolve, reject) => {
-    sqlite.serialize(() => {
-      sqlite.run("BEGIN TRANSACTION");
-      sqlite.run(
-        "UPDATE users SET credit = COALESCE(credit,0) + ? WHERE id = ?",
-        [amount, userId]
-      );
-      sqlite.run(
-        `INSERT INTO transactions (id, user_id, type, amount, status)
-         VALUES (?, ?, 'topup', ?, 'success')`,
-        [require("uuid").v4(), userId, amount]
-      );
-      sqlite.run("COMMIT", (err) => {
-        if (err) return reject(err);
-        resolve(true);
-      });
-    });
-  });
-}
-
-// ==============================
-// DEDUCT CREDIT (ATOMIC)
-// ==============================
-
-function deductCredit(userId, amount, engine) {
-  return new Promise((resolve, reject) => {
-    sqlite.serialize(() => {
-      sqlite.get(
-        "SELECT credit FROM users WHERE id = ?",
-        [userId],
-        (err, row) => {
-          if (err) return reject(err);
-          if (!row || row.credit < amount)
-            return reject(new Error("INSUFFICIENT_CREDIT"));
-
-          sqlite.run("BEGIN TRANSACTION");
-          sqlite.run(
-            "UPDATE users SET credit = credit - ? WHERE id = ?",
-            [amount, userId]
-          );
-          sqlite.run(
-            `INSERT INTO transactions
-             (id, user_id, type, amount, engine, status)
-             VALUES (?, ?, 'render', ?, ?, 'success')`,
-            [require("uuid").v4(), userId, amount, engine]
-          );
-          sqlite.run("COMMIT", (err2) => {
-            if (err2) return reject(err2);
-            resolve(true);
-          });
-        }
-      );
-    });
-  });
-}
-
-module.exports.addCredit = addCredit;
-module.exports.deductCredit = deductCredit;
