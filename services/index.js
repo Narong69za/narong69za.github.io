@@ -1,6 +1,9 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER - AUTH INTEGRATION VERSION
+// VERSION: 2.2.0
+// STATUS: PRODUCTION FIX
+// LAST FIX: Move Stripe webhook raw body BEFORE json parser
 // =====================================================
 
 require("dotenv").config();
@@ -25,27 +28,23 @@ const thaiPaymentRoutes = require("../routes/thai-payment.route");
 const authRoutes = require("../routes/auth.route");
 
 const usageCheck = require("../services/usage-check");
-
 const { create } = require("../controllers/create.controller.js");
 
 const app = express();
 
 // =====================================================
-// GLOBAL MIDDLEWARE
+// CORS
 // =====================================================
 
 app.use(cors({
-  origin: [
-    "https://sn-designstudio.dev"
-  ],
+  origin: ["https://sn-designstudio.dev"],
   credentials: true
 }));
+
 app.use(cookieParser());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
 // =====================================================
-// STRIPE WEBHOOK (RAW BODY FIRST)
+// 🔥 STRIPE WEBHOOK MUST COME FIRST (RAW BODY)
 // =====================================================
 
 app.use(
@@ -56,6 +55,13 @@ app.use(
 app.use("/api/stripe/webhook", stripeWebhook);
 
 // =====================================================
+// 🔥 JSON PARSER AFTER WEBHOOK
+// =====================================================
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+// =====================================================
 // ROUTE REGISTER
 // =====================================================
 
@@ -63,8 +69,6 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
-
-// 🔐 AUTH ROUTES (NEW)
 app.use("/auth", authRoutes);
 
 // =====================================================
