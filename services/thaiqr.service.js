@@ -3,7 +3,7 @@ const QRCode = require("qrcode");
 
 exports.generate = async(amount,userId)=>{
 
-    const payload = PromptPayQR(process.env.PROMPTPAY_NUMBER,{
+    const payload = PromptPayQR(process.env.PROMPTPAY_ID,{
         amount: amount
     });
 
