@@ -1,37 +1,57 @@
-// ======================================================
+// =====================================================
+// PROJECT: SN DESIGN STUDIO
 // MODULE: omise.route.js
-// VERSION: 1.0.0
-// ======================================================
+// VERSION: v1.1.0
+// STATUS: production
+// LAST FIX: add metadata mapping for credit system
+// =====================================================
 
 const express = require("express");
+const Omise = require("omise");
 const router = express.Router();
-const authMiddleware = require("../middleware/auth");
-const { createCharge } = require("../services/omise.service");
 
-router.post("/create", authMiddleware, async (req,res)=>{
+const omise = Omise({
+  publicKey: process.env.OMISE_PUBLIC_KEY,
+  secretKey: process.env.OMISE_SECRET_KEY
+});
 
-  try{
+// =====================================================
+// CREATE CHARGE
+// =====================================================
 
-    const { amount } = req.body;
+router.post("/create-charge", async (req, res) => {
 
-    if(!amount){
-      return res.status(400).json({ error:"NO_AMOUNT" });
+  try {
+
+    const { amount, token, packageName, userId } = req.body;
+
+    if (!amount || !token || !packageName || !userId) {
+      return res.status(400).json({ error: "missing required fields" });
     }
 
-    const charge = await createCharge({
-      amount: amount * 100, // satang
-      returnUri: "https://sn-designstudio.dev/create.html",
+    const charge = await omise.charges.create({
+      amount: parseInt(amount),
+      currency: "thb",
+      card: token,
+
+      // 🔥 สำคัญมาก
       metadata: {
-        userId: req.user.id,
-        credits: amount
+        userId: userId,
+        package: packageName
       }
+
     });
 
-    res.json({ authorizeUri: charge.authorize_uri });
+    res.json({
+      status: "created",
+      charge
+    });
 
-  }catch(err){
-    console.error(err);
-    res.status(500).json({ error:"OMISE_CREATE_FAILED" });
+  } catch (err) {
+
+    console.error("OMISE CREATE ERROR:", err);
+    res.status(500).json({ error: err.message });
+
   }
 
 });
