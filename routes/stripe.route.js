@@ -29,8 +29,8 @@ router.post("/create-checkout", authMiddleware, async (req,res)=>{
       const PRODUCT_MAP = {
          credit_pack_1:{
             name:"Credit Pack",
-            price:10000,
-            credits:100
+            price:2000,
+            credits:20
          }
       };
 
