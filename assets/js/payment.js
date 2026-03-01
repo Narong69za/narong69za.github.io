@@ -1,7 +1,10 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 4.4.1
-LAST FIX: remove manual userId, ensure correct API call
+VERSION: 4.5.0
+LAST FIX:
+- add omise create-charge support
+- send packageName + userId for metadata
+- keep original structure intact (add-only)
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -59,12 +62,45 @@ async function init(){
                 let endpoint="";
                 let payload={};
 
+                // =====================================================
+                // STRIPE (ORIGINAL - UNTOUCHED)
+                // =====================================================
+
                 if(method==="stripe"){
                     endpoint="/api/stripe/create-checkout";
                     payload = {
                         product:"credit_pack_1"
                     };
                 }
+
+                // =====================================================
+                // 🔥 OMISE (ADD-ONLY)
+                // =====================================================
+
+                if(method==="truemoney"){
+
+                    endpoint="/api/omise/create-charge";
+
+                    const packageName =
+                        document.getElementById("packageName")?.value || "starter-100";
+
+                    // userId ดึงจาก cookie-based auth
+                    const me = await fetch(`${API_BASE}/auth/me`,{
+                        credentials:"include"
+                    });
+
+                    const user = await me.json();
+
+                    payload = {
+                        amount: 10000, // 100 บาทตัวอย่าง (แก้ตามแพ็กเกจได้)
+                        token: "tokn_test_4242424242424242", // TEST MODE ONLY
+                        packageName: packageName,
+                        userId: user.id
+                    };
+
+                }
+
+                // =====================================================
 
                 const res = await fetch(API_BASE + endpoint,{
                     method:"POST",
@@ -83,6 +119,12 @@ async function init(){
 
                 if(method==="stripe" && data.url){
                     window.location.href=data.url;
+                    return;
+                }
+
+                if(method==="truemoney"){
+                    paymentBox.innerHTML="สร้างรายการชำระเงินสำเร็จ (Test Mode)";
+                    setStatus("CHARGE CREATED");
                     return;
                 }
 
