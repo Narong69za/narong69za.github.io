@@ -1,9 +1,20 @@
 // =====================================================
+// PROJECT: SN DESIGN ENGINE AI
+// MODULE: controllers/create.controller.js
+// VERSION: 2.1.0
+// STATUS: production
+// LAST FIX: ADD ENGINE LOCK LAYER (no structure modification)
+// =====================================================
+
+// =====================================================
 // CREATE CONTROLLER — ULTRA CREDIT INTEGRATION
 // =====================================================
 
 const modelRouter = require("../models/model.router");
 const creditEngine = require("../services/credit.engine");
+
+// 🔥 NEW: ENGINE LOCK MAP (ADD-ONLY)
+const { getEngine } = require("../services/engine.map");
 
 exports.create = async (req,res)=>{
 
@@ -25,19 +36,35 @@ exports.create = async (req,res)=>{
       req.headers["x-forwarded-for"] ||
       req.socket.remoteAddress;
 
-      // ===============================
-      // FREE CHECK
-      // ===============================
+      // ==================================================
+      // 🔒 ENGINE LOCK VALIDATION (NEW SAFE LAYER)
+      // ==================================================
+
+      let lockedEngineConfig = null;
+
+      try{
+         lockedEngineConfig = getEngine(alias);
+      }catch(e){
+         return res.status(400).json({
+            error:"ENGINE_NOT_ALLOWED"
+         });
+      }
+
+      // ==================================================
+      // FREE CHECK (UNCHANGED)
+      // ==================================================
 
       const freeAllowed =
       await creditEngine.checkFreeUsage(ip);
 
       if(!freeAllowed){
 
+         // 🔥 override cost from engine map if exists
          const creditCheck =
          await creditEngine.checkAndUseCredit(
             user.id,
-            alias
+            alias,
+            lockedEngineConfig.cost // ADD-ONLY param
          );
 
          if(!creditCheck.allowed){
@@ -50,9 +77,9 @@ exports.create = async (req,res)=>{
 
       }
 
-      // ===============================
-      // FILE CHECK
-      // ===============================
+      // ==================================================
+      // FILE CHECK (UNCHANGED)
+      // ==================================================
 
       if(alias !== "text_to_video" && !files.fileA){
 
@@ -62,14 +89,15 @@ exports.create = async (req,res)=>{
 
       }
 
-      // ===============================
-      // RUN MODEL
-      // ===============================
+      // ==================================================
+      // RUN MODEL (ENGINE LOCK ENFORCED)
+      // ==================================================
 
       const result = await modelRouter.run({
          userId:user.id,
-         engine,
-         alias,
+         engine:lockedEngineConfig.provider,  // LOCKED
+         alias,                                // UI key
+         modelId:lockedEngineConfig.modelId,   // 🔥 deterministic
          type,
          prompt,
          files
@@ -77,6 +105,7 @@ exports.create = async (req,res)=>{
 
       res.json({
          status:"queued",
+         engineVersion:lockedEngineConfig.version, // observability
          result
       });
 
