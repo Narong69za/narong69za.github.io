@@ -1,11 +1,13 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 5.0.0
-LAST FIX: implement real Omise token flow (card)
+VERSION: 5.1.0
+LAST FIX: attach x-user-id header from /auth/me (fix USER ID undefined)
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
 const statusEl = document.getElementById("paymentStatus");
+
+let CURRENT_USER_ID = null;
 
 function setStatus(text){
     if(statusEl){
@@ -25,6 +27,16 @@ async function checkAuth(){
         if(res.status !== 200){
             window.location.replace("/login.html");
             return false;
+        }
+
+        const user = await res.json();
+
+        // 🔥 เก็บ userId สำหรับส่ง header
+        if(user && user.id){
+            CURRENT_USER_ID = user.id;
+            console.log("AUTH OK - USER ID:", CURRENT_USER_ID);
+        }else{
+            console.warn("USER ID NOT FOUND IN /auth/me");
         }
 
         return true;
@@ -67,7 +79,13 @@ async function init(){
                         return;
                     }
 
-                    Omise.setPublicKey("pkey_test_66os44r1xiuuit0qvcn"); // 🔥 ใส่ของจริง
+                    if(!CURRENT_USER_ID){
+                        setStatus("NO USER");
+                        paymentBox.innerHTML="ไม่พบข้อมูลผู้ใช้";
+                        return;
+                    }
+
+                    Omise.setPublicKey("pkey_test_66os44r1xiuuit0qvcn");
 
                     Omise.createToken("card", {
                         name: "Test User",
@@ -88,7 +106,8 @@ async function init(){
                             const res = await fetch(API_BASE + "/api/omise/create-charge",{
                                 method:"POST",
                                 headers:{
-                                    "Content-Type":"application/json"
+                                    "Content-Type":"application/json",
+                                    "x-user-id": CURRENT_USER_ID // 🔥 FIX สำคัญ
                                 },
                                 credentials:"include",
                                 body:JSON.stringify({
