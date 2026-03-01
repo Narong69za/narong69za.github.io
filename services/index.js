@@ -1,24 +1,17 @@
 // =====================================================
 // SN DESIGN ENGINE AI
-// ULTRA ENGINE SERVER - AUTH INTEGRATION VERSION
+// ULTRA ENGINE SERVER
 // VERSION: 2.2.0
-// STATUS: PRODUCTION FIX
-// LAST FIX: Move Stripe webhook raw body BEFORE json parser
+// STATUS: production
+// LAST FIX: FIX STRIPE WEBHOOK RAW BODY ORDER
 // =====================================================
 
 require("dotenv").config();
-
-console.log("RUNWAY ENV:", process.env.RUNWAY_API_KEY ? "OK" : "MISSING");
-console.log("GOOGLE ENV:", process.env.GOOGLE_CLIENT_ID ? "OK" : "MISSING");
 
 const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
-
-// =====================================================
-// ROUTES / SERVICES / CONTROLLERS
-// =====================================================
 
 const adminRoutes = require("../routes/admin.routes");
 const stripeRoute = require("../routes/stripe.route");
@@ -44,7 +37,7 @@ app.use(cors({
 app.use(cookieParser());
 
 // =====================================================
-// 🔥 STRIPE WEBHOOK MUST COME FIRST (RAW BODY)
+// 🔴 STRIPE WEBHOOK MUST COME BEFORE express.json()
 // =====================================================
 
 app.use(
@@ -55,14 +48,14 @@ app.use(
 app.use("/api/stripe/webhook", stripeWebhook);
 
 // =====================================================
-// 🔥 JSON PARSER AFTER WEBHOOK
+// BODY PARSER (AFTER WEBHOOK)
 // =====================================================
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // =====================================================
-// ROUTE REGISTER
+// ROUTES
 // =====================================================
 
 app.use("/api/admin", adminRoutes);
