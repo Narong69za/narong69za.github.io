@@ -1,7 +1,7 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 4.4.0
-LAST FIX: remove duplicate auth fetch before stripe call
+VERSION: 4.4.1
+LAST FIX: remove manual userId, ensure correct API call
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -62,8 +62,7 @@ async function init(){
                 if(method==="stripe"){
                     endpoint="/api/stripe/create-checkout";
                     payload = {
-                        product:"credit_pack_1",
-                        userId: 1 // ชั่วคราวเพื่อทดสอบ flow
+                        product:"credit_pack_1"
                     };
                 }
 
