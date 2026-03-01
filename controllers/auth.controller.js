@@ -23,7 +23,6 @@ exports.googleRedirect = async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".sn-designstudio.dev"
   });
 
   const url = googleService.generateAuthUrl(state);
@@ -137,14 +136,12 @@ exports.logout = async (req, res) => {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".sn-designstudio.dev"
   });
 
   res.clearCookie("refresh_token", {
     httpOnly: true,
     secure: true,
     sameSite: "none",
-    domain: ".sn-designstudio.dev"
   });
 
   return res.json({ message: "Logged out" });
