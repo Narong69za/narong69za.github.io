@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.route.js
- * VERSION: v2.2.0
+ * VERSION: v2.3.0
  * STATUS: production
- * LAST FIX: enforce token validation + debug logs + safe credit add
+ * LAST FIX: require auth middleware to fix req.user undefined
  */
 
 const express = require("express");
@@ -12,14 +12,17 @@ const Omise = require("omise");
 
 const { addCredit } = require("../db/db");
 
+// 🔥 IMPORT AUTH MIDDLEWARE (ใช้ของที่คุณมีอยู่แล้ว)
+const requireAuth = require("../middlewares/auth.middleware");
+
 const omise = Omise({
   secretKey: process.env.OMISE_SECRET_KEY
 });
 
 // =====================================================
-// CREATE CHARGE (CARD TOKEN FLOW)
+// CREATE CHARGE (AUTH REQUIRED)
 // =====================================================
-router.post("/create-charge", async (req, res) => {
+router.post("/create-charge", requireAuth, async (req, res) => {
 
   try {
 
@@ -32,8 +35,7 @@ router.post("/create-charge", async (req, res) => {
       return res.status(400).json({ error: "NO_TOKEN" });
     }
 
-    // 🔥 ปรับราคาแพ็คเกจตรงนี้
-    const amount = 9900; // 99.00 THB
+    const amount = 9900;
     const creditAmount = 100;
 
     const charge = await omise.charges.create({
@@ -45,10 +47,6 @@ router.post("/create-charge", async (req, res) => {
     console.log("CHARGE STATUS:", charge.status);
 
     if (charge.status === "successful") {
-
-      if (!req.user || !req.user.id) {
-        return res.status(400).json({ error: "NO_USER_SESSION" });
-      }
 
       await addCredit(req.user.id, creditAmount);
 
