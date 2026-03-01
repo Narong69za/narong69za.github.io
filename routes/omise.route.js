@@ -1,19 +1,21 @@
-// =====================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: omise.route.js
-// VERSION: v1.1.0
-// STATUS: production
-// LAST FIX: add metadata mapping for credit system
-// =====================================================
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: routes/omise.route.js
+ * VERSION: v1.3.0
+ * STATUS: production
+ * LAST FIX: correct omise sdk initialization
+ */
 
 const express = require("express");
-const Omise = require("omise");
-console.log("OMISE KEY:", process.env.OMISE_SECRET_KEY);
 const router = express.Router();
-const omise = Omise({
+
+// ✅ INIT SDK แบบถูกต้อง
+const omise = require("omise")({
   publicKey: process.env.OMISE_PUBLIC_KEY,
   secretKey: process.env.OMISE_SECRET_KEY
 });
+
+console.log("OMISE KEY LOADED:", !!process.env.OMISE_SECRET_KEY);
 
 // =====================================================
 // CREATE CHARGE
