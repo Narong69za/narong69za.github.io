@@ -1,9 +1,9 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER
-// VERSION: 2.2.0
+// VERSION: 2.3.0
 // STATUS: production
-// LAST FIX: FIX STRIPE WEBHOOK RAW BODY ORDER
+// LAST FIX: ADD PROMPTPAY AUTO SLIP ROUTE + CLEAN STRUCTURE
 // =====================================================
 
 require("dotenv").config();
@@ -13,12 +13,19 @@ const cors = require("cors");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
 
+// =====================================================
+// ROUTES
+// =====================================================
+
 const adminRoutes = require("../routes/admin.routes");
 const stripeRoute = require("../routes/stripe.route");
 const stripeWebhook = require("../routes/stripe.webhook");
 const userRoutes = require("../routes/user.routes");
 const thaiPaymentRoutes = require("../routes/thai-payment.route");
 const authRoutes = require("../routes/auth.route");
+
+// 🔥 NEW: PROMPTPAY AUTO SLIP VERIFY
+const promptpayRoute = require("../routes/promptpay.route");
 
 const usageCheck = require("../services/usage-check");
 const { create } = require("../controllers/create.controller.js");
@@ -37,7 +44,7 @@ app.use(cors({
 app.use(cookieParser());
 
 // =====================================================
-// 🔴 STRIPE WEBHOOK MUST COME BEFORE express.json()
+// 🔴 STRIPE WEBHOOK (RAW BODY FIRST)
 // =====================================================
 
 app.use(
@@ -55,13 +62,17 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // =====================================================
-// ROUTES
+// ROUTE REGISTER
 // =====================================================
 
 app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
+
+// 🔥 NEW
+app.use("/api/promptpay", promptpayRoute);
+
 app.use("/auth", authRoutes);
 
 // =====================================================
