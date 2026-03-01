@@ -1,1 +1,1 @@
-const API_BASE = "https://api.sn-designstudio.dev";
+const API_BASE = "https://sn-design-api.onrender.com";
