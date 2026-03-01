@@ -91,7 +91,6 @@ exports.googleCallback = async (req, res) => {
       httpOnly: true,
       secure: true,
       sameSite: "none",
-      domain: ".sn-designstudio.dev",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
