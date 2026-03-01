@@ -1,61 +1,67 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.route.js
- * VERSION: v1.3.0
+ * VERSION: v2.2.0
  * STATUS: production
- * LAST FIX: correct omise sdk initialization
+ * LAST FIX: enforce token validation + debug logs + safe credit add
  */
 
 const express = require("express");
 const router = express.Router();
+const Omise = require("omise");
 
-// ✅ INIT SDK แบบถูกต้อง
-const omise = require("omise")({
-  publicKey: process.env.OMISE_PUBLIC_KEY,
+const { addCredit } = require("../db/db");
+
+const omise = Omise({
   secretKey: process.env.OMISE_SECRET_KEY
 });
 
-console.log("OMISE KEY LOADED:", !!process.env.OMISE_SECRET_KEY);
-
 // =====================================================
-// CREATE CHARGE
+// CREATE CHARGE (CARD TOKEN FLOW)
 // =====================================================
-
 router.post("/create-charge", async (req, res) => {
 
   try {
 
-    const { amount, token, packageName, userId } = req.body;
+    console.log("BODY:", req.body);
+    console.log("USER:", req.user);
 
-    if (!amount || !token || !packageName || !userId) {
-      return res.status(400).json({ error: "missing required fields" });
+    const { token, product } = req.body;
+
+    if (!token) {
+      return res.status(400).json({ error: "NO_TOKEN" });
     }
 
-    const charge = await omise.charges.create({
-      amount: parseInt(amount),
-      currency: "thb",
-      card: token,
+    // 🔥 ปรับราคาแพ็คเกจตรงนี้
+    const amount = 9900; // 99.00 THB
+    const creditAmount = 100;
 
-      // 🔥 สำคัญมาก
-      metadata: {
-        userId: userId,
-        package: packageName
+    const charge = await omise.charges.create({
+      amount: amount,
+      currency: "thb",
+      card: token
+    });
+
+    console.log("CHARGE STATUS:", charge.status);
+
+    if (charge.status === "successful") {
+
+      if (!req.user || !req.user.id) {
+        return res.status(400).json({ error: "NO_USER_SESSION" });
       }
 
-    });
+      await addCredit(req.user.id, creditAmount);
 
-    res.json({
-      status: "created",
-      charge
-    });
+      return res.json({ success: true });
+    }
+
+    return res.json({ success: false });
 
   } catch (err) {
 
     console.error("OMISE CREATE ERROR:", err);
-    res.status(500).json({ error: err.message });
-
+    return res.status(500).json({ error: "OMISE_FAIL" });
   }
-
 });
 
 module.exports = router;
