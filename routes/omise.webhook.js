@@ -1,9 +1,9 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: omise.webhook.js
-// VERSION: v1.0.0
+// VERSION: v1.1.0
 // STATUS: production
-// LAST FIX: INITIAL PRODUCTION WEBHOOK + SIGNATURE VERIFY + IDEMPOTENCY LOCK
+// LAST FIX: FORCE RAW BODY PARSER FOR SIGNATURE VERIFY (FIX 401 ISSUE)
 // =====================================================
 
 const express = require("express");
@@ -14,21 +14,30 @@ const creditEngine = require("../services/credit.engine");
 const { sqlite } = require("../db/db");
 
 // =====================================================
+// RAW BODY MIDDLEWARE (CRITICAL)
+// =====================================================
+
+router.use(
+   express.raw({
+      type: "*/*"
+   })
+);
+
+// =====================================================
 // VERIFY SIGNATURE
 // =====================================================
 
 function verifyOmiseSignature(req) {
+
    const secret = process.env.OMISE_WEBHOOK_SECRET;
    if (!secret) return false;
 
    const signature = req.headers["x-omise-signature"];
    if (!signature) return false;
 
-   const payload = req.body;
-
    const expected = crypto
       .createHmac("sha256", secret)
-      .update(payload)
+      .update(req.body)
       .digest("hex");
 
    return signature === expected;
@@ -42,7 +51,6 @@ router.post("/", async (req, res) => {
 
    try {
 
-      // RAW body required
       const isValid = verifyOmiseSignature(req);
 
       if (!isValid) {
@@ -70,7 +78,6 @@ router.post("/", async (req, res) => {
          return res.status(200).send("duplicate");
       }
 
-      // Save event first (lock)
       await new Promise((resolve, reject) => {
          sqlite.run(
             "INSERT INTO omise_events (event_id) VALUES (?)",
@@ -116,9 +123,7 @@ router.post("/", async (req, res) => {
 
       console.error("OMISE WEBHOOK ERROR:", err);
       res.status(500).send("error");
-
    }
-
 });
 
 module.exports = router;
