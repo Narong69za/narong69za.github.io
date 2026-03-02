@@ -82,32 +82,26 @@ body{
    ENGINE CARD
 ================================ */
 
+.payment-grid{
+  width:100%;
+  max-width:1200px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:28px;
+  padding:20px;
+  box-sizing:border-box;
+}
+
 .engine-card{
   background:var(--card-bg);
-  border-radius:22px;
-  padding:45px;
+  border-radius:18px;
+  padding:28px;
   text-align:center;
   border:1px solid var(--border-soft);
   transition:all .3s ease;
   cursor:pointer;
   position:relative;
-}
-
-.engine-card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 0 40px rgba(255,0,0,.35);
-}
-
-.engine-card h2{
-  font-size:22px;
-  margin:0 0 15px;
-  letter-spacing:1px;
-}
-
-.engine-card p{
-  margin:0 0 30px;
-  opacity:.75;
-  font-size:14px;
+  overflow:hidden;
 }
 
 
@@ -207,11 +201,23 @@ body{
 ================================ */
 
 @media(max-width:900px){
+
+  .payment-header{
+    padding:30px 15px 15px;
+  }
+
   .payment-grid{
     grid-template-columns:1fr;
+    gap:22px;
+    padding:15px;
   }
 
   .engine-card{
-    padding:35px;
+    padding:22px;
   }
+
+  .engine-btn{
+    padding:14px 26px;
+  }
+
 }
