@@ -1,44 +1,113 @@
+/* =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: assets/css/payment.css
+VERSION: v1.3.0
+STATUS: production
+LAST FIX: ULTRA PAYMENT UI UPGRADE (crypto glow + premium dark theme)
+===================================================== */
+
 body{
-background:#000;
-color:#fff;
-font-family:Arial;
-display:flex;
-justify-content:center;
-align-items:center;
-height:100vh;
+    background:#000;
+    color:#fff;
+    font-family:'Segoe UI', Arial, sans-serif;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    margin:0;
 }
+
+/* ========================= */
+/* ROOT CONTAINER */
+/* ========================= */
 
 .payment-root{
-width:420px;
-text-align:center;
+    width:420px;
+    text-align:center;
+    padding:25px;
+    background:#0b0b0b;
+    border-radius:16px;
+    border:1px solid #1a1a1a;
+    box-shadow:0 0 40px rgba(0,255,200,0.08);
 }
 
+/* ========================= */
+/* TITLE */
+/* ========================= */
+
+.payment-root h1{
+    font-size:20px;
+    letter-spacing:2px;
+    margin-bottom:25px;
+}
+
+/* ========================= */
+/* PAYMENT METHODS */
+/* ========================= */
+
 .payment-methods{
-display:flex;
-gap:10px;
-justify-content:center;
-margin-bottom:20px;
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:20px;
+    flex-wrap:wrap;
 }
 
 .pay-btn{
-background:#111;
-border:1px solid #333;
-color:#fff;
-padding:10px 14px;
-cursor:pointer;
+    background:#111;
+    border:1px solid #222;
+    color:#fff;
+    padding:10px 14px;
+    cursor:pointer;
+    border-radius:10px;
+    transition:all .25s ease;
+    font-size:13px;
+}
+
+.pay-btn:hover{
+    border-color:#00ffc8;
+    box-shadow:0 0 12px rgba(0,255,200,0.4);
 }
 
 .pay-btn.active{
-box-shadow:0 0 15px #00ff88;
+    border-color:#00ffc8;
+    box-shadow:0 0 15px #00ff88;
 }
+
+/* ========================= */
+/* PAYMENT BOX */
+/* ========================= */
 
 .payment-box{
-border:1px solid #222;
-padding:20px;
-min-height:200px;
+    border:1px solid #1f1f1f;
+    padding:20px;
+    min-height:220px;
+    border-radius:14px;
+    background:#0f0f0f;
+    transition:all .3s ease;
 }
 
+/* ========================= */
+/* STATUS */
+/* ========================= */
+
 .status{
-margin-top:15px;
-color:#00ff88;
+    margin-top:18px;
+    color:#00ffc8;
+    font-weight:600;
+    letter-spacing:1px;
+    font-size:13px;
+}
+
+/* ========================= */
+/* SMOOTH FADE */
+/* ========================= */
+
+.fade-in{
+    animation:fadeIn .4s ease;
+}
+
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(8px);}
+    to{opacity:1;transform:translateY(0);}
 }
