@@ -273,7 +273,11 @@ async function payCrypto(){
 ============================= */
 
 document.addEventListener("DOMContentLoaded", async ()=>{
-
+document.querySelectorAll(".payment-card").forEach(card=>{
+  card.addEventListener("click",()=>{
+    setMethod(card.dataset.method);
+  });
+});
   if(typeof API_BASE === "undefined") return;
 
   const ok = await checkAuth();
