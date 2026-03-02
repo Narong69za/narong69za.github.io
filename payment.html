@@ -22,16 +22,32 @@ LAST FIX: unified 4-payment methods (no inline script)
 <div class="payment-root">
 
 <h1>SN DESIGN PAYMENT CENTER</h1>
+<div class="payment-grid">
 
-<div class="payment-methods">
-  <button class="pay-btn" data-method="stripe">💳 Card (Omise)</button>
-  <button class="pay-btn" data-method="truemoney">🟠 TrueMoney Wallet</button>
-  <button class="pay-btn" data-method="promptpay">📱 PromptPay QR</button>
-  <button class="pay-btn" data-method="crypto">🪙 Crypto</button>
-</div>
+  <div class="payment-card" data-method="stripe">
+    <h2>💳 OMise Card</h2>
+    <p>Visa / Master / JCB</p>
+    <button class="premium-btn">ชำระด้วยบัตร</button>
+  </div>
 
-<div id="paymentBox" class="payment-box">
-  เลือกช่องทางชำระเงิน
+  <div class="payment-card" data-method="truemoney">
+    <h2>🟠 TrueMoney</h2>
+    <p>Wallet Direct Payment</p>
+    <button class="premium-btn orange">ชำระผ่าน Wallet</button>
+  </div>
+
+  <div class="payment-card" data-method="promptpay">
+    <h2>📱 SCB PromptPay</h2>
+    <p>QR Code Banking</p>
+    <button class="premium-btn blue">สร้าง QR ชำระเงิน</button>
+  </div>
+
+  <div class="payment-card" data-method="crypto">
+    <h2>🪙 Binance Crypto</h2>
+    <p>USDT / BNB / TON</p>
+    <button class="premium-btn green">ชำระด้วย Crypto</button>
+  </div>
+
 </div>
 
 <div id="paymentStatus" class="status">
