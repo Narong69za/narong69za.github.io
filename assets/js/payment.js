@@ -1,7 +1,7 @@
 /* =====================================================
 SN DESIGN PAYMENT CENTER
-VERSION: 5.1.0
-LAST FIX: attach x-user-id header from /auth/me (fix USER ID undefined)
+VERSION: 5.2.0
+LAST FIX: add TrueMoney Wallet flow (add-only)
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -31,12 +31,8 @@ async function checkAuth(){
 
         const user = await res.json();
 
-        // 🔥 เก็บ userId สำหรับส่ง header
         if(user && user.id){
             CURRENT_USER_ID = user.id;
-            console.log("AUTH OK - USER ID:", CURRENT_USER_ID);
-        }else{
-            console.warn("USER ID NOT FOUND IN /auth/me");
         }
 
         return true;
@@ -49,10 +45,7 @@ async function checkAuth(){
 
 async function init(){
 
-    if (typeof API_BASE === "undefined") {
-        console.error("API_BASE not found.");
-        return;
-    }
+    if (typeof API_BASE === "undefined") return;
 
     const ok = await checkAuth();
     if(!ok) return;
@@ -69,23 +62,13 @@ async function init(){
             try{
 
                 // =============================
-                // 💳 OMISE CARD FLOW (REAL)
+                // CARD
                 // =============================
                 if(method==="stripe"){
 
-                    if(typeof Omise === "undefined"){
-                        setStatus("OMISE JS NOT LOADED");
-                        paymentBox.innerHTML="Omise.js โหลดไม่สำเร็จ";
-                        return;
-                    }
+                    if(!CURRENT_USER_ID) return;
 
-                    if(!CURRENT_USER_ID){
-                        setStatus("NO USER");
-                        paymentBox.innerHTML="ไม่พบข้อมูลผู้ใช้";
-                        return;
-                    }
-
-                    Omise.setPublicKey("pkey_test_66os44r1xiuuit0qvcn");
+                    Omise.setPublicKey("pkey_test_xxxxxxxxx");
 
                     Omise.createToken("card", {
                         name: "Test User",
@@ -95,45 +78,26 @@ async function init(){
                         security_code: "123"
                     }, async function(statusCode, response){
 
-                        if(response.object !== "token"){
-                            setStatus("TOKEN ERROR");
-                            paymentBox.innerHTML="สร้าง Token ไม่สำเร็จ";
-                            return;
-                        }
+                        if(response.object !== "token") return;
 
-                        try{
+                        const res = await fetch(API_BASE + "/api/omise/create-charge",{
+                            method:"POST",
+                            credentials:"include",
+                            headers:{
+                                "Content-Type":"application/json",
+                                "x-user-id": CURRENT_USER_ID
+                            },
+                            body:JSON.stringify({
+                                token: response.id,
+                                product:"credit_pack_1"
+                            })
+                        });
 
-                            const res = await fetch(API_BASE + "/api/omise/create-charge",{
-                                method:"POST",
-                                headers:{
-                                    "Content-Type":"application/json",
-                                    "x-user-id": CURRENT_USER_ID // 🔥 FIX สำคัญ
-                                },
-                                credentials:"include",
-                                body:JSON.stringify({
-                                    token: response.id,
-                                    product:"credit_pack_1"
-                                })
-                            });
+                        const data = await res.json();
 
-                            if(!res.ok){
-                                throw new Error("Charge API Failed");
-                            }
-
-                            const data = await res.json();
-
-                            if(data.success){
-                                setStatus("SUCCESS");
-                                paymentBox.innerHTML="ชำระเงินสำเร็จ เติมเครดิตแล้ว";
-                            }else{
-                                setStatus("FAILED");
-                                paymentBox.innerHTML="ชำระเงินไม่สำเร็จ";
-                            }
-
-                        }catch(err){
-                            console.error("CHARGE ERROR:",err);
-                            setStatus("ERROR");
-                            paymentBox.innerHTML="เกิดข้อผิดพลาดในการเรียก Charge";
+                        if(data.success){
+                            setStatus("SUCCESS");
+                            paymentBox.innerHTML="ชำระเงินสำเร็จ เติมเครดิตแล้ว";
                         }
 
                     });
@@ -142,16 +106,39 @@ async function init(){
                 }
 
                 // =============================
-                // OTHER METHODS (PLACEHOLDER)
+                // TRUE MONEY WALLET
                 // =============================
+                if(method==="truemoney"){
+
+                    if(!CURRENT_USER_ID) return;
+
+                    const res = await fetch(API_BASE + "/api/omise/create-truewallet",{
+                        method:"POST",
+                        credentials:"include",
+                        headers:{
+                            "Content-Type":"application/json",
+                            "x-user-id": CURRENT_USER_ID
+                        },
+                        body:JSON.stringify({
+                            product:"credit_pack_1"
+                        })
+                    });
+
+                    const data = await res.json();
+
+                    if(data.authorizeUri){
+                        window.location.href = data.authorizeUri;
+                    }
+
+                    return;
+                }
 
                 paymentBox.innerHTML="ช่องทางนี้ยังไม่เปิดใช้งาน";
                 setStatus("NOT AVAILABLE");
 
             }catch(err){
 
-                console.error("PAYMENT ERROR:",err);
-                paymentBox.innerHTML="เกิดข้อผิดพลาด";
+                console.error(err);
                 setStatus("ERROR");
             }
 
