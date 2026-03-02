@@ -123,9 +123,7 @@ async function handleConfirm(){
 
   try{
 
-    if(CURRENT_METHOD === "stripe"){
-      return payOmise();
-    }
+    if(method === "omise" || method === "stripe" || method === "card"){
 
     if(CURRENT_METHOD === "truemoney"){
       return payTrueMoney();
@@ -151,7 +149,7 @@ async function handleConfirm(){
 
 function payOmise(){
 
-  Omise.setPublicKey("pkey_test_xxxxxxxxx");
+  Omise.setPublicKey("pkey_test_66os44r1xiuuit0qvcn");
 
   Omise.createToken("card", {
     name: "Test User",
@@ -208,7 +206,8 @@ async function payTrueMoney(){
   if(data.authorizeUri){
     window.location.href = data.authorizeUri;
   }else{
-    setStatus("ERROR");
+    console.log(data);
+    setStatus("FAILED");
   }
 }
 
