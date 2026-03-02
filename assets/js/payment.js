@@ -1,12 +1,13 @@
 /* =====================================================
 SN DESIGN PAYMENT CONTROLLER
-VERSION: 8.1.0
+VERSION: 9.0.0
 STATUS: production
 LAST FIX:
-- fix Omise product param
-- fix TrueMoney product param
-- lock PromptPay 50–500 THB
-- stable event binding
+- fixed handleConfirm router logic
+- unified CURRENT_METHOD control
+- bind with .engine-card (Enterprise UI)
+- stable Omise / TrueMoney / SCB / Crypto flow
+- remove duplicated event binding
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -61,6 +62,10 @@ function setMethod(method){
   renderMethodUI(method);
 }
 
+/* =============================
+   RENDER UI
+============================= */
+
 function renderMethodUI(method){
 
   if(method === "stripe"){
@@ -79,8 +84,7 @@ function renderMethodUI(method){
     paymentBox.innerHTML = `
       <input type="number"
              id="qrAmount"
-             placeholder="ขั้นต่ำ 50 - สูงสุด 500 บาท"
-             style="padding:10px;width:80%;margin-bottom:12px;">
+             placeholder="ขั้นต่ำ 50 - สูงสุด 500 บาท">
       <button id="confirmBtn">สร้าง QR PromptPay</button>
       <div id="qrResult" style="margin-top:15px;"></div>
     `;
@@ -123,7 +127,9 @@ async function handleConfirm(){
 
   try{
 
-    if(method === "omise" || method === "stripe" || method === "card"){
+    if(CURRENT_METHOD === "stripe"){
+      return payOmise();
+    }
 
     if(CURRENT_METHOD === "truemoney"){
       return payTrueMoney();
@@ -138,13 +144,13 @@ async function handleConfirm(){
     }
 
   }catch(err){
-    console.error(err);
+    console.error("PAYMENT ERROR:", err);
     setStatus("ERROR");
   }
 }
 
 /* =============================
-   OMise CARD
+   OMISE CARD
 ============================= */
 
 function payOmise(){
@@ -273,19 +279,15 @@ async function payCrypto(){
 ============================= */
 
 document.addEventListener("DOMContentLoaded", async ()=>{
-document.querySelectorAll(".payment-card").forEach(card=>{
-  card.addEventListener("click",()=>{
-    setMethod(card.dataset.method);
-  });
-});
+
   if(typeof API_BASE === "undefined") return;
 
   const ok = await checkAuth();
   if(!ok) return;
 
-  document.querySelectorAll(".pay-btn").forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      setMethod(btn.dataset.method);
+  document.querySelectorAll(".engine-card").forEach(card=>{
+    card.addEventListener("click",()=>{
+      setMethod(card.dataset.method);
     });
   });
 
