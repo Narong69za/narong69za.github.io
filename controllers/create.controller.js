@@ -9,7 +9,8 @@
 // =====================================================
 // CREATE CONTROLLER — ULTRA CREDIT INTEGRATION
 // =====================================================
-
+const { v4: uuidv4 } = require("uuid");
+const db = require("../db/db");
 const modelRouter = require("../models/model.router");
 const creditEngine = require("../services/credit.engine");
 
