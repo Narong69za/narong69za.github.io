@@ -285,9 +285,13 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   const ok = await checkAuth();
   if(!ok) return;
 
-  document.querySelectorAll(".engine-card").forEach(card=>{
-    card.addEventListener("click",()=>{
-      setMethod(card.dataset.method);
+  document.querySelectorAll(".engine-btn").forEach(btn=>{
+    btn.addEventListener("click",(e)=>{
+      e.stopPropagation();
+      const card = btn.closest(".engine-card");
+      if(card){
+        setMethod(card.dataset.method);
+      }
     });
   });
 
