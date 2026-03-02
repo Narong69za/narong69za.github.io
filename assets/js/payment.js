@@ -1,13 +1,11 @@
 /* =====================================================
 SN DESIGN PAYMENT CONTROLLER
-VERSION: 9.0.0
+VERSION: 9.0.1
 STATUS: production
 LAST FIX:
-- fixed handleConfirm router logic
-- unified CURRENT_METHOD control
-- bind with .engine-card (Enterprise UI)
-- stable Omise / TrueMoney / SCB / Crypto flow
-- remove duplicated event binding
+- fixed engine-card click binding
+- support both .engine-btn and .engine-card
+- guaranteed CURRENT_METHOD set
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -31,8 +29,11 @@ function resetUI(){
   }
 }
 
-async function checkAuth(){
+/* =============================
+   AUTH CHECK
+============================= */
 
+async function checkAuth(){
   try{
     const res = await fetch(`${API_BASE}/auth/me`,{
       credentials:"include",
@@ -69,21 +70,16 @@ function setMethod(method){
 function renderMethodUI(method){
 
   if(method === "stripe"){
-    paymentBox.innerHTML = `
-      <button id="confirmBtn">ชำระด้วยบัตร (Omise)</button>
-    `;
+    paymentBox.innerHTML = `<button id="confirmBtn">ชำระด้วยบัตร (Omise)</button>`;
   }
 
   if(method === "truemoney"){
-    paymentBox.innerHTML = `
-      <button id="confirmBtn">ชำระผ่าน TrueMoney Wallet</button>
-    `;
+    paymentBox.innerHTML = `<button id="confirmBtn">ชำระผ่าน TrueMoney Wallet</button>`;
   }
 
   if(method === "promptpay"){
     paymentBox.innerHTML = `
-      <input type="number"
-             id="qrAmount"
+      <input type="number" id="qrAmount"
              placeholder="ขั้นต่ำ 50 - สูงสุด 500 บาท">
       <button id="confirmBtn">สร้าง QR PromptPay</button>
       <div id="qrResult" style="margin-top:15px;"></div>
@@ -123,6 +119,11 @@ function renderMethodUI(method){
 
 async function handleConfirm(){
 
+  if(!CURRENT_METHOD){
+    setStatus("NO METHOD");
+    return;
+  }
+
   setStatus("PROCESSING");
 
   try{
@@ -150,7 +151,7 @@ async function handleConfirm(){
 }
 
 /* =============================
-   OMISE CARD
+   OMISE
 ============================= */
 
 function payOmise(){
@@ -212,13 +213,12 @@ async function payTrueMoney(){
   if(data.authorizeUri){
     window.location.href = data.authorizeUri;
   }else{
-    console.log(data);
     setStatus("FAILED");
   }
 }
 
 /* =============================
-   PROMPTPAY (SCB)
+   PROMPTPAY
 ============================= */
 
 async function payPromptPay(){
@@ -226,7 +226,6 @@ async function payPromptPay(){
   const amount = parseInt(document.getElementById("qrAmount").value);
 
   if(!amount || amount < 50 || amount > 500){
-    alert("ขั้นต่ำ 50 บาท สูงสุด 500 บาท");
     setStatus("INVALID AMOUNT");
     return;
   }
@@ -250,7 +249,7 @@ async function payPromptPay(){
 }
 
 /* =============================
-   CRYPTO (BINANCE)
+   CRYPTO
 ============================= */
 
 async function payCrypto(){
@@ -285,12 +284,13 @@ document.addEventListener("DOMContentLoaded", async ()=>{
   const ok = await checkAuth();
   if(!ok) return;
 
-  document.querySelectorAll(".engine-btn").forEach(btn=>{
-    btn.addEventListener("click",(e)=>{
-      e.stopPropagation();
-      const card = btn.closest(".engine-card");
-      if(card){
-        setMethod(card.dataset.method);
+  // 🔥 รองรับทั้งแบบ card คลิกทั้งกล่อง และปุ่ม
+
+  document.querySelectorAll("[data-method]").forEach(el=>{
+    el.addEventListener("click",()=>{
+      const method = el.dataset.method;
+      if(method){
+        setMethod(method);
       }
     });
   });
