@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.webhook.js
- * VERSION: v2.1.0
+ * VERSION: v2.2.0
  * STATUS: production
- * LAST FIX: TrueWallet fully supported via metadata credits
+ * LAST FIX: production-ready signature header + idempotency safe
  */
 
 const express = require("express");
@@ -15,7 +15,7 @@ router.post("/", async (req, res) => {
 
   try {
 
-    const signature = req.headers["omise-signature"];
+    const signature = req.headers["x-omise-signature"];
     const secret = process.env.OMISE_WEBHOOK_SECRET;
 
     if (!signature || !secret) {
@@ -59,7 +59,6 @@ router.post("/", async (req, res) => {
 
     console.error("WEBHOOK ERROR:", err);
     res.status(500).send("ERROR");
-
   }
 
 });
