@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SN DESIGN STUDIO — PAYMENT CONTROL</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+
+body {
+  background:#0b0b0f;
+  color:#fff;
+  font-family:Montserrat, sans-serif;
+  margin:0;
+}
+
+header {
+  padding:20px;
+  font-size:22px;
+  background:linear-gradient(90deg,#8b0000,#001f3f);
+  font-weight:bold;
+}
+
+.dashboard {
+  padding:20px;
+}
+
+.card-container {
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.card {
+  flex:1;
+  min-width:200px;
+  background:rgba(255,255,255,0.05);
+  padding:20px;
+  border-radius:12px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,0.1);
+}
+
+table {
+  width:100%;
+  border-collapse:collapse;
+  margin-top:20px;
+}
+
+th, td {
+  padding:10px;
+  border-bottom:1px solid rgba(255,255,255,0.1);
+}
+
+button {
+  background:#8b0000;
+  color:#fff;
+  padding:8px 14px;
+  border:none;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+canvas {
+  margin-top:30px;
+}
+
+</style>
+</head>
+<body>
+
+<header>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</header>
+
+<div class="dashboard">
+
+<div class="card-container">
+  <div class="card" id="totalRevenue">Revenue: ...</div>
+  <div class="card" id="totalTransactions">Transactions: ...</div>
+</div>
+
+<canvas id="revenueChart"></canvas>
+
+<button onclick="exportCSV()">Export CSV</button>
+
+<table id="paymentTable">
+<thead>
+<tr>
+<th>User</th>
+<th>Method</th>
+<th>Amount</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+</div>
+
+<script>
+
+const API = "/api/admin";
+
+async function loadSummary(){
+  const res = await fetch(API+"/analytics/summary",{credentials:"include"});
+  const data = await res.json();
+
+  let total=0;
+  let count=0;
+
+  data.forEach(r=>{
+    total += r.total_amount || 0;
+    count += r.total_transactions || 0;
+  });
+
+  document.getElementById("totalRevenue").innerText = "Revenue: "+total;
+  document.getElementById("totalTransactions").innerText = "Transactions: "+count;
+}
+
+async function loadTable(){
+  const res = await fetch(API+"/payments/full",{credentials:"include"});
+  const data = await res.json();
+
+  const tbody = document.querySelector("#paymentTable tbody");
+  tbody.innerHTML="";
+
+  data.forEach(row=>{
+    tbody.innerHTML += `
+      <tr>
+        <td>${row.email || "-"}</td>
+        <td>${row.method}</td>
+        <td>${row.amount}</td>
+        <td>${row.status}</td>
+        <td>${row.created_at}</td>
+      </tr>
+    `;
+  });
+
+}
+
+async function loadChart(){
+  const res = await fetch(API+"/analytics/daily",{credentials:"include"});
+  const data = await res.json();
+
+  const ctx = document.getElementById("revenueChart");
+
+  new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:data.map(d=>d.date),
+      datasets:[{
+        label:'Daily Revenue',
+        data:data.map(d=>d.total),
+        borderColor:'#ff0000'
+      }]
+    }
+  });
+
+}
+
+function exportCSV(){
+  let table = document.getElementById("paymentTable").outerHTML;
+  let blob = new Blob([table],{type:"text/csv"});
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download="payments.csv";
+  a.click();
+}
+
+async function init(){
+  await loadSummary();
+  await loadTable();
+  await loadChart();
+}
+
+setInterval(init,10000); // live refresh
+init();
+
+</script>
+
+</body>
+</html>
