@@ -229,3 +229,76 @@ module.exports = {
   checkSlipReference,
   saveSlipReference
 };
+
+// =====================================================
+// USAGE LOG INSERT (RESERVE)
+// =====================================================
+
+exports.insertUsageLog = function(id, userId, alias, cost){
+
+  return new Promise((resolve,reject)=>{
+
+    db.run(
+      `INSERT INTO usage_logs (id,user_id,alias,cost,status)
+       VALUES (?,?,?,?,?)`,
+      [id,userId,alias,cost,"reserved"],
+      function(err){
+
+        if(err) return reject(err);
+
+        resolve(true);
+
+      }
+    );
+
+  });
+
+};
+
+// =====================================================
+// UPDATE USAGE STATUS
+// =====================================================
+
+exports.updateUsageStatus = function(id,status){
+
+  return new Promise((resolve,reject)=>{
+
+    db.run(
+      `UPDATE usage_logs SET status=? WHERE id=?`,
+      [status,id],
+      function(err){
+
+        if(err) return reject(err);
+
+        resolve(true);
+
+      }
+    );
+
+  });
+
+};
+
+// =====================================================
+// CHECK DUPLICATE REQUEST
+// =====================================================
+
+exports.getUsageById = function(id){
+
+  return new Promise((resolve,reject)=>{
+
+    db.get(
+      `SELECT * FROM usage_logs WHERE id=?`,
+      [id],
+      function(err,row){
+
+        if(err) return reject(err);
+
+        resolve(row);
+
+      }
+    );
+
+  });
+
+};
