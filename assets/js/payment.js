@@ -1,8 +1,12 @@
 /* =====================================================
 SN DESIGN PAYMENT CONTROLLER
-VERSION: 8.0.0
+VERSION: 8.1.0
 STATUS: production
-LAST FIX: unified Omise + TrueMoney + PromptPay(SCB) + Crypto
+LAST FIX:
+- fix Omise product param
+- fix TrueMoney product param
+- lock PromptPay 50–500 THB
+- stable event binding
 ===================================================== */
 
 const paymentBox = document.getElementById("paymentBox");
@@ -10,26 +14,46 @@ const statusEl = document.getElementById("paymentStatus");
 
 let CURRENT_METHOD = null;
 
+/* =============================
+   UTIL
+============================= */
+
 function setStatus(text){
-  statusEl.innerText = "STATUS: " + text;
+  if(statusEl){
+    statusEl.innerText = "STATUS: " + text;
+  }
 }
 
 function resetUI(){
-  paymentBox.innerHTML = "";
+  if(paymentBox){
+    paymentBox.innerHTML = "";
+  }
 }
 
 async function checkAuth(){
-  const res = await fetch(`${API_BASE}/auth/me`,{
-    credentials:"include",
-    cache:"no-store"
-  });
 
-  if(res.status !== 200){
+  try{
+    const res = await fetch(`${API_BASE}/auth/me`,{
+      credentials:"include",
+      cache:"no-store"
+    });
+
+    if(res.status !== 200){
+      window.location.replace("/login.html");
+      return false;
+    }
+
+    return true;
+
+  }catch(err){
     window.location.replace("/login.html");
     return false;
   }
-  return true;
 }
+
+/* =============================
+   METHOD SELECT
+============================= */
 
 function setMethod(method){
   CURRENT_METHOD = method;
@@ -40,16 +64,23 @@ function setMethod(method){
 function renderMethodUI(method){
 
   if(method === "stripe"){
-    paymentBox.innerHTML = `<button id="confirmBtn">ชำระด้วยบัตร</button>`;
+    paymentBox.innerHTML = `
+      <button id="confirmBtn">ชำระด้วยบัตร (Omise)</button>
+    `;
   }
 
   if(method === "truemoney"){
-    paymentBox.innerHTML = `<button id="confirmBtn">ชำระผ่าน TrueMoney</button>`;
+    paymentBox.innerHTML = `
+      <button id="confirmBtn">ชำระผ่าน TrueMoney Wallet</button>
+    `;
   }
 
   if(method === "promptpay"){
     paymentBox.innerHTML = `
-      <input type="number" id="qrAmount" placeholder="ระบุจำนวน (บาท)" style="padding:8px;width:80%;margin-bottom:10px;">
+      <input type="number"
+             id="qrAmount"
+             placeholder="ขั้นต่ำ 50 - สูงสุด 500 บาท"
+             style="padding:10px;width:80%;margin-bottom:12px;">
       <button id="confirmBtn">สร้าง QR PromptPay</button>
       <div id="qrResult" style="margin-top:15px;"></div>
     `;
@@ -65,17 +96,26 @@ function renderMethodUI(method){
         <option value="30">30 USD</option>
         <option value="50">50 USD</option>
       </select>
+
       <select id="coinSelect">
         <option value="USDT">USDT</option>
         <option value="BNB">BNB</option>
         <option value="TON">TON</option>
       </select>
+
       <button id="confirmBtn">ชำระด้วย Crypto</button>
     `;
   }
 
-  document.getElementById("confirmBtn").addEventListener("click", handleConfirm);
+  const btn = document.getElementById("confirmBtn");
+  if(btn){
+    btn.addEventListener("click", handleConfirm);
+  }
 }
+
+/* =============================
+   CONFIRM ROUTER
+============================= */
 
 async function handleConfirm(){
 
@@ -106,7 +146,7 @@ async function handleConfirm(){
 }
 
 /* =============================
-   Omise Card
+   OMise CARD
 ============================= */
 
 function payOmise(){
@@ -130,7 +170,10 @@ function payOmise(){
       method:"POST",
       credentials:"include",
       headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ token: response.id })
+      body: JSON.stringify({
+        token: response.id,
+        product: "credit_pack_1"
+      })
     });
 
     const data = await res.json();
@@ -146,7 +189,7 @@ function payOmise(){
 }
 
 /* =============================
-   TrueMoney
+   TRUE MONEY
 ============================= */
 
 async function payTrueMoney(){
@@ -154,7 +197,10 @@ async function payTrueMoney(){
   const res = await fetch(API_BASE + "/api/omise/create-truewallet",{
     method:"POST",
     credentials:"include",
-    headers:{ "Content-Type":"application/json" }
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({
+      product: "credit_pack_1"
+    })
   });
 
   const data = await res.json();
@@ -167,15 +213,16 @@ async function payTrueMoney(){
 }
 
 /* =============================
-   PromptPay SCB
+   PROMPTPAY (SCB)
 ============================= */
 
 async function payPromptPay(){
 
-  const amount = document.getElementById("qrAmount").value;
+  const amount = parseInt(document.getElementById("qrAmount").value);
 
-  if(!amount || amount < 1){
-    alert("ระบุจำนวนเงิน");
+  if(!amount || amount < 50 || amount > 500){
+    alert("ขั้นต่ำ 50 บาท สูงสุด 500 บาท");
+    setStatus("INVALID AMOUNT");
     return;
   }
 
@@ -198,7 +245,7 @@ async function payPromptPay(){
 }
 
 /* =============================
-   Binance Crypto
+   CRYPTO (BINANCE)
 ============================= */
 
 async function payCrypto(){
