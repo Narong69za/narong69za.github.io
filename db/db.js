@@ -302,3 +302,16 @@ exports.getUsageById = function(id){
   });
 
 };
+// PAYMENT LOG (ADD-ONLY ENTERPRISE LAYER)
+sqlite.run(`
+  CREATE TABLE IF NOT EXISTS payment_logs (
+    id TEXT PRIMARY KEY,
+    user_id TEXT,
+    method TEXT,
+    amount INTEGER,
+    currency TEXT,
+    status TEXT,
+    tx_id TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )
+`);
