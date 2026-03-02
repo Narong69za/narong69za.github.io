@@ -1,22 +1,48 @@
-// ======================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: omise.service.js
-// VERSION: 1.0.0
-// STATUS: production
-// ======================================================
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: services/omise.service.js
+ * VERSION: v9.0.0
+ * STATUS: production
+ * LAST FIX: enterprise omise integration layer
+ */
 
-const Omise = require("omise")({
-  publicKey: process.env.OMISE_PUBLIC_KEY,
-  secretKey: process.env.OMISE_SECRET_KEY,
+const Omise = require("omise");
+const config = require("../config/payment.config");
+
+const omise = Omise({
+  secretKey: config.OMISE.SECRET_KEY
 });
 
-exports.createCharge = async ({ amount, returnUri, metadata }) => {
+async function createCharge(product, user){
 
-  return await Omise.charges.create({
-    amount,
-    currency: "thb",
-    return_uri: returnUri,
-    metadata
+  const charge = await omise.charges.create({
+    amount: product.amount,
+    currency: product.currency.toLowerCase(),
+    description: "SN DESIGN CREDIT",
+    metadata: {
+      userId: user.id,
+      credits: product.credits
+    }
   });
 
-};
+  return charge;
+}
+
+async function createTrueMoney(product, user){
+
+  const source = await omise.sources.create({
+    type: "truemoney",
+    amount: product.amount,
+    currency: product.currency.toLowerCase(),
+    metadata: {
+      userId: user.id,
+      credits: product.credits
+    }
+  });
+
+  return {
+    authorizeUri: source.authorize_uri
+  };
+}
+
+module.exports = { createCharge, createTrueMoney };
