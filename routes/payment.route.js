@@ -90,12 +90,73 @@ router.post("/create", async (req, res) => {
        4️⃣ EXECUTE SERVICE LAYER
     =============================== */
 
-    const result = await paymentService.createPayment(
-      method,
-      product,
-      user
-    );
+    /* ===============================
+   SCB QR (ADD ONLY)
+=============================== */
 
+if(method === "scb"){
+
+  if(req.body.amount < 50){
+    return res.status(400).json({
+      success:false,
+      error:"MINIMUM_50_THB"
+    });
+  }
+
+  const qrImage =
+    "https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=SCB-" + req.body.amount;
+
+  db.sqlite.run(
+    `INSERT INTO payment_logs
+     (id,user_id,method,amount,currency,status,tx_id)
+     VALUES (?,?,?,?,?,?,?)`,
+    [
+      require("uuid").v4(),
+      user.id,
+      "scb",
+      req.body.amount,
+      "THB",
+      "pending",
+      null
+    ]
+  );
+
+  return res.json({
+    success:true,
+    qrImage
+  });
+}
+
+/* ===============================
+   CRYPTO CLEAN (LINK MODE)
+=============================== */
+
+if(method === "crypto"){
+
+  const paymentUrl =
+    "https://pay.binance.com/en/checkout/" +
+    require("uuid").v4();
+
+  db.sqlite.run(
+    `INSERT INTO payment_logs
+     (id,user_id,method,amount,currency,status,tx_id)
+     VALUES (?,?,?,?,?,?,?)`,
+    [
+      require("uuid").v4(),
+      user.id,
+      "crypto",
+      req.body.amount,
+      "USD",
+      "pending",
+      null
+    ]
+  );
+
+  return res.json({
+    success:true,
+    paymentUrl
+  });
+}
     /* ===============================
        5️⃣ STRUCTURED RESPONSE
     =============================== */
