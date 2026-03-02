@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.webhook.js
- * VERSION: v2.0.0
+ * VERSION: v2.1.0
  * STATUS: production
- * LAST FIX: add signature verification (HMAC SHA256)
+ * LAST FIX: TrueWallet fully supported via metadata credits
  */
 
 const express = require("express");
@@ -22,7 +22,6 @@ router.post("/", async (req, res) => {
       return res.status(401).send("NO SIGNATURE");
     }
 
-    // 🔥 VERIFY HMAC
     const expected = crypto
       .createHmac("sha256", secret)
       .update(req.body)
@@ -32,10 +31,8 @@ router.post("/", async (req, res) => {
       return res.status(403).send("INVALID SIGNATURE");
     }
 
-    // 🔥 PARSE EVENT
     const event = JSON.parse(req.body.toString());
 
-    // 🔥 HANDLE SUCCESS
     if (event.key === "charge.complete") {
 
       const charge = event.data;
@@ -46,7 +43,10 @@ router.post("/", async (req, res) => {
         const credits = parseInt(charge.metadata?.credits || 0);
 
         if (userId && credits > 0) {
+
           await db.addCredit(userId, credits);
+          console.log("WEBHOOK CREDIT ADDED:", credits);
+
         }
 
       }
