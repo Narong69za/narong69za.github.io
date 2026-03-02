@@ -45,6 +45,20 @@ router.post("/", async (req, res) => {
         if (userId && credits > 0) {
 
           await db.addCredit(userId, credits);
+          await db.sqlite.run(
+  `INSERT INTO payment_logs
+   (id,user_id,method,amount,currency,status,tx_id)
+   VALUES (?,?,?,?,?,?,?)`,
+  [
+    require("uuid").v4(),
+    userId,
+    "omise",
+    charge.amount,
+    charge.currency,
+    "success",
+    charge.id
+  ]
+);
           console.log("WEBHOOK CREDIT ADDED:", credits);
 
         }
