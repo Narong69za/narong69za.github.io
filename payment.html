@@ -1,9 +1,9 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.html
-VERSION: v1.4.0
-STATUS: production
-LAST FIX: remove inline crypto script (clean execution flow)
+VERSION: v1.5.0
+STATUS: stable
+LAST FIX: remove crypto block, restore omise stable flow
 ===================================================== -->
 
 <!DOCTYPE html>
@@ -26,9 +26,7 @@ LAST FIX: remove inline crypto script (clean execution flow)
 
 <div class="payment-methods">
 <button type="button" class="pay-btn" data-method="stripe">💳 Card (Omise)</button>
-<button type="button" class="pay-btn" data-method="promptpay">📱 PromptPay QR</button>
 <button type="button" class="pay-btn" data-method="truemoney">🟠 TrueMoney Wallet</button>
-<button type="button" class="pay-btn" data-method="crypto">🪙 Crypto</button>
 </div>
 
 <div id="paymentBox" class="payment-box">
@@ -41,8 +39,8 @@ STATUS: IDLE
 
 </div>
 
-<script src="/assets/js/config.js?v=10.0.0"></script>
-<script src="/assets/js/payment.js?v=6.0.0"></script>
+<script src="/assets/js/config.js?v=11.0.0"></script>
+<script src="/assets/js/payment.js?v=7.0.0"></script>
 
 </body>
 </html>
