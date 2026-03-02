@@ -1,9 +1,9 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER
-// VERSION: 2.6.0
+// VERSION: 2.7.0
 // STATUS: production
-// LAST FIX: attach authMiddleware to OMISE route (JWT protected)
+// LAST FIX: add BINANCE CRYPTO ROUTE (add-only, no structure change)
 // =====================================================
 
 require("dotenv").config();
@@ -28,9 +28,12 @@ const promptpayRoute = require("../routes/promptpay.route");
 // 🔥 AUTH
 const authMiddleware = require("../middleware/auth");
 
-// 🔥 ADD OMISE
+// 🔥 OMISE
 const omiseRoute = require("../routes/omise.route");
 const omiseWebhook = require("../routes/omise.webhook");
+
+// 🔥 NEW — CRYPTO (BINANCE PAY)
+const cryptoRoute = require("../routes/crypto.route");
 
 const usageCheck = require("../services/usage-check");
 const { create } = require("../controllers/create.controller.js");
@@ -69,6 +72,15 @@ app.use(
 );
 
 // =====================================================
+// 🔴 BINANCE CRYPTO WEBHOOK (RAW BODY REQUIRED)
+// =====================================================
+
+app.use(
+  "/api/crypto/webhook",
+  express.raw({ type: "application/json" })
+);
+
+// =====================================================
 // BODY PARSER (AFTER WEBHOOKS)
 // =====================================================
 
@@ -89,6 +101,9 @@ app.use("/api/omise", authMiddleware, omiseRoute);
 
 // 🔥 OMISE WEBHOOK (NO AUTH)
 app.use("/api/omise/webhook", omiseWebhook);
+
+// 🔥 PROTECTED CRYPTO ROUTE (JWT REQUIRED FOR CREATE)
+app.use("/api/crypto", authMiddleware, cryptoRoute);
 
 app.use("/api/promptpay", promptpayRoute);
 
@@ -137,5 +152,6 @@ const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log("OMISE KEY LOADED:", !!process.env.OMISE_SECRET_KEY);
+  console.log("BINANCE KEY LOADED:", !!process.env.BINANCE_PAY_KEY);
   console.log("ULTRA ENGINE RUNNING:", PORT);
 });
