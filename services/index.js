@@ -1,9 +1,9 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER
-// VERSION: 2.5.0
+// VERSION: 2.6.0
 // STATUS: production
-// LAST FIX: HARDEN OMISE BODY PARSER + WEBHOOK RAW FIX (NO STRUCTURE CHANGE)
+// LAST FIX: attach authMiddleware to OMISE route (JWT protected)
 // =====================================================
 
 require("dotenv").config();
@@ -24,6 +24,9 @@ const userRoutes = require("../routes/user.routes");
 const thaiPaymentRoutes = require("../routes/thai-payment.route");
 const authRoutes = require("../routes/auth.route");
 const promptpayRoute = require("../routes/promptpay.route");
+
+// 🔥 AUTH
+const authMiddleware = require("../middleware/auth");
 
 // 🔥 ADD OMISE
 const omiseRoute = require("../routes/omise.route");
@@ -57,7 +60,7 @@ app.use(
 app.use("/api/stripe/webhook", stripeWebhook);
 
 // =====================================================
-// 🔴 OMISE WEBHOOK (RAW BODY REQUIRED BY PLATFORM)
+// 🔴 OMISE WEBHOOK (RAW BODY REQUIRED)
 // =====================================================
 
 app.use(
@@ -66,17 +69,11 @@ app.use(
 );
 
 // =====================================================
-// BODY PARSER (AFTER WEBHOOKS ONLY)
+// BODY PARSER (AFTER WEBHOOKS)
 // =====================================================
 
-app.use(express.json({
-  limit: "10mb"
-}));
-
-app.use(express.urlencoded({
-  extended: true,
-  limit: "10mb"
-}));
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
 // =====================================================
 // ROUTE REGISTER
@@ -87,10 +84,10 @@ app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
 
-// 🔥 OMISE ROUTE (NORMAL JSON ROUTE)
-app.use("/api/omise", omiseRoute);
+// 🔥 PROTECTED OMISE ROUTE (JWT REQUIRED)
+app.use("/api/omise", authMiddleware, omiseRoute);
 
-// 🔥 OMISE WEBHOOK HANDLER (AFTER RAW)
+// 🔥 OMISE WEBHOOK (NO AUTH)
 app.use("/api/omise/webhook", omiseWebhook);
 
 app.use("/api/promptpay", promptpayRoute);
