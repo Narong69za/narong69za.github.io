@@ -1,71 +1,96 @@
 // =====================================================
-// SN DESIGN ENGINE AI
-// FREE USAGE CHECK (EXPRESS VERSION)
+// PROJECT: SN DESIGN STUDIO
+// MODULE: services/usage-check.js
+// VERSION: v2.0.0
+// STATUS: production
+// LAST FIX: add credit deduction + atomic protection + free fallback
 // =====================================================
 
-module.exports = async function usageCheck(req,res,next){
+const db = require("../db/db");
 
-try{
+module.exports = async function usageCheck(req, res, next) {
 
-// ======================
-// GET CLIENT IP
-// ======================
+  try {
 
-const ip =
-req.headers["x-forwarded-for"]?.split(",")[0] ||
-req.socket.remoteAddress;
+    // ======================
+    // DEV MODE BYPASS
+    // ======================
 
+    if (process.env.DEV_MODE === "true") {
+      console.log("DEV BYPASS ACTIVE");
+      return next();
+    }
 
-// ======================
-// DEV BYPASS
-// ======================
+    // ======================
+    // AUTH USER (JWT REQUIRED)
+    // ======================
 
-if(process.env.DEV_MODE === "true"){
+    const user = req.user;
 
-   console.log("DEV BYPASS FREE LIMIT");
+    if (user?.id) {
 
-   return next();
+      const userData = await db.getUser(user.id);
 
-}
+      if (!userData) {
+        return res.status(404).json({ error: "USER NOT FOUND" });
+      }
 
+      // ======================
+      // CREDIT MODE
+      // ======================
 
-// ======================
-// USAGE LIMIT ENGINE
-// ======================
+      if (userData.credits > 0) {
 
-const today = new Date().toISOString().slice(0,10);
+        const result = await db.decreaseCreditAtomic(user.id, 1);
 
-global.usageStore = global.usageStore || {};
+        if (!result) {
+          return res.status(402).json({ error: "NO CREDIT" });
+        }
 
-const key = ip + "_" + today;
+        console.log("CREDIT USED → Remaining:", userData.credits - 1);
 
-if(!global.usageStore[key]){
+        return next();
+      }
 
-   global.usageStore[key] = 0;
+    }
 
-}
+    // ======================
+    // FREE IP FALLBACK MODE
+    // ======================
 
-if(global.usageStore[key] >= 3){
+    const ip =
+      req.headers["x-forwarded-for"]?.split(",")[0] ||
+      req.socket.remoteAddress;
 
-   return res.status(403).json({
-      limit:true,
-      message:"FREE LIMIT REACHED"
-   });
+    const today = new Date().toISOString().slice(0, 10);
 
-}
+    global.usageStore = global.usageStore || {};
 
-global.usageStore[key]++;
+    const key = ip + "_" + today;
 
-console.log("FREE COUNT:",global.usageStore[key]);
+    if (!global.usageStore[key]) {
+      global.usageStore[key] = 0;
+    }
 
-next();
+    if (global.usageStore[key] >= 3) {
+      return res.status(403).json({
+        limit: true,
+        message: "FREE LIMIT REACHED"
+      });
+    }
 
-}catch(err){
+    global.usageStore[key]++;
 
-console.log("USAGE CHECK ERROR:",err);
+    console.log("FREE COUNT:", global.usageStore[key]);
 
-next();
+    next();
 
-}
+  } catch (err) {
 
-}
+    console.log("USAGE CHECK ERROR:", err);
+
+    res.status(500).json({ error: "USAGE_CHECK_FAILED" });
+
+  }
+
+};
