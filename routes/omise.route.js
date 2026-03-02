@@ -1,10 +1,9 @@
-
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.route.js
- * VERSION: v2.5.0
+ * VERSION: v2.6.0
  * STATUS: production
- * LAST FIX: switch from x-user-id header to session-based auth (no structure change)
+ * LAST FIX: add create-truewallet route (add-only, no structure change)
  */
 
 const express = require("express");
@@ -17,7 +16,7 @@ const omise = Omise({
 });
 
 // =====================================================
-// CREATE CHARGE
+// CREATE CHARGE (CARD)
 // =====================================================
 router.post("/create-charge", async (req, res) => {
 
@@ -25,7 +24,6 @@ router.post("/create-charge", async (req, res) => {
 
     console.log("BODY:", req.body);
 
-    // 🔥 ใช้ session / auth middleware ที่ระบบคุณมีอยู่แล้ว
     const userId = req.user?.id || req.session?.user?.id;
 
     console.log("USER ID:", userId);
@@ -40,9 +38,6 @@ router.post("/create-charge", async (req, res) => {
       return res.status(400).json({ error: "NO_TOKEN" });
     }
 
-    // ============================
-    // PRODUCT MAP
-    // ============================
     const PRODUCT_MAP = {
       credit_pack_1: {
         amount: 9900,
@@ -62,7 +57,7 @@ router.post("/create-charge", async (req, res) => {
       card: token,
       metadata: {
         userId: userId,
-        package: product
+        credits: selected.credits
       }
     });
 
@@ -85,6 +80,58 @@ router.post("/create-charge", async (req, res) => {
     console.error("OMISE CREATE ERROR:", err);
     return res.status(500).json({ error: "OMISE_FAIL" });
   }
+});
+
+
+// =====================================================
+// CREATE TRUE MONEY WALLET
+// =====================================================
+router.post("/create-truewallet", async (req, res) => {
+
+  try {
+
+    const userId = req.user?.id || req.session?.user?.id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "UNAUTHORIZED_USER" });
+    }
+
+    const { product } = req.body;
+
+    const PRODUCT_MAP = {
+      credit_pack_1: {
+        amount: 9900,
+        credits: 100
+      }
+    };
+
+    const selected = PRODUCT_MAP[product];
+
+    if (!selected) {
+      return res.status(400).json({ error: "INVALID_PRODUCT" });
+    }
+
+    const source = await omise.sources.create({
+      type: "truemoney",
+      amount: selected.amount,
+      currency: "thb",
+      metadata: {
+        userId: userId,
+        credits: selected.credits
+      }
+    });
+
+    return res.json({
+      authorizeUri: source.authorize_uri
+    });
+
+  } catch (err) {
+
+    console.error("TRUEWALLET ERROR:", err);
+    return res.status(500).json({ error: "TRUEWALLET_FAIL" });
+
+  }
+
 });
 
 module.exports = router;
