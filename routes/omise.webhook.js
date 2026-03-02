@@ -1,129 +1,67 @@
-// =====================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: omise.webhook.js
-// VERSION: v1.1.0
-// STATUS: production
-// LAST FIX: FORCE RAW BODY PARSER FOR SIGNATURE VERIFY (FIX 401 ISSUE)
-// =====================================================
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: routes/omise.webhook.js
+ * VERSION: v2.0.0
+ * STATUS: production
+ * LAST FIX: add signature verification (HMAC SHA256)
+ */
 
 const express = require("express");
 const crypto = require("crypto");
 const router = express.Router();
+const db = require("../db/db");
 
-const creditEngine = require("../services/credit.engine");
-const { sqlite } = require("../db/db");
+router.post("/", async (req, res) => {
 
-// =====================================================
-// RAW BODY MIDDLEWARE (CRITICAL)
-// =====================================================
+  try {
 
-router.use(
-   express.raw({
-      type: "*/*"
-   })
-);
+    const signature = req.headers["omise-signature"];
+    const secret = process.env.OMISE_WEBHOOK_SECRET;
 
-// =====================================================
-// VERIFY SIGNATURE
-// =====================================================
+    if (!signature || !secret) {
+      return res.status(401).send("NO SIGNATURE");
+    }
 
-function verifyOmiseSignature(req) {
-
-   const secret = process.env.OMISE_WEBHOOK_SECRET;
-   if (!secret) return false;
-
-   const signature = req.headers["x-omise-signature"];
-   if (!signature) return false;
-
-   const expected = crypto
+    // 🔥 VERIFY HMAC
+    const expected = crypto
       .createHmac("sha256", secret)
       .update(req.body)
       .digest("hex");
 
-   return signature === expected;
-}
+    if (expected !== signature) {
+      return res.status(403).send("INVALID SIGNATURE");
+    }
 
-// =====================================================
-// WEBHOOK
-// =====================================================
+    // 🔥 PARSE EVENT
+    const event = JSON.parse(req.body.toString());
 
-router.post("/", async (req, res) => {
+    // 🔥 HANDLE SUCCESS
+    if (event.key === "charge.complete") {
 
-   try {
+      const charge = event.data;
 
-      const isValid = verifyOmiseSignature(req);
+      if (charge.status === "successful") {
 
-      if (!isValid) {
-         return res.status(401).send("invalid signature");
-      }
+        const userId = charge.metadata?.userId;
+        const credits = parseInt(charge.metadata?.credits || 0);
 
-      const event = JSON.parse(req.body.toString());
-
-      // =====================================================
-      // IDEMPOTENCY CHECK
-      // =====================================================
-
-      const existing = await new Promise((resolve, reject) => {
-         sqlite.get(
-            "SELECT id FROM omise_events WHERE event_id = ?",
-            [event.id],
-            (err, row) => {
-               if (err) return reject(err);
-               resolve(row);
-            }
-         );
-      });
-
-      if (existing) {
-         return res.status(200).send("duplicate");
-      }
-
-      await new Promise((resolve, reject) => {
-         sqlite.run(
-            "INSERT INTO omise_events (event_id) VALUES (?)",
-            [event.id],
-            (err) => {
-               if (err) return reject(err);
-               resolve();
-            }
-         );
-      });
-
-      // =====================================================
-      // HANDLE SUCCESSFUL CHARGE
-      // =====================================================
-
-      if (event.key === "charge.complete") {
-
-         const charge = event.data;
-
-         if (charge.status === "successful") {
-
-            const metadata = charge.metadata || {};
-            const userId = metadata.userId;
-            const packageName = metadata.package;
-
-            if (userId && packageName) {
-
-               await creditEngine.addCreditFromPackage(
-                  userId,
-                  packageName,
-                  charge.amount
-               );
-
-            }
-
-         }
+        if (userId && credits > 0) {
+          await db.addCredit(userId, credits);
+        }
 
       }
 
-      res.status(200).send("ok");
+    }
 
-   } catch (err) {
+    res.status(200).send("OK");
 
-      console.error("OMISE WEBHOOK ERROR:", err);
-      res.status(500).send("error");
-   }
+  } catch (err) {
+
+    console.error("WEBHOOK ERROR:", err);
+    res.status(500).send("ERROR");
+
+  }
+
 });
 
 module.exports = router;
