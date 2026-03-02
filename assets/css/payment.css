@@ -1,102 +1,217 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
-MODULE: assets/css/payment.css
-VERSION: v1.3.0
+MODULE: payment.css
+VERSION: v10.0.0
 STATUS: production
-LAST FIX: ULTRA PAYMENT UI UPGRADE (crypto glow + premium dark theme)
+LAST FIX:
+- Full Enterprise Layout System
+- 4 Engine Grid Control
+- Dark AI Theme Standard
+- Premium Spacing / Alignment
+- Responsive Production Ready
 ===================================================== */
 
+
+/* ================================
+   ROOT THEME
+================================ */
+
+:root{
+  --bg-main: radial-gradient(circle at top,#1a0000,#000 60%);
+  --card-bg: linear-gradient(145deg,#0b0b0b,#111);
+  --border-soft: rgba(255,255,255,0.08);
+  --status-color:#00ffd5;
+}
+
+
+/* ================================
+   BODY
+================================ */
+
 body{
-  background: radial-gradient(circle at top,#0b0b12,#000);
-  color:#fff;
-  font-family:Montserrat, sans-serif;
   margin:0;
-  padding:40px;
+  padding:0;
+  font-family: "Segoe UI", sans-serif;
+  background:var(--bg-main);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
 }
 
-.payment-root{
-  max-width:1100px;
-  margin:auto;
-}
 
-h1{
+/* ================================
+   HEADER CENTER CONTROL
+================================ */
+
+.payment-header{
   text-align:center;
-  margin-bottom:40px;
-  font-size:28px;
-  letter-spacing:2px;
+  padding:60px 20px 30px;
+  width:100%;
 }
+
+.payment-header h1{
+  font-size:28px;
+  letter-spacing:3px;
+  margin:0 0 10px;
+}
+
+.payment-header p{
+  opacity:0.6;
+  margin:0;
+}
+
+
+/* ================================
+   GRID CENTER SYSTEM
+================================ */
 
 .payment-grid{
+  width:100%;
+  max-width:1200px;
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:30px;
+  gap:40px;
+  padding:40px 20px 60px;
+  box-sizing:border-box;
 }
 
-.payment-card{
-  background:rgba(255,255,255,0.05);
-  border-radius:18px;
-  padding:40px;
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,0.08);
-  transition:all .3s ease;
+
+/* ================================
+   ENGINE CARD
+================================ */
+
+.engine-card{
+  background:var(--card-bg);
+  border-radius:22px;
+  padding:45px;
   text-align:center;
-}
-
-.payment-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 0 40px rgba(255,0,0,.2);
-}
-
-.payment-card h2{
-  margin-bottom:10px;
-  font-size:22px;
-}
-
-.payment-card p{
-  opacity:.7;
-  margin-bottom:25px;
-}
-
-.premium-btn{
-  width:100%;
-  padding:16px;
-  font-size:16px;
-  border:none;
-  border-radius:10px;
+  border:1px solid var(--border-soft);
+  transition:all .3s ease;
   cursor:pointer;
-  background:linear-gradient(90deg,#8b0000,#ff0000);
+  position:relative;
+}
+
+.engine-card:hover{
+  transform:translateY(-8px);
+  box-shadow:0 0 40px rgba(255,0,0,.35);
+}
+
+.engine-card h2{
+  font-size:22px;
+  margin:0 0 15px;
+  letter-spacing:1px;
+}
+
+.engine-card p{
+  margin:0 0 30px;
+  opacity:.75;
+  font-size:14px;
+}
+
+
+/* ================================
+   BUTTON CONTROL
+================================ */
+
+.engine-btn{
+  padding:18px 38px;
+  border-radius:50px;
+  border:none;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  transition:all .25s ease;
+}
+
+.engine-btn:hover{
+  transform:scale(1.06);
+}
+
+
+/* ================================
+   ACCENT COLORS
+================================ */
+
+.omise .engine-btn{
+  background:gold;
+  color:#000;
+}
+
+.truemoney .engine-btn{
+  background:#ff7a00;
   color:#fff;
-  font-weight:bold;
-  transition:.3s;
 }
 
-.premium-btn:hover{
-  transform:scale(1.03);
+.scb .engine-btn{
+  background:#6a1b9a;
+  color:#fff;
 }
 
-.premium-btn.orange{
-  background:linear-gradient(90deg,#ff8c00,#ffae00);
+.crypto .engine-btn{
+  background:#ffd600;
+  color:#000;
 }
 
-.premium-btn.blue{
-  background:linear-gradient(90deg,#003cff,#00bfff);
+
+/* ================================
+   PAYMENT BOX
+================================ */
+
+.payment-box{
+  width:100%;
+  max-width:850px;
+  margin:30px auto;
+  padding:40px;
+  background:#0b0b0b;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.1);
+  box-sizing:border-box;
 }
 
-.premium-btn.green{
-  background:linear-gradient(90deg,#00c853,#00ff88);
-}
 
-#paymentBox{
-  margin-top:40px;
-  padding:30px;
-  border-radius:14px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.08);
-}
+/* ================================
+   STATUS CENTER
+================================ */
 
 .status{
-  margin-top:20px;
-  font-weight:bold;
+  width:100%;
   text-align:center;
-  color:#00ff88;
+  margin:30px 0 80px;
+  font-weight:bold;
+  letter-spacing:2px;
+  color:var(--status-color);
+}
+
+
+/* ================================
+   INPUT CONTROL (QR / CARD)
+================================ */
+
+.payment-box input,
+.payment-box select{
+  width:100%;
+  padding:14px;
+  margin-bottom:20px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  background:#111;
+  color:#fff;
+  box-sizing:border-box;
+}
+
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media(max-width:900px){
+  .payment-grid{
+    grid-template-columns:1fr;
+  }
+
+  .engine-card{
+    padding:35px;
+  }
 }
