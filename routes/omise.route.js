@@ -23,7 +23,7 @@ router.post("/create-charge", async (req, res) => {
   try {
 
     console.log("BODY:", req.body);
-
+    console.log("OMISE SECRET:", process.env.OMISE_SECRET_KEY);
     const userId = req.user?.id || req.session?.user?.id;
 
     console.log("USER ID:", userId);
