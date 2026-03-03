@@ -126,9 +126,11 @@ app.get("/", (req, res) => {
 // START SERVER
 // =====================================================
 
-const PORT = config.PORT || process.env.PORT || 10000;
+const PORT = process.env.PORT || 10000;
 
-app.listen(PORT, () => {
-  console.log("ULTRA ENGINE RUNNING:", PORT);
-  console.log("SYSTEM MODE:", config.ENV || "production");
-});
+setTimeout(() => {
+  app.listen(PORT, () => {
+    console.log("ULTRA ENGINE RUNNING:", PORT);
+    console.log("SYSTEM MODE:", process.env.NODE_ENV || "production");
+  });
+}, 3000);
