@@ -21,7 +21,13 @@ router.post("/", async (req, res) => {
 
     const signature = req.headers["omise-signature"];
     const secret = process.env.OMISE_WEBHOOK_SECRET;
-
+    console.log("=== OMISE WEBHOOK DEBUG START ===");
+    console.log("SIGNATURE HEADER:", signature);
+    console.log("WEBHOOK SECRET LOADED:", secret ? "YES" : "NO");
+    console.log("RAW BODY TYPE:", typeof req.body);
+    console.log("RAW BODY LENGTH:", req.body?.length);
+    console.log("RAW BODY PREVIEW:", req.body?.toString()?.slice(0,100));
+    console.log("=== OMISE WEBHOOK DEBUG END ===");
     if (!signature || !secret) {
       console.log("WEBHOOK: Missing signature or secret");
       return res.status(401).send("NO SIGNATURE");
