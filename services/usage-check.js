@@ -1,13 +1,17 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: services/usage-check.js
-// VERSION: v3.0.0
-// STATUS: production
+// VERSION: v9.0.0
+// STATUS: production-final
+// LAYER: backend
+// RESPONSIBILITY:
+// - enforce engine credit cost
+// - atomic deduction
+// DEPENDS ON:
+// - config/credit.policy.js
+// - db/db.js
 // LAST FIX:
-// - Unified credit policy integration
-// - Engine-based cost deduction
-// - Removed deprecated db calls
-// - Atomic deductCredit enforced
+// - unified v9 header standard
 // =====================================================
 
 const db = require("../db/db");
