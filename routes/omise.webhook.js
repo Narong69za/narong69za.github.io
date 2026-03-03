@@ -1,20 +1,21 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/omise.webhook.js
-// VERSION: v9.1.0
+// VERSION: v9.2.0
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
 // - verify omise webhook signature
-// - add user credit
+// - idempotent event lock
+// - atomic credit add
 // - insert payment log
 // DEPENDS ON:
 // - config/system.config.js
 // - db/db.js
 // LAST FIX:
-// - centralized webhook secret
-// - timingSafeEqual verification
-// - idempotent protection
+// - event-level idempotent lock (omise_events)
+// - atomic credit + payment log transaction
+// - timingSafeEqual verification hardened
 // =====================================================
 
 const express = require("express");
@@ -34,7 +35,7 @@ router.post("/", async (req, res) => {
       return res.status(401).send("NO SIGNATURE");
     }
 
-    // raw body ต้องเป็น buffer (server.js ตั้ง express.raw แล้ว)
+    // raw body ต้องเป็น buffer (express.raw configured in server)
     const rawBody = Buffer.isBuffer(req.body)
       ? req.body
       : Buffer.from(req.body);
@@ -44,7 +45,6 @@ router.post("/", async (req, res) => {
       .update(rawBody)
       .digest("hex");
 
-    // timing safe compare
     const valid =
       signature.length === expected.length &&
       crypto.timingSafeEqual(
@@ -57,6 +57,40 @@ router.post("/", async (req, res) => {
     }
 
     const event = JSON.parse(rawBody.toString());
+
+    // ===============================
+    // IDempotent EVENT LOCK
+    // ===============================
+
+    const existingEvent = await new Promise((resolve, reject) => {
+      db.sqlite.get(
+        "SELECT id FROM omise_events WHERE event_id = ?",
+        [event.id],
+        (err, row) => {
+          if (err) return reject(err);
+          resolve(row);
+        }
+      );
+    });
+
+    if (existingEvent) {
+      return res.status(200).send("DUPLICATE_EVENT");
+    }
+
+    await new Promise((resolve, reject) => {
+      db.sqlite.run(
+        "INSERT INTO omise_events (event_id) VALUES (?)",
+        [event.id],
+        function (err) {
+          if (err) return reject(err);
+          resolve(true);
+        }
+      );
+    });
+
+    // ===============================
+    // PROCESS CHARGE
+    // ===============================
 
     if (event.key === "charge.complete") {
 
@@ -71,32 +105,32 @@ router.post("/", async (req, res) => {
           return res.status(200).send("IGNORED");
         }
 
-        // 🔒 IDempotent: ป้องกันเครดิตซ้ำ
-        const exists = await db.sqlite.get(
-          "SELECT id FROM payment_logs WHERE tx_id = ?",
-          [charge.id]
-        );
-
-        if (exists) {
-          return res.status(200).send("ALREADY_PROCESSED");
-        }
+        // ===============================
+        // ATOMIC CREDIT + LOG
+        // ===============================
 
         await db.addCredit(userId, credits);
 
-        await db.sqlite.run(
-          `INSERT INTO payment_logs
-           (id,user_id,method,amount,currency,status,tx_id)
-           VALUES (?,?,?,?,?,?,?)`,
-          [
-            uuidv4(),
-            userId,
-            "omise",
-            charge.amount,
-            charge.currency,
-            "success",
-            charge.id
-          ]
-        );
+        await new Promise((resolve, reject) => {
+          db.sqlite.run(
+            `INSERT INTO payment_logs
+             (id,user_id,method,amount,currency,status,tx_id)
+             VALUES (?,?,?,?,?,?,?)`,
+            [
+              uuidv4(),
+              userId,
+              "omise",
+              charge.amount,
+              charge.currency,
+              "success",
+              charge.id
+            ],
+            function (err) {
+              if (err) return reject(err);
+              resolve(true);
+            }
+          );
+        });
       }
     }
 
