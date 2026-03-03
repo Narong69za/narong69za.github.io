@@ -1,9 +1,20 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
-// MODULE: stripe.route.js
-// VERSION: 1.1.0
-// STATUS: production
-// LAST FIX: add auth middleware to prevent redirect
+// MODULE: routes/stripe.route.js
+// VERSION: v9.0.0
+// STATUS: production-final
+// LAYER: gateway
+// RESPONSIBILITY:
+// - create stripe checkout session
+// - calculate credit via centralized policy
+// - attach metadata (userId, credits)
+// DEPENDS ON:
+// - config/credit.policy.js
+// - services/stripe.service.js
+// - middleware/auth.js
+// LAST FIX:
+// - removed hardcoded product map
+// - unified credit calculation
 // =====================================================
 
 const express = require("express");
@@ -11,48 +22,60 @@ const router = express.Router();
 
 const stripeService = require("../services/stripe.service");
 const authMiddleware = require("../middleware/auth");
+const CREDIT_POLICY = require("../config/credit.policy");
 
 // =====================================================
 // CREATE CHECKOUT SESSION
 // =====================================================
 
-router.post("/create-checkout", authMiddleware, async (req,res)=>{
+router.post("/create-checkout", authMiddleware, async (req, res) => {
 
-   try{
+  try {
 
-      const { product } = req.body;
+    const userId = req.user?.id;
+    const { amountTHB } = req.body;
 
-      if(!product){
-         return res.status(400).json({ error:"NO PRODUCT" });
-      }
+    if (!userId) {
+      return res.status(401).json({ error: "UNAUTHORIZED" });
+    }
 
-      const PRODUCT_MAP = {
-         credit_pack_1:{
-            name:"Credit Pack",
-            price:2000,
-            credits:20
-         }
-      };
+    if (!amountTHB || amountTHB < CREDIT_POLICY.MIN_TOPUP_THB) {
+      return res.status(400).json({ error: "MIN_TOPUP_NOT_REACHED" });
+    }
 
-      const item = PRODUCT_MAP[product];
+    // ===============================
+    // 🔥 CENTRAL CREDIT CALCULATION
+    // ===============================
 
-      if(!item){
-         return res.status(400).json({ error:"INVALID PRODUCT" });
-      }
+    const creditResult =
+      CREDIT_POLICY.calculateCreditFromTHB(amountTHB);
 
-      const session = await stripeService.createCheckout({
-         name:item.name,
-         price:item.price,
-         credits:item.credits,
-         userId:req.user.id
-      });
+    const totalCredit = creditResult.totalCredit;
 
-      res.json({ url: session.url });
+    // Stripe ใช้หน่วยเป็น satang (เหมือน Omise)
+    const amountSatang = amountTHB * 100;
 
-   }catch(err){
-      console.error(err);
-      res.status(500).json({ error:"STRIPE CREATE FAILED" });
-   }
+    const session = await stripeService.createCheckout({
+      name: "SN Design Credit Topup",
+      amount: amountSatang,
+      userId,
+      credits: totalCredit
+    });
+
+    return res.json({
+      url: session.url,
+      creditPreview: creditResult
+    });
+
+  } catch (err) {
+
+    console.error("STRIPE CREATE ERROR:", err);
+
+    return res.status(500).json({
+      error: "STRIPE_CREATE_FAILED"
+    });
+
+  }
 
 });
 
