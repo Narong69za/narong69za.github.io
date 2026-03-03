@@ -1,21 +1,22 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: services/index.js
-// VERSION: v9.1.0
+// VERSION: v9.2.0
 // STATUS: production-final
 // LAYER: core-server
 // RESPONSIBILITY:
 // - initialize express app
 // - register middleware
-// - register webhook routes (raw first)
-// - register protected routes
+// - secure admin routes
+// - register webhooks (raw first)
 // DEPENDS ON:
-// - config/system.config.js
+// - middleware/auth.js
+// - middleware/admin.guard.js
 // - routes/*
 // LAST FIX:
-// - centralized config usage
-// - confirmed webhook raw order
-// - production route locking
+// - removed delayed listen
+// - secured admin routes
+// - fixed crypto webhook registration
 // =====================================================
 
 require("dotenv").config();
@@ -35,18 +36,22 @@ const thaiPaymentRoutes = require("../routes/thai-payment.route");
 const authRoutes = require("../routes/auth.route");
 const promptpayRoute = require("../routes/promptpay.route");
 const authMiddleware = require("../middleware/auth");
+const adminGuard = require("../middleware/admin.guard");
 const omiseRoute = require("../routes/omise.route");
 const omiseWebhook = require("../routes/omise.webhook");
 const cryptoRoute = require("../routes/crypto.route");
+const cryptoWebhook = require("../routes/crypto.webhook");
 const usageCheck = require("../services/usage-check");
 const { create } = require("../controllers/create.controller.js");
 
 const app = express();
+
 app.get("/healthz", (req, res) => {
   res.status(200).send("OK");
 });
 
 // ================= CORS =================
+
 app.use(cors({
   origin: ["https://sn-designstudio.dev"],
   credentials: true
@@ -54,9 +59,8 @@ app.use(cors({
 
 app.use(cookieParser());
 
-// =====================================================
-// 🔴 WEBHOOKS (RAW BODY MUST COME FIRST)
-// =====================================================
+// ================= WEBHOOKS =================
+// MUST COME BEFORE JSON PARSER
 
 app.use("/api/stripe/webhook",
   express.raw({ type: "application/json" }),
@@ -69,34 +73,38 @@ app.use("/api/omise/webhook",
 );
 
 app.use("/api/crypto/webhook",
-  express.raw({ type: "application/json" })
+  express.raw({ type: "application/json" }),
+  cryptoWebhook
 );
 
-// =====================================================
-// BODY PARSER (AFTER WEBHOOKS)
-// =====================================================
+// ================= BODY PARSER =================
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// =====================================================
-// ROUTES
-// =====================================================
+// ================= ROUTES =================
 
-app.use("/api/admin", adminRoutes);
-app.use("/api/user", userRoutes);
-app.use("/api/stripe", stripeRoute);
-app.use("/api/thai-payment", thaiPaymentRoutes);
+// 🔒 Admin protected
+app.use("/api/admin",
+  authMiddleware,
+  adminGuard,
+  adminRoutes
+);
+
+// User APIs
+app.use("/api/user", authMiddleware, userRoutes);
+
+app.use("/api/stripe", authMiddleware, stripeRoute);
+app.use("/api/thai-payment", authMiddleware, thaiPaymentRoutes);
 
 app.use("/api/omise", authMiddleware, omiseRoute);
 app.use("/api/crypto", authMiddleware, cryptoRoute);
-app.use("/api/promptpay", promptpayRoute);
+
+app.use("/api/promptpay", authMiddleware, promptpayRoute);
 
 app.use("/auth", authRoutes);
 
-// =====================================================
-// RENDER ENGINE
-// =====================================================
+// ================= RENDER ENGINE =================
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -110,9 +118,7 @@ app.post(
   create
 );
 
-// =====================================================
-// STATUS
-// =====================================================
+// ================= STATUS =================
 
 app.get("/api/status/server", (req, res) => {
   res.json({ server: "online" });
@@ -122,15 +128,11 @@ app.get("/", (req, res) => {
   res.send("SN DESIGN API RUNNING");
 });
 
-// =====================================================
-// START SERVER
-// =====================================================
+// ================= START =================
 
 const PORT = process.env.PORT || 10000;
 
-setTimeout(() => {
-  app.listen(PORT, () => {
-    console.log("ULTRA ENGINE RUNNING:", PORT);
-    console.log("SYSTEM MODE:", process.env.NODE_ENV || "production");
-  });
-}, 3000);
+app.listen(PORT, () => {
+  console.log("ULTRA ENGINE RUNNING:", PORT);
+  console.log("SYSTEM MODE:", process.env.NODE_ENV || "production");
+});
