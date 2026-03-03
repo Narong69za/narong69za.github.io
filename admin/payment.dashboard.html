@@ -2,56 +2,57 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>SN DESIGN STUDIO — PAYMENT CONTROL</title>
+<title>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
 
-body {
+<style>
+body{
   background:#0b0b0f;
   color:#fff;
-  font-family:Montserrat, sans-serif;
+  font-family:Montserrat,sans-serif;
   margin:0;
 }
-
-header {
+header{
   padding:20px;
   font-size:22px;
   background:linear-gradient(90deg,#8b0000,#001f3f);
   font-weight:bold;
 }
-
-.dashboard {
-  padding:20px;
-}
-
-.card-container {
+.dashboard{padding:20px;}
+.card-container{
   display:flex;
   gap:20px;
   flex-wrap:wrap;
 }
-
-.card {
+.card{
   flex:1;
-  min-width:200px;
+  min-width:220px;
   background:rgba(255,255,255,0.05);
   padding:20px;
   border-radius:12px;
   backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,0.1);
 }
-
-table {
+.card h3{margin:0 0 10px 0;font-size:14px;color:#aaa;}
+.card p{margin:0;font-size:22px;font-weight:bold;}
+.policy-box{
+  margin-top:20px;
+  background:rgba(255,255,255,0.04);
+  padding:15px;
+  border-radius:10px;
+  border:1px solid rgba(255,255,255,0.08);
+}
+table{
   width:100%;
   border-collapse:collapse;
   margin-top:20px;
 }
-
-th, td {
+th,td{
   padding:10px;
   border-bottom:1px solid rgba(255,255,255,0.1);
+  text-align:left;
 }
-
-button {
+button{
   background:#8b0000;
   color:#fff;
   padding:8px 14px;
@@ -59,26 +60,46 @@ button {
   border-radius:6px;
   cursor:pointer;
 }
-
-canvas {
-  margin-top:30px;
-}
-
+canvas{margin-top:30px;}
 </style>
 </head>
+
 <body>
 
 <header>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</header>
 
 <div class="dashboard">
 
+<!-- ================= SUMMARY ================= -->
 <div class="card-container">
-  <div class="card" id="totalRevenue">Revenue: ...</div>
-  <div class="card" id="totalTransactions">Transactions: ...</div>
+  <div class="card">
+    <h3>Total Credit Sold</h3>
+    <p id="sold">0</p>
+  </div>
+  <div class="card">
+    <h3>Total Credit Used</h3>
+    <p id="used">0</p>
+  </div>
+  <div class="card">
+    <h3>Net Credit Balance</h3>
+    <p id="balance">0</p>
+  </div>
+  <div class="card">
+    <h3>Active Users</h3>
+    <p id="users">0</p>
+  </div>
 </div>
 
-<canvas id="revenueChart"></canvas>
+<!-- ================= POLICY ================= -->
+<div class="policy-box">
+  <h3>Credit Policy</h3>
+  <div id="policy"></div>
+</div>
 
+<!-- ================= CHART ================= -->
+<canvas id="creditChart"></canvas>
+
+<!-- ================= TABLE ================= -->
 <button onclick="exportCSV()">Export CSV</button>
 
 <table id="paymentTable">
@@ -87,6 +108,7 @@ canvas {
 <th>User</th>
 <th>Method</th>
 <th>Amount</th>
+<th>Currency</th>
 <th>Status</th>
 <th>Date</th>
 </tr>
@@ -98,81 +120,109 @@ canvas {
 
 <script>
 
-const API = "/api/admin";
+const API="/api/admin";
+let chartInstance=null;
 
+// ================= SUMMARY =================
 async function loadSummary(){
-  const res = await fetch(API+"/analytics/summary",{credentials:"include"});
-  const data = await res.json();
 
-  let total=0;
-  let count=0;
+  const res=await fetch(API+"/finance-summary",{credentials:"include"});
+  const data=await res.json();
 
-  data.forEach(r=>{
-    total += r.total_amount || 0;
-    count += r.total_transactions || 0;
-  });
-
-  document.getElementById("totalRevenue").innerText = "Revenue: "+total;
-  document.getElementById("totalTransactions").innerText = "Transactions: "+count;
+  document.getElementById("sold").innerText=data.totalCreditSold;
+  document.getElementById("used").innerText=data.totalCreditUsed;
+  document.getElementById("balance").innerText=data.netCreditBalance;
+  document.getElementById("users").innerText=data.activeUsers;
 }
 
-async function loadTable(){
-  const res = await fetch(API+"/payments/full",{credentials:"include"});
-  const data = await res.json();
+// ================= POLICY =================
+async function loadPolicy(){
 
-  const tbody = document.querySelector("#paymentTable tbody");
+  const res=await fetch(API+"/credit-policy",{credentials:"include"});
+  const data=await res.json();
+
+  let html=`
+  Base Rate: 1 THB = ${data.baseRate} credits<br>
+  Min Topup: ${data.minTopup} THB<br>
+  Binance Rate: 1 USD = ${data.binanceRate} THB<br><br>
+  <b>Bonus Tiers:</b><br>
+  `;
+
+  data.bonusTiers.forEach(t=>{
+    html+=`≥ ${t.min} THB → +${t.bonusPercent}% bonus<br>`;
+  });
+
+  document.getElementById("policy").innerHTML=html;
+}
+
+// ================= TABLE =================
+async function loadTable(){
+
+  const res=await fetch(API+"/finance-recent",{credentials:"include"});
+  const data=await res.json();
+
+  const tbody=document.querySelector("#paymentTable tbody");
   tbody.innerHTML="";
 
   data.forEach(row=>{
-    tbody.innerHTML += `
-      <tr>
-        <td>${row.email || "-"}</td>
-        <td>${row.method}</td>
-        <td>${row.amount}</td>
-        <td>${row.status}</td>
-        <td>${row.created_at}</td>
-      </tr>
+    tbody.innerHTML+=`
+    <tr>
+      <td>${row.user_id}</td>
+      <td>${row.method}</td>
+      <td>${row.amount}</td>
+      <td>${row.currency||"-"}</td>
+      <td>${row.status}</td>
+      <td>${row.created_at}</td>
+    </tr>
     `;
   });
-
 }
 
+// ================= CHART =================
 async function loadChart(){
-  const res = await fetch(API+"/analytics/daily",{credentials:"include"});
-  const data = await res.json();
 
-  const ctx = document.getElementById("revenueChart");
+  const res=await fetch(API+"/finance-daily",{credentials:"include"});
+  const data=await res.json();
 
-  new Chart(ctx,{
-    type:'line',
+  const ctx=document.getElementById("creditChart");
+
+  if(chartInstance){
+    chartInstance.destroy();
+  }
+
+  chartInstance=new Chart(ctx,{
+    type:"line",
     data:{
       labels:data.map(d=>d.date),
       datasets:[{
-        label:'Daily Revenue',
+        label:"Daily Credit Sold",
         data:data.map(d=>d.total),
-        borderColor:'#ff0000'
+        borderColor:"#ff0000",
+        fill:false
       }]
     }
   });
-
 }
 
+// ================= EXPORT =================
 function exportCSV(){
-  let table = document.getElementById("paymentTable").outerHTML;
-  let blob = new Blob([table],{type:"text/csv"});
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
+  let table=document.getElementById("paymentTable").outerHTML;
+  let blob=new Blob([table],{type:"text/csv"});
+  let a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
   a.download="payments.csv";
   a.click();
 }
 
+// ================= INIT =================
 async function init(){
   await loadSummary();
+  await loadPolicy();
   await loadTable();
   await loadChart();
 }
 
-setInterval(init,10000); // live refresh
+setInterval(init,15000);
 init();
 
 </script>
