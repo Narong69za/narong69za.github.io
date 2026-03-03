@@ -1,22 +1,30 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/admin.routes.js
-// VERSION: v9.0.0
+// VERSION: v9.1.0
 // STATUS: production-final
 // LAYER: admin
 // RESPONSIBILITY:
 // - finance summary
-// - transaction analytics
+// - credit analytics
+// - transaction reports
+// - credit policy viewer
 // DEPENDS ON:
 // - db/db.js
+// - config/credit.policy.js
+// LAST FIX:
+// - unified credit-based reporting
+// - added credit-policy endpoint
+// - hardened finance queries
 // =====================================================
 
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
+const CREDIT_POLICY = require("../config/credit.policy");
 
 // ================================
-// FINANCE SUMMARY
+// FINANCE SUMMARY (CREDIT BASED)
 // ================================
 
 router.get("/finance-summary", async (req, res) => {
@@ -46,25 +54,25 @@ router.get("/finance-summary", async (req, res) => {
       WHERE status='success'
     `);
 
-    return res.json({
-      revenueCredits: totalTopup.total,
-      usedCredits: totalRender.total,
+    res.json({
+      totalCreditSold: totalTopup.total,
+      totalCreditUsed: totalRender.total,
+      netCreditBalance: totalTopup.total - totalRender.total,
       activeUsers: totalUsers.total,
-      successfulPayments: totalSuccessfulPayments.total,
-      netCreditBalance: totalTopup.total - totalRender.total
+      successfulPayments: totalSuccessfulPayments.total
     });
 
   } catch (err) {
 
     console.error("FINANCE SUMMARY ERROR:", err);
-    return res.status(500).json({ error: "FINANCE_SUMMARY_FAILED" });
+    res.status(500).json({ error: "FINANCE_SUMMARY_FAILED" });
 
   }
 
 });
 
 // ================================
-// DAILY REVENUE CHART
+// DAILY CREDIT SOLD (CHART)
 // ================================
 
 router.get("/finance-daily", async (req, res) => {
@@ -74,25 +82,25 @@ router.get("/finance-daily", async (req, res) => {
     const rows = await queryAll(`
       SELECT DATE(created_at) as date,
              SUM(amount) as total
-      FROM payment_logs
-      WHERE status='success'
+      FROM transactions
+      WHERE type='topup'
       GROUP BY DATE(created_at)
       ORDER BY DATE(created_at) ASC
     `);
 
-    return res.json(rows);
+    res.json(rows);
 
   } catch (err) {
 
     console.error("FINANCE DAILY ERROR:", err);
-    return res.status(500).json({ error: "FINANCE_DAILY_FAILED" });
+    res.status(500).json({ error: "FINANCE_DAILY_FAILED" });
 
   }
 
 });
 
 // ================================
-// RECENT PAYMENTS TABLE
+// RECENT PAYMENTS
 // ================================
 
 router.get("/finance-recent", async (req, res) => {
@@ -111,19 +119,35 @@ router.get("/finance-recent", async (req, res) => {
       LIMIT 50
     `);
 
-    return res.json(rows);
+    res.json(rows);
 
   } catch (err) {
 
     console.error("FINANCE RECENT ERROR:", err);
-    return res.status(500).json({ error: "FINANCE_RECENT_FAILED" });
+    res.status(500).json({ error: "FINANCE_RECENT_FAILED" });
 
   }
 
 });
 
 // ================================
-// Helper
+// CREDIT POLICY VIEW (DYNAMIC)
+// ================================
+
+router.get("/credit-policy", (req, res) => {
+
+  res.json({
+    baseRate: CREDIT_POLICY.BASE_RATE,
+    minTopup: CREDIT_POLICY.MIN_TOPUP_THB,
+    binanceRate: CREDIT_POLICY.BINANCE_THB_RATE,
+    bonusTiers: CREDIT_POLICY.BONUS_TIERS,
+    engineCost: CREDIT_POLICY.ENGINE_COST
+  });
+
+});
+
+// ================================
+// HELPERS
 // ================================
 
 function queryOne(sql) {
