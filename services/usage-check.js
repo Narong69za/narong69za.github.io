@@ -1,12 +1,17 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: services/usage-check.js
-// VERSION: v2.0.0
+// VERSION: v3.0.0
 // STATUS: production
-// LAST FIX: add credit deduction + atomic protection + free fallback
+// LAST FIX:
+// - Unified credit policy integration
+// - Engine-based cost deduction
+// - Removed deprecated db calls
+// - Atomic deductCredit enforced
 // =====================================================
 
 const db = require("../db/db");
+const CREDIT_POLICY = require("../config/credit.policy");
 
 module.exports = async function usageCheck(req, res, next) {
 
@@ -22,66 +27,67 @@ module.exports = async function usageCheck(req, res, next) {
     }
 
     // ======================
-    // AUTH USER (JWT REQUIRED)
+    // REQUIRE AUTH USER
     // ======================
 
     const user = req.user;
 
-    if (user?.id) {
+    if (!user?.id) {
+      return res.status(401).json({ error: "UNAUTHORIZED" });
+    }
 
-      const userData = await db.getUser(user.id);
+    // ======================
+    // FETCH USER
+    // ======================
 
-      if (!userData) {
-        return res.status(404).json({ error: "USER NOT FOUND" });
-      }
-
-      // ======================
-      // CREDIT MODE
-      // ======================
-
-      if (userData.credits > 0) {
-
-        const result = await db.decreaseCreditAtomic(user.id, 1);
-
-        if (!result) {
-          return res.status(402).json({ error: "NO CREDIT" });
+    const userData = await new Promise((resolve, reject) => {
+      db.sqlite.get(
+        "SELECT * FROM users WHERE id = ?",
+        [user.id],
+        (err, row) => {
+          if (err) return reject(err);
+          resolve(row);
         }
+      );
+    });
 
-        console.log("CREDIT USED → Remaining:", userData.credits - 1);
-
-        return next();
-      }
-
+    if (!userData) {
+      return res.status(404).json({ error: "USER_NOT_FOUND" });
     }
 
     // ======================
-    // FREE IP FALLBACK MODE
+    // ENGINE COST LOOKUP
     // ======================
 
-    const ip =
-      req.headers["x-forwarded-for"]?.split(",")[0] ||
-      req.socket.remoteAddress;
+    const engine = req.body?.engine;
 
-    const today = new Date().toISOString().slice(0, 10);
-
-    global.usageStore = global.usageStore || {};
-
-    const key = ip + "_" + today;
-
-    if (!global.usageStore[key]) {
-      global.usageStore[key] = 0;
+    if (!engine) {
+      return res.status(400).json({ error: "ENGINE_REQUIRED" });
     }
 
-    if (global.usageStore[key] >= 3) {
-      return res.status(403).json({
-        limit: true,
-        message: "FREE LIMIT REACHED"
-      });
+    const cost = CREDIT_POLICY.ENGINE_COST[engine];
+
+    if (!cost) {
+      return res.status(400).json({ error: "INVALID_ENGINE" });
     }
 
-    global.usageStore[key]++;
+    // ======================
+    // CHECK CREDIT
+    // ======================
 
-    console.log("FREE COUNT:", global.usageStore[key]);
+    if (userData.credits < cost) {
+      return res.status(402).json({ error: "INSUFFICIENT_CREDIT" });
+    }
+
+    // ======================
+    // ATOMIC DEDUCTION
+    // ======================
+
+    await db.deductCredit(user.id, cost, engine);
+
+    console.log(
+      `CREDIT USED → user:${user.id} engine:${engine} cost:${cost}`
+    );
 
     next();
 
