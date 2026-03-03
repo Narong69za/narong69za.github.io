@@ -3,129 +3,104 @@
 // MODULE: config/credit.policy.js
 // VERSION: v9.0.0
 // STATUS: production-final
-// LAYER: config
+// LAYER: core-policy
 // RESPONSIBILITY:
-// - central financial authority
-// - unified gateway pricing
-// - binance FX control
-// DEPENDS ON:
-// - none
+// - centralized credit rate
+// - bonus tier logic
+// - engine cost mapping
+// - multi-gateway normalization (THB base)
+// DEPENDS ON: none
 // LAST FIX:
-// - unified version alignment to v9
+// - production credit model (1 THB = 100 CREDIT)
+// - bonus tier system
+// - binance rate 34 THB
 // =====================================================
 
-const CREDIT_POLICY = {
+// ===============================
+// BASE CONFIG
+// ===============================
 
-  // ============================================
-  // GLOBAL FX RATE (CRYPTO)
-  // ============================================
+const BASE_RATE = 100;          // 1 THB = 100 CREDIT
+const MIN_TOPUP_THB = 10;       // ขั้นต่ำ 10 บาท
+const BINANCE_THB_RATE = 34;    // 1 BNB = 34 THB
 
-  FX: {
-    BINANCE_THB_RATE: 34,   // 1 USDT = 34 THB (manual control)
-  },
+// ===============================
+// BONUS TIERS
+// ===============================
 
-  // ============================================
-  // GATEWAY FEE MODEL (optional accounting)
-  // ============================================
+const BONUS_TIERS = [
+  { min: 1000, bonus: 0.30 },
+  { min: 300,  bonus: 0.20 },
+  { min: 100,  bonus: 0.10 },
+];
 
-  GATEWAY_FEES: {
+// ===============================
+// ENGINE COST (CREDIT)
+// ===============================
 
-    omise: {
-      percent: 3.65,
-      fixed_thb: 0
-    },
-
-    stripe: {
-      percent: 3.65,
-      fixed_thb: 0
-    },
-
-    truemoney: {
-      percent: 3.9,
-      fixed_thb: 0
-    },
-
-    promptpay: {
-      percent: 0,
-      fixed_thb: 0
-    },
-
-    binance: {
-      percent: 0.1,
-      fixed_thb: 0
-    }
-
-  },
-
-  // ============================================
-  // PRODUCT PACKS (UNIFIED FOR ALL GATEWAYS)
-  // ============================================
-
-  PRODUCTS: {
-
-    credit_pack_1: {
-      name: "Starter Pack",
-      price_thb: 99,
-      amount_satang: 9900,
-      credits: 100
-    },
-
-    credit_pack_2: {
-      name: "Creator Pack",
-      price_thb: 199,
-      amount_satang: 19900,
-      credits: 220
-    },
-
-    credit_pack_3: {
-      name: "Pro Pack",
-      price_thb: 499,
-      amount_satang: 49900,
-      credits: 600
-    },
-
-    credit_pack_4: {
-      name: "Ultra Pack",
-      price_thb: 999,
-      amount_satang: 99900,
-      credits: 1300
-    }
-
-  },
-
-  // ============================================
-  // ENGINE COST (DEDUCT SYSTEM)
-  // ============================================
-
-  ENGINE_COST: {
-
-    generate_image: 2,
-    generate_video: 5,
-    upscale: 1,
-    lip_sync: 4,
-    face_swap: 3,
-    motion_clone: 6
-
-  },
-
-  // ============================================
-  // UTILITY FUNCTIONS
-  // ============================================
-
-  calculateCryptoUSDT(thbAmount) {
-    return (thbAmount / this.FX.BINANCE_THB_RATE).toFixed(4);
-  },
-
-  calculateGatewayFee(thbAmount, gateway) {
-
-    const feeModel = this.GATEWAY_FEES[gateway];
-
-    if (!feeModel) return 0;
-
-    const percentFee = (thbAmount * feeModel.percent) / 100;
-    return percentFee + feeModel.fixed_thb;
-  }
-
+const ENGINE_COST = {
+  image: 50,
+  upscale: 80,
+  video: 200,
+  deep_motion: 300
 };
 
-module.exports = CREDIT_POLICY;
+// ===============================
+// CREDIT CALCULATOR
+// ===============================
+
+function calculateCreditFromTHB(amountTHB) {
+
+  if (!amountTHB || amountTHB < MIN_TOPUP_THB) {
+    throw new Error("MIN_TOPUP_NOT_REACHED");
+  }
+
+  const baseCredit = amountTHB * BASE_RATE;
+
+  let bonusPercent = 0;
+
+  for (const tier of BONUS_TIERS) {
+    if (amountTHB >= tier.min) {
+      bonusPercent = tier.bonus;
+      break;
+    }
+  }
+
+  const bonusCredit = Math.floor(baseCredit * bonusPercent);
+
+  return {
+    baseCredit,
+    bonusCredit,
+    totalCredit: baseCredit + bonusCredit,
+    bonusPercent
+  };
+}
+
+// ===============================
+// CRYPTO (BNB → THB → CREDIT)
+// ===============================
+
+function calculateCreditFromBNB(amountBNB) {
+
+  if (!amountBNB || amountBNB <= 0) {
+    throw new Error("INVALID_BNB_AMOUNT");
+  }
+
+  const thbValue = amountBNB * BINANCE_THB_RATE;
+
+  return calculateCreditFromTHB(thbValue);
+}
+
+// ===============================
+// EXPORT
+// ===============================
+
+module.exports = {
+  BASE_RATE,
+  MIN_TOPUP_THB,
+  BINANCE_THB_RATE,
+  BONUS_TIERS,
+  ENGINE_COST,
+  calculateCreditFromTHB,
+  calculateCreditFromBNB
+};
