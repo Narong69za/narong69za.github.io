@@ -23,9 +23,6 @@ const DEV_MODE = false;
     nav.className="create-top-nav";
 
     nav.innerHTML=`
-        <div class="create-nav-left">
-            ⭐ SN DESIGN ENGINE AI
-        </div>
 
         <div class="create-nav-right">
             <button id="btn-credit" class="credit-btn-premium" style="display:none;">
