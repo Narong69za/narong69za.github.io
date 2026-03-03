@@ -1,9 +1,14 @@
 /**
+ * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.4.0
+ * VERSION: v3.5.0
  * STATUS: production
- * LAST FIX: removed duplicated broken logic + stable account rendering
+ * LAST FIX:
+ * - Owner-only Payment Control
+ * - Lock credit button visibility by role
+ * - Admin Dashboard route support
+ * =====================================================
  */
 
 const DEV_MODE = false;
@@ -23,8 +28,12 @@ const DEV_MODE = false;
         </div>
 
         <div class="create-nav-right">
-            <button id="btn-credit" class="credit-btn-premium">
+            <button id="btn-credit" class="credit-btn-premium" style="display:none;">
                 💎 เติมเครดิต
+            </button>
+
+            <button id="btn-admin" class="credit-btn-premium" style="display:none;">
+                ⚙ PAYMENT CONTROL
             </button>
         </div>
     `;
@@ -42,10 +51,8 @@ const DEV_MODE = false;
 
 async function loadUserStatus(){
 
-    const emailEl = document.getElementById("userEmail");
-    const creditEl = document.getElementById("userCredits");
-    const roleEl = document.getElementById("userRole");
-    const shortEl = document.getElementById("userShort");
+    const creditBtn = document.getElementById("btn-credit");
+    const adminBtn  = document.getElementById("btn-admin");
 
     try{
 
@@ -63,34 +70,26 @@ async function loadUserStatus(){
 
         const user = await res.json();
 
-        /* ===== HEADER BRAND ===== */
-
-        const brandName = "SN DESIGN";
-
-        if(shortEl){
-            if(user.role && user.role.toLowerCase()==="owner"){
-                shortEl.textContent="👑 OWNER · "+brandName;
-                shortEl.classList.add("owner-header");
-            }else{
-                shortEl.textContent=brandName;
-            }
-        }
-
-        /* ===== ACCOUNT CARD ===== */
-
-        if(emailEl){
-            emailEl.textContent = user.email || "-";
-        }
-
-        if(roleEl){
-            roleEl.textContent = (user.role || "-").toUpperCase();
-        }
-
-        if(creditEl){
-            creditEl.textContent = user.credits ?? 0;
-        }
-
         console.log("USER LOADED:", user);
+
+        const role = (user.role || "").toLowerCase();
+
+        /* ================= OWNER CONTROL ================= */
+
+        if(role === "owner"){
+
+            // 🔥 Owner เห็นทุกระบบ
+            if(creditBtn) creditBtn.style.display="inline-block";
+            if(adminBtn)  adminBtn.style.display="inline-block";
+
+        } else {
+
+            // 🔒 User ธรรมดา เห็นแค่เติมเครดิต
+            if(creditBtn) creditBtn.style.display="inline-block";
+
+            // ซ่อน admin
+            if(adminBtn) adminBtn.style.display="none";
+        }
 
     }catch(err){
         console.warn("USER LOAD ERROR:",err);
@@ -99,10 +98,16 @@ async function loadUserStatus(){
 
 document.addEventListener("DOMContentLoaded", loadUserStatus);
 
-/* ================= CREDIT BUTTON ================= */
+/* ================= BUTTON NAVIGATION ================= */
 
 document.addEventListener("click",(e)=>{
+
     if(e.target.id==="btn-credit"){
         window.location.href="/payment.html";
     }
+
+    if(e.target.id==="btn-admin"){
+        window.location.href="/payment-control.html";
+    }
+
 });
