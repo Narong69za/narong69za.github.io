@@ -1,25 +1,30 @@
-// ======================================================
+// =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/stripe.webhook.js
-// VERSION: v9.0.0
+// VERSION: v9.2.0
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
-// - verify stripe webhook
-// - idempotent protection
-// - add credit
+// - verify stripe webhook signature
+// - idempotent event protection
+// - atomic credit add
 // - insert payment log
 // DEPENDS ON:
-// - services/stripe.service.js
+// - config/credit.policy.js
 // - db/db.js
-// ======================================================
+// - services/stripe.service.js
+// LAST FIX:
+// - added idempotent lock
+// - unified credit logic
+// - hardened metadata validation
+// =====================================================
 
 const express = require("express");
 const router = express.Router();
-const { v4: uuidv4 } = require("uuid");
 
 const stripeService = require("../services/stripe.service");
 const db = require("../db/db");
+const CREDIT_POLICY = require("../config/credit.policy");
 
 // ======================================================
 // STRIPE WEBHOOK
@@ -28,7 +33,6 @@ const db = require("../db/db");
 router.post("/", async (req, res) => {
 
   const sig = req.headers["stripe-signature"];
-
   let event;
 
   try {
@@ -53,70 +57,93 @@ router.post("/", async (req, res) => {
 
     const session = event.data.object;
 
+    const stripeSessionId = session.id;
     const userId = session?.metadata?.userId;
-    const credits = parseInt(session?.metadata?.credits || 0);
-    const txId = session?.id;
 
-    if (!userId || !credits || !txId) {
-      console.error("Stripe invalid metadata");
-      return res.status(200).json({ received: true });
+    if (!userId) {
+      return res.json({ received: true });
+    }
+
+    // ===============================
+    // IDEMPOTENT LOCK
+    // ===============================
+
+    const existing = await new Promise((resolve, reject) => {
+      db.sqlite.get(
+        "SELECT id FROM payment_logs WHERE tx_id = ?",
+        [stripeSessionId],
+        (err, row) => {
+          if (err) return reject(err);
+          resolve(row);
+        }
+      );
+    });
+
+    if (existing) {
+      return res.status(200).json({ duplicate: true });
+    }
+
+    // ===============================
+    // CREDIT CALCULATION
+    // ===============================
+
+    let credits = parseInt(session?.metadata?.credits || 0);
+
+    // Fallback to policy calculation if not provided
+    if (!credits) {
+
+      const amountTHB = session.amount_total / 100; // Stripe in satang
+      const base = amountTHB * CREDIT_POLICY.BASE_RATE;
+
+      const tier = CREDIT_POLICY.BONUS_TIERS
+        .filter(t => amountTHB >= t.min)
+        .sort((a,b)=>b.min-a.min)[0];
+
+      credits = tier
+        ? Math.floor(base + (base * tier.bonusPercent / 100))
+        : Math.floor(base);
     }
 
     try {
 
-      // 🔒 IDempotent check
-      const exists = await new Promise((resolve, reject) => {
-        db.sqlite.get(
-          "SELECT id FROM payment_logs WHERE tx_id = ?",
-          [txId],
-          (err, row) => {
-            if (err) return reject(err);
-            resolve(row);
-          }
-        );
-      });
+      // ===============================
+      // ATOMIC CREDIT ADD
+      // ===============================
 
-      if (exists) {
-        console.log("Stripe webhook duplicate ignored:", txId);
-        return res.status(200).json({ received: true });
-      }
-
-      // 🔥 Add credit
       await db.addCredit(userId, credits);
 
-      // 🧾 Insert payment log
       await new Promise((resolve, reject) => {
         db.sqlite.run(
           `INSERT INTO payment_logs
            (id,user_id,method,amount,currency,status,tx_id)
            VALUES (?,?,?,?,?,?,?)`,
           [
-            uuidv4(),
+            crypto.randomUUID(),
             userId,
             "stripe",
-            session.amount_total || 0,
-            session.currency || "thb",
+            session.amount_total / 100,
+            session.currency?.toUpperCase() || "THB",
             "success",
-            txId
+            stripeSessionId
           ],
-          (err) => {
+          function (err) {
             if (err) return reject(err);
             resolve(true);
           }
         );
       });
 
-      console.log("✅ Stripe credit added:", credits);
+      console.log("Stripe credit added:", credits);
 
     } catch (err) {
 
-      console.error("Stripe webhook DB error:", err);
+      console.error("Stripe credit error:", err);
 
     }
 
   }
 
-  return res.status(200).json({ received: true });
+  res.json({ received: true });
 
 });
 
