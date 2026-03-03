@@ -1,33 +1,40 @@
-/**
- * PROJECT: SN DESIGN STUDIO
- * MODULE: db/db.js
- * VERSION: v2.2.0
- * STATUS: production
- * LAST FIX:
- * - unified credits column
- * - fixed duplicate addCredit
- * - added transactions table
- * - added omise_events table
- * - fixed atomic credit system
- */
+// =====================================================
+// PROJECT: SN DESIGN STUDIO
+// MODULE: db/db.js
+// VERSION: v9.1.0
+// STATUS: production-final
+// LAYER: core
+// RESPONSIBILITY:
+// - database connection
+// - user management
+// - atomic credit system
+// - transaction logging
+// DEPENDS ON:
+// - config/system.config.js
+// LAST FIX:
+// - centralized DB_PATH
+// - fixed db reference bug
+// - production stable export
+// =====================================================
 
 const sqlite3 = require("sqlite3").verbose();
 const path = require("path");
 const { v4: uuidv4 } = require("uuid");
+const config = require("../config/system.config");
 
-const dbPath = process.env.DB_PATH || path.join(__dirname, "database.sqlite");
+const dbPath =
+  config.DB_PATH || path.join(__dirname, "database.sqlite");
 
 console.log("DB PATH:", dbPath);
 
 const sqlite = new sqlite3.Database(dbPath);
 
 // =====================================================
-// AUTO CREATE TABLES (SAFE INIT)
+// AUTO CREATE TABLES
 // =====================================================
 
 sqlite.serialize(() => {
 
-  // USERS
   sqlite.run(`
     CREATE TABLE IF NOT EXISTS users (
       id TEXT PRIMARY KEY,
@@ -38,16 +45,6 @@ sqlite.serialize(() => {
     )
   `);
 
-  // SLIP PROTECTION
-  sqlite.run(`
-    CREATE TABLE IF NOT EXISTS slip_references (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      ref TEXT UNIQUE,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
-
-  // TRANSACTIONS LEDGER
   sqlite.run(`
     CREATE TABLE IF NOT EXISTS transactions (
       id TEXT PRIMARY KEY,
@@ -60,33 +57,32 @@ sqlite.serialize(() => {
     )
   `);
 
-  // OMISE IDEMPOTENCY LOCK
   sqlite.run(`
-    CREATE TABLE IF NOT EXISTS omise_events (
+    CREATE TABLE IF NOT EXISTS payment_logs (
+      id TEXT PRIMARY KEY,
+      user_id TEXT,
+      method TEXT,
+      amount INTEGER,
+      currency TEXT,
+      status TEXT,
+      tx_id TEXT UNIQUE,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
+  sqlite.run(`
+    CREATE TABLE IF NOT EXISTS slip_references (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      event_id TEXT UNIQUE,
+      ref TEXT UNIQUE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP
     )
   `);
 
 });
 
-// ==============================
+// =====================================================
 // USER FUNCTIONS
-// ==============================
-
-function getUserByGoogleId(googleId) {
-  return new Promise((resolve, reject) => {
-    sqlite.get(
-      "SELECT * FROM users WHERE google_id = ?",
-      [googleId],
-      (err, row) => {
-        if (err) return reject(err);
-        resolve(row);
-      }
-    );
-  });
-}
+// =====================================================
 
 function getUserByEmail(email) {
   return new Promise((resolve, reject) => {
@@ -104,7 +100,7 @@ function getUserByEmail(email) {
 function createUser({ id, googleId, email, role }) {
   return new Promise((resolve, reject) => {
     sqlite.run(
-      `INSERT INTO users (id, google_id, email, role) 
+      `INSERT INTO users (id, google_id, email, role)
        VALUES (?, ?, ?, ?)`,
       [id, googleId, email, role || "user"],
       function (err) {
@@ -116,7 +112,7 @@ function createUser({ id, googleId, email, role }) {
 }
 
 // =====================================================
-// CREDIT SYSTEM (ATOMIC SAFE)
+// CREDIT SYSTEM (ATOMIC)
 // =====================================================
 
 function addCredit(userId, amount) {
@@ -151,16 +147,16 @@ function addCredit(userId, amount) {
 function deductCredit(userId, amount, engine) {
   return new Promise((resolve, reject) => {
 
-    sqlite.serialize(() => {
+    sqlite.get(
+      "SELECT credits FROM users WHERE id = ?",
+      [userId],
+      (err, row) => {
 
-      sqlite.get(
-        "SELECT credits FROM users WHERE id = ?",
-        [userId],
-        (err, row) => {
+        if (err) return reject(err);
+        if (!row || row.credits < amount)
+          return reject(new Error("INSUFFICIENT_CREDIT"));
 
-          if (err) return reject(err);
-          if (!row || row.credits < amount)
-            return reject(new Error("INSUFFICIENT_CREDIT"));
+        sqlite.serialize(() => {
 
           sqlite.run("BEGIN TRANSACTION");
 
@@ -181,16 +177,16 @@ function deductCredit(userId, amount, engine) {
             resolve(true);
           });
 
-        }
-      );
+        });
 
-    });
+      }
+    );
 
   });
 }
 
 // =====================================================
-// SLIP FUNCTIONS
+// SLIP
 // =====================================================
 
 function checkSlipReference(ref) {
@@ -219,9 +215,12 @@ function saveSlipReference(ref) {
   });
 }
 
+// =====================================================
+// EXPORT
+// =====================================================
+
 module.exports = {
   sqlite,
-  getUserByGoogleId,
   getUserByEmail,
   createUser,
   addCredit,
@@ -229,89 +228,3 @@ module.exports = {
   checkSlipReference,
   saveSlipReference
 };
-
-// =====================================================
-// USAGE LOG INSERT (RESERVE)
-// =====================================================
-
-exports.insertUsageLog = function(id, userId, alias, cost){
-
-  return new Promise((resolve,reject)=>{
-
-    db.run(
-      `INSERT INTO usage_logs (id,user_id,alias,cost,status)
-       VALUES (?,?,?,?,?)`,
-      [id,userId,alias,cost,"reserved"],
-      function(err){
-
-        if(err) return reject(err);
-
-        resolve(true);
-
-      }
-    );
-
-  });
-
-};
-
-// =====================================================
-// UPDATE USAGE STATUS
-// =====================================================
-
-exports.updateUsageStatus = function(id,status){
-
-  return new Promise((resolve,reject)=>{
-
-    db.run(
-      `UPDATE usage_logs SET status=? WHERE id=?`,
-      [status,id],
-      function(err){
-
-        if(err) return reject(err);
-
-        resolve(true);
-
-      }
-    );
-
-  });
-
-};
-
-// =====================================================
-// CHECK DUPLICATE REQUEST
-// =====================================================
-
-exports.getUsageById = function(id){
-
-  return new Promise((resolve,reject)=>{
-
-    db.get(
-      `SELECT * FROM usage_logs WHERE id=?`,
-      [id],
-      function(err,row){
-
-        if(err) return reject(err);
-
-        resolve(row);
-
-      }
-    );
-
-  });
-
-};
-// PAYMENT LOG (ADD-ONLY ENTERPRISE LAYER)
-sqlite.run(`
-  CREATE TABLE IF NOT EXISTS payment_logs (
-    id TEXT PRIMARY KEY,
-    user_id TEXT,
-    method TEXT,
-    amount INTEGER,
-    currency TEXT,
-    status TEXT,
-    tx_id TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
