@@ -1,163 +1,195 @@
 // =====================================================
-// PROJECT: SN DESIGN ENGINE AI
+// PROJECT: SN DESIGN STUDIO
 // MODULE: controllers/crypto.controller.js
-// VERSION: v1.0.0
-// STATUS: production
-// LAST FIX: Binance Pay create order + webhook handler
+// VERSION: v9.0.0
+// STATUS: production-final
+// LAYER: gateway
+// RESPONSIBILITY:
+// - create binance order
+// - calculate credit via policy
+// - hardened webhook (idempotent + atomic)
+// DEPENDS ON:
+// - config/credit.policy.js
+// - db/db.js
 // =====================================================
 
 const axios = require("axios");
 const crypto = require("crypto");
-const creditEngine = require("../services/credit.engine");
-
-// =====================================================
-// CONFIG
-// =====================================================
+const { v4: uuidv4 } = require("uuid");
+const CREDIT_POLICY = require("../config/credit.policy");
+const db = require("../db/db");
 
 const BINANCE_API_KEY = process.env.BINANCE_PAY_KEY;
 const BINANCE_SECRET = process.env.BINANCE_PAY_SECRET;
 
-const FIX_RATE_THB = 34;
-const CREDIT_RATE = 200;
-
-const ALLOWED_AMOUNTS = [10, 15, 20, 25, 30, 50];
-const ALLOWED_COINS = ["USDT", "BNB", "TON"];
-
 // =====================================================
-// CREDIT CALCULATOR
-// =====================================================
-
-function calculateCredits(usd) {
-    return usd * FIX_RATE_THB * CREDIT_RATE;
-}
-
-// =====================================================
-// SIGN BINANCE PAY REQUEST
+// SIGN BINANCE REQUEST
 // =====================================================
 
 function signPayload(payload, timestamp, nonce) {
+  const body = JSON.stringify(payload);
+  const preSign = timestamp + "\n" + nonce + "\n" + body + "\n";
 
-    const body = JSON.stringify(payload);
-    const preSign = timestamp + "\n" + nonce + "\n" + body + "\n";
-
-    return crypto
-        .createHmac("sha512", BINANCE_SECRET)
-        .update(preSign)
-        .digest("hex")
-        .toUpperCase();
+  return crypto
+    .createHmac("sha512", BINANCE_SECRET)
+    .update(preSign)
+    .digest("hex")
+    .toUpperCase();
 }
 
 // =====================================================
 // CREATE ORDER
 // =====================================================
 
-exports.createOrder = async (req, res) => {
+exports.createOrder = async ({ userId, amountBNB, credits }) => {
 
-    try {
+  const merchantTradeNo = `SN-${userId}-${Date.now()}`;
 
-        const userId = req.user?.id;
-
-        if (!userId) {
-            return res.status(401).json({ error: "UNAUTHORIZED" });
-        }
-
-        const { usd, coin } = req.body;
-
-        if (!ALLOWED_AMOUNTS.includes(Number(usd))) {
-            return res.status(400).json({ error: "INVALID_AMOUNT" });
-        }
-
-        if (!ALLOWED_COINS.includes(coin)) {
-            return res.status(400).json({ error: "INVALID_COIN" });
-        }
-
-        const credits = calculateCredits(Number(usd));
-
-        const merchantTradeNo = `SN-${userId}-${Date.now()}`;
-
-        const payload = {
-            merchantTradeNo,
-            orderAmount: usd,
-            currency: coin,
-            goods: {
-                goodsType: "01",
-                goodsCategory: "D000",
-                referenceGoodsId: "SN_CREDIT",
-                goodsName: "SN DESIGN CREDIT"
-            }
-        };
-
-        const timestamp = Date.now().toString();
-        const nonce = crypto.randomBytes(16).toString("hex");
-
-        const signature = signPayload(payload, timestamp, nonce);
-
-        const response = await axios.post(
-            "https://bpay.binanceapi.com/binancepay/openapi/v2/order",
-            payload,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "BinancePay-Timestamp": timestamp,
-                    "BinancePay-Nonce": nonce,
-                    "BinancePay-Certificate-SN": BINANCE_API_KEY,
-                    "BinancePay-Signature": signature
-                }
-            }
-        );
-
-        return res.json({
-            status: "created",
-            orderId: merchantTradeNo,
-            credits,
-            paymentUrl: response.data?.data?.checkoutUrl
-        });
-
-    } catch (err) {
-
-        console.error("CREATE ORDER ERROR:", err.response?.data || err.message);
-        return res.status(500).json({ error: "CREATE_ORDER_FAILED" });
-
+  const payload = {
+    merchantTradeNo,
+    orderAmount: amountBNB,
+    currency: "BNB",
+    goods: {
+      goodsType: "01",
+      goodsCategory: "D000",
+      referenceGoodsId: "SN_CREDIT",
+      goodsName: "SN DESIGN CREDIT"
     }
+  };
+
+  const timestamp = Date.now().toString();
+  const nonce = crypto.randomBytes(16).toString("hex");
+  const signature = signPayload(payload, timestamp, nonce);
+
+  const response = await axios.post(
+    "https://bpay.binanceapi.com/binancepay/openapi/v2/order",
+    payload,
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "BinancePay-Timestamp": timestamp,
+        "BinancePay-Nonce": nonce,
+        "BinancePay-Certificate-SN": BINANCE_API_KEY,
+        "BinancePay-Signature": signature
+      }
+    }
+  );
+
+  return {
+    merchantTradeNo,
+    checkoutUrl: response.data?.data?.checkoutUrl,
+    credits
+  };
 };
 
 // =====================================================
-// WEBHOOK
+// WEBHOOK (HARDENED)
 // =====================================================
 
 exports.webhook = async (req, res) => {
 
-    try {
+  try {
 
-        const data = JSON.parse(req.body.toString());
-
-        if (data?.bizStatus !== "PAY_SUCCESS") {
-            return res.status(200).json({ received: true });
-        }
-
-        const merchantTradeNo = data.merchantTradeNo;
-        const totalFee = Number(data.totalFee);
-
-        if (!merchantTradeNo) {
-            return res.status(400).json({ error: "NO_ORDER_ID" });
-        }
-
-        const parts = merchantTradeNo.split("-");
-        const userId = parts[1];
-
-        const credits = calculateCredits(totalFee);
-
-        await creditEngine.addCredit(userId, credits);
-
-        return res.status(200).json({
-            success: true,
-            creditsAdded: credits
-        });
-
-    } catch (err) {
-
-        console.error("WEBHOOK ERROR:", err);
-        return res.status(500).json({ error: "WEBHOOK_FAILED" });
-
+    if (!Buffer.isBuffer(req.body)) {
+      return res.status(400).send("INVALID_BODY");
     }
+
+    const data = JSON.parse(req.body.toString());
+
+    if (data?.bizStatus !== "PAY_SUCCESS") {
+      return res.status(200).json({ received: true });
+    }
+
+    const merchantTradeNo = data.merchantTradeNo;
+    const totalBNB = Number(data.totalFee);
+
+    if (!merchantTradeNo || !totalBNB) {
+      return res.status(400).send("INVALID_DATA");
+    }
+
+    const parts = merchantTradeNo.split("-");
+    const userId = parts[1];
+
+    const creditResult =
+      CREDIT_POLICY.calculateCreditFromBNB(totalBNB);
+
+    const credits = creditResult.totalCredit;
+
+    const txId = merchantTradeNo;
+
+    // ===============================
+    // ATOMIC BLOCK
+    // ===============================
+
+    await new Promise((resolve, reject) => {
+
+      db.sqlite.serialize(() => {
+
+        db.sqlite.run("BEGIN TRANSACTION");
+
+        db.sqlite.get(
+          "SELECT id FROM payment_logs WHERE tx_id = ?",
+          [txId],
+          (err, row) => {
+
+            if (err) {
+              db.sqlite.run("ROLLBACK");
+              return reject(err);
+            }
+
+            if (row) {
+              db.sqlite.run("ROLLBACK");
+              return resolve("DUPLICATE");
+            }
+
+            db.sqlite.run(
+              "UPDATE users SET credits = COALESCE(credits,0) + ? WHERE id = ?",
+              [credits, userId]
+            );
+
+            db.sqlite.run(
+              `INSERT INTO transactions
+               (id, user_id, type, amount, status)
+               VALUES (?, ?, 'topup', ?, 'success')`,
+              [uuidv4(), userId, credits]
+            );
+
+            db.sqlite.run(
+              `INSERT INTO payment_logs
+               (id,user_id,method,amount,currency,status,tx_id)
+               VALUES (?,?,?,?,?,?,?)`,
+              [
+                uuidv4(),
+                userId,
+                "crypto",
+                totalBNB,
+                "BNB",
+                "success",
+                txId
+              ]
+            );
+
+            db.sqlite.run("COMMIT", (commitErr) => {
+              if (commitErr) {
+                db.sqlite.run("ROLLBACK");
+                return reject(commitErr);
+              }
+              resolve("OK");
+            });
+
+          }
+        );
+
+      });
+
+    });
+
+    return res.status(200).json({ success: true });
+
+  } catch (err) {
+
+    console.error("CRYPTO WEBHOOK ERROR:", err);
+    return res.status(500).send("ERROR");
+
+  }
 };
