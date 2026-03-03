@@ -1,60 +1,63 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: middleware/auth.js
-// VERSION: v9.1.0
+// VERSION: v9.2.0
 // STATUS: production-final
-// LAYER: core
+// LAYER: security
 // RESPONSIBILITY:
 // - verify JWT access token
 // - attach req.user
+// - support cookie + bearer
 // DEPENDS ON:
-// - config/system.config.js
+// - utils/token.util.js
 // LAST FIX:
-// - centralized JWT secret via system.config
+// - removed direct jwt usage
+// - fully centralized verification
 // =====================================================
 
-const jwt = require("jsonwebtoken");
-const config = require("../config/system.config");
+const tokenUtil = require("../utils/token.util");
 
-async function authMiddleware(req, res, next) {
+function extractToken(req) {
 
-  if (req.query.dev === "true") {
+  // 1️⃣ Cookie
+  if (req.cookies?.access_token) {
+    return req.cookies.access_token;
+  }
+
+  // 2️⃣ Bearer
+  if (req.headers.authorization?.startsWith("Bearer ")) {
+    return req.headers.authorization.split("Bearer ")[1];
+  }
+
+  return null;
+}
+
+function authMiddleware(req, res, next) {
+
+  // DEV BYPASS (controlled)
+  if (process.env.DEV_MODE === "true") {
     req.user = {
-      id: 1,
-      email: "dev@local",
+      id: "dev-user",
       role: "dev"
     };
     return next();
   }
 
-  let token = null;
-
-  if (req.cookies?.access_token) {
-    token = req.cookies.access_token;
-  }
-
-  if (!token && req.headers.authorization?.startsWith("Bearer ")) {
-    token = req.headers.authorization.split("Bearer ")[1];
-  }
+  const token = extractToken(req);
 
   if (!token) {
-    return res.status(401).json({ error: "No token" });
+    return res.status(401).json({ error: "NO_TOKEN" });
   }
 
-  try {
+  const decoded = tokenUtil.verifyAccessToken(token);
 
-    const decoded = jwt.verify(
-      token,
-      config.JWT_ACCESS_SECRET
-    );
-
-    req.user = decoded;
-
-    next();
-
-  } catch (err) {
-    return res.status(401).json({ error: "Invalid token" });
+  if (!decoded) {
+    return res.status(401).json({ error: "INVALID_TOKEN" });
   }
+
+  req.user = decoded;
+
+  next();
 }
 
 module.exports = authMiddleware;
