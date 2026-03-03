@@ -1,17 +1,19 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: services/usage-check.js
-// VERSION: v9.0.0
+// VERSION: v9.1.0
 // STATUS: production-final
 // LAYER: backend
 // RESPONSIBILITY:
 // - enforce engine credit cost
-// - atomic deduction
+// - atomic ledger deduction
+// - block insufficient credit
 // DEPENDS ON:
 // - config/credit.policy.js
 // - db/db.js
 // LAST FIX:
-// - unified v9 header standard
+// - switched to user_credits table
+// - removed legacy users.credits
 // =====================================================
 
 const db = require("../db/db");
@@ -26,12 +28,11 @@ module.exports = async function usageCheck(req, res, next) {
     // ======================
 
     if (process.env.DEV_MODE === "true") {
-      console.log("DEV BYPASS ACTIVE");
       return next();
     }
 
     // ======================
-    // REQUIRE AUTH USER
+    // AUTH REQUIRED
     // ======================
 
     const user = req.user;
@@ -41,26 +42,7 @@ module.exports = async function usageCheck(req, res, next) {
     }
 
     // ======================
-    // FETCH USER
-    // ======================
-
-    const userData = await new Promise((resolve, reject) => {
-      db.sqlite.get(
-        "SELECT * FROM users WHERE id = ?",
-        [user.id],
-        (err, row) => {
-          if (err) return reject(err);
-          resolve(row);
-        }
-      );
-    });
-
-    if (!userData) {
-      return res.status(404).json({ error: "USER_NOT_FOUND" });
-    }
-
-    // ======================
-    // ENGINE COST LOOKUP
+    // ENGINE REQUIRED
     // ======================
 
     const engine = req.body?.engine;
@@ -76,15 +58,17 @@ module.exports = async function usageCheck(req, res, next) {
     }
 
     // ======================
-    // CHECK CREDIT
+    // FETCH CREDIT (NEW SCHEMA)
     // ======================
 
-    if (userData.credits < cost) {
+    const credits = await db.getUserCredits(user.id);
+
+    if (credits < cost) {
       return res.status(402).json({ error: "INSUFFICIENT_CREDIT" });
     }
 
     // ======================
-    // ATOMIC DEDUCTION
+    // ATOMIC DEDUCT
     // ======================
 
     await db.deductCredit(user.id, cost, engine);
@@ -97,7 +81,7 @@ module.exports = async function usageCheck(req, res, next) {
 
   } catch (err) {
 
-    console.log("USAGE CHECK ERROR:", err);
+    console.error("USAGE CHECK ERROR:", err);
 
     res.status(500).json({ error: "USAGE_CHECK_FAILED" });
 
