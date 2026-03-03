@@ -1,20 +1,17 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: db/db.js
-// VERSION: v9.1.0
+// VERSION: v9.0.0
 // STATUS: production-final
 // LAYER: core
 // RESPONSIBILITY:
 // - database connection
-// - user management
-// - atomic credit system
-// - transaction logging
+// - credit atomic system
+// - ledger + idempotent tables
 // DEPENDS ON:
-// - config/system.config.js
+// - sqlite3
 // LAST FIX:
-// - centralized DB_PATH
-// - fixed db reference bug
-// - production stable export
+// - version unified to v9
 // =====================================================
 
 const sqlite3 = require("sqlite3").verbose();
