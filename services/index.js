@@ -1,10 +1,21 @@
 // =====================================================
-// SN DESIGN ENGINE AI
-// ULTRA ENGINE SERVER
-// VERSION: 2.7.2
-// STATUS: production
+// PROJECT: SN DESIGN STUDIO
+// MODULE: services/index.js
+// VERSION: v9.1.0
+// STATUS: production-final
+// LAYER: core-server
+// RESPONSIBILITY:
+// - initialize express app
+// - register middleware
+// - register webhook routes (raw first)
+// - register protected routes
+// DEPENDS ON:
+// - config/system.config.js
+// - routes/*
 // LAST FIX:
-// - CONFIRMED WEBHOOK RAW ORDER
+// - centralized config usage
+// - confirmed webhook raw order
+// - production route locking
 // =====================================================
 
 require("dotenv").config();
@@ -13,6 +24,8 @@ const express = require("express");
 const cors = require("cors");
 const multer = require("multer");
 const cookieParser = require("cookie-parser");
+
+const config = require("../config/system.config");
 
 const adminRoutes = require("../routes/admin.routes");
 const stripeRoute = require("../routes/stripe.route");
@@ -38,37 +51,66 @@ app.use(cors({
 
 app.use(cookieParser());
 
-// ================= STRIPE WEBHOOK =================
-app.use("/api/stripe/webhook", express.raw({ type: "application/json" }));
-app.use("/api/stripe/webhook", stripeWebhook);
+// =====================================================
+// 🔴 WEBHOOKS (RAW BODY MUST COME FIRST)
+// =====================================================
 
-// ================= OMISE WEBHOOK =================
-app.use("/api/omise/webhook", express.raw({ type: "application/json" }));
-app.use("/api/omise/webhook", omiseWebhook);
+app.use("/api/stripe/webhook",
+  express.raw({ type: "application/json" }),
+  stripeWebhook
+);
 
-// ================= CRYPTO WEBHOOK =================
-app.use("/api/crypto/webhook", express.raw({ type: "application/json" }));
+app.use("/api/omise/webhook",
+  express.raw({ type: "application/json" }),
+  omiseWebhook
+);
 
-// ================= BODY PARSER =================
+app.use("/api/crypto/webhook",
+  express.raw({ type: "application/json" })
+);
+
+// =====================================================
+// BODY PARSER (AFTER WEBHOOKS)
+// =====================================================
+
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// ================= ROUTES =================
+// =====================================================
+// ROUTES
+// =====================================================
+
 app.use("/api/admin", adminRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
+
 app.use("/api/omise", authMiddleware, omiseRoute);
 app.use("/api/crypto", authMiddleware, cryptoRoute);
 app.use("/api/promptpay", promptpayRoute);
+
 app.use("/auth", authRoutes);
 
-// ================= RENDER =================
-const upload = multer({ storage: multer.memoryStorage() });
+// =====================================================
+// RENDER ENGINE
+// =====================================================
 
-app.post("/api/render", usageCheck, upload.any(), create);
+const upload = multer({
+  storage: multer.memoryStorage(),
+});
 
-// ================= STATUS =================
+app.post(
+  "/api/render",
+  authMiddleware,
+  usageCheck,
+  upload.any(),
+  create
+);
+
+// =====================================================
+// STATUS
+// =====================================================
+
 app.get("/api/status/server", (req, res) => {
   res.json({ server: "online" });
 });
@@ -77,11 +119,13 @@ app.get("/", (req, res) => {
   res.send("SN DESIGN API RUNNING");
 });
 
-// ================= START =================
-const PORT = process.env.PORT || 10000;
+// =====================================================
+// START SERVER
+// =====================================================
+
+const PORT = config.PORT || process.env.PORT || 10000;
 
 app.listen(PORT, () => {
   console.log("ULTRA ENGINE RUNNING:", PORT);
-  console.log("OMISE SECRET KEY:", process.env.OMISE_SECRET_KEY ? "LOADED" : "MISSING");
-  console.log("OMISE WEBHOOK SECRET:", process.env.OMISE_WEBHOOK_SECRET ? "LOADED" : "MISSING");
+  console.log("SYSTEM MODE:", config.ENV || "production");
 });
