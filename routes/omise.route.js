@@ -1,17 +1,27 @@
-/**
- * PROJECT: SN DESIGN STUDIO
- * MODULE: routes/omise.route.js
- * VERSION: v2.7.0
- * STATUS: production
- * LAST FIX: move credit logic to webhook only (live-ready flow)
- */
+// =====================================================
+// PROJECT: SN DESIGN STUDIO
+// MODULE: routes/omise.route.js
+// VERSION: v9.1.0
+// STATUS: production-final
+// LAYER: gateway
+// RESPONSIBILITY:
+// - create omise card charge
+// - create truemoney source
+// - attach metadata for webhook credit processing
+// DEPENDS ON:
+// - middleware/auth.js
+// - config/system.config.js
+// LAST FIX:
+// - centralized OMISE secret via system.config
+// =====================================================
 
 const express = require("express");
 const router = express.Router();
 const Omise = require("omise");
+const config = require("../config/system.config");
 
 const omise = Omise({
-  secretKey: process.env.OMISE_SECRET_KEY
+  secretKey: config.OMISE_SECRET_KEY
 });
 
 // =====================================================
@@ -22,6 +32,10 @@ const PRODUCT_MAP = {
   credit_pack_1: {
     amount: 9900,
     credits: 100
+  },
+  credit_pack_2: {
+    amount: 19900,
+    credits: 250
   }
 };
 
@@ -33,7 +47,7 @@ router.post("/create-charge", async (req, res) => {
 
   try {
 
-    const userId = req.user?.id || req.session?.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: "UNAUTHORIZED_USER" });
@@ -56,8 +70,8 @@ router.post("/create-charge", async (req, res) => {
       currency: "thb",
       card: token,
       metadata: {
-        userId: userId,
-        credits: selected.credits
+        userId: String(userId),
+        credits: String(selected.credits)
       }
     });
 
@@ -82,7 +96,7 @@ router.post("/create-truewallet", async (req, res) => {
 
   try {
 
-    const userId = req.user?.id || req.session?.user?.id;
+    const userId = req.user?.id;
 
     if (!userId) {
       return res.status(401).json({ error: "UNAUTHORIZED_USER" });
@@ -107,8 +121,8 @@ router.post("/create-truewallet", async (req, res) => {
       currency: "thb",
       source: source.id,
       metadata: {
-        userId: userId,
-        credits: selected.credits
+        userId: String(userId),
+        credits: String(selected.credits)
       }
     });
 
