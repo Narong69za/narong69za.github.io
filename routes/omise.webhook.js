@@ -1,33 +1,39 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/omise.webhook.js
- * VERSION: v2.2.0
+ * VERSION: v2.3.0
  * STATUS: production
- * LAST FIX: production-ready signature header + idempotency safe
+ * LAST FIX:
+ * - FIX signature header name
+ * - FIX base64 HMAC validation
+ * - STRICT charge.complete handling
  */
 
 const express = require("express");
 const crypto = require("crypto");
 const router = express.Router();
 const db = require("../db/db");
+const { v4: uuidv4 } = require("uuid");
 
 router.post("/", async (req, res) => {
 
   try {
 
-    const signature = req.headers["x-omise-signature"];
+    const signature = req.headers["omise-signature"];
     const secret = process.env.OMISE_WEBHOOK_SECRET;
 
     if (!signature || !secret) {
+      console.log("WEBHOOK: Missing signature or secret");
       return res.status(401).send("NO SIGNATURE");
     }
 
     const expected = crypto
       .createHmac("sha256", secret)
       .update(req.body)
-      .digest("hex");
+      .digest("base64");
 
     if (expected !== signature) {
+      console.log("WEBHOOK: Signature mismatch");
       return res.status(403).send("INVALID SIGNATURE");
     }
 
@@ -45,20 +51,22 @@ router.post("/", async (req, res) => {
         if (userId && credits > 0) {
 
           await db.addCredit(userId, credits);
+
           await db.sqlite.run(
-  `INSERT INTO payment_logs
-   (id,user_id,method,amount,currency,status,tx_id)
-   VALUES (?,?,?,?,?,?,?)`,
-  [
-    require("uuid").v4(),
-    userId,
-    "omise",
-    charge.amount,
-    charge.currency,
-    "success",
-    charge.id
-  ]
-);
+            `INSERT INTO payment_logs
+             (id,user_id,method,amount,currency,status,tx_id)
+             VALUES (?,?,?,?,?,?,?)`,
+            [
+              uuidv4(),
+              userId,
+              "omise",
+              charge.amount,
+              charge.currency,
+              "success",
+              charge.id
+            ]
+          );
+
           console.log("WEBHOOK CREDIT ADDED:", credits);
 
         }
