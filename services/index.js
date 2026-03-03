@@ -1,9 +1,10 @@
 // =====================================================
 // SN DESIGN ENGINE AI
 // ULTRA ENGINE SERVER
-// VERSION: 2.7.0
+// VERSION: 2.7.1
 // STATUS: production
-// LAST FIX: add BINANCE CRYPTO ROUTE (add-only, no structure change)
+// LAST FIX:
+// - FIX OMISE WEBHOOK ORDER (webhook before auth route)
 // =====================================================
 
 require("dotenv").config();
@@ -64,12 +65,15 @@ app.use("/api/stripe/webhook", stripeWebhook);
 
 // =====================================================
 // 🔴 OMISE WEBHOOK (RAW BODY REQUIRED)
+// 🔥 FIX: MUST REGISTER BEFORE AUTH ROUTE
 // =====================================================
 
 app.use(
   "/api/omise/webhook",
   express.raw({ type: "application/json" })
 );
+
+app.use("/api/omise/webhook", omiseWebhook);
 
 // =====================================================
 // 🔴 BINANCE CRYPTO WEBHOOK (RAW BODY REQUIRED)
@@ -97,10 +101,8 @@ app.use("/api/stripe", stripeRoute);
 app.use("/api/thai-payment", thaiPaymentRoutes);
 
 // 🔥 PROTECTED OMISE ROUTE (JWT REQUIRED)
+// MUST COME AFTER WEBHOOK
 app.use("/api/omise", authMiddleware, omiseRoute);
-
-// 🔥 OMISE WEBHOOK (NO AUTH)
-app.use("/api/omise/webhook", omiseWebhook);
 
 // 🔥 PROTECTED CRYPTO ROUTE (JWT REQUIRED FOR CREATE)
 app.use("/api/crypto", authMiddleware, cryptoRoute);
