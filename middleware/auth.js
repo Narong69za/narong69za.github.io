@@ -1,12 +1,20 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
-// MODULE: auth.js
-// VERSION: v3.2.0
-// STATUS: production
-// LAST FIX: use JWT_ACCESS_SECRET (match token.util)
+// MODULE: middleware/auth.js
+// VERSION: v9.1.0
+// STATUS: production-final
+// LAYER: core
+// RESPONSIBILITY:
+// - verify JWT access token
+// - attach req.user
+// DEPENDS ON:
+// - config/system.config.js
+// LAST FIX:
+// - centralized JWT secret via system.config
 // =====================================================
 
 const jwt = require("jsonwebtoken");
+const config = require("../config/system.config");
 
 async function authMiddleware(req, res, next) {
 
@@ -37,7 +45,7 @@ async function authMiddleware(req, res, next) {
 
     const decoded = jwt.verify(
       token,
-      process.env.JWT_ACCESS_SECRET   // 🔥 แก้ตรงนี้
+      config.JWT_ACCESS_SECRET
     );
 
     req.user = decoded;
