@@ -153,7 +153,10 @@ app.get("/", (req, res) => {
 const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
-  console.log("OMISE KEY LOADED:", !!process.env.OMISE_SECRET_KEY);
-  console.log("BINANCE KEY LOADED:", !!process.env.BINANCE_PAY_KEY);
   console.log("ULTRA ENGINE RUNNING:", PORT);
+
+  console.log("=== ENV DEBUG ===");
+  console.log("OMISE SECRET KEY:", process.env.OMISE_SECRET_KEY ? "LOADED" : "MISSING");
+  console.log("OMISE WEBHOOK SECRET:", process.env.OMISE_WEBHOOK_SECRET ? "LOADED" : "MISSING");
+  console.log("=================");
 });
