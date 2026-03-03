@@ -42,6 +42,9 @@ const usageCheck = require("../services/usage-check");
 const { create } = require("../controllers/create.controller.js");
 
 const app = express();
+app.get("/healthz", (req, res) => {
+  res.status(200).send("OK");
+});
 
 // ================= CORS =================
 app.use(cors({
