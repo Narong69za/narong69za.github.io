@@ -28,16 +28,9 @@ const omise = Omise({
 // PRODUCT MAP (LOCKED)
 // =====================================================
 
-const PRODUCT_MAP = {
-  credit_pack_1: {
-    amount: 9900,
-    credits: 100
-  },
-  credit_pack_2: {
-    amount: 19900,
-    credits: 250
-  }
-};
+const CREDIT_POLICY = require("../config/credit.policy");
+
+const PRODUCT_MAP = CREDIT_POLICY.PRODUCTS;
 
 // =====================================================
 // CREATE CHARGE (CARD)
