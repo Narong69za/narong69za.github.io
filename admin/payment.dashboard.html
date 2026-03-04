@@ -1,22 +1,21 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: admin/payment.dashboard.html
-VERSION: v9.1.0
+VERSION: v9.2.0
 STATUS: production-engine
 LAYER: admin-finance
 RESPONSIBILITY:
-- display finance summary
+- finance summary
 - credit policy
 - payment records
-- daily chart analytics
-- owner-only secure dashboard
-DEPENDS ON:
-- API_BASE (config.js if exists)
-- /api/admin/*
+- realtime analytics
+- burn analytics
+- owner admin control
 LAST FIX:
-- added login redirect target support
-- safer API_BASE resolution
-- preserved production auth guard
+- realtime refresh engine
+- credit burn chart
+- manual admin control
+- live refresh system
 ===================================================== -->
 
 <!DOCTYPE html>
@@ -24,71 +23,110 @@ LAST FIX:
 <head>
 <meta charset="UTF-8">
 <title>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</title>
+
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+
 body{
-  background:#0b0b0f;
-  color:#fff;
-  font-family:Montserrat,sans-serif;
-  margin:0;
+background:#0b0b0f;
+color:#fff;
+font-family:Montserrat,sans-serif;
+margin:0;
 }
+
 header{
-  padding:20px;
-  font-size:22px;
-  background:linear-gradient(90deg,#8b0000,#001f3f);
-  font-weight:bold;
+padding:20px;
+font-size:22px;
+background:linear-gradient(90deg,#8b0000,#001f3f);
+font-weight:bold;
 }
+
 .dashboard{padding:20px;}
+
 .card-container{
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
+display:flex;
+gap:20px;
+flex-wrap:wrap;
 }
+
 .card{
-  flex:1;
-  min-width:220px;
-  background:rgba(255,255,255,0.05);
-  padding:20px;
-  border-radius:12px;
-  backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,0.1);
+flex:1;
+min-width:220px;
+background:rgba(255,255,255,0.05);
+padding:20px;
+border-radius:12px;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.1);
 }
-.card h3{margin:0 0 10px 0;font-size:14px;color:#aaa;}
-.card p{margin:0;font-size:22px;font-weight:bold;}
+
+.card h3{
+margin:0 0 10px 0;
+font-size:14px;
+color:#aaa;
+}
+
+.card p{
+margin:0;
+font-size:22px;
+font-weight:bold;
+}
+
 .policy-box{
-  margin-top:20px;
-  background:rgba(255,255,255,0.04);
-  padding:15px;
-  border-radius:10px;
-  border:1px solid rgba(255,255,255,0.08);
+margin-top:20px;
+background:rgba(255,255,255,0.04);
+padding:15px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.08);
 }
+
+.admin-box{
+margin-top:20px;
+background:rgba(255,255,255,0.04);
+padding:15px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.08);
+}
+
 table{
-  width:100%;
-  border-collapse:collapse;
-  margin-top:20px;
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
 }
+
 th,td{
-  padding:10px;
-  border-bottom:1px solid rgba(255,255,255,0.1);
-  text-align:left;
+padding:10px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+text-align:left;
 }
+
 button{
-  background:#8b0000;
-  color:#fff;
-  padding:8px 14px;
-  border:none;
-  border-radius:6px;
-  cursor:pointer;
+background:#8b0000;
+color:#fff;
+padding:8px 14px;
+border:none;
+border-radius:6px;
+cursor:pointer;
 }
+
 .status-bar{
-  margin-top:15px;
-  color:#00ffcc;
-  font-size:13px;
+margin-top:10px;
+color:#00ffcc;
+font-size:13px;
 }
-canvas{margin-top:30px;}
+
+canvas{
+margin-top:30px;
+}
+
+input{
+padding:6px;
+margin-right:6px;
+}
+
 </style>
 </head>
+
 
 <body>
 
@@ -100,36 +138,67 @@ canvas{margin-top:30px;}
 ENGINE STATUS: INITIALIZING...
 </div>
 
+
 <!-- SUMMARY -->
+
 <div class="card-container">
-  <div class="card">
-    <h3>Total Credit Sold</h3>
-    <p id="sold">0</p>
-  </div>
-  <div class="card">
-    <h3>Total Credit Used</h3>
-    <p id="used">0</p>
-  </div>
-  <div class="card">
-    <h3>Net Credit Balance</h3>
-    <p id="balance">0</p>
-  </div>
-  <div class="card">
-    <h3>Active Users</h3>
-    <p id="users">0</p>
-  </div>
+
+<div class="card">
+<h3>Total Credit Sold</h3>
+<p id="sold">0</p>
 </div>
+
+<div class="card">
+<h3>Total Credit Used</h3>
+<p id="used">0</p>
+</div>
+
+<div class="card">
+<h3>Net Credit Balance</h3>
+<p id="balance">0</p>
+</div>
+
+<div class="card">
+<h3>Active Users</h3>
+<p id="users">0</p>
+</div>
+
+</div>
+
+
+<!-- POLICY -->
 
 <div class="policy-box">
-  <h3>Credit Policy</h3>
-  <div id="policy"></div>
+<h3>Credit Policy</h3>
+<div id="policy"></div>
 </div>
 
-<canvas id="creditChart"></canvas>
+
+<!-- ADMIN CONTROL -->
+
+<div class="admin-box">
+
+<h3>Admin Credit Control</h3>
+
+<input id="adminUserId" placeholder="User ID">
+<input id="adminCredits" placeholder="Credits">
+
+<button onclick="adminAddCredit()">Add Credit</button>
+<button onclick="adminRemoveCredit()">Remove Credit</button>
+
+</div>
+
+
+<!-- CHARTS -->
+
+<canvas id="revenueChart"></canvas>
+<canvas id="burnChart"></canvas>
+
 
 <button onclick="exportCSV()">Export CSV</button>
 
 <table id="paymentTable">
+
 <thead>
 <tr>
 <th>User</th>
@@ -140,175 +209,260 @@ ENGINE STATUS: INITIALIZING...
 <th>Date</th>
 </tr>
 </thead>
+
 <tbody></tbody>
+
 </table>
 
 </div>
 
+
 <script>
 
-/* ================= API BASE ================= */
+const API="/api/admin";
 
-const API_BASE =
-  window.API_BASE ||
-  (location.hostname === "sn-designstudio.dev"
-    ? "https://sn-design-api.onrender.com"
-    : "");
+let revenueChart;
+let burnChart;
 
-const API = API_BASE + "/api/admin";
 
-let chartInstance=null;
-
-/* ================= AUTH VALIDATION ================= */
+/* ================= AUTH ================= */
 
 async function validateOwner(){
 
-  const res = await fetch(API_BASE + "/auth/me",{credentials:"include"});
+const res=await fetch("/auth/me",{credentials:"include"});
 
-  if(!res.ok){
-
-    // 🔴 ส่ง redirect target ไป login
-    const target = encodeURIComponent(location.pathname);
-    window.location.href = "/login.html?redirect=" + target;
-
-    return false;
-  }
-
-  const user = await res.json();
-
-  if(user.role !== "owner"){
-    window.location.href="/create.html";
-    return false;
-  }
-
-  return true;
+if(!res.ok){
+window.location.href="/login.html?redirect=/admin/payment.dashboard.html";
+return false;
 }
+
+const user=await res.json();
+
+if(user.role!=="owner"){
+window.location.href="/create.html";
+return false;
+}
+
+return true;
+
+}
+
 
 /* ================= SAFE FETCH ================= */
 
 async function safeFetch(url){
-  const res = await fetch(url,{credentials:"include"});
-  if(!res.ok) throw new Error("API FAIL: "+url);
-  return res.json();
+
+const res=await fetch(url,{credentials:"include"});
+
+if(!res.ok) throw new Error("API ERROR");
+
+return res.json();
+
 }
+
 
 /* ================= SUMMARY ================= */
 
 async function loadSummary(){
-  const data=await safeFetch(API+"/finance-summary");
 
-  document.getElementById("sold").innerText=data.totalCreditSold;
-  document.getElementById("used").innerText=data.totalCreditUsed;
-  document.getElementById("balance").innerText=data.netCreditBalance;
-  document.getElementById("users").innerText=data.activeUsers;
+const data=await safeFetch(API+"/finance-summary");
+
+document.getElementById("sold").innerText=data.totalCreditSold;
+document.getElementById("used").innerText=data.totalCreditUsed;
+document.getElementById("balance").innerText=data.netCreditBalance;
+document.getElementById("users").innerText=data.activeUsers;
+
 }
+
 
 /* ================= POLICY ================= */
 
 async function loadPolicy(){
 
-  const data=await safeFetch(API+"/credit-policy");
+const data=await safeFetch(API+"/credit-policy");
 
-  let html=`
-  Base Rate: 1 THB = ${data.baseRate} credits<br>
-  Min Topup: ${data.minTopup} THB<br>
-  Binance Rate: 1 USD = ${data.binanceRate} THB<br><br>
-  <b>Bonus Tiers:</b><br>
-  `;
+let html=`
+Base Rate: 1 THB = ${data.baseRate} credits<br>
+Min Topup: ${data.minTopup} THB<br>
+Binance Rate: 1 USD = ${data.binanceRate} THB<br><br>
+<b>Bonus Tiers:</b><br>
+`;
 
-  data.bonusTiers.forEach(t=>{
-    html+=`≥ ${t.min} THB → +${t.bonusPercent}% bonus<br>`;
-  });
+data.bonusTiers.forEach(t=>{
+html+=`≥ ${t.min} THB → +${t.bonusPercent}% bonus<br>`;
+});
 
-  document.getElementById("policy").innerHTML=html;
+document.getElementById("policy").innerHTML=html;
+
 }
+
 
 /* ================= TABLE ================= */
 
 async function loadTable(){
 
-  const data=await safeFetch(API+"/finance-recent");
+const data=await safeFetch(API+"/finance-recent");
 
-  const tbody=document.querySelector("#paymentTable tbody");
-  tbody.innerHTML="";
+const tbody=document.querySelector("#paymentTable tbody");
 
-  data.forEach(row=>{
-    tbody.innerHTML+=`
-    <tr>
-      <td>${row.user_id}</td>
-      <td>${row.method}</td>
-      <td>${row.amount}</td>
-      <td>${row.currency||"-"}</td>
-      <td>${row.status}</td>
-      <td>${row.created_at}</td>
-    </tr>
-    `;
-  });
+tbody.innerHTML="";
+
+data.forEach(row=>{
+
+tbody.innerHTML+=`
+<tr>
+<td>${row.user_id}</td>
+<td>${row.method}</td>
+<td>${row.amount}</td>
+<td>${row.currency||"-"}</td>
+<td>${row.status}</td>
+<td>${row.created_at}</td>
+</tr>
+`;
+
+});
+
 }
 
-/* ================= CHART ================= */
 
-async function loadChart(){
+/* ================= REVENUE CHART ================= */
 
-  const data=await safeFetch(API+"/finance-daily");
+async function loadRevenueChart(){
 
-  const ctx=document.getElementById("creditChart");
+const data=await safeFetch(API+"/finance-daily");
 
-  if(chartInstance) chartInstance.destroy();
+const ctx=document.getElementById("revenueChart");
 
-  chartInstance=new Chart(ctx,{
-    type:"line",
-    data:{
-      labels:data.map(d=>d.date),
-      datasets:[{
-        label:"Daily Credit Sold",
-        data:data.map(d=>d.total),
-        borderColor:"#ff0000",
-        fill:false
-      }]
-    }
-  });
+if(revenueChart) revenueChart.destroy();
+
+revenueChart=new Chart(ctx,{
+
+type:"line",
+
+data:{
+labels:data.map(d=>d.date),
+datasets:[{
+label:"Daily Revenue",
+data:data.map(d=>d.total),
+borderColor:"#ff0000",
+fill:false
+}]
 }
 
-/* ================= EXPORT ================= */
+});
+
+}
+
+
+/* ================= BURN CHART ================= */
+
+async function loadBurnChart(){
+
+const data=await safeFetch(API+"/analytics/burn");
+
+const ctx=document.getElementById("burnChart");
+
+if(burnChart) burnChart.destroy();
+
+burnChart=new Chart(ctx,{
+
+type:"line",
+
+data:{
+labels:data.map(d=>d.date),
+datasets:[{
+label:"Credit Burn",
+data:data.map(d=>d.burn),
+borderColor:"#00ffaa",
+fill:false
+}]
+}
+
+});
+
+}
+
+
+/* ================= ADMIN CONTROL ================= */
+
+async function adminAddCredit(){
+
+const user=document.getElementById("adminUserId").value;
+const credits=document.getElementById("adminCredits").value;
+
+await fetch(API+"/admin-add-credit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+credentials:"include",
+body:JSON.stringify({user,credits})
+});
+
+init();
+
+}
+
+
+async function adminRemoveCredit(){
+
+const user=document.getElementById("adminUserId").value;
+const credits=document.getElementById("adminCredits").value;
+
+await fetch(API+"/admin-remove-credit",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+credentials:"include",
+body:JSON.stringify({user,credits})
+});
+
+init();
+
+}
+
+
+/* ================= CSV ================= */
 
 function exportCSV(){
-  let table=document.getElementById("paymentTable").outerHTML;
-  let blob=new Blob([table],{type:"text/csv"});
-  let a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="payments.csv";
-  a.click();
+
+let table=document.getElementById("paymentTable").outerHTML;
+
+let blob=new Blob([table],{type:"text/csv"});
+
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="payments.csv";
+
+a.click();
+
 }
 
-/* ================= ENGINE INIT ================= */
+
+/* ================= INIT ================= */
 
 async function init(){
 
-  document.getElementById("systemStatus").innerText="ENGINE STATUS: AUTH VALIDATION...";
+document.getElementById("systemStatus").innerText="ENGINE STATUS: AUTH VALIDATION";
 
-  const ok = await validateOwner();
-  if(!ok) return;
+const ok=await validateOwner();
 
-  document.getElementById("systemStatus").innerText="ENGINE STATUS: LOADING DATA...";
+if(!ok) return;
 
-  try{
+document.getElementById("systemStatus").innerText="ENGINE STATUS: LIVE";
 
-    await loadSummary();
-    await loadPolicy();
-    await loadTable();
-    await loadChart();
+await loadSummary();
+await loadPolicy();
+await loadTable();
+await loadRevenueChart();
+await loadBurnChart();
 
-    document.getElementById("systemStatus").innerText="ENGINE STATUS: LIVE (PRODUCTION)";
-
-  }catch(err){
-
-    console.error(err);
-    document.getElementById("systemStatus").innerText="ENGINE STATUS: ERROR";
-  }
 }
 
-setInterval(init,15000);
+
+/* ================= REALTIME ================= */
+
+setInterval(init,10000);
+
 init();
 
 </script>
