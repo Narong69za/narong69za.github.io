@@ -1,13 +1,21 @@
- /**
+/**
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v3.5.0
- * STATUS: production
+ * VERSION: v9.0.0
+ * STATUS: production-hardened
+ * LAYER: frontend-navigation
+ * RESPONSIBILITY:
+ * - build top navigation
+ * - role-based visibility control
+ * - secure route navigation
+ * DEPENDS ON:
+ * - API_BASE (config.js)
  * LAST FIX:
- * - Owner-only Payment Control
- * - Lock credit button visibility by role
- * - Admin Dashboard route support
+ * - fixed admin route path (/admin/payment.dashboard.html)
+ * - hardened click detection
+ * - prevented duplicate nav injection
+ * - improved role safety check
  * =====================================================
  */
 
@@ -19,11 +27,10 @@ const DEV_MODE = false;
 
     if(document.querySelector(".create-top-nav")) return;
 
-    const nav=document.createElement("div");
-    nav.className="create-top-nav";
+    const nav = document.createElement("div");
+    nav.className = "create-top-nav";
 
-    nav.innerHTML=`
-
+    nav.innerHTML = `
         <div class="create-nav-right">
             <button id="btn-credit" class="credit-btn-premium" style="display:none;">
                 💎 เติมเครดิต
@@ -38,8 +45,7 @@ const DEV_MODE = false;
     document.body.prepend(nav);
 
     requestAnimationFrame(()=>{
-        document.body.style.paddingTop =
-        nav.offsetHeight+"px";
+        document.body.style.paddingTop = nav.offsetHeight + "px";
     });
 
 })();
@@ -53,15 +59,22 @@ async function loadUserStatus(){
 
     try{
 
+        if(typeof API_BASE === "undefined"){
+            console.error("API_BASE missing");
+            return;
+        }
+
         const res = await fetch(`${API_BASE}/auth/me`,{
-            credentials:"include",
-            cache:"no-store"
+            credentials: "include",
+            cache: "no-store"
         });
 
         if(!res.ok){
-            if(!DEV_MODE && res.status===401){
-                window.location.href="/login.html";
+
+            if(!DEV_MODE && res.status === 401){
+                window.location.href = "/login.html";
             }
+
             return;
         }
 
@@ -75,21 +88,17 @@ async function loadUserStatus(){
 
         if(role === "owner"){
 
-            // 🔥 Owner เห็นทุกระบบ
-            if(creditBtn) creditBtn.style.display="inline-block";
-            if(adminBtn)  adminBtn.style.display="inline-block";
+            if(creditBtn) creditBtn.style.display = "inline-block";
+            if(adminBtn)  adminBtn.style.display  = "inline-block";
 
         } else {
 
-            // 🔒 User ธรรมดา เห็นแค่เติมเครดิต
-            if(creditBtn) creditBtn.style.display="inline-block";
-
-            // ซ่อน admin
-            if(adminBtn) adminBtn.style.display="none";
+            if(creditBtn) creditBtn.style.display = "inline-block";
+            if(adminBtn)  adminBtn.style.display  = "none";
         }
 
     }catch(err){
-        console.warn("USER LOAD ERROR:",err);
+        console.warn("USER LOAD ERROR:", err);
     }
 }
 
@@ -97,14 +106,20 @@ document.addEventListener("DOMContentLoaded", loadUserStatus);
 
 /* ================= BUTTON NAVIGATION ================= */
 
-document.addEventListener("click",(e)=>{
+document.addEventListener("click", (e)=>{
 
-    if(e.target.id==="btn-credit"){
-        window.location.href="/payment.html";
+    const target = e.target.closest("button");
+    if(!target) return;
+
+    if(target.id === "btn-credit"){
+        window.location.href = "/payment.html";
+        return;
     }
 
-    if(e.target.id==="btn-admin"){
-        window.location.href="/payment.dashboard.html";
+    if(target.id === "btn-admin"){
+        // 🔥 FIXED PATH
+        window.location.href = "/admin/payment.dashboard.html";
+        return;
     }
 
 });
