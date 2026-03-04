@@ -1,15 +1,48 @@
-import * as runway from "../engines/runway.engine.js"
-import * as replicate from "../engines/replicate.engine.js"
-import * as pika from "../engines/pika.engine.js"
-import * as leonardo from "../engines/leonardo.engine.js"
+/* =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: services/model.router.js
+VERSION: v1.0.0
+STATUS: production
+RESPONSIBILITY:
+- route model request to correct engine provider
+===================================================== */
 
-export async function runModel(engine,payload){
+const runwayService = require("./runway.service")
+// future engines
+// const replicateService = require("./replicate.service")
+// const pikaService = require("./pika.service")
+// const leonardoService = require("./leonardo.service")
+// const elevenService = require("./eleven.service")
+// const geminiService = require("./gemini.service")
 
- if(engine==="runway") return runway.generate(payload)
- if(engine==="replicate") return replicate.generate(payload)
- if(engine==="pika") return pika.generate(payload)
- if(engine==="leonardo") return leonardo.generate(payload)
+async function routeGenerate(payload){
 
- throw new Error("ENGINE NOT FOUND")
+    const engine = payload.engine
 
+    switch(engine){
+
+        case "runway":
+            return await runwayService.generate(payload)
+
+        case "replicate":
+            throw new Error("Replicate engine not implemented yet")
+
+        case "pika":
+            throw new Error("Pika engine not implemented yet")
+
+        case "leonardo":
+            throw new Error("Leonardo engine not implemented yet")
+
+        case "system":
+            throw new Error("System engine reserved")
+
+        default:
+            throw new Error("Unknown engine")
+
+    }
+
+}
+
+module.exports = {
+    routeGenerate
 }
