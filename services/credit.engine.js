@@ -1,128 +1,13 @@
-// =====================================================
-// SN DESIGN ENGINE AI
-// ULTRA CREDIT CORE ENGINE
-// =====================================================
+export function checkCredits(user,required){
 
-const db = require("../db/db");
-
-// ===============================
-// CONFIG COST PER MODEL
-// ===============================
-
-const COST_MAP = {
-
-   text_to_video: 3,
-   image_to_video: 4,
-   motion_transfer: 5,
-   face_swap: 6,
-   lip_sync: 4,
-
-   default: 3
-
-};
-
-// ===============================
-// FREE LIMIT CHECK (IP BASED)
-// ===============================
-
-async function checkFreeUsage(ip){
-
-   if(process.env.DEV_MODE === "true"){
-      return true;
-   }
-
-   const today = new Date().toISOString().slice(0,10);
-
-   global.freeUsage = global.freeUsage || {};
-
-   const key = ip + "_" + today;
-
-   if(!global.freeUsage[key]){
-      global.freeUsage[key] = 0;
-   }
-
-   if(global.freeUsage[key] >= 3){
-      return false;
-   }
-
-   global.freeUsage[key]++;
-
-   return true;
+ if(user.credits<required){
+  throw new Error("INSUFFICIENT_CREDITS")
+ }
 
 }
 
-// ===============================
-// CHECK AND DEDUCT CREDIT
-// ===============================
+export function deductCredits(user,amount){
 
-async function checkAndUseCredit(userId, alias){
-
-   if(process.env.DEV_MODE === "true"){
-      return { allowed:true };
-   }
-
-   const user = await db.getUser(userId);
-
-   if(!user){
-      return { allowed:false };
-   }
-
-   const cost = COST_MAP[alias] || COST_MAP.default;
-
-   if(user.credits < cost){
-      return { allowed:false };
-   }
-
-   await db.decreaseCredit(userId, cost);
-
-   return { allowed:true, cost };
+ user.credits=user.credits-amount
 
 }
-
-// ===============================
-// ADD CREDIT
-// ===============================
-
-async function addCredit(userId, amount){
-
-   await db.addCredit(userId, amount);
-
-}
-
-// ===============================
-
-module.exports = {
-   checkFreeUsage,
-   checkAndUseCredit,
-   addCredit
-};
-
-// =====================================================
-// CREDIT PACKAGE MAPPING
-// VERSION: v1.0.0
-// =====================================================
-
-exports.addCreditFromPackage = async (userId, packageName, amount) => {
-
-   const mapping = {
-      "starter-100": 100,
-      "pro-300": 300,
-      "elite-1000": 1000
-   };
-
-   const credit = mapping[packageName];
-
-   if (!credit) return;
-
-   await new Promise((resolve, reject) => {
-      sqlite.run(
-         "UPDATE users SET credits = credits + ? WHERE id = ?",
-         [credit, userId],
-         (err) => {
-            if (err) return reject(err);
-            resolve();
-         }
-      );
-   });
-
-};
