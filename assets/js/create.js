@@ -2,51 +2,50 @@
 =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.js
-VERSION: v9.4.0
+VERSION: v9.4.1
 STATUS: production
 RESPONSIBILITY:
-- per-engine generation
-- realtime credit calculation
-- payload build
-- engine execution
+- CTA engine router
+- realtime credit rate preview
+- generation payload
 =====================================================
 */
 
-const CREDIT_TABLE = {
+const CREDIT_RATE = {
 
-720:5,
-1080:10
+720:2,
+1080:4
 
 }
 
-function calculateCredits(engine){
+function updateCreditRate(engine){
 
 const resolution=engine.querySelector(".engine-resolution")?.value
 
-const length=engine.querySelector(".engine-length")?.value
+if(!resolution)return
 
-if(!resolution||!length)return 0
+const rate=CREDIT_RATE[resolution]
 
-return CREDIT_TABLE[resolution] * parseInt(length)
-
-}
-
-function updateCredit(engine){
-
-const cost=calculateCredits(engine)
-
-engine.querySelector(".credit-value").innerText=cost
+engine.querySelector(".credit-rate").innerText=
+rate+" credits / sec"
 
 }
 
 document.querySelectorAll(".engine-box").forEach(engine=>{
 
 const resolution=engine.querySelector(".engine-resolution")
-const length=engine.querySelector(".engine-length")
 
-if(resolution)resolution.addEventListener("change",()=>updateCredit(engine))
+if(resolution){
 
-if(length)length.addEventListener("change",()=>updateCredit(engine))
+resolution.addEventListener("change",()=>{
+
+updateCreditRate(engine)
+
+})
+
+updateCreditRate(engine)
+
+}
 
 })
 
@@ -57,26 +56,20 @@ btn.addEventListener("click",async()=>{
 const engine=btn.closest(".engine-box")
 
 const model=engine.dataset.model
-const type=engine.dataset.type
 
 const prompt=engine.querySelector(".engine-prompt")?.value
 
 const resolution=engine.querySelector(".engine-resolution")?.value
 
-const length=engine.querySelector(".engine-length")?.value
-
-const credits=calculateCredits(engine)
-
-document.getElementById("status").innerText=
-`GENERATING (${credits} credits)`
-
 const payload={
+
 model,
-type,
 prompt,
-resolution,
-length
+resolution
+
 }
+
+document.getElementById("status").innerText="GENERATING..."
 
 try{
 
@@ -92,9 +85,9 @@ RenderEngine.preview(result)
 
 document.getElementById("status").innerText="RENDER COMPLETE"
 
-}catch(err){
+}catch(e){
 
-console.error(err)
+console.error(e)
 
 document.getElementById("status").innerText="ERROR"
 
