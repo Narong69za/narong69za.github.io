@@ -1,70 +1,40 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.html
-VERSION: v9.1.0
+VERSION: v9.2.0
 STATUS: production
 LAYER: frontend-ui
 RESPONSIBILITY:
 - render ultra engine control UI
 - display authenticated account info
-- connect to API_BASE
-- expanded CTA ENGINE BOX system (14 engines total)
+- CTA ENGINE BOX system (14 engines)
+- map engine → AI model
 DEPENDS ON:
 - /assets/js/config.js
 - /assets/js/create.js
 - /assets/js/create-nav.js
 LAST FIX:
-- add 12 additional CTA engine boxes
-- preserve original API command structure
-- prepare color themes via create-premium.css
+- add model mapping system
+- add engine id router
 ===================================================== -->
 
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
 </head>
+
 <body>
 
 <div class="create-root create-container">
 
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<div class="account-wrapper">
-
-<div class="user-header">
-<span id="userShort">-</span>
-</div>
-
-<div class="account-card">
-
-<div class="account-title">
-ACCOUNT STATUS
-</div>
-
-<div class="account-row">
-<span>EMAIL</span>
-<span id="userEmail">-</span>
-</div>
-
-<div class="account-row">
-<span>ROLE</span>
-<span id="userRole">-</span>
-</div>
-
-<div class="account-row">
-<span>CREDITS</span>
-<span id="userCredits">0</span>
-</div>
-
-</div>
-</div>
-
-<textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
+<textarea id="promptBox" placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
 
 <div class="type-bar">
 <button class="type-btn active">สร้างวิดีโอ</button>
@@ -75,262 +45,291 @@ ACCOUNT STATUS
 <div class="engine-wrap">
 
 <!-- ENGINE 1 -->
-<div class="engine engine-box red-engine engine-theme-1">
-<h2>⭐ สร้างวิดีโอ AI</h2>
+<div class="engine engine-box red-engine engine-theme-1"
+data-engine="1"
+data-model="gen4.5">
+
+<h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn" data-alias="image_to_video">🎬 สร้างคลิปไวรัล AI</button>
-<button class="mode-btn" data-alias="lip_sync">🎤 ลิปซิงค์เสียง-คำพูด</button>
-<button class="mode-btn" data-alias="motion_transfer">🕺 โคลนท่าเต้น AI</button>
-<button class="mode-btn" data-alias="face_swap">🧑 เปลี่ยนหน้า AI</button>
+
+<button class="mode-btn active-mode" data-alias="image_to_video">
+🎬 สร้างคลิปไวรัล AI
+</button>
+
+<button class="mode-btn" data-alias="lip_sync">
+🎤 ลิปซิงค์เสียง
+</button>
+
+<button class="mode-btn" data-alias="motion_transfer">
+🕺 โคลนท่าเต้น
+</button>
+
+<button class="mode-btn" data-alias="face_swap">
+🧑 เปลี่ยนหน้า
+</button>
+
 </div>
-<button class="generate-btn">สร้างวิดีโอ AI (RW)</button>
+
+<button class="generate-btn">ENGINE 01</button>
+
 </div>
 
 <!-- ENGINE 2 -->
-<div class="engine engine-box blue-engine engine-theme-2">
-<h2>⭐ สร้างวิดีโอ AI</h2>
+<div class="engine engine-box engine-theme-2"
+data-engine="2"
+data-model="gen3a_turbo">
+
+<h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 สร้างคลิปไวรัล AI</button>
-<button class="mode-btn">🎤 ลิปซิงค์เสียง-คำพูด</button>
-<button class="mode-btn">🕺 โคลนท่าเต้น AI</button>
-<button class="mode-btn">🧑 เปลี่ยนหน้า AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_video">
+🎬 Video Generator
+</button>
+
+<button class="mode-btn" data-alias="speech_to_speech">
+🎤 Voice Sync
+</button>
+
 </div>
-<button class="generate-btn">สร้างวิดีโอ AI (RC)</button>
+
+<button class="generate-btn">ENGINE 02</button>
+
 </div>
 
 <!-- ENGINE 3 -->
-<div class="engine engine-box engine-theme-3">
+<div class="engine engine-box engine-theme-3"
+data-engine="3"
+data-model="gen4_turbo">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_video">
+🎬 Video Generator
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 03</button>
+
 </div>
 
 <!-- ENGINE 4 -->
-<div class="engine engine-box engine-theme-4">
+<div class="engine engine-box engine-theme-4"
+data-engine="4"
+data-model="gen4_image">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_image">
+🖼 Image Generator
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 04</button>
+
 </div>
 
 <!-- ENGINE 5 -->
-<div class="engine engine-box engine-theme-5">
+<div class="engine engine-box engine-theme-5"
+data-engine="5"
+data-model="gen4_image_turbo">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_image">
+🖼 Image Turbo
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 05</button>
+
 </div>
 
 <!-- ENGINE 6 -->
-<div class="engine engine-box engine-theme-6">
+<div class="engine engine-box engine-theme-6"
+data-engine="6"
+data-model="act_two">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="character_performance">
+🎭 Character AI
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 06</button>
+
 </div>
 
 <!-- ENGINE 7 -->
-<div class="engine engine-box engine-theme-7">
+<div class="engine engine-box engine-theme-7"
+data-engine="7"
+data-model="gen4_aleph">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="video_to_video">
+🎬 Video Enhance
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 07</button>
+
 </div>
 
 <!-- ENGINE 8 -->
-<div class="engine engine-box engine-theme-8">
+<div class="engine engine-box engine-theme-8"
+data-engine="8"
+data-model="veo3">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_video">
+🎬 Video AI
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 08</button>
+
 </div>
 
 <!-- ENGINE 9 -->
-<div class="engine engine-box engine-theme-9">
+<div class="engine engine-box engine-theme-9"
+data-engine="9"
+data-model="veo3.1">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_video">
+🎬 Video AI
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 09</button>
+
 </div>
 
 <!-- ENGINE 10 -->
-<div class="engine engine-box engine-theme-10">
+<div class="engine engine-box engine-theme-10"
+data-engine="10"
+data-model="veo3.1_fast">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_video">
+🎬 Fast Video
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 10</button>
+
 </div>
 
 <!-- ENGINE 11 -->
-<div class="engine engine-box engine-theme-11">
+<div class="engine engine-box engine-theme-11"
+data-engine="11"
+data-model="gemini_2.5_flash">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="text_to_image">
+🖼 Gemini Image
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 11</button>
+
 </div>
 
 <!-- ENGINE 12 -->
-<div class="engine engine-box engine-theme-12">
+<div class="engine engine-box engine-theme-12"
+data-engine="12"
+data-model="eleven_multilingual_v2">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="speech_to_speech">
+🎤 Voice AI
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 12</button>
+
 </div>
 
 <!-- ENGINE 13 -->
-<div class="engine engine-box engine-theme-13">
+<div class="engine engine-box engine-theme-13"
+data-engine="13"
+data-model="eleven_text_to_sound_v2">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="sound_effect">
+🔊 Sound FX
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 13</button>
+
 </div>
 
 <!-- ENGINE 14 -->
-<div class="engine engine-box engine-theme-14">
+<div class="engine engine-box engine-theme-14"
+data-engine="14"
+data-model="eleven_multilingual_sts_v2">
+
 <h2>⭐ AI ENGINE</h2>
+
 <div class="mode-row">
-<button class="mode-btn">🎬 Video Generator</button>
-<button class="mode-btn">🎤 Voice Sync</button>
-<button class="mode-btn">🕺 Motion AI</button>
-<button class="mode-btn">🧑 Face AI</button>
+
+<button class="mode-btn active-mode" data-alias="speech_to_speech">
+🎤 Voice Transfer
+</button>
+
 </div>
+
 <button class="generate-btn">ENGINE 14</button>
-</div>
 
-</div>
-
-<div class="upload-core-wrapper">
-<div class="upload-core">
-
-<div class="upload-box">
-<span>Upload Motion / Source</span>
-<input type="file" id="fileA"/>
-</div>
-
-<div class="upload-box">
-<span>Upload Character / Target</span>
-<input type="file" id="fileB"/>
-</div>
-
-</div>
-</div>
-
-<div class="preview-dual preview-wrapper">
-
-<div class="preview-box">
-<video id="preview-red-video" controls></video>
-<img id="preview-red-image"/>
-</div>
-
-<div class="preview-box">
-<video id="preview-blue-video" controls></video>
-<img id="preview-blue-image"/>
-</div>
-
-</div>
-
-<div class="status-bar">
-<span id="status">STATUS: IDLE</span>
 </div>
 
 </div>
 
 <script src="/assets/js/config.js?v=6.1.0"></script>
-<script src="/assets/js/create.js?v=6.1.0"></script>
-<script src="/assets/js/create-nav.js?v=6.1.0"></script>
-
-<!-- =====================================================
-PROJECT: SN DESIGN STUDIO
-MODULE: account.loader.inline
-VERSION: v9.0.0
-STATUS: production
-RESPONSIBILITY:
-- fetch authenticated user
-- update account UI safely
-===================================================== -->
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-
-try {
-
-if (typeof API_BASE === "undefined") {
-console.error("API_BASE not found");
-return;
-}
-
-const response = await fetch(`${API_BASE}/auth/me`, {
-method: "GET",
-credentials: "include"
-});
-
-if (!response.ok) {
-console.warn("User not authenticated");
-return;
-}
-
-const user = await response.json();
-
-const emailEl = document.getElementById("userEmail");
-const roleEl = document.getElementById("userRole");
-const creditEl = document.getElementById("userCredits");
-const shortEl = document.getElementById("userShort");
-
-if (emailEl) emailEl.textContent = user.email || "-";
-if (roleEl) roleEl.textContent = user.role || "-";
-if (creditEl) creditEl.textContent = user.credits ?? 0;
-if (shortEl && user.email) shortEl.textContent = user.email.split("@")[0];
-
-} catch (err) {
-console.error("ACCOUNT LOAD ERROR:", err);
-}
-
-});
-</script>
+<script src="/assets/js/create.js?v=9.2.0"></script>
 
 </body>
 </html>
