@@ -1,3 +1,25 @@
+<!-- =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: admin/payment.dashboard.html
+VERSION: v9.0.0
+STATUS: production-engine
+LAYER: admin-finance
+RESPONSIBILITY:
+- display finance summary
+- credit policy
+- payment records
+- daily chart analytics
+- owner-only secure dashboard
+DEPENDS ON:
+- API_BASE (config.js if exists)
+- /api/admin/*
+LAST FIX:
+- hardened auth check
+- added role validation
+- added error handling
+- production API integration
+===================================================== -->
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -60,6 +82,11 @@ button{
   border-radius:6px;
   cursor:pointer;
 }
+.status-bar{
+  margin-top:15px;
+  color:#00ffcc;
+  font-size:13px;
+}
 canvas{margin-top:30px;}
 </style>
 </head>
@@ -70,7 +97,11 @@ canvas{margin-top:30px;}
 
 <div class="dashboard">
 
-<!-- ================= SUMMARY ================= -->
+<div class="status-bar" id="systemStatus">
+ENGINE STATUS: INITIALIZING...
+</div>
+
+<!-- SUMMARY -->
 <div class="card-container">
   <div class="card">
     <h3>Total Credit Sold</h3>
@@ -90,16 +121,13 @@ canvas{margin-top:30px;}
   </div>
 </div>
 
-<!-- ================= POLICY ================= -->
 <div class="policy-box">
   <h3>Credit Policy</h3>
   <div id="policy"></div>
 </div>
 
-<!-- ================= CHART ================= -->
 <canvas id="creditChart"></canvas>
 
-<!-- ================= TABLE ================= -->
 <button onclick="exportCSV()">Export CSV</button>
 
 <table id="paymentTable">
@@ -120,26 +148,51 @@ canvas{margin-top:30px;}
 
 <script>
 
-const API="/api/admin";
+const API_BASE = window.API_BASE || "";
+const API = API_BASE + "/api/admin";
 let chartInstance=null;
 
-// ================= SUMMARY =================
+/* ================= AUTH VALIDATION ================= */
+
+async function validateOwner(){
+
+  const res = await fetch((API_BASE||"")+"/auth/me",{credentials:"include"});
+  if(!res.ok){
+    window.location.href="/login.html";
+    return false;
+  }
+
+  const user = await res.json();
+  if(user.role !== "owner"){
+    window.location.href="/create.html";
+    return false;
+  }
+
+  return true;
+}
+
+/* ================= SAFE FETCH ================= */
+
+async function safeFetch(url){
+  const res = await fetch(url,{credentials:"include"});
+  if(!res.ok) throw new Error("API FAIL: "+url);
+  return res.json();
+}
+
+/* ================= SUMMARY ================= */
+
 async function loadSummary(){
-
-  const res=await fetch(API+"/finance-summary",{credentials:"include"});
-  const data=await res.json();
-
+  const data=await safeFetch(API+"/finance-summary");
   document.getElementById("sold").innerText=data.totalCreditSold;
   document.getElementById("used").innerText=data.totalCreditUsed;
   document.getElementById("balance").innerText=data.netCreditBalance;
   document.getElementById("users").innerText=data.activeUsers;
 }
 
-// ================= POLICY =================
-async function loadPolicy(){
+/* ================= POLICY ================= */
 
-  const res=await fetch(API+"/credit-policy",{credentials:"include"});
-  const data=await res.json();
+async function loadPolicy(){
+  const data=await safeFetch(API+"/credit-policy");
 
   let html=`
   Base Rate: 1 THB = ${data.baseRate} credits<br>
@@ -155,12 +208,10 @@ async function loadPolicy(){
   document.getElementById("policy").innerHTML=html;
 }
 
-// ================= TABLE =================
+/* ================= TABLE ================= */
+
 async function loadTable(){
-
-  const res=await fetch(API+"/finance-recent",{credentials:"include"});
-  const data=await res.json();
-
+  const data=await safeFetch(API+"/finance-recent");
   const tbody=document.querySelector("#paymentTable tbody");
   tbody.innerHTML="";
 
@@ -178,17 +229,13 @@ async function loadTable(){
   });
 }
 
-// ================= CHART =================
+/* ================= CHART ================= */
+
 async function loadChart(){
-
-  const res=await fetch(API+"/finance-daily",{credentials:"include"});
-  const data=await res.json();
-
+  const data=await safeFetch(API+"/finance-daily");
   const ctx=document.getElementById("creditChart");
 
-  if(chartInstance){
-    chartInstance.destroy();
-  }
+  if(chartInstance) chartInstance.destroy();
 
   chartInstance=new Chart(ctx,{
     type:"line",
@@ -204,7 +251,8 @@ async function loadChart(){
   });
 }
 
-// ================= EXPORT =================
+/* ================= EXPORT ================= */
+
 function exportCSV(){
   let table=document.getElementById("paymentTable").outerHTML;
   let blob=new Blob([table],{type:"text/csv"});
@@ -214,12 +262,27 @@ function exportCSV(){
   a.click();
 }
 
-// ================= INIT =================
+/* ================= ENGINE INIT ================= */
+
 async function init(){
-  await loadSummary();
-  await loadPolicy();
-  await loadTable();
-  await loadChart();
+
+  document.getElementById("systemStatus").innerText="ENGINE STATUS: AUTH VALIDATION...";
+
+  const ok = await validateOwner();
+  if(!ok) return;
+
+  document.getElementById("systemStatus").innerText="ENGINE STATUS: LOADING DATA...";
+
+  try{
+    await loadSummary();
+    await loadPolicy();
+    await loadTable();
+    await loadChart();
+    document.getElementById("systemStatus").innerText="ENGINE STATUS: LIVE (PRODUCTION)";
+  }catch(err){
+    console.error(err);
+    document.getElementById("systemStatus").innerText="ENGINE STATUS: ERROR";
+  }
 }
 
 setInterval(init,15000);
