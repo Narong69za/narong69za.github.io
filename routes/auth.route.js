@@ -1,19 +1,50 @@
-const express = require('express');
+// =====================================================
+// PROJECT: SN DESIGN STUDIO
+// MODULE: routes/auth.route.js
+// VERSION: v9.2.0
+// STATUS: production-final
+// LAYER: auth
+// RESPONSIBILITY:
+// - google oauth
+// - jwt protected profile
+// - logout
+// DEPENDS ON:
+// - middleware/auth.js
+// - controllers/auth.controller.js
+// LAST FIX:
+// - removed jwt.middleware
+// - unified to v9 auth system
+// =====================================================
+
+const express = require("express");
 const router = express.Router();
-const authController = require('../controllers/auth.controller');
-const jwtMiddleware = require('../middleware/jwt.middleware');
 
-// OAuth Entry
-router.get('/google', authController.googleRedirect);
+const authController = require("../controllers/auth.controller");
+const authMiddleware = require("../middleware/auth");
 
-// OAuth Callback
-router.get('/google/callback', authController.googleCallback);
+// ===============================
+// OAUTH ENTRY
+// ===============================
 
-// Protected Test Route
-router.get('/me', jwtMiddleware.verifyAccessToken, authController.me);
+router.get("/google", authController.googleRedirect);
 
-// Logout
-router.get('/logout', authController.logout);
-router.post('/logout', authController.logout);
+// ===============================
+// OAUTH CALLBACK
+// ===============================
+
+router.get("/google/callback", authController.googleCallback);
+
+// ===============================
+// PROTECTED USER PROFILE
+// ===============================
+
+router.get("/me", authMiddleware, authController.me);
+
+// ===============================
+// LOGOUT
+// ===============================
+
+router.get("/logout", authController.logout);
+router.post("/logout", authController.logout);
 
 module.exports = router;
