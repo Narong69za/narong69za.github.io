@@ -1,8 +1,12 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: controllers/auth.controller.js
-// VERSION: v9.3.1
-// STATUS: production-final
+// VERSION: v9.4.0
+// STATUS: production-hardened
+// LAST FIX:
+// - added redirect-safe login flow
+// - preserved dashboard redirect
+// - hardened cookie config
 // =====================================================
 
 const crypto = require("crypto");
@@ -25,14 +29,23 @@ exports.googleRedirect = async (req, res) => {
 
   const state = crypto.randomBytes(32).toString("hex");
 
+  const redirectTarget = req.query.redirect || "/create.html";
+
   res.cookie("oauth_state", state, {
     ...COOKIE_OPTIONS,
     maxAge: 10 * 60 * 1000
   });
 
+  res.cookie("oauth_redirect", redirectTarget, {
+    ...COOKIE_OPTIONS,
+    maxAge: 10 * 60 * 1000
+  });
+
   const url = googleService.generateAuthUrl(state);
+
   return res.redirect(url);
 };
+
 
 // ================= GOOGLE CALLBACK =================
 
@@ -91,4 +104,5 @@ exports.googleCallback = async (req, res) => {
 
     res.cookie("refresh_token", refreshToken, {
       ...COOKIE_OPTIONS,
-      maxAge: 7 * 24
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
