@@ -1,7 +1,7 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: admin/payment.dashboard.html
-VERSION: v9.0.0
+VERSION: v9.1.0
 STATUS: production-engine
 LAYER: admin-finance
 RESPONSIBILITY:
@@ -14,10 +14,9 @@ DEPENDS ON:
 - API_BASE (config.js if exists)
 - /api/admin/*
 LAST FIX:
-- hardened auth check
-- added role validation
-- added error handling
-- production API integration
+- added login redirect target support
+- safer API_BASE resolution
+- preserved production auth guard
 ===================================================== -->
 
 <!DOCTYPE html>
@@ -148,21 +147,35 @@ ENGINE STATUS: INITIALIZING...
 
 <script>
 
-const API_BASE = window.API_BASE || "";
+/* ================= API BASE ================= */
+
+const API_BASE =
+  window.API_BASE ||
+  (location.hostname === "sn-designstudio.dev"
+    ? "https://sn-design-api.onrender.com"
+    : "");
+
 const API = API_BASE + "/api/admin";
+
 let chartInstance=null;
 
 /* ================= AUTH VALIDATION ================= */
 
 async function validateOwner(){
 
-  const res = await fetch((API_BASE||"")+"/auth/me",{credentials:"include"});
+  const res = await fetch(API_BASE + "/auth/me",{credentials:"include"});
+
   if(!res.ok){
-    window.location.href="/login.html";
+
+    // 🔴 ส่ง redirect target ไป login
+    const target = encodeURIComponent(location.pathname);
+    window.location.href = "/login.html?redirect=" + target;
+
     return false;
   }
 
   const user = await res.json();
+
   if(user.role !== "owner"){
     window.location.href="/create.html";
     return false;
@@ -183,6 +196,7 @@ async function safeFetch(url){
 
 async function loadSummary(){
   const data=await safeFetch(API+"/finance-summary");
+
   document.getElementById("sold").innerText=data.totalCreditSold;
   document.getElementById("used").innerText=data.totalCreditUsed;
   document.getElementById("balance").innerText=data.netCreditBalance;
@@ -192,6 +206,7 @@ async function loadSummary(){
 /* ================= POLICY ================= */
 
 async function loadPolicy(){
+
   const data=await safeFetch(API+"/credit-policy");
 
   let html=`
@@ -211,7 +226,9 @@ async function loadPolicy(){
 /* ================= TABLE ================= */
 
 async function loadTable(){
+
   const data=await safeFetch(API+"/finance-recent");
+
   const tbody=document.querySelector("#paymentTable tbody");
   tbody.innerHTML="";
 
@@ -232,7 +249,9 @@ async function loadTable(){
 /* ================= CHART ================= */
 
 async function loadChart(){
+
   const data=await safeFetch(API+"/finance-daily");
+
   const ctx=document.getElementById("creditChart");
 
   if(chartInstance) chartInstance.destroy();
@@ -274,12 +293,16 @@ async function init(){
   document.getElementById("systemStatus").innerText="ENGINE STATUS: LOADING DATA...";
 
   try{
+
     await loadSummary();
     await loadPolicy();
     await loadTable();
     await loadChart();
+
     document.getElementById("systemStatus").innerText="ENGINE STATUS: LIVE (PRODUCTION)";
+
   }catch(err){
+
     console.error(err);
     document.getElementById("systemStatus").innerText="ENGINE STATUS: ERROR";
   }
