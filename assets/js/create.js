@@ -1,66 +1,59 @@
-// =====================================================
-// CREATE PAGE JS
-// ULTRA CLEAN BUILD
-// RESPONSIBILITY:
-// - nav UI only
-// - redirect payment center only
-// - NO payment logic
-// =====================================================
+/**
+ * =====================================================
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: create.js
+ * VERSION: v9.2.0
+ * STATUS: production
+ * LAYER: frontend-controller
+ * RESPONSIBILITY:
+ * - CTA engine router
+ * - build generation payload
+ * - call engine modules
+ * - update UI status
+ * DEPENDS ON:
+ * - payload.builder.js
+ * - runway.engine.js
+ * - upload.service.js
+ * - task.poller.js
+ * - render-engine.js
+ * LAST FIX:
+ * - add CTA model mapping system
+ * - add engine router v9
+ * =====================================================
+ */
 
-document.addEventListener("DOMContentLoaded", () => {
+document.querySelectorAll(".generate-btn").forEach(btn=>{
 
-    if(document.querySelector(".create-top-nav")) return;
+btn.addEventListener("click",async()=>{
 
-    const nav = document.createElement("div");
+const engineBox=btn.closest(".engine-box");
 
-    nav.className = "create-top-nav";
+const model=engineBox.dataset.model;
 
-    nav.innerHTML = `
-        <div class="create-nav-left">
-            ⭐ SN DESIGN ENGINE AI
-        </div>
+const mode=engineBox.querySelector(".mode-btn.active-mode");
 
-        <div class="create-nav-right">
-            <button id="btn-credit" class="create-nav-btn">
-                เติมเครดิต
-            </button>
-        </div>
-    `;
+if(!mode) return;
 
-    document.body.prepend(nav);
+const alias=mode.dataset.alias;
+
+const prompt=document.getElementById("promptBox").value;
+
+const payload={
+model:model,
+alias:alias,
+prompt:prompt
+};
+
+const built=PayloadBuilder.build(payload);
+
+await UploadService.prepare(built);
+
+const task=await RunwayEngine.run(built);
+
+const result=await TaskPoller.wait(task);
+
+RenderEngine.preview(result);
 
 });
 
-// ONLY redirect payment center
-
-document.addEventListener("click",(e)=>{
-
-    if(e.target.id === "btn-credit"){
-
-        window.location.href="/payment.html";
-
-    }
-
-});
-// ================= ACTIVE MODE FIX =================
-
-document.querySelectorAll(".mode-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        btn.closest(".engine-box")
-           .querySelectorAll(".mode-btn")
-           .forEach(b=>b.classList.remove("active-mode"));
-
-        btn.classList.add("active-mode");
-    });
-});
-
-// TYPE BAR
-
-document.querySelectorAll(".type-btn").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-        document.querySelectorAll(".type-btn")
-        .forEach(b=>b.classList.remove("active-model"));
-
-        btn.classList.add("active-model");
-    });
 });
