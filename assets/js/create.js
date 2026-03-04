@@ -1,59 +1,105 @@
 /**
- * =====================================================
- * PROJECT: SN DESIGN STUDIO
- * MODULE: create.js
- * VERSION: v9.2.0
- * STATUS: production
- * LAYER: frontend-controller
- * RESPONSIBILITY:
- * - CTA engine router
- * - build generation payload
- * - call engine modules
- * - update UI status
- * DEPENDS ON:
- * - payload.builder.js
- * - runway.engine.js
- * - upload.service.js
- * - task.poller.js
- * - render-engine.js
- * LAST FIX:
- * - add CTA model mapping system
- * - add engine router v9
- * =====================================================
- */
+=====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: create.js
+VERSION: v9.4.0
+STATUS: production
+RESPONSIBILITY:
+- per-engine generation
+- realtime credit calculation
+- payload build
+- engine execution
+=====================================================
+*/
+
+const CREDIT_TABLE = {
+
+720:5,
+1080:10
+
+}
+
+function calculateCredits(engine){
+
+const resolution=engine.querySelector(".engine-resolution")?.value
+
+const length=engine.querySelector(".engine-length")?.value
+
+if(!resolution||!length)return 0
+
+return CREDIT_TABLE[resolution] * parseInt(length)
+
+}
+
+function updateCredit(engine){
+
+const cost=calculateCredits(engine)
+
+engine.querySelector(".credit-value").innerText=cost
+
+}
+
+document.querySelectorAll(".engine-box").forEach(engine=>{
+
+const resolution=engine.querySelector(".engine-resolution")
+const length=engine.querySelector(".engine-length")
+
+if(resolution)resolution.addEventListener("change",()=>updateCredit(engine))
+
+if(length)length.addEventListener("change",()=>updateCredit(engine))
+
+})
 
 document.querySelectorAll(".generate-btn").forEach(btn=>{
 
 btn.addEventListener("click",async()=>{
 
-const engineBox=btn.closest(".engine-box");
+const engine=btn.closest(".engine-box")
 
-const model=engineBox.dataset.model;
+const model=engine.dataset.model
+const type=engine.dataset.type
 
-const mode=engineBox.querySelector(".mode-btn.active-mode");
+const prompt=engine.querySelector(".engine-prompt")?.value
 
-if(!mode) return;
+const resolution=engine.querySelector(".engine-resolution")?.value
 
-const alias=mode.dataset.alias;
+const length=engine.querySelector(".engine-length")?.value
 
-const prompt=document.getElementById("promptBox").value;
+const credits=calculateCredits(engine)
+
+document.getElementById("status").innerText=
+`GENERATING (${credits} credits)`
 
 const payload={
-model:model,
-alias:alias,
-prompt:prompt
-};
+model,
+type,
+prompt,
+resolution,
+length
+}
 
-const built=PayloadBuilder.build(payload);
+try{
 
-await UploadService.prepare(built);
+const built=PayloadBuilder.build(payload)
 
-const task=await RunwayEngine.run(built);
+await UploadService.prepare(built)
 
-const result=await TaskPoller.wait(task);
+const task=await RunwayEngine.run(built)
 
-RenderEngine.preview(result);
+const result=await TaskPoller.wait(task)
 
-});
+RenderEngine.preview(result)
 
-});
+document.getElementById("status").innerText="RENDER COMPLETE"
+
+}catch(err){
+
+console.error(err)
+
+document.getElementById("status").innerText="ERROR"
+
+}
+
+})
+
+})
