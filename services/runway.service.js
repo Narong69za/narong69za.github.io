@@ -1,41 +1,83 @@
-const fetch = require("node-fetch");
+/* =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: services/runway.service.js
+VERSION: v1.0.0
+STATUS: production
+RESPONSIBILITY:
+- call runway api
+- upload media
+- generate tasks
+- poll tasks
+===================================================== */
 
-const RUNWAY_API_KEY = process.env.RUNWAY_API_KEY;
+const fetch = require("node-fetch")
 
-async function createRunwayJob(preset, prompt){
+const RUNWAY_API = "https://api.dev.runwayml.com/v1"
+const RUNWAY_KEY = process.env.RUNWAY_API_KEY
 
-    let model="";
+async function upload(req){
 
-    // mapping preset → model
-    if(preset==="cinematic-pro"){
-        model="gen4_image";
-    }
-
-    if(preset==="dance-motion"){
-        model="act_two";
-    }
-
-    const res = await fetch("https://api.runwayml.com/v1/generate",{
+    const response = await fetch(`${RUNWAY_API}/uploads`,{
 
         method:"POST",
 
         headers:{
-            "Authorization":`Bearer ${RUNWAY_API_KEY}`,
+            "Authorization":`Bearer ${RUNWAY_KEY}`,
+            "X-Runway-Version":"2024-11-06",
             "Content-Type":"application/json"
         },
 
         body:JSON.stringify({
-            model:model,
-            input:{
-                prompt:prompt
-            }
+            filename:"upload.file",
+            type:"ephemeral"
         })
 
-    });
+    })
 
-    const data = await res.json();
+    const data = await response.json()
 
-    return data;
+    return data.runwayUri
 }
 
-module.exports={createRunwayJob};
+async function generate(payload){
+
+    const response = await fetch(`${RUNWAY_API}/image_to_video`,{
+
+        method:"POST",
+
+        headers:{
+            "Authorization":`Bearer ${RUNWAY_KEY}`,
+            "X-Runway-Version":"2024-11-06",
+            "Content-Type":"application/json"
+        },
+
+        body:JSON.stringify(payload)
+
+    })
+
+    const data = await response.json()
+
+    return data
+}
+
+async function getTask(id){
+
+    const response = await fetch(`${RUNWAY_API}/tasks/${id}`,{
+
+        headers:{
+            "Authorization":`Bearer ${RUNWAY_KEY}`,
+            "X-Runway-Version":"2024-11-06"
+        }
+
+    })
+
+    const data = await response.json()
+
+    return data
+}
+
+module.exports = {
+    upload,
+    generate,
+    getTask
+}
