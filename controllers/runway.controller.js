@@ -1,11 +1,12 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: controllers/runway.controller.js
-VERSION: v1.0.0
+VERSION: v1.1.0
 STATUS: production
 ===================================================== */
 
 const runwayService = require("../services/runway.service")
+const modelRouter = require("../services/model.router")
 
 exports.upload = async (req,res)=>{
 
@@ -34,7 +35,9 @@ exports.generate = async (req,res)=>{
 
     try{
 
-        const task = await runwayService.generate(req.body)
+        const payload = req.body
+
+        const task = await modelRouter.routeGenerate(payload)
 
         res.json(task)
 
@@ -43,7 +46,8 @@ exports.generate = async (req,res)=>{
         console.error(err)
 
         res.status(500).json({
-            success:false
+            success:false,
+            message:err.message
         })
 
     }
