@@ -2,20 +2,17 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v9.0.0
+ * VERSION: v9.1.0
  * STATUS: production-hardened
  * LAYER: frontend-navigation
  * RESPONSIBILITY:
- * - build top navigation
+ * - build balanced top navigation
  * - role-based visibility control
- * - secure route navigation
- * DEPENDS ON:
- * - API_BASE (config.js)
+ * - left/right button separation
  * LAST FIX:
- * - fixed admin route path (/admin/payment.dashboard.html)
- * - hardened click detection
- * - prevented duplicate nav injection
- * - improved role safety check
+ * - separated credit (left) / admin (right)
+ * - enforced equal button sizing
+ * - improved layout stability
  * =====================================================
  */
 
@@ -31,12 +28,14 @@ const DEV_MODE = false;
     nav.className = "create-top-nav";
 
     nav.innerHTML = `
-        <div class="create-nav-right">
-            <button id="btn-credit" class="credit-btn-premium" style="display:none;">
+        <div class="create-nav-left">
+            <button id="btn-credit" class="nav-btn" style="display:none;">
                 💎 เติมเครดิต
             </button>
+        </div>
 
-            <button id="btn-admin" class="credit-btn-premium" style="display:none;">
+        <div class="create-nav-right">
+            <button id="btn-admin" class="nav-btn" style="display:none;">
                 ⚙ PAYMENT CONTROL
             </button>
         </div>
@@ -47,6 +46,51 @@ const DEV_MODE = false;
     requestAnimationFrame(()=>{
         document.body.style.paddingTop = nav.offsetHeight + "px";
     });
+
+})();
+
+/* ================= STYLE INJECTION ================= */
+
+(function(){
+
+    if(document.getElementById("nav-balance-style")) return;
+
+    const style = document.createElement("style");
+    style.id = "nav-balance-style";
+
+    style.innerHTML = `
+        .create-top-nav{
+            position: fixed;
+            top:0;
+            left:0;
+            width:100%;
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            padding:12px 24px;
+            background:rgba(0,0,0,0.85);
+            backdrop-filter: blur(10px);
+            z-index:9999;
+        }
+
+        .create-nav-left,
+        .create-nav-right{
+            display:flex;
+            align-items:center;
+        }
+
+        .nav-btn{
+            min-width:200px;
+            height:48px;
+            border-radius:30px;
+            font-weight:600;
+            font-size:14px;
+            letter-spacing:0.5px;
+            cursor:pointer;
+        }
+    `;
+
+    document.head.appendChild(style);
 
 })();
 
@@ -65,40 +109,30 @@ async function loadUserStatus(){
         }
 
         const res = await fetch(`${API_BASE}/auth/me`,{
-            credentials: "include",
-            cache: "no-store"
+            credentials:"include",
+            cache:"no-store"
         });
 
         if(!res.ok){
-
-            if(!DEV_MODE && res.status === 401){
-                window.location.href = "/login.html";
+            if(!DEV_MODE && res.status===401){
+                window.location.href="/login.html";
             }
-
             return;
         }
 
         const user = await res.json();
-
-        console.log("USER LOADED:", user);
-
         const role = (user.role || "").toLowerCase();
 
-        /* ================= OWNER CONTROL ================= */
-
         if(role === "owner"){
-
-            if(creditBtn) creditBtn.style.display = "inline-block";
-            if(adminBtn)  adminBtn.style.display  = "inline-block";
-
+            if(creditBtn) creditBtn.style.display="inline-flex";
+            if(adminBtn)  adminBtn.style.display="inline-flex";
         } else {
-
-            if(creditBtn) creditBtn.style.display = "inline-block";
-            if(adminBtn)  adminBtn.style.display  = "none";
+            if(creditBtn) creditBtn.style.display="inline-flex";
+            if(adminBtn)  adminBtn.style.display="none";
         }
 
     }catch(err){
-        console.warn("USER LOAD ERROR:", err);
+        console.warn("USER LOAD ERROR:",err);
     }
 }
 
@@ -106,19 +140,18 @@ document.addEventListener("DOMContentLoaded", loadUserStatus);
 
 /* ================= BUTTON NAVIGATION ================= */
 
-document.addEventListener("click", (e)=>{
+document.addEventListener("click",(e)=>{
 
     const target = e.target.closest("button");
     if(!target) return;
 
-    if(target.id === "btn-credit"){
-        window.location.href = "/payment.html";
+    if(target.id==="btn-credit"){
+        window.location.href="/payment.html";
         return;
     }
 
-    if(target.id === "btn-admin"){
-        // 🔥 FIXED PATH
-        window.location.href = "/admin/payment.dashboard.html";
+    if(target.id==="btn-admin"){
+        window.location.href="/admin/payment.dashboard.html";
         return;
     }
 
