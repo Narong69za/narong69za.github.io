@@ -1,14 +1,19 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.html
-VERSION: v10.0.0
-STATUS: production
+VERSION: v11.1.0
+STATUS: production-enterprise
+LAYER: payment-ui
+RESPONSIBILITY:
+- Enterprise AI SaaS Payment Engine UI
+- 5 Engine Grid System
+- CTA UI BOX LOCKED (no structural change)
+DEPENDS ON:
+- /assets/css/payment.css
+- /assets/js/payment.js
 LAST FIX:
-- Full Enterprise Layout Rebuild
-- 4 Engine Grid System
-- Premium Dark AI Theme
-- Large CTA Structure
-- Backend Compatible (No Logic Change)
+- add stripe engine
+- enterprise polling compatible
 ===================================================== -->
 
 <!DOCTYPE html>
@@ -22,160 +27,8 @@ LAST FIX:
 <link rel="stylesheet" href="/assets/css/payment.css">
 <script src="https://cdn.omise.co/omise.js"></script>
 
-<style>
-
-/* ================================
-   GLOBAL THEME
-================================ */
-
-body{
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background: radial-gradient(circle at top, #1a0000, #000000 60%);
-  color:white;
-}
-
-/* ================================
-   HEADER
-================================ */
-
-.payment-header{
-  text-align:center;
-  padding:50px 20px 20px;
-}
-
-.payment-header h1{
-  font-size:28px;
-  letter-spacing:3px;
-  margin-bottom:10px;
-}
-
-.payment-header p{
-  opacity:0.6;
-}
-
-/* ================================
-   GRID
-================================ */
-
-.payment-grid{
-  max-width:1100px;
-  margin:40px auto;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:35px;
-  padding:0 20px 60px;
-}
-
-/* ================================
-   ENGINE CARD
-================================ */
-
-.engine-card{
-  background:linear-gradient(145deg,#0b0b0b,#111);
-  border-radius:20px;
-  padding:40px;
-  text-align:center;
-  border:1px solid rgba(255,255,255,0.08);
-  transition:all .3s ease;
-  cursor:pointer;
-  position:relative;
-}
-
-.engine-card:hover{
-  transform:translateY(-8px);
-  box-shadow:0 0 40px rgba(255,0,0,.35);
-}
-
-.engine-card h2{
-  margin-bottom:10px;
-  font-size:22px;
-  letter-spacing:1px;
-}
-
-.engine-card p{
-  opacity:0.7;
-  margin-bottom:25px;
-}
-
-/* ================================
-   BUTTON
-================================ */
-
-.engine-btn{
-  padding:16px 34px;
-  border-radius:50px;
-  border:none;
-  font-weight:bold;
-  font-size:14px;
-  cursor:pointer;
-  transition:all .25s ease;
-}
-
-/* Accent Colors */
-
-.omise .engine-btn{
-  background:gold;
-  color:black;
-}
-
-.truemoney .engine-btn{
-  background:#ff7a00;
-  color:white;
-}
-
-.scb .engine-btn{
-  background:#6a1b9a;
-  color:white;
-}
-
-.crypto .engine-btn{
-  background:#ffd600;
-  color:black;
-}
-
-.engine-btn:hover{
-  transform:scale(1.05);
-}
-
-/* ================================
-   PAYMENT BOX
-================================ */
-
-.payment-box{
-  max-width:800px;
-  margin:40px auto;
-  padding:30px;
-  background:#0b0b0b;
-  border-radius:20px;
-  border:1px solid rgba(255,255,255,0.1);
-}
-
-/* ================================
-   STATUS
-================================ */
-
-.status{
-  text-align:center;
-  margin:30px 0 60px;
-  color:#00ffd5;
-  font-weight:bold;
-  letter-spacing:2px;
-}
-
-/* ================================
-   RESPONSIVE
-================================ */
-
-@media(max-width:768px){
-  .payment-grid{
-    grid-template-columns:1fr;
-  }
-}
-
-</style>
-
 </head>
+
 <body>
 
 <div class="payment-header">
@@ -185,7 +38,7 @@ body{
 
 <div class="payment-grid">
 
-  <div class="engine-card omise" data-method="stripe">
+  <div class="engine-card omise" data-method="omise">
     <h2>💳 OMISE CARD ENGINE</h2>
     <p>Visa / Master / JCB Secure Gateway</p>
     <button class="engine-btn">ENTER CARD SYSTEM</button>
@@ -209,23 +62,24 @@ body{
     <button class="engine-btn">OPEN CRYPTO GATE</button>
   </div>
 
+  <div class="engine-card stripe" data-method="stripe">
+    <h2>💠 STRIPE GLOBAL PAY</h2>
+    <p>Visa / Mastercard / Apple Pay</p>
+    <button class="engine-btn">OPEN STRIPE CHECKOUT</button>
+  </div>
+
 </div>
 
-<div id="paymentBox" class="payment-box">
-  <!-- Dynamic Payment UI Render Here -->
-</div>
+<div id="paymentBox" class="payment-box"></div>
 
 <div id="paymentStatus" class="status">
-  STATUS: IDLE
+STATUS: IDLE
 </div>
 
 <script src="/assets/js/config.js"></script>
 <script src="/assets/js/payment.js"></script>
 
 <script>
-
-/* Bind Engine Cards (Compatible with Old Logic) */
-
 document.addEventListener("DOMContentLoaded",()=>{
 
   document.querySelectorAll(".engine-card").forEach(card=>{
@@ -238,7 +92,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   });
 
 });
-
 </script>
 
 </body>
