@@ -2,13 +2,14 @@
 =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.js
-VERSION: v9.7.0
+VERSION: v9.8.0
 STATUS: production
 FIX:
-- connect CTA_MODEL_MASTER
-- build payload correctly
-- upload media support
-- runway task polling
+- support ENGINE 1-14 fully
+- safe element handling
+- correct preview target
+- stable upload routing
+- stable payload builder
 =====================================================
 */
 
@@ -25,24 +26,33 @@ const CREDIT_RATE={
 function updateCreditRate(engine){
 
 const res=engine.querySelector(".engine-resolution")
+
 if(!res)return
 
 const rate=CREDIT_RATE[res.value]||0
 
-engine.querySelector(".credit-rate").innerText=
-rate+" credits / sec"
+const credit=engine.querySelector(".credit-rate")
+
+if(credit){
+credit.innerText=rate+" credits / sec"
+}
 
 }
 
 function initEngines(){
 
-document.querySelectorAll(".engine-box").forEach(engine=>{
+const engines=document.querySelectorAll(".engine-box")
+
+engines.forEach(engine=>{
 
 const res=engine.querySelector(".engine-resolution")
 
 if(res){
 
-res.addEventListener("change",()=>updateCreditRate(engine))
+res.addEventListener("change",()=>{
+updateCreditRate(engine)
+})
+
 updateCreditRate(engine)
 
 }
@@ -57,24 +67,35 @@ document.querySelectorAll(".engine-fileA")
 input.addEventListener("change",(e)=>{
 
 const engine=input.closest(".engine-box")
+
 const preview=engine.querySelector(".engine-preview")
 
+if(!preview)return
+
 const file=e.target.files[0]
+
 if(!file)return
 
 const url=URL.createObjectURL(file)
 
 if(file.type.startsWith("image")){
 
-preview.innerHTML=`<img src="${url}" style="max-width:100%">`
+preview.innerHTML=
+`<img src="${url}" style="max-width:100%">`
 
-}else if(file.type.startsWith("video")){
+}
 
-preview.innerHTML=`<video src="${url}" controls style="max-width:100%"></video>`
+else if(file.type.startsWith("video")){
 
-}else if(file.type.startsWith("audio")){
+preview.innerHTML=
+`<video src="${url}" controls style="max-width:100%"></video>`
 
-preview.innerHTML=`<audio src="${url}" controls></audio>`
+}
+
+else if(file.type.startsWith("audio")){
+
+preview.innerHTML=
+`<audio src="${url}" controls></audio>`
 
 }
 
@@ -82,7 +103,7 @@ preview.innerHTML=`<audio src="${url}" controls></audio>`
 
 })
 
-/* GENERATE */
+/* GENERATE ENGINE */
 
 document.querySelectorAll(".generate-btn")
 .forEach(btn=>{
@@ -91,15 +112,23 @@ btn.addEventListener("click",async()=>{
 
 const engine=btn.closest(".engine-box")
 
+if(!engine)return
+
 const cta=engine.dataset.engine
 
-const prompt=engine.querySelector(".engine-prompt")?.value
+const prompt=engine.querySelector(".engine-prompt")?.value||""
 
-const resolution=engine.querySelector(".engine-resolution")?.value
+const resolution=engine.querySelector(".engine-resolution")?.value||"720"
 
-const file=engine.querySelector(".engine-fileA")?.files[0]
+const file=engine.querySelector(".engine-fileA")?.files?.[0]||null
 
-document.getElementById("status").innerText="GENERATING..."
+const preview=engine.querySelector(".engine-preview")
+
+const status=document.getElementById("status")
+
+if(status){
+status.innerText="GENERATING..."
+}
 
 try{
 
@@ -107,15 +136,27 @@ let image=null
 let video=null
 let audio=null
 
+/* upload media */
+
 if(file){
 
 const upload=await uploadFile(file)
 
-if(file.type.startsWith("image")) image=upload.runwayUri
-if(file.type.startsWith("video")) video=upload.runwayUri
-if(file.type.startsWith("audio")) audio=upload.runwayUri
+if(file.type.startsWith("image")){
+image=upload.runwayUri
+}
+
+if(file.type.startsWith("video")){
+video=upload.runwayUri
+}
+
+if(file.type.startsWith("audio")){
+audio=upload.runwayUri
+}
 
 }
+
+/* build payload */
 
 const payload=buildPayload(cta,{
 prompt,
@@ -126,30 +167,83 @@ ratio:"1280:720",
 duration:5
 })
 
+/* generate */
+
 const res=await fetch("/api/runway/generate",{
+
 method:"POST",
+
 headers:{
 "Content-Type":"application/json"
 },
+
 body:JSON.stringify(payload)
+
 })
 
+if(!res.ok){
+
+throw new Error("API GENERATE FAILED")
+
+}
+
 const task=await res.json()
+
+/* poll */
 
 const result=await pollTask(task.id)
 
 logTask(result)
 
-document.querySelector(".engine-preview").innerHTML=
-`<video src="${result.output[0]}" controls style="max-width:100%">`
+/* render preview */
 
-document.getElementById("status").innerText="RENDER COMPLETE"
+if(preview){
+
+const output=result?.output?.[0]
+
+if(!output)return
+
+if(output.endsWith(".mp4")){
+
+preview.innerHTML=
+`<video src="${output}" controls style="max-width:100%"></video>`
+
+}
+
+else if(
+output.endsWith(".png")||
+output.endsWith(".jpg")||
+output.endsWith(".jpeg")
+){
+
+preview.innerHTML=
+`<img src="${output}" style="max-width:100%">`
+
+}
+
+else if(
+output.endsWith(".mp3")||
+output.endsWith(".wav")
+){
+
+preview.innerHTML=
+`<audio src="${output}" controls></audio>`
+
+}
+
+}
+
+if(status){
+status.innerText="RENDER COMPLETE"
+}
 
 }catch(e){
 
 console.error(e)
 
-document.getElementById("status").innerText="ERROR"
+if(status){
+status.innerText="ERROR"
+}
 
 }
 
