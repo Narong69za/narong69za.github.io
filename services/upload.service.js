@@ -1,23 +1,12 @@
-const multer = require("multer");
-const path = require("path");
+export async function uploadFile(file){
 
-const storage = multer.diskStorage({
+ const res=await fetch("/api/upload",{
 
-   destination:function(req,file,cb){
+  method:"POST",
+  body:file
 
-      cb(null,"storage/input/");
+ })
 
-   },
+ return res.json()
 
-   filename:function(req,file,cb){
-
-      const name = Date.now()+"-"+file.originalname;
-      cb(null,name);
-
-   }
-
-});
-
-const upload = multer({ storage });
-
-module.exports = upload;
+}
