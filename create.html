@@ -34,38 +34,113 @@ LAST FIX:
 
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
+<!-- ================= ACCOUNT ================= -->
+
+<div class="account-wrapper">
+
+<div class="user-header">
+<span id="userShort">-</span>
+</div>
+
+<div class="account-card">
+
+<div class="account-title">
+ACCOUNT STATUS
+</div>
+
+<div class="account-row">
+<span>EMAIL</span>
+<span id="userEmail">-</span>
+</div>
+
+<div class="account-row">
+<span>ROLE</span>
+<span id="userRole">-</span>
+</div>
+
+<div class="account-row">
+<span>CREDITS</span>
+<span id="userCredits">0</span>
+</div>
+
+</div>
+</div>
+
 <div class="engine-wrap">
 
 <!-- ENGINE 1 -->
-<div class="engine engine-box engine-theme-1"
-data-engine="1"
-data-model="gen4_turbo">
+<div class="engine engine-box red-engine engine-theme-1" data-engine="1">
 
 <h2>⭐ AI ENGINE</h2>
 
-<div class="mode-row">
+<div class="engine-detail">
 
-<button class="mode-btn active-mode" data-alias="text_to_video">
-🎬 Video Generator
+<textarea class="engine-prompt"
+placeholder="Describe your prompt..."></textarea>
+
+<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+
+<select class="engine-resolution">
+<option value="720">720p</option>
+<option value="1080">1080p</option>
+</select>
+
+<input type="file"
+class="engine-fileA"
+accept="image/*,video/*,audio/*">
+
+</div>
+
+<div class="engine-credit">
+RATE
+<span class="credit-rate">0 credits / sec</span>
+</div>
+
+</div>
+
+<div class="engine-preview">Preview</div>
+
+<button class="generate-btn">
+ENGINE 01
 </button>
 
 </div>
 
-<button class="generate-btn">ENGINE 01</button>
-
-</div>
 
 <!-- ENGINE 2 -->
-<div class="engine engine-box engine-theme-2"
-data-engine="2"
-data-model="gen4_turbo">
+<div class="engine engine-box blue-engine engine-theme-2" data-engine="2">
 
 <h2>⭐ AI ENGINE</h2>
 
-<div class="mode-row">
+<div class="engine-detail">
 
-<button class="mode-btn active-mode" data-alias="text_to_video">
-🎬 Video Generator
+<textarea class="engine-prompt"
+placeholder="Describe your prompt..."></textarea>
+
+<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
+
+<select class="engine-resolution">
+<option value="720">720p</option>
+<option value="1080">1080p</option>
+</select>
+
+<input type="file"
+class="engine-fileA"
+accept="image/*,video/*,audio/*">
+
+</div>
+
+<div class="engine-credit">
+RATE
+<span class="credit-rate">0 credits / sec</span>
+</div>
+
+</div>
+
+<div class="engine-preview">Preview</div>
+
+<button class="generate-btn">
+ENGINE 02
 </button>
 
 </div>
