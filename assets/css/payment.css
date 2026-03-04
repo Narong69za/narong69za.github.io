@@ -1,20 +1,12 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.css
-VERSION: v10.0.0
-STATUS: production
+VERSION: v11.1.0
+STATUS: production-enterprise
 LAST FIX:
-- Full Enterprise Layout System
-- 4 Engine Grid Control
-- Dark AI Theme Standard
-- Premium Spacing / Alignment
-- Responsive Production Ready
+- stripe accent added
+- enterprise layout stabilization
 ===================================================== */
-
-
-/* ================================
-   ROOT THEME
-================================ */
 
 :root{
   --bg-main: radial-gradient(circle at top,#1a0000,#000 60%);
@@ -23,15 +15,10 @@ LAST FIX:
   --status-color:#00ffd5;
 }
 
-
-/* ================================
-   BODY
-================================ */
-
 body{
   margin:0;
   padding:0;
-  font-family: "Segoe UI", sans-serif;
+  font-family:"Segoe UI",sans-serif;
   background:var(--bg-main);
   color:#fff;
   min-height:100vh;
@@ -39,11 +26,6 @@ body{
   flex-direction:column;
   align-items:center;
 }
-
-
-/* ================================
-   HEADER CENTER CONTROL
-================================ */
 
 .payment-header{
   text-align:center;
@@ -54,33 +36,11 @@ body{
 .payment-header h1{
   font-size:28px;
   letter-spacing:3px;
-  margin:0 0 10px;
 }
 
 .payment-header p{
-  opacity:0.6;
-  margin:0;
+  opacity:.6;
 }
-
-
-/* ================================
-   GRID CENTER SYSTEM
-================================ */
-
-.payment-grid{
-  width:100%;
-  max-width:1200px;
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:40px;
-  padding:40px 20px 60px;
-  box-sizing:border-box;
-}
-
-
-/* ================================
-   ENGINE CARD
-================================ */
 
 .payment-grid{
   width:100%;
@@ -89,7 +49,6 @@ body{
   grid-template-columns:repeat(2,1fr);
   gap:28px;
   padding:20px;
-  box-sizing:border-box;
 }
 
 .engine-card{
@@ -98,16 +57,14 @@ body{
   padding:28px;
   text-align:center;
   border:1px solid var(--border-soft);
-  transition:all .3s ease;
+  transition:.3s;
   cursor:pointer;
-  position:relative;
-  overflow:hidden;
 }
 
-
-/* ================================
-   BUTTON CONTROL
-================================ */
+.engine-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(255,0,0,.35);
+}
 
 .engine-btn{
   padding:18px 38px;
@@ -116,17 +73,12 @@ body{
   font-weight:700;
   font-size:14px;
   cursor:pointer;
-  transition:all .25s ease;
+  transition:.25s;
 }
 
 .engine-btn:hover{
-  transform:scale(1.06);
+  transform:scale(1.05);
 }
-
-
-/* ================================
-   ACCENT COLORS
-================================ */
 
 .omise .engine-btn{
   background:gold;
@@ -148,10 +100,10 @@ body{
   color:#000;
 }
 
-
-/* ================================
-   PAYMENT BOX
-================================ */
+.stripe .engine-btn{
+  background:#635bff;
+  color:#fff;
+}
 
 .payment-box{
   width:100%;
@@ -161,13 +113,7 @@ body{
   background:#0b0b0b;
   border-radius:22px;
   border:1px solid rgba(255,255,255,.1);
-  box-sizing:border-box;
 }
-
-
-/* ================================
-   STATUS CENTER
-================================ */
 
 .status{
   width:100%;
@@ -178,11 +124,6 @@ body{
   color:var(--status-color);
 }
 
-
-/* ================================
-   INPUT CONTROL (QR / CARD)
-================================ */
-
 .payment-box input,
 .payment-box select{
   width:100%;
@@ -192,32 +133,10 @@ body{
   border:1px solid rgba(255,255,255,.15);
   background:#111;
   color:#fff;
-  box-sizing:border-box;
 }
 
-
-/* ================================
-   RESPONSIVE
-================================ */
-
 @media(max-width:900px){
-
-  .payment-header{
-    padding:30px 15px 15px;
-  }
-
   .payment-grid{
     grid-template-columns:1fr;
-    gap:22px;
-    padding:15px;
   }
-
-  .engine-card{
-    padding:22px;
-  }
-
-  .engine-btn{
-    padding:14px 26px;
-  }
-
 }
