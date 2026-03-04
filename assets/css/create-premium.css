@@ -1,10 +1,13 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create-premium.css
-VERSION: v3.2.0
+VERSION: v3.3.0
 STATUS: production
-LAST FIX: dashboard restore + unified active system clean
-COMPATIBLE WITH: create.html (ULTRA ENGINE CONTROL)
+LAST FIX:
+- added 12 engine theme colors
+- support 14 CTA engine boxes
+- add-only (no structure removal)
+COMPATIBLE WITH: create.html v9.1.0
 ===================================================== */
 
 *{
@@ -106,6 +109,68 @@ box-shadow:0 0 60px rgba(255,0,0,0.35);
 
 .blue-engine{
 box-shadow:0 0 60px rgba(0,255,220,0.35);
+}
+
+/* ================= NEW ENGINE THEMES ================= */
+
+.engine-theme-3{
+box-shadow:0 0 60px rgba(255,120,0,0.35);
+border-color:rgba(255,120,0,0.3);
+}
+
+.engine-theme-4{
+box-shadow:0 0 60px rgba(255,0,180,0.35);
+border-color:rgba(255,0,180,0.3);
+}
+
+.engine-theme-5{
+box-shadow:0 0 60px rgba(140,0,255,0.35);
+border-color:rgba(140,0,255,0.3);
+}
+
+.engine-theme-6{
+box-shadow:0 0 60px rgba(0,120,255,0.35);
+border-color:rgba(0,120,255,0.3);
+}
+
+.engine-theme-7{
+box-shadow:0 0 60px rgba(0,255,150,0.35);
+border-color:rgba(0,255,150,0.3);
+}
+
+.engine-theme-8{
+box-shadow:0 0 60px rgba(255,220,0,0.35);
+border-color:rgba(255,220,0,0.3);
+}
+
+.engine-theme-9{
+box-shadow:0 0 60px rgba(0,255,255,0.35);
+border-color:rgba(0,255,255,0.3);
+}
+
+.engine-theme-10{
+box-shadow:0 0 60px rgba(255,60,60,0.35);
+border-color:rgba(255,60,60,0.3);
+}
+
+.engine-theme-11{
+box-shadow:0 0 60px rgba(120,255,0,0.35);
+border-color:rgba(120,255,0,0.3);
+}
+
+.engine-theme-12{
+box-shadow:0 0 60px rgba(255,0,80,0.35);
+border-color:rgba(255,0,80,0.3);
+}
+
+.engine-theme-13{
+box-shadow:0 0 60px rgba(0,200,255,0.35);
+border-color:rgba(0,200,255,0.3);
+}
+
+.engine-theme-14{
+box-shadow:0 0 60px rgba(200,120,255,0.35);
+border-color:rgba(200,120,255,0.3);
 }
 
 /* ================= BUTTON LAYOUT ================= */
@@ -223,176 +288,90 @@ background:rgba(0,255,136,0.08);
 
 color:#00ffae;
 
-                }
-
-/* ===== USER HEADER ===== */
-
-.user-header{
-  text-align:center;
-  font-size:18px;
-  letter-spacing:2px;
-  color:#00ffb3;
-  margin-bottom:15px;
-  font-weight:600;
 }
 
-/* ===== ACCOUNT CARD ===== */
-
-.account-card{
-  background:rgba(0,255,180,0.05);
-  border:1px solid rgba(0,255,180,0.2);
-  border-radius:14px;
-  padding:20px;
-  margin-bottom:25px;
-  backdrop-filter:blur(10px);
-}
-
-.account-title{
-  font-size:14px;
-  letter-spacing:2px;
-  color:#00ffb3;
-  margin-bottom:15px;
-  text-align:center;
-}
-
-.account-row{
-  display:flex;
-  justify-content:space-between;
-  padding:6px 0;
-  font-size:14px;
-  color:#d0fff3;
-}
-
-.account-row span:first-child{
-  opacity:0.7;
-}
-/* ================= OWNER BADGE ================= */
-
-.owner-badge{
-  color:#ffd700;
-  font-weight:700;
-  letter-spacing:2px;
-  text-shadow:
-    0 0 5px rgba(255,215,0,0.8),
-    0 0 10px rgba(255,215,0,0.6),
-    0 0 20px rgba(255,215,0,0.4);
-  animation:ownerGlow 2s infinite alternate;
-}
-
-@keyframes ownerGlow{
-  from{
-    text-shadow:
-      0 0 5px rgba(255,215,0,0.6),
-      0 0 10px rgba(255,215,0,0.4);
-  }
-  to{
-    text-shadow:
-      0 0 10px rgba(255,215,0,1),
-      0 0 25px rgba(255,215,0,0.8),
-      0 0 40px rgba(255,215,0,0.6);
-  }
-}
-/* ================= ACCOUNT WRAPPER ================= */
+/* ================= ACCOUNT ================= */
 
 .account-wrapper{
-  max-width:420px;
-  margin:30px auto;
-  text-align:center;
+max-width:420px;
+margin:30px auto;
+text-align:center;
 }
-
-/* ================= USER HEADER ================= */
 
 .user-header{
-  font-size:18px;
-  letter-spacing:2px;
-  color:#00ffb3;
-  margin-bottom:20px;
-  font-weight:600;
+font-size:18px;
+letter-spacing:2px;
+margin-bottom:20px;
+font-weight:600;
+color:#00ffb3;
 }
-
-/* ================= ACCOUNT CARD ================= */
 
 .account-card{
-  background:rgba(0,255,180,0.06);
-  border:1px solid rgba(0,255,180,0.25);
-  border-radius:16px;
-  padding:25px;
-  backdrop-filter:blur(14px);
-  box-shadow:
-    0 0 25px rgba(0,255,180,0.15),
-    inset 0 0 15px rgba(0,255,180,0.05);
+background:rgba(0,255,180,0.06);
+border:1px solid rgba(0,255,180,0.25);
+border-radius:16px;
+padding:25px;
+backdrop-filter:blur(14px);
+box-shadow:
+0 0 25px rgba(0,255,180,0.15),
+inset 0 0 15px rgba(0,255,180,0.05);
 }
-
-/* ================= TITLE ================= */
 
 .account-title{
-  font-size:13px;
-  letter-spacing:3px;
-  color:#00ffb3;
-  margin-bottom:18px;
+font-size:13px;
+letter-spacing:3px;
+color:#00ffb3;
+margin-bottom:18px;
 }
 
-/* ================= ROW ================= */
-
 .account-row{
-  display:flex;
-  justify-content:space-between;
-  padding:8px 0;
-  font-size:14px;
-  color:#d9fff7;
+display:flex;
+justify-content:space-between;
+padding:8px 0;
+font-size:14px;
+color:#d9fff7;
 }
 
 .account-row span:first-child{
-  opacity:0.6;
-}
-.user-header{
-  font-size:18px;
-  letter-spacing:2px;
-  margin-bottom:20px;
-  font-weight:600;
-  color:#00ffb3;
+opacity:0.6;
 }
 
-/* OWNER HEADER GLOW */
-.user-header:has(#userShort:contains("OWNER")){
-  color:#ffd700;
-}
-/* ================= NAV LAYOUT ================= */
+/* ================= NAV ================= */
 
 .create-top-nav{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding:12px 20px;
-  position:fixed;
-  top:0;
-  left:0;
-  right:0;
-  z-index:1000;
-  background:rgba(0,0,0,0.8);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid rgba(0,255,180,0.2);
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:12px 20px;
+position:fixed;
+top:0;
+left:0;
+right:0;
+z-index:1000;
+background:rgba(0,0,0,0.8);
+backdrop-filter:blur(10px);
+border-bottom:1px solid rgba(0,255,180,0.2);
 }
 
-/* ================= PREMIUM CREDIT BUTTON ================= */
+/* ================= NAV BUTTON ================= */
 
 .credit-btn-premium{
-  background:linear-gradient(135deg,#00ffb3,#00c8ff);
-  border:none;
-  padding:8px 16px;
-  border-radius:20px;
-  font-size:13px;
-  font-weight:600;
-  letter-spacing:1px;
-  cursor:pointer;
-  color:#000;
-  transition:all 0.3s ease;
-  box-shadow:0 0 12px rgba(0,255,180,0.6);
+background:linear-gradient(135deg,#00ffb3,#00c8ff);
+border:none;
+padding:8px 16px;
+border-radius:20px;
+font-size:13px;
+font-weight:600;
+letter-spacing:1px;
+cursor:pointer;
+color:#000;
+transition:all 0.3s ease;
+box-shadow:0 0 12px rgba(0,255,180,0.6);
 }
 
 .credit-btn-premium:hover{
-  transform:scale(1.05);
-  box-shadow:
-    0 0 20px rgba(0,255,180,1),
-    0 0 35px rgba(0,255,180,0.7);
-}
+transform:scale(1.05);
+box-shadow:
+0 0 20px rgba(0,255,180,1),
+0 0 35px rgba(0,255,180,0.7);
+  }
