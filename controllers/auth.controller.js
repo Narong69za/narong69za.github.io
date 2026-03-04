@@ -1,23 +1,8 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: controllers/auth.controller.js
-// VERSION: v9.3.0
+// VERSION: v9.3.1
 // STATUS: production-final
-// LAYER: auth-core
-// RESPONSIBILITY:
-// - google oauth
-// - secure cookie issuance
-// - db sync with v9 schema
-// - prevent redirect loop
-// DEPENDS ON:
-// - services/google.service.js
-// - utils/token.util.js
-// - db/db.js
-// LAST FIX:
-// - hardened cookie policy for HTTPS production
-// - added domain support
-// - fixed /me DB query
-// - improved security validation
 // =====================================================
 
 const crypto = require("crypto");
@@ -34,9 +19,7 @@ const COOKIE_OPTIONS = {
   path: "/"
 };
 
-// =====================================================
-// GOOGLE REDIRECT
-// =====================================================
+// ================= GOOGLE REDIRECT =================
 
 exports.googleRedirect = async (req, res) => {
 
@@ -51,9 +34,7 @@ exports.googleRedirect = async (req, res) => {
   return res.redirect(url);
 };
 
-// =====================================================
-// GOOGLE CALLBACK
-// =====================================================
+// ================= GOOGLE CALLBACK =================
 
 exports.googleCallback = async (req, res) => {
 
@@ -72,12 +53,42 @@ exports.googleCallback = async (req, res) => {
       return res.status(400).json({ error: "INVALID_GOOGLE_USER" });
     }
 
-    // ===============================
-    // ROLE ASSIGNMENT
-    // ===============================
-
     let role = "user";
 
-    if (googleUser.email === process.env.OWNER_EMAIL) {
-      role = "owner";
-    } else
+    if (googleUser.email === process.env.OWNER_EMAIL) role = "owner";
+    if (googleUser.email === process.env.DEV_EMAIL) role = "dev";
+
+    let user = await db.getUserByEmail(googleUser.email);
+
+    if (!user) {
+
+      const newId = uuidv4();
+
+      await db.createUser({
+        id: newId,
+        googleId: googleUser.id,
+        email: googleUser.email,
+        role
+      });
+
+      user = await db.getUserByEmail(googleUser.email);
+    }
+
+    const accessToken = tokenUtil.generateAccessToken({
+      id: user.id,
+      email: user.email,
+      role: user.role
+    });
+
+    const refreshToken = tokenUtil.generateRefreshToken({
+      id: user.id
+    });
+
+    res.cookie("access_token", accessToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: 60 * 60 * 1000
+    });
+
+    res.cookie("refresh_token", refreshToken, {
+      ...COOKIE_OPTIONS,
+      maxAge: 7 * 24
