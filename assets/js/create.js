@@ -2,47 +2,38 @@
 =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.js
-VERSION: v9.5.0
+VERSION: v9.6.0
 STATUS: production
-RESPONSIBILITY:
-- engine asset preview
-- realtime credit rate preview
-- CTA generate system
 =====================================================
 */
 
-
 const CREDIT_RATE = {
-
 720:2,
 1080:4
-
 }
 
 
 function updateCreditRate(engine){
 
 const resolution =
-engine.querySelector(".engine-resolution")?.value
+engine.querySelector(".engine-resolution").value
 
-if(!resolution) return
+const rate =
+CREDIT_RATE[resolution] || 0
 
-const rate = CREDIT_RATE[resolution]
-
-engine.querySelector(".credit-rate").innerText =
-rate + " credits / sec"
+engine.querySelector(".credit-rate")
+.innerText = rate + " credits / sec"
 
 }
 
 
+function initEngines(){
 
 document.querySelectorAll(".engine-box")
 .forEach(engine=>{
 
 const res =
 engine.querySelector(".engine-resolution")
-
-if(res){
 
 res.addEventListener("change",()=>{
 
@@ -51,8 +42,6 @@ updateCreditRate(engine)
 })
 
 updateCreditRate(engine)
-
-}
 
 })
 
@@ -63,7 +52,8 @@ document.querySelectorAll(".engine-fileA")
 
 input.addEventListener("change",(e)=>{
 
-const engine = input.closest(".engine-box")
+const engine =
+input.closest(".engine-box")
 
 const preview =
 engine.querySelector(".engine-preview")
@@ -72,25 +62,26 @@ const file = e.target.files[0]
 
 if(!file) return
 
-const url = URL.createObjectURL(file)
+const url =
+URL.createObjectURL(file)
 
 if(file.type.startsWith("image")){
 
-preview.innerHTML=
+preview.innerHTML =
 `<img src="${url}" style="max-width:100%">`
 
 }
 
 else if(file.type.startsWith("video")){
 
-preview.innerHTML=
+preview.innerHTML =
 `<video src="${url}" controls style="max-width:100%"></video>`
 
 }
 
 else if(file.type.startsWith("audio")){
 
-preview.innerHTML=
+preview.innerHTML =
 `<audio src="${url}" controls></audio>`
 
 }
@@ -98,7 +89,6 @@ preview.innerHTML=
 })
 
 })
-
 
 
 document.querySelectorAll(".generate-btn")
@@ -110,24 +100,28 @@ const engine =
 btn.closest(".engine-box")
 
 const prompt =
-engine.querySelector(".engine-prompt")?.value
+engine.querySelector(".engine-prompt").value
 
 const resolution =
-engine.querySelector(".engine-resolution")?.value
+engine.querySelector(".engine-resolution").value
 
 const file =
-engine.querySelector(".engine-fileA")?.files[0]
+engine.querySelector(".engine-fileA").files[0]
 
-const payload = {
 
-prompt,
-resolution,
-file
+const payload = new FormData()
+
+payload.append("prompt",prompt)
+payload.append("resolution",resolution)
+
+if(file){
+
+payload.append("file",file)
 
 }
 
-document.getElementById("status").innerText =
-"GENERATING..."
+document.getElementById("status")
+.innerText = "GENERATING..."
 
 
 try{
@@ -145,18 +139,25 @@ await TaskPoller.wait(task)
 
 RenderEngine.preview(result)
 
-document.getElementById("status").innerText =
-"RENDER COMPLETE"
+document.getElementById("status")
+.innerText = "RENDER COMPLETE"
 
 }catch(e){
 
 console.error(e)
 
-document.getElementById("status").innerText =
-"ERROR"
+document.getElementById("status")
+.innerText = "ERROR"
 
 }
 
 })
 
 })
+
+}
+
+document.addEventListener(
+"DOMContentLoaded",
+initEngines
+)
