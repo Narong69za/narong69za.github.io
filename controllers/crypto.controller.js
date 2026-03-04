@@ -1,20 +1,22 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: controllers/crypto.controller.js
-// VERSION: v9.1.0
+// VERSION: v9.2.0
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
 // - create Binance Pay order
-// - calculate credits via credit.policy
-// - idempotent webhook credit add
+// - verify Binance webhook signature
+// - replay attack protection
+// - idempotent credit add
+// - atomic ledger logging
 // DEPENDS ON:
 // - config/credit.policy.js
 // - db/db.js
 // LAST FIX:
-// - unified credit policy usage
-// - removed FIX_RATE hardcode
-// - added idempotent lock via payment_logs
+// - full signature verification
+// - replay timestamp guard (5 min)
+// - idempotent protection via payment_logs
 // =====================================================
 
 const axios = require("axios");
@@ -28,28 +30,27 @@ const BINANCE_SECRET = process.env.BINANCE_PAY_SECRET;
 const ALLOWED_AMOUNTS = [10, 15, 20, 25, 30, 50];
 const ALLOWED_COINS = ["USDT", "BNB", "TON"];
 
-// ===============================
-// CREDIT CALCULATOR (POLICY BASED)
-// ===============================
+// =====================================================
+// CREDIT CALCULATION (POLICY BASED)
+// =====================================================
 
 function calculateCredits(usd) {
 
   const thb = usd * CREDIT_POLICY.BINANCE_THB_RATE;
   const base = thb * CREDIT_POLICY.BASE_RATE;
 
-  // bonus tier
   const tier = CREDIT_POLICY.BONUS_TIERS
     .filter(t => thb >= t.min)
-    .sort((a,b)=>b.min-a.min)[0];
+    .sort((a, b) => b.min - a.min)[0];
 
-  if (!tier) return base;
+  if (!tier) return Math.floor(base);
 
   return Math.floor(base + (base * tier.bonusPercent / 100));
 }
 
-// ===============================
-// SIGN BINANCE PAY REQUEST
-// ===============================
+// =====================================================
+// SIGN BINANCE REQUEST
+// =====================================================
 
 function signPayload(payload, timestamp, nonce) {
 
@@ -63,16 +64,15 @@ function signPayload(payload, timestamp, nonce) {
     .toUpperCase();
 }
 
-// ===============================
+// =====================================================
 // CREATE ORDER
-// ===============================
+// =====================================================
 
 exports.createOrder = async (req, res) => {
 
   try {
 
     const userId = req.user?.id;
-
     if (!userId) {
       return res.status(401).json({ error: "UNAUTHORIZED" });
     }
@@ -88,7 +88,6 @@ exports.createOrder = async (req, res) => {
     }
 
     const credits = calculateCredits(Number(usd));
-
     const merchantTradeNo = `SN-${userId}-${Date.now()}`;
 
     const payload = {
@@ -136,15 +135,65 @@ exports.createOrder = async (req, res) => {
   }
 };
 
-// ===============================
-// WEBHOOK
-// ===============================
+// =====================================================
+// WEBHOOK (FULL HARDENED)
+// =====================================================
 
 exports.webhook = async (req, res) => {
 
   try {
 
-    const data = JSON.parse(req.body.toString());
+    // ===============================
+    // 1. VERIFY SIGNATURE
+    // ===============================
+
+    const timestamp = req.headers["binancepay-timestamp"];
+    const nonce = req.headers["binancepay-nonce"];
+    const signature = req.headers["binancepay-signature"];
+
+    if (!timestamp || !nonce || !signature) {
+      return res.status(401).json({ error: "NO_SIGNATURE" });
+    }
+
+    const rawBody = Buffer.isBuffer(req.body)
+      ? req.body
+      : Buffer.from(req.body);
+
+    const payload = timestamp + "\n" + nonce + "\n" + rawBody.toString() + "\n";
+
+    const expected = crypto
+      .createHmac("sha512", BINANCE_SECRET)
+      .update(payload)
+      .digest("hex")
+      .toUpperCase();
+
+    const valid =
+      signature.length === expected.length &&
+      crypto.timingSafeEqual(
+        Buffer.from(signature),
+        Buffer.from(expected)
+      );
+
+    if (!valid) {
+      return res.status(403).json({ error: "INVALID_SIGNATURE" });
+    }
+
+    // ===============================
+    // 2. REPLAY TIMESTAMP GUARD (±5 min)
+    // ===============================
+
+    const now = Date.now();
+    const requestTime = Number(timestamp);
+
+    if (Math.abs(now - requestTime) > 5 * 60 * 1000) {
+      return res.status(400).json({ error: "TIMESTAMP_EXPIRED" });
+    }
+
+    // ===============================
+    // 3. PARSE BODY
+    // ===============================
+
+    const data = JSON.parse(rawBody.toString());
 
     if (data?.bizStatus !== "PAY_SUCCESS") {
       return res.status(200).json({ received: true });
@@ -163,7 +212,7 @@ exports.webhook = async (req, res) => {
     const credits = calculateCredits(totalFee);
 
     // ===============================
-    // IDEMPOTENT LOCK
+    // 4. IDEMPOTENT LOCK
     // ===============================
 
     const existing = await new Promise((resolve, reject) => {
@@ -182,7 +231,7 @@ exports.webhook = async (req, res) => {
     }
 
     // ===============================
-    // ATOMIC CREDIT
+    // 5. ATOMIC CREDIT + LOG
     // ===============================
 
     await db.addCredit(userId, credits);
