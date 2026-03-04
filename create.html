@@ -1,31 +1,28 @@
 <!-- =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.html
-VERSION: v9.4.0
+VERSION: v9.5.0
 STATUS: production
 LAYER: frontend-ui
 RESPONSIBILITY:
 - render ultra engine control UI
 - account dashboard
 - 14 CTA engine boxes
-- per-engine prompt / resolution / length
-- realtime credit preview per CTA
+- prompt / resolution / credit preview
+- asset input preview layer
 DEPENDS ON:
 - /assets/js/config.js
 - /assets/js/create.js
 - /assets/js/create-nav.js
-COMPATIBLE WITH:
-- create-premium.css (LOCKED)
-LAST FIX:
-- add engine-detail layer
-- add realtime credit preview
 ===================================================== -->
 
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>ULTRA ENGINE CONTROL</title>
 
 <link rel="stylesheet" href="/assets/css/create-premium.css">
@@ -38,7 +35,6 @@ LAST FIX:
 
 <h1 class="title">ULTRA ENGINE CONTROL</h1>
 
-<!-- ACCOUNT DASHBOARD -->
 <div class="account-wrapper">
 
 <div class="user-header">
@@ -69,25 +65,37 @@ ACCOUNT STATUS
 </div>
 </div>
 
+
 <div class="engine-wrap">
 
-<!-- ENGINE TEMPLATE -->
+<!-- ENGINE LOOP -->
 
-<div class="engine engine-box engine-theme-1"
-data-engine="1"
-data-type="text_to_video"
-data-model="gen4.5">
+<script>
+
+for(let i=1;i<=14;i++){
+
+const box=document.createElement("div")
+
+box.className=`engine engine-box engine-theme-${i}`
+
+box.setAttribute("data-engine",i)
+
+box.innerHTML=`
 
 <h2>⭐ AI ENGINE</h2>
 
 <div class="mode-row">
-<button class="mode-btn active-mode">🎬 Text to Video</button>
+
+<button class="mode-btn active-mode">
+AI MODEL
+</button>
+
 </div>
 
 <div class="engine-detail">
 
 <textarea class="engine-prompt"
-placeholder="Describe your scene..."></textarea>
+placeholder="Describe your prompt..."></textarea>
 
 <select class="engine-resolution">
 
@@ -99,7 +107,7 @@ placeholder="Describe your scene..."></textarea>
 
 <div class="engine-credit">
 
-RATE:
+RATE
 <span class="credit-rate">
 0 credits / sec
 </span>
@@ -108,74 +116,50 @@ RATE:
 
 </div>
 
+
+<div class="engine-asset">
+
+<input type="file"
+class="engine-fileA"
+accept="image/*,video/*,audio/*">
+
+<div class="engine-preview">
+Preview
+</div>
+
+</div>
+
 <button class="generate-btn">
+
 GENERATE
+
 </button>
-
-</div>
-
-<!-- ENGINE 2-14 -->
-
-<script>
-for(let i=2;i<=14;i++){
-
-const engine=document.createElement("div")
-
-engine.className=`engine engine-box engine-theme-${i}`
-
-engine.setAttribute("data-engine",i)
-engine.setAttribute("data-type","text_to_video")
-engine.setAttribute("data-model","model_"+i)
-
-engine.innerHTML=`
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">AI MODEL</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt"
-placeholder="Prompt..."></textarea>
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<select class="engine-length">
-<option value="5">5 sec</option>
-<option value="10">10 sec</option>
-</select>
-
-<div class="engine-credit">
-CREDIT COST:
-<span class="credit-value">0</span>
-</div>
-
-</div>
-
-<button class="generate-btn">GENERATE</button>
 
 `
 
-document.querySelector(".engine-wrap").appendChild(engine)
+document.currentScript.parentElement.appendChild(box)
 
 }
+
 </script>
 
 </div>
 
+
 <div class="status-bar">
-<span id="status">STATUS: IDLE</span>
+
+<span id="status">
+
+STATUS: IDLE
+
+</span>
+
 </div>
 
 </div>
 
 <script src="/assets/js/config.js?v=6.1.0"></script>
-<script src="/assets/js/create.js?v=9.4.0"></script>
+<script src="/assets/js/create.js?v=9.5.0"></script>
 <script src="/assets/js/create-nav.js?v=6.1.0"></script>
 
 </body>
