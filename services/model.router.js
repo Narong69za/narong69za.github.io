@@ -1,39 +1,15 @@
-// services/model.router.js
+import * as runway from "../engines/runway.engine.js"
+import * as replicate from "../engines/replicate.engine.js"
+import * as pika from "../engines/pika.engine.js"
+import * as leonardo from "../engines/leonardo.engine.js"
 
-const runway = require("./runwayml/v1");
-const db = require("../db/db");
+export async function runModel(engine,payload){
 
-async function run({ engine, mode, prompt, files }) {
+ if(engine==="runway") return runway.generate(payload)
+ if(engine==="replicate") return replicate.generate(payload)
+ if(engine==="pika") return pika.generate(payload)
+ if(engine==="leonardo") return leonardo.generate(payload)
 
-  const projectID = await db.createProject({
-    engine,
-    mode,
-    prompt,
-    fileAUrl: files?.fileAUrl || null,
-    fileBUrl: files?.fileBUrl || null
-  });
-
-  if (engine === "runway") {
-
-    const result = await runway.run({
-      mode,
-      payload: {
-        prompt,
-        imageUrl: files?.fileAUrl,
-        videoUri: files?.fileAUrl
-      }
-    });
-
-    if (result.id) {
-      await db.updateProcessing(projectID, result.id);
-    }
-
-    return { projectID };
-
-  }
-
-  throw new Error("ENGINE NOT SUPPORTED");
+ throw new Error("ENGINE NOT FOUND")
 
 }
-
-module.exports = { run };
