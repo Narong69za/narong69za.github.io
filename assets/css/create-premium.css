@@ -103,15 +103,15 @@ transition:0.3s ease;
 transform:translateY(-4px);
 }
 
-.red-engine{
+.engine-theme-1{
 box-shadow:0 0 60px rgba(255,0,0,0.35);
+border-color:rgba(255,0,0,0.3);
 }
 
-.blue-engine{
+.engine-theme-2{
 box-shadow:0 0 60px rgba(0,255,220,0.35);
+border-color:rgba(0,255,220,0.3);
 }
-
-/* ================= NEW ENGINE THEMES ================= */
 
 .engine-theme-3{
 box-shadow:0 0 60px rgba(255,120,0,0.35);
