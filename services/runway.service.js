@@ -1,83 +1,81 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: services/runway.service.js
-VERSION: v1.0.0
+VERSION: v1.1.0
 STATUS: production
-RESPONSIBILITY:
-- call runway api
-- upload media
-- generate tasks
-- poll tasks
 ===================================================== */
 
-const fetch = require("node-fetch")
+const fetch=require("node-fetch")
 
-const RUNWAY_API = "https://api.dev.runwayml.com/v1"
-const RUNWAY_KEY = process.env.RUNWAY_API_KEY
+const RUNWAY_API="https://api.dev.runwayml.com/v1"
+const RUNWAY_KEY=process.env.RUNWAY_API_KEY
 
-async function upload(req){
+async function upload(){
 
-    const response = await fetch(`${RUNWAY_API}/uploads`,{
+const response=await fetch(`${RUNWAY_API}/uploads`,{
 
-        method:"POST",
+method:"POST",
 
-        headers:{
-            "Authorization":`Bearer ${RUNWAY_KEY}`,
-            "X-Runway-Version":"2024-11-06",
-            "Content-Type":"application/json"
-        },
+headers:{
+Authorization:`Bearer ${RUNWAY_KEY}`,
+"X-Runway-Version":"2024-11-06",
+"Content-Type":"application/json"
+},
 
-        body:JSON.stringify({
-            filename:"upload.file",
-            type:"ephemeral"
-        })
+body:JSON.stringify({
+filename:"upload.file",
+type:"ephemeral"
+})
 
-    })
+})
 
-    const data = await response.json()
+const data=await response.json()
 
-    return data.runwayUri
+return data.runwayUri
+
 }
 
 async function generate(payload){
 
-    const response = await fetch(`${RUNWAY_API}/image_to_video`,{
+const endpoint=payload.endpoint
 
-        method:"POST",
+delete payload.endpoint
 
-        headers:{
-            "Authorization":`Bearer ${RUNWAY_KEY}`,
-            "X-Runway-Version":"2024-11-06",
-            "Content-Type":"application/json"
-        },
+const response=await fetch(`${RUNWAY_API}${endpoint}`,{
 
-        body:JSON.stringify(payload)
+method:"POST",
 
-    })
+headers:{
+Authorization:`Bearer ${RUNWAY_KEY}`,
+"X-Runway-Version":"2024-11-06",
+"Content-Type":"application/json"
+},
 
-    const data = await response.json()
+body:JSON.stringify(payload)
 
-    return data
+})
+
+return await response.json()
+
 }
 
 async function getTask(id){
 
-    const response = await fetch(`${RUNWAY_API}/tasks/${id}`,{
+const response=await fetch(`${RUNWAY_API}/tasks/${id}`,{
 
-        headers:{
-            "Authorization":`Bearer ${RUNWAY_KEY}`,
-            "X-Runway-Version":"2024-11-06"
-        }
-
-    })
-
-    const data = await response.json()
-
-    return data
+headers:{
+Authorization:`Bearer ${RUNWAY_KEY}`,
+"X-Runway-Version":"2024-11-06"
 }
 
-module.exports = {
-    upload,
-    generate,
-    getTask
+})
+
+return await response.json()
+
+}
+
+module.exports={
+upload,
+generate,
+getTask
 }
