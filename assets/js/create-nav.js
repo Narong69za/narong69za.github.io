@@ -104,7 +104,7 @@ document.addEventListener("click",(e)=>{
     }
 
     if(e.target.id==="btn-admin"){
-        window.location.href="/admin/payment.dashboard.html";
+        window.location.href="/payment.dashboard.html";
     }
 
 });
