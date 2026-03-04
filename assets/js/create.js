@@ -2,87 +2,79 @@
 =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.js
-VERSION: v9.6.0
+VERSION: v9.7.0
 STATUS: production
+FIX:
+- connect CTA_MODEL_MASTER
+- build payload correctly
+- upload media support
+- runway task polling
 =====================================================
 */
 
-const CREDIT_RATE = {
+import {buildPayload} from "./payload.builder.js"
+import {pollTask} from "./task.poller.js"
+import {uploadFile} from "./upload.service.js"
+import {logTask} from "./db.logger.js"
+
+const CREDIT_RATE={
 720:2,
 1080:4
 }
 
-
 function updateCreditRate(engine){
 
-const resolution =
-engine.querySelector(".engine-resolution").value
+const res=engine.querySelector(".engine-resolution")
+if(!res)return
 
-const rate =
-CREDIT_RATE[resolution] || 0
+const rate=CREDIT_RATE[res.value]||0
 
-engine.querySelector(".credit-rate")
-.innerText = rate + " credits / sec"
+engine.querySelector(".credit-rate").innerText=
+rate+" credits / sec"
 
 }
 
-
 function initEngines(){
 
-document.querySelectorAll(".engine-box")
-.forEach(engine=>{
+document.querySelectorAll(".engine-box").forEach(engine=>{
 
-const res =
-engine.querySelector(".engine-resolution")
+const res=engine.querySelector(".engine-resolution")
 
-res.addEventListener("change",()=>{
+if(res){
 
+res.addEventListener("change",()=>updateCreditRate(engine))
 updateCreditRate(engine)
+
+}
 
 })
 
-updateCreditRate(engine)
-
-})
-
-
+/* FILE PREVIEW */
 
 document.querySelectorAll(".engine-fileA")
 .forEach(input=>{
 
 input.addEventListener("change",(e)=>{
 
-const engine =
-input.closest(".engine-box")
+const engine=input.closest(".engine-box")
+const preview=engine.querySelector(".engine-preview")
 
-const preview =
-engine.querySelector(".engine-preview")
+const file=e.target.files[0]
+if(!file)return
 
-const file = e.target.files[0]
-
-if(!file) return
-
-const url =
-URL.createObjectURL(file)
+const url=URL.createObjectURL(file)
 
 if(file.type.startsWith("image")){
 
-preview.innerHTML =
-`<img src="${url}" style="max-width:100%">`
+preview.innerHTML=`<img src="${url}" style="max-width:100%">`
 
-}
+}else if(file.type.startsWith("video")){
 
-else if(file.type.startsWith("video")){
+preview.innerHTML=`<video src="${url}" controls style="max-width:100%"></video>`
 
-preview.innerHTML =
-`<video src="${url}" controls style="max-width:100%"></video>`
+}else if(file.type.startsWith("audio")){
 
-}
-
-else if(file.type.startsWith("audio")){
-
-preview.innerHTML =
-`<audio src="${url}" controls></audio>`
+preview.innerHTML=`<audio src="${url}" controls></audio>`
 
 }
 
@@ -90,64 +82,74 @@ preview.innerHTML =
 
 })
 
+/* GENERATE */
 
 document.querySelectorAll(".generate-btn")
 .forEach(btn=>{
 
 btn.addEventListener("click",async()=>{
 
-const engine =
-btn.closest(".engine-box")
+const engine=btn.closest(".engine-box")
 
-const prompt =
-engine.querySelector(".engine-prompt").value
+const cta=engine.dataset.engine
 
-const resolution =
-engine.querySelector(".engine-resolution").value
+const prompt=engine.querySelector(".engine-prompt")?.value
 
-const file =
-engine.querySelector(".engine-fileA").files[0]
+const resolution=engine.querySelector(".engine-resolution")?.value
 
+const file=engine.querySelector(".engine-fileA")?.files[0]
 
-const payload = new FormData()
-
-payload.append("prompt",prompt)
-payload.append("resolution",resolution)
-
-if(file){
-
-payload.append("file",file)
-
-}
-
-document.getElementById("status")
-.innerText = "GENERATING..."
-
+document.getElementById("status").innerText="GENERATING..."
 
 try{
 
-const built =
-PayloadBuilder.build(payload)
+let image=null
+let video=null
+let audio=null
 
-await UploadService.prepare(built)
+if(file){
 
-const task =
-await RunwayEngine.run(built)
+const upload=await uploadFile(file)
 
-const result =
-await TaskPoller.wait(task)
+if(file.type.startsWith("image")) image=upload.runwayUri
+if(file.type.startsWith("video")) video=upload.runwayUri
+if(file.type.startsWith("audio")) audio=upload.runwayUri
 
-RenderEngine.preview(result)
+}
 
-document.getElementById("status")
-.innerText = "RENDER COMPLETE"
+const payload=buildPayload(cta,{
+prompt,
+image,
+video,
+audio,
+ratio:"1280:720",
+duration:5
+})
+
+const res=await fetch("/api/runway/generate",{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify(payload)
+})
+
+const task=await res.json()
+
+const result=await pollTask(task.id)
+
+logTask(result)
+
+document.querySelector(".engine-preview").innerHTML=
+`<video src="${result.output[0]}" controls style="max-width:100%">`
+
+document.getElementById("status").innerText="RENDER COMPLETE"
 
 }catch(e){
 
 console.error(e)
 
-document.getElementById("status")
-.innerText = "ERROR"
+document.getElementById("status").innerText="ERROR"
 
 }
 
@@ -157,7 +159,4 @@ document.getElementById("status")
 
 }
 
-document.addEventListener(
-"DOMContentLoaded",
-initEngines
-)
+document.addEventListener("DOMContentLoaded",initEngines)
