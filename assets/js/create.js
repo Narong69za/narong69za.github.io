@@ -169,7 +169,7 @@ duration:5
 
 /* generate */
 
-const res=await fetch("/api/runway/generate",{
+const res=await fetch("/api/generate",{
 
 method:"POST",
 
