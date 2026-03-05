@@ -1,60 +1,163 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: endpoint.router.js
-VERSION: v9.0.0
+VERSION: v10.0.0
 STATUS: production
-LAYER: api-router
-
-CREATED: 2026
-AUTHOR: SN DESIGN ENGINE SYSTEM
+LAYER: ENGINE ROUTER
 
 RESPONSIBILITY:
-- route CTA engine → API endpoint
-- read model config from CTA_MODEL_MASTER
-- provide endpoint + method + provider mapping
+- route ENGINE 1-14
+- call correct provider API
+- return result
 
-USED BY:
-- payload.builder.js
-- runway.service.js
-- create.js
-
-DEPENDS ON:
-- /assets/js/cta.model.master.js
-
-DESCRIPTION:
-Central routing layer that maps UI CTA engine IDs
-to their respective AI provider endpoints.
-
-This ensures the UI (ENGINE 1-14) connects
-correctly to Runway / Replicate / Pika / Leonardo
-without hardcoding endpoints inside services.
+DEPENDENCIES:
+- engine.data.js
 
 ===================================================== */
 
-import { CTA_MODEL_MASTER } from "./cta.model.master.js"
+import {ENGINE_DATA} from "./engine.data.js"
 
-export function getEndpointConfig(ctaId){
+export async function routeEngine(engineId,payload){
 
-    const cfg = CTA_MODEL_MASTER[ctaId]
+const engine=ENGINE_DATA[engineId]
 
-    if(!cfg){
+if(!engine){
+throw new Error("ENGINE NOT FOUND")
+}
 
-        throw new Error("Invalid CTA ID: "+ctaId)
+const provider=engine.provider
+const endpoint=engine.endpoint
+const model=engine.model
 
-    }
+/* ================= RUNWAY ================= */
 
-    return {
+if(provider==="runway"){
 
-        provider: cfg.provider || cfg.engine || "runway",
+const res=await fetch("/api/runway/generate",{
 
-        endpoint: cfg.endpoint || null,
+method:"POST",
 
-        method: cfg.method || "POST",
+headers:{
+"Content-Type":"application/json"
+},
 
-        model: cfg.model || null,
+body:JSON.stringify({
+model,
+endpoint,
+payload
+})
 
-        task_endpoint: cfg.task_endpoint || "/v1/tasks/{id}"
+})
 
-    }
+if(!res.ok){
+throw new Error("RUNWAY GENERATE FAILED")
+}
+
+return await res.json()
 
 }
+
+/* ================= REPLICATE ================= */
+
+if(provider==="replicate"){
+
+const res=await fetch("https://api.replicate.com/v1/predictions",{
+
+method:"POST",
+
+headers:{
+"Authorization":"Token "+window.REPLICATE_API_TOKEN,
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+version:model,
+input:payload
+})
+
+})
+
+if(!res.ok){
+throw new Error("REPLICATE GENERATE FAILED")
+}
+
+return await res.json()
+
+}
+
+/* ================= GEMINI ================= */
+
+if(provider==="gemini"){
+
+const res=await fetch(
+`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${window.GEMINI_API_KEY}`,
+{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+contents:[
+{
+parts:[
+{text:payload.prompt}
+]
+}
+]
+})
+
+})
+
+if(!res.ok){
+throw new Error("GEMINI GENERATE FAILED")
+}
+
+return await res.json()
+
+}
+
+/* ================= ELEVENLABS ================= */
+
+if(provider==="elevenlabs"){
+
+let api=""
+
+if(model==="multilingual_v2"){
+api="https://api.elevenlabs.io/v1/text-to-speech"
+}
+
+if(model==="text_to_sound_v2"){
+api="https://api.elevenlabs.io/v1/sound-generation"
+}
+
+if(model==="sts_v2"){
+api="https://api.elevenlabs.io/v1/speech-to-speech"
+}
+
+const res=await fetch(api,{
+
+method:"POST",
+
+headers:{
+"xi-api-key":window.ELEVEN_API_KEY,
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(payload)
+
+})
+
+if(!res.ok){
+throw new Error("ELEVENLABS GENERATE FAILED")
+}
+
+return await res.json()
+
+}
+
+throw new Error("UNSUPPORTED PROVIDER")
+
+    }
