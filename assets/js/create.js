@@ -2,14 +2,14 @@
 =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: create.js
-VERSION: v9.8.0
-STATUS: production
+VERSION: v9.9.0
+STATUS: production-final
 FIX:
-- support ENGINE 1-14 fully
-- safe element handling
-- correct preview target
-- stable upload routing
+- corrected API endpoint (/api/render)
+- stable engine UI 1-14
+- safe file preview
 - stable payload builder
+- safe DOM handling
 =====================================================
 */
 
@@ -67,6 +67,8 @@ document.querySelectorAll(".engine-fileA")
 input.addEventListener("change",(e)=>{
 
 const engine=input.closest(".engine-box")
+
+if(!engine)return
 
 const preview=engine.querySelector(".engine-preview")
 
@@ -143,15 +145,15 @@ if(file){
 const upload=await uploadFile(file)
 
 if(file.type.startsWith("image")){
-image=upload.runwayUri
+image=upload.runwayUri || upload.url
 }
 
 if(file.type.startsWith("video")){
-video=upload.runwayUri
+video=upload.runwayUri || upload.url
 }
 
 if(file.type.startsWith("audio")){
-audio=upload.runwayUri
+audio=upload.runwayUri || upload.url
 }
 
 }
@@ -169,7 +171,7 @@ duration:5
 
 /* generate */
 
-const res=await fetch("/api/generate",{
+const res=await fetch("/api/render",{
 
 method:"POST",
 
