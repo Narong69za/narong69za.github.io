@@ -1,83 +1,96 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: eleven.service.js
-VERSION: v1.0.0
+VERSION: v2.0.0
 STATUS: production
 LAYER: AI PROVIDER SERVICE
 
-AUTHOR: SN DESIGN ENGINE SYSTEM
-CREATED: 2026
-
 RESPONSIBILITY:
-- execute ElevenLabs voice generation
-- handle text-to-speech
-- handle speech-to-speech
-- handle sound generation
+- ElevenLabs API execution
+- Text → Speech
+- Speech → Speech
+- Sound Effects generation
 
-SUPPORTED MODELS:
+SUPPORTED MODELS
 - multilingual_v2
 - text_to_sound_v2
 - sts_v2
 
-ENV REQUIRED:
-ELEVEN_API_KEY
-
-ENDPOINT:
-https://api.elevenlabs.io
+ENV REQUIRED
+ELEVENLABS_API_KEY
 
 ===================================================== */
+
+const ELEVEN_API="https://api.elevenlabs.io/v1"
 
 export async function runEleven(model,payload){
 
 try{
 
 let endpoint=""
+let body={}
 
 if(model==="multilingual_v2"){
 
-endpoint="https://api.elevenlabs.io/v1/text-to-speech"
+const voice=payload.voice||"JBFqnCBsd6RMkjVDRZzb"
+
+endpoint=`${ELEVEN_API}/text-to-speech/${voice}`
+
+body={
+text:payload.prompt,
+model_id:"eleven_multilingual_v2",
+output_format:"mp3_44100_128"
+}
 
 }
 
 if(model==="text_to_sound_v2"){
 
-endpoint="https://api.elevenlabs.io/v1/sound-generation"
+endpoint=`${ELEVEN_API}/sound-effects/generate`
+
+body={
+text:payload.prompt,
+duration_seconds:payload.duration||2
+}
 
 }
 
 if(model==="sts_v2"){
 
-endpoint="https://api.elevenlabs.io/v1/speech-to-speech"
+const voice=payload.voice||"JBFqnCBsd6RMkjVDRZzb"
+
+endpoint=`${ELEVEN_API}/speech-to-speech/${voice}`
+
+body={
+audio:payload.audio
+}
 
 }
 
 const res=await fetch(endpoint,{
-
 method:"POST",
-
 headers:{
-"xi-api-key":process.env.ELEVEN_API_KEY,
+"xi-api-key":process.env.ELEVENLABS_API_KEY,
 "Content-Type":"application/json"
 },
-
-body:JSON.stringify({
-text:payload.prompt,
-audio:payload.audio||null
-})
-
+body:JSON.stringify(body)
 })
 
 if(!res.ok){
-throw new Error("ElevenLabs API error")
+
+const err=await res.text()
+throw new Error(`ELEVENLABS_ERROR: ${err}`)
+
 }
 
-const data=await res.json()
+const buffer=await res.arrayBuffer()
 
-return data
+return Buffer.from(buffer)
 
 }catch(e){
 
-console.error("ELEVEN SERVICE ERROR",e)
+console.error("ELEVEN SERVICE ERROR")
+console.error(e)
 
 throw e
 
