@@ -2,8 +2,12 @@
 PROJECT: SN DESIGN STUDIO
 MODULE: CTA MODEL MASTER
 FILE: /assets/js/cta.model.master.js
-VERSION: v9.0
-STATUS: production
+VERSION: v9.1
+STATUS: production-final
+LAST FIX:
+- FIX ENGINE 9
+- FIX ENGINE 10
+- STABLE MODEL MAP
 ===================================================== */
 
 export const CTA_MODEL_MASTER = {
@@ -74,7 +78,7 @@ cta:"CTA_09",
 alias:"video_ai",
 engine:"runway",
 endpoint:"/v1/text_to_video",
-model:"veo3"
+model:"gen4_turbo"
 },
 
 10:{
@@ -82,7 +86,7 @@ cta:"CTA_10",
 alias:"video_fast",
 engine:"runway",
 endpoint:"/v1/text_to_video",
-model:"veo3.1_fast"
+model:"gen4_turbo"
 },
 
 11:{
