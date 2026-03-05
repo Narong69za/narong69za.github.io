@@ -1,29 +1,29 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: engine.data.js
-VERSION: v9.1.0
-STATUS: production
+VERSION: v9.2.0
+STATUS: production-final
 RESPONSIBILITY:
-- store engine → model → endpoint mapping
-- used by payload.builder
-- used by router
+- engine → provider mapping
+- endpoint mapping
 ===================================================== */
 
 export const ENGINE_DATA = {
 
 1:{
 provider:"runway",
-endpoint:"/v1/text_to_video",
+endpoint:"/v1/image_to_video",
 method:"POST",
 model:"gen4.5",
 task_endpoint:"/v1/tasks/{id}"
 },
 
 2:{
-provider:"replicate",
-endpoint:"/v1/predictions",
+provider:"runway",
+endpoint:"/v1/text_to_video",
 method:"POST",
-model:"black-forest-labs/flux-1.1-pro"
+model:"gen4.5",
+task_endpoint:"/v1/tasks/{id}"
 },
 
 3:{
@@ -38,17 +38,24 @@ task_endpoint:"/v1/tasks/{id}"
 provider:"replicate",
 endpoint:"/v1/predictions",
 method:"POST",
-model:"black-forest-labs/flux-schnell"
+model:"black-forest-labs/flux-1.1-pro"
 },
 
 5:{
 provider:"replicate",
 endpoint:"/v1/predictions",
 method:"POST",
-model:"black-forest-labs/flux-redux"
+model:"black-forest-labs/flux-schnell"
 },
 
 6:{
+provider:"replicate",
+endpoint:"/v1/predictions",
+method:"POST",
+model:"black-forest-labs/flux-redux"
+},
+
+7:{
 provider:"runway",
 endpoint:"/v1/character_performance",
 method:"POST",
@@ -56,7 +63,7 @@ model:"act_two",
 task_endpoint:"/v1/tasks/{id}"
 },
 
-7:{
+8:{
 provider:"runway",
 endpoint:"/v1/video_to_video",
 method:"POST",
@@ -64,19 +71,11 @@ model:"gen4_aleph",
 task_endpoint:"/v1/tasks/{id}"
 },
 
-8:{
-provider:"runway",
-endpoint:"/v1/text_to_video",
-method:"POST",
-model:"veo3",
-task_endpoint:"/v1/tasks/{id}"
-},
-
 9:{
 provider:"runway",
 endpoint:"/v1/text_to_video",
 method:"POST",
-model:"veo3.1",
+model:"gen4_turbo",
 task_endpoint:"/v1/tasks/{id}"
 },
 
@@ -84,7 +83,7 @@ task_endpoint:"/v1/tasks/{id}"
 provider:"runway",
 endpoint:"/v1/text_to_video",
 method:"POST",
-model:"veo3.1_fast",
+model:"gen4_turbo",
 task_endpoint:"/v1/tasks/{id}"
 },
 
