@@ -393,5 +393,53 @@ RATE <span class="credit-rate">0 credits / sec</span>
 <script type="module" src="/assets/js/create.js?v=6.1.0"></script>
 <script src="/assets/js/create-nav.js?v=6.1.0"></script>
 
+<!-- ==============================================script
+PROJECT: SN DESIGN STUDIO
+MODULE: account.loader.inline
+VERSION: v9.0.0
+STATUS: production
+RESPONSIBILITY:
+- fetch authenticated user
+- update account UI safely
+===================================================== -->
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+try {
+
+if (typeof API_BASE === "undefined") {
+console.error("API_BASE not found");
+return;
+}
+
+const response = await fetch(`${API_BASE}/auth/me`, {
+method: "GET",
+credentials: "include"
+});
+
+if (!response.ok) {
+console.warn("User not authenticated");
+return;
+}
+
+const user = await response.json();
+
+const emailEl = document.getElementById("userEmail");
+const roleEl = document.getElementById("userRole");
+const creditEl = document.getElementById("userCredits");
+const shortEl = document.getElementById("userShort");
+
+if (emailEl) emailEl.textContent = user.email || "-";
+if (roleEl) roleEl.textContent = user.role || "-";
+if (creditEl) creditEl.textContent = user.credits ?? 0;
+if (shortEl && user.email) shortEl.textContent = user.email.split("@")[0];
+
+} catch (err) {
+console.error("ACCOUNT LOAD ERROR:", err);
+}
+
+});
+</script>
+
 </body>
 </html>
