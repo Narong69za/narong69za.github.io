@@ -163,70 +163,42 @@ duration:[
 
 file_types:[
 "png",
-"jpg",
-"mp4"
-],
+export const MODEL_SCHEMA = {
 
-max_file_size:"200MB"
+gen4_turbo:{...},
 
-},
+gen4_image:{...},
 
-gemini_2_5_flash:{
+gen4_image_turbo:{...},
 
+gen4_aleph:{...},
+
+act_two:{...},
+
+gemini_2.5_flash:{
 type:"image",
-
 prompt_max:2000,
-
-input:{
-image:false
+input:{image:false},
+ratio:["1024:1024"]
 },
 
-ratio:[
-"1024:1024"
-]
-
-},
-
-eleven_multilingual_v2:{
-
+multilingual_v2:{
 type:"audio",
-
 prompt_max:2000,
-
-audio_format:[
-"mp3",
-"wav"
-]
-
+audio_format:["mp3","wav"]
 },
 
-eleven_text_to_sound_v2:{
-
+text_to_sound_v2:{
 type:"audio",
-
 prompt_max:2000,
-
-duration:[
-0.5,1,2,5,10,20
-]
-
+duration:[0.5,1,2,5,10,20]
 },
 
-eleven_multilingual_sts_v2:{
-
+sts_v2:{
 type:"audio",
-
 prompt_max:2000,
-
-input:{
-audio:true
-},
-
-audio_format:[
-"mp3",
-"wav"
-]
-
+input:{audio:true},
+audio_format:["mp3","wav"]
 }
 
 }
