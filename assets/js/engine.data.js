@@ -13,42 +13,39 @@ export const ENGINE_DATA = {
 
 1:{
 provider:"runway",
-endpoint:"/v1/text_to_image",
+endpoint:"/v1/text_to_video",
 method:"POST",
-model:"gen4_image_turbo",
+model:"gen4.5",
 task_endpoint:"/v1/tasks/{id}"
 },
 
 2:{
-provider:"runway",
-endpoint:"/v1/text_to_image",
+provider:"replicate",
+endpoint:"/v1/predictions",
 method:"POST",
-model:"gen4_image",
-task_endpoint:"/v1/tasks/{id}"
+model:"black-forest-labs/flux-1.1-pro"
 },
 
 3:{
 provider:"runway",
-endpoint:"/v1/text_to_video",
+endpoint:"/v1/video_to_video",
 method:"POST",
-model:"gen4_turbo",
+model:"gen4_aleph",
 task_endpoint:"/v1/tasks/{id}"
 },
 
 4:{
-provider:"runway",
-endpoint:"/v1/text_to_image",
+provider:"replicate",
+endpoint:"/v1/predictions",
 method:"POST",
-model:"gen4_image",
-task_endpoint:"/v1/tasks/{id}"
+model:"black-forest-labs/flux-schnell"
 },
 
 5:{
-provider:"runway",
-endpoint:"/v1/text_to_image",
+provider:"replicate",
+endpoint:"/v1/predictions",
 method:"POST",
-model:"gen4_image_turbo",
-task_endpoint:"/v1/tasks/{id}"
+model:"black-forest-labs/flux-redux"
 },
 
 6:{
@@ -68,52 +65,55 @@ task_endpoint:"/v1/tasks/{id}"
 },
 
 8:{
-provider:"google",
-endpoint:"/v1/video_generate",
+provider:"runway",
+endpoint:"/v1/text_to_video",
 method:"POST",
-model:"veo3"
+model:"veo3",
+task_endpoint:"/v1/tasks/{id}"
 },
 
 9:{
-provider:"google",
-endpoint:"/v1/video_generate",
+provider:"runway",
+endpoint:"/v1/text_to_video",
 method:"POST",
-model:"veo3.1"
+model:"veo3.1",
+task_endpoint:"/v1/tasks/{id}"
 },
 
 10:{
-provider:"google",
-endpoint:"/v1/video_generate",
+provider:"runway",
+endpoint:"/v1/text_to_video",
 method:"POST",
-model:"veo3.1_fast"
+model:"veo3.1_fast",
+task_endpoint:"/v1/tasks/{id}"
 },
 
 11:{
-provider:"google",
-endpoint:"/v1/image_generate",
+provider:"gemini",
+endpoint:"/v1beta/models/gemini-2.5-flash:generateContent",
 method:"POST",
-model:"gemini_2.5_flash"
+model:"gemini-2.5-flash"
 },
 
 12:{
 provider:"elevenlabs",
-endpoint:"/v1/text_to_speech",
+endpoint:"/v1/text-to-speech",
 method:"POST",
-model:"eleven_multilingual_v2"
+model:"multilingual_v2"
 },
 
 13:{
 provider:"elevenlabs",
-endpoint:"/v1/text_to_sound",
+endpoint:"/v1/sound-generation",
 method:"POST",
-model:"eleven_text_to_sound_v2"
+model:"text_to_sound_v2"
 },
 
 14:{
 provider:"elevenlabs",
-endpoint:"/v1/speech_to_speech",
+endpoint:"/v1/speech-to-speech",
 method:"POST",
-model:"eleven_multilingual_sts_v2"
+model:"sts_v2"
 }
 
-  }
+}
