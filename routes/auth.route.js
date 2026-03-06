@@ -1,8 +1,8 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/auth.route.js
-// VERSION: v9.2.0
-// STATUS: production-final
+// VERSION: v9.3.0
+// STATUS: production-fixed
 // LAYER: auth
 // RESPONSIBILITY:
 // - google oauth
@@ -12,8 +12,8 @@
 // - middleware/auth.js
 // - controllers/auth.controller.js
 // LAST FIX:
-// - removed jwt.middleware
-// - unified to v9 auth system
+// - fixed undefined controller crash
+// - protected routes fallback
 // =====================================================
 
 const express = require("express");
@@ -38,13 +38,30 @@ router.get("/google/callback", authController.googleCallback);
 // PROTECTED USER PROFILE
 // ===============================
 
-router.get("/me", authMiddleware, authController.me);
+router.get("/me", authMiddleware, (req, res) => {
+  return res.json({
+    id: req.user?.id,
+    email: req.user?.email,
+    role: req.user?.role
+  });
+});
 
 // ===============================
 // LOGOUT
 // ===============================
 
-router.get("/logout", authController.logout);
-router.post("/logout", authController.logout);
+router.get("/logout", (req, res) => {
+  res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
+
+  return res.json({ status: "LOGGED_OUT" });
+});
+
+router.post("/logout", (req, res) => {
+  res.clearCookie("access_token");
+  res.clearCookie("refresh_token");
+
+  return res.json({ status: "LOGGED_OUT" });
+});
 
 module.exports = router;
