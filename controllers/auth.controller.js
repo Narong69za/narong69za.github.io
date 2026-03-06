@@ -97,12 +97,26 @@ exports.googleCallback = async (req, res) => {
       id: user.id
     });
 
-    res.cookie("access_token", accessToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: 60 * 60 * 1000
-    });
+   res.cookie("refresh_token", refreshToken, {
+  ...COOKIE_OPTIONS,
+  maxAge: 7 * 24 * 60 * 60 * 1000
+});
 
-    res.cookie("refresh_token", refreshToken, {
-      ...COOKIE_OPTIONS,
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
+const redirectTarget = req.cookies.oauth_redirect || "/create.html";
+
+res.clearCookie("oauth_state", COOKIE_OPTIONS);
+res.clearCookie("oauth_redirect", COOKIE_OPTIONS);
+
+return res.redirect(redirectTarget);
+
+} catch (err) {
+
+console.error("GOOGLE CALLBACK ERROR", err);
+
+return res.status(500).json({
+  error: "GOOGLE_LOGIN_FAILED"
+});
+
+}
+
+};
