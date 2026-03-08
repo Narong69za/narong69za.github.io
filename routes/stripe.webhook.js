@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/stripe.webhook.js
-// VERSION: v9.2.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
@@ -13,7 +13,7 @@
 // - config/credit.policy.js
 // - db/db.js
 // - services/stripe.service.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - added idempotent lock
 // - unified credit logic
 // - hardened metadata validation

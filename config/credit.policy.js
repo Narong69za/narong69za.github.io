@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: config/credit.policy.js
-// VERSION: v9.0.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: core-policy
 // RESPONSIBILITY:
@@ -10,7 +10,7 @@
 // - engine cost mapping
 // - multi-gateway normalization (THB base)
 // DEPENDS ON: none
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - production credit model (1 THB = 100 CREDIT)
 // - bonus tier system
 // - binance rate 34 THB

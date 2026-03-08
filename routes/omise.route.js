@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/omise.route.js
-// VERSION: v9.2.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
@@ -11,7 +11,7 @@
 // DEPENDS ON:
 // - config/credit.policy.js
 // - middleware/auth.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - removed PRODUCT_MAP
 // - unified credit calculation
 // - policy-based metadata

@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: services/index.js
-// VERSION: v9.2.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: core-server
 // RESPONSIBILITY:
@@ -13,7 +13,7 @@
 // - middleware/auth.js
 // - middleware/admin.guard.js
 // - routes/*
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - removed delayed listen
 // - secured admin routes
 // - fixed crypto webhook registration

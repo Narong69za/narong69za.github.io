@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: middleware/auth.js
-// VERSION: v9.2.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: security
 // RESPONSIBILITY:
@@ -10,7 +10,7 @@
 // - support cookie + bearer
 // DEPENDS ON:
 // - utils/token.util.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - removed direct jwt usage
 // - fully centralized verification
 // =====================================================

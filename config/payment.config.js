@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: config/payment.config.js
- * VERSION: v9.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX: initial enterprise config layer
+ * LAST FIX: 2026-03-08
  */
 
 module.exports = {

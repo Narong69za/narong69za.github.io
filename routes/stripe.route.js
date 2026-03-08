@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/stripe.route.js
-// VERSION: v9.0.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
@@ -12,7 +12,7 @@
 // - config/credit.policy.js
 // - services/stripe.service.js
 // - middleware/auth.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - removed hardcoded product map
 // - unified credit calculation
 // =====================================================

@@ -1,9 +1,9 @@
 // ======================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: promptpay.route.js
-// VERSION: 1.0.0
+// VERSION: v
 // STATUS: production
-// LAST FIX: auto credit after slip verify
+// LAST FIX: 2026-03-08
 // ======================================================
 
 const express = require("express");

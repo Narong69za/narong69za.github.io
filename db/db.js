@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: db/db.js
-// VERSION: v9.1.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: core
 // RESPONSIBILITY:
@@ -12,7 +12,7 @@
 // DEPENDS ON:
 // - sqlite3
 // - config/system.config.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - unified production schema (user_credits)
 // - removed legacy users.credits
 // - atomic ledger normalization

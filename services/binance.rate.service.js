@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: services/binance.rate.service.js
- * VERSION: v9.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX:
+ * LAST FIX: 2026-03-08
  * - added real-time binance rate fetch
  * - added in-memory cache
  * - add-only module (no system modification)

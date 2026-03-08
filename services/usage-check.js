@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: services/usage-check.js
-// VERSION: v9.1.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: backend
 // RESPONSIBILITY:
@@ -11,7 +11,7 @@
 // DEPENDS ON:
 // - config/credit.policy.js
 // - db/db.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - switched to user_credits table
 // - removed legacy users.credits
 // =====================================================

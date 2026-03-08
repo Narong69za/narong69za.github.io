@@ -1,9 +1,9 @@
 // =====================================================
 // PROJECT: SN DESIGN ENGINE AI
 // MODULE: controllers/create.controller.js
-// VERSION: 2.1.0
+// VERSION: v
 // STATUS: production
-// LAST FIX: ADD ENGINE LOCK LAYER (no structure modification)
+// LAST FIX: 2026-03-08
 // =====================================================
 
 // =====================================================

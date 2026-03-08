@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: utils/token.util.js
-// VERSION: v9.0.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: security-core
 // RESPONSIBILITY:
@@ -13,7 +13,7 @@
 // - jsonwebtoken
 // - process.env.JWT_ACCESS_SECRET
 // - process.env.JWT_REFRESH_SECRET
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - hardened secret validation
 // - added verifyAccessToken
 // - upgraded to v9 header standard

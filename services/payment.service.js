@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: services/payment.service.js
- * VERSION: v9.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX: unified payment dispatcher
+ * LAST FIX: 2026-03-08
  */
 
 const config = require("../config/payment.config");

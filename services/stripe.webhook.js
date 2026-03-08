@@ -1,9 +1,9 @@
 // ======================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: stripe.webhook.js
-// VERSION: 2.0.0
+// VERSION: v
 // STATUS: production
-// LAST FIX: DIRECT STRIPE constructEvent WITH RAW BODY
+// LAST FIX: 2026-03-08
 // ======================================================
 
 const express = require("express");

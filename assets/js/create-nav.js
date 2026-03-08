@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: create-nav.js
- * VERSION: v4.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX:
+ * LAST FIX: 2026-03-08
  * - fixed oversized button issue
  * - restored gradient UI
  * - balanced left/right navigation

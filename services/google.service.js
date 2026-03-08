@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: google.service.js
- * VERSION: v1.0.1
+ * VERSION: v
  * STATUS: production
- * LAST FIX: fix redirect env variable mismatch
+ * LAST FIX: 2026-03-08
  */
 
 const { google } = require("googleapis");

@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: controllers/crypto.controller.js
-// VERSION: v9.2.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:
@@ -13,7 +13,7 @@
 // DEPENDS ON:
 // - config/credit.policy.js
 // - db/db.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - full signature verification
 // - replay timestamp guard (5 min)
 // - idempotent protection via payment_logs

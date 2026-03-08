@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: middleware/admin.guard.js
-// VERSION: v9.0.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: security
 // RESPONSIBILITY:
@@ -9,7 +9,7 @@
 // - block unauthorized access
 // DEPENDS ON:
 // - middleware/auth.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - initial production admin guard
 // =====================================================
 

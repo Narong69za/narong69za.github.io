@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/auth.route.js
-// VERSION: v9.3.0
+// VERSION: v
 // STATUS: production-fixed
 // LAYER: auth
 // RESPONSIBILITY:
@@ -11,7 +11,7 @@
 // DEPENDS ON:
 // - middleware/auth.js
 // - controllers/auth.controller.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - fixed undefined controller crash
 // - protected routes fallback
 // =====================================================

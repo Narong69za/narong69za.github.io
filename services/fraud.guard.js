@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: services/fraud.guard.js
- * VERSION: v9.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX:
+ * LAST FIX: 2026-03-08
  * - add fraud detection
  * - detect rapid payment attempts
  * - add-only module

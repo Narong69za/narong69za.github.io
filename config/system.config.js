@@ -2,14 +2,14 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: config/system.config.js
- * VERSION: v9.0.1
+ * VERSION: v
  * STATUS: production-final
  * LAYER: config
  * RESPONSIBILITY:
  * - centralize environment configuration
  * DEPENDS ON:
  * - process.env
- * LAST FIX:
+ * LAST FIX: 2026-03-08
  * - production final lock configuration layer
  * =====================================================
  */

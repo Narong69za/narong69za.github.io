@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: scripts/run-init.js
-// VERSION: v9.0.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: system
 // RESPONSIBILITY:
@@ -11,7 +11,7 @@
 // DEPENDS ON:
 // - init.sql
 // - DB_PATH (.env)
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - unified DB_PATH handling
 // - safe init guard
 // - foreign key enforcement

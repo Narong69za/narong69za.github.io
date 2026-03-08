@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/crypto.webhook.js
-// VERSION: v9.0.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: gateway
 // RESPONSIBILITY:

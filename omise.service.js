@@ -1,9 +1,9 @@
 // =====================================================
 // PROJECT: SN DESIGN ENGINE AI
 // MODULE: services/omise.service.js
-// VERSION: 1.0.0
+// VERSION: v
 // STATUS: test
-// LAST FIX: initial test-mode implementation
+// LAST FIX: 2026-03-08
 // =====================================================
 
 const Omise = require("omise");

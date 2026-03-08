@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/admin.routes.js
-// VERSION: v9.1.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: admin
 // RESPONSIBILITY:
@@ -12,7 +12,7 @@
 // DEPENDS ON:
 // - db/db.js
 // - config/credit.policy.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - unified credit-based reporting
 // - added credit-policy endpoint
 // - hardened finance queries

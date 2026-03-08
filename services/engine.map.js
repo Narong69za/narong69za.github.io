@@ -1,9 +1,9 @@
 // =====================================================
 // PROJECT: SN DESIGN ENGINE AI
 // MODULE: services/engine.map.js
-// VERSION: 1.0.0
+// VERSION: v
 // STATUS: production
-// LAST FIX: initial engine lock mapping
+// LAST FIX: 2026-03-08
 // =====================================================
 
 const ENGINE_MAP = {

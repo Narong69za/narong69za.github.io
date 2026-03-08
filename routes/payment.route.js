@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: routes/payment.route.js
- * VERSION: v9.0.1
+ * VERSION: v
  * STATUS: production
- * LAST FIX: full unified enterprise route with validation & structured response
+ * LAST FIX: 2026-03-08
  * =====================================================
  */
 

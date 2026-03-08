@@ -1,9 +1,9 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: services/omise.service.js
- * VERSION: v9.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX: enterprise omise integration layer
+ * LAST FIX: 2026-03-08
  */
 
 const Omise = require("omise");

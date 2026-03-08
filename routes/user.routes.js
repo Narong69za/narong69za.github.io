@@ -1,7 +1,7 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/user.routes.js
-// VERSION: v9.1.0
+// VERSION: v
 // STATUS: production-final
 // LAYER: user
 // RESPONSIBILITY:
@@ -9,7 +9,7 @@
 // DEPENDS ON:
 // - middleware/auth.js
 // - db/db.js
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - removed x-user-id header usage
 // - unified with JWT auth
 // =====================================================

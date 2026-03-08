@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: controllers/admin.finance.controller.js
- * VERSION: v9.0.0
+ * VERSION: v
  * STATUS: production
- * LAST FIX:
+ * LAST FIX: 2026-03-08
  * - added finance summary
  * - added finance daily analytics
  * - add-only safe controller

@@ -1,9 +1,9 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: controllers/auth.controller.js
-// VERSION: v9.4.0
+// VERSION: v
 // STATUS: production-hardened
-// LAST FIX:
+// LAST FIX: 2026-03-08
 // - added redirect-safe login flow
 // - preserved dashboard redirect
 // - hardened cookie config
