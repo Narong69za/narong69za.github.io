@@ -1,19 +1,20 @@
 /**
- * =====================================================
- * PROJECT: SN DESIGN STUDIO
- * MODULE: ACTIVATE PAGE STYLE
- * VERSION: 1.2.0
- * STATUS: ACTIVE
- * LAST FIX: ADD AI MODELS PREMIUM UI BOX
- * =====================================================
- */
+=====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: ACTIVATE PAGE STYLE
+VERSION: 2.0.0
+STATUS: PRODUCTION
+LAST FIX: FULL ENGINE UI ALIGNMENT
+=====================================================
+*/
 
 body{
 margin:0;
-font-family:Montserrat, sans-serif;
+font-family:Montserrat,sans-serif;
 background:#070b16;
 color:#fff;
 }
+
 
 
 /* HERO */
@@ -28,7 +29,7 @@ overflow:hidden;
 width:100%;
 height:100%;
 object-fit:cover;
-filter:brightness(0.4);
+filter:brightness(0.35);
 }
 
 .hero-content{
@@ -53,12 +54,12 @@ color:#00eaff;
 
 .hero-content p{
 margin-top:10px;
-opacity:0.8;
+opacity:.8;
 }
 
 .start-btn{
 display:inline-block;
-margin-top:25px;
+margin-top:26px;
 padding:14px 28px;
 background:#00eaff;
 color:#000;
@@ -66,6 +67,7 @@ border-radius:8px;
 text-decoration:none;
 font-weight:bold;
 }
+
 
 
 /* ACTIVATE SECTION */
@@ -76,7 +78,6 @@ max-width:1200px;
 margin:auto;
 }
 
-
 .activate-box{
 display:grid;
 grid-template-columns:1fr 420px;
@@ -84,18 +85,14 @@ gap:40px;
 }
 
 
-/* LEFT */
 
-.activate-left h3{
-font-size:26px;
-margin-bottom:10px;
-}
+/* VIDEO */
 
 .video-wrapper{
 margin-top:20px;
-border-radius:10px;
+border-radius:12px;
 overflow:hidden;
-box-shadow:0 0 30px rgba(0,0,0,0.6);
+box-shadow:0 0 30px rgba(0,0,0,.6);
 }
 
 .video-wrapper iframe{
@@ -105,26 +102,19 @@ border:none;
 }
 
 
-/* RIGHT */
+
+/* RIGHT PANEL */
 
 .activate-right{
 background:#11182c;
 padding:30px;
 border-radius:12px;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
-}
-
-.activate-right h3{
-font-size:24px;
-margin-bottom:10px;
-}
-
-.activate-right p{
-opacity:0.8;
+box-shadow:0 0 20px rgba(0,0,0,.6);
 }
 
 
-/* INPUT */
+
+/* KEY INPUT */
 
 .key-input{
 margin-top:20px;
@@ -151,40 +141,37 @@ font-weight:bold;
 cursor:pointer;
 }
 
-.key-input button:hover{
-opacity:0.85;
-}
-
-
 .activate-info{
-margin-top:16px;
+margin-top:14px;
 font-size:14px;
-opacity:0.7;
+opacity:.7;
 }
 
 
-/* =====================================================
-   AI MODELS SECTION
-   PREMIUM ENGINE BOX
-   ===================================================== */
+
+/* AI MODELS */
 
 .ai-models{
 
-margin-top:60px;
+margin-top:70px;
 
 display:grid;
+
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
 
 gap:20px;
 
 max-width:1100px;
+
 margin-left:auto;
+
 margin-right:auto;
+
+padding:0 20px;
 
 }
 
 
-/* MODEL BOX */
 
 .ai-model-card{
 
@@ -196,14 +183,14 @@ background:linear-gradient(
 
 border:1px solid rgba(255,255,255,0.06);
 
-padding:22px 24px;
+padding:22px;
 
 border-radius:14px;
 
 font-size:16px;
-letter-spacing:0.4px;
 
 display:flex;
+
 align-items:center;
 
 transition:all .25s ease;
@@ -213,14 +200,15 @@ cursor:pointer;
 }
 
 
-/* HOVER */
 
 .ai-model-card:hover{
 
 border-color:#00eaff;
 
 box-shadow:
+
 0 0 20px rgba(0,234,255,0.25),
+
 inset 0 0 12px rgba(0,234,255,0.08);
 
 transform:translateY(-3px);
@@ -228,7 +216,8 @@ transform:translateY(-3px);
 }
 
 
-/* COLOR ACCENT MODULES */
+
+/* COLOR ACCENTS */
 
 .bot-automation:hover{
 border-color:#3ad1ff;
@@ -257,11 +246,7 @@ grid-template-columns:1fr;
 }
 
 .video-wrapper iframe{
-height:250px;
+height:240px;
 }
 
-.ai-models{
-grid-template-columns:1fr;
 }
-
-  }
