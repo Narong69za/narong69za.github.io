@@ -1,52 +1,368 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
 
 <meta charset="UTF-8">
-<title>SN Design Studio Activation</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<link rel="stylesheet" href="assets/css/activate.css">
+<title>SN DESIGN STUDIO | Engine Activation</title>
 
-<script>
-window.ENV_API="/api"
-window.VIDEO_ID="YOUTUBE_VIDEO_ID"
-</script>
+<link rel="stylesheet" href="/assets/css/activate.css">
+
+<style>
+
+body{
+margin:0;
+background:#070707;
+color:#fff;
+font-family:Arial,Helvetica,sans-serif;
+}
+
+/* HERO */
+
+.hero{
+height:100vh;
+background:radial-gradient(circle at center,#0a0a0a,#000);
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+position:relative;
+}
+
+.hero h1{
+font-size:50px;
+letter-spacing:4px;
+}
+
+.hero h2{
+color:#00eaff;
+margin-top:10px;
+}
+
+.hero p{
+opacity:.8;
+}
+
+.hero-btn{
+margin-top:30px;
+padding:14px 30px;
+border-radius:30px;
+background:#00eaff;
+color:#000;
+font-weight:bold;
+display:inline-block;
+}
+
+/* PLATFORM */
+
+.platforms{
+padding:60px 20px;
+text-align:center;
+}
+
+.platform-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:20px;
+max-width:1000px;
+margin:auto;
+}
+
+.platform-card{
+background:#111;
+padding:30px;
+border-radius:12px;
+border:1px solid #222;
+}
+
+/* MODELS */
+
+.models{
+padding:60px 20px;
+}
+
+.models-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+gap:15px;
+max-width:1100px;
+margin:auto;
+}
+
+.model-card{
+background:#101010;
+padding:20px;
+border-radius:10px;
+border:1px solid #222;
+font-size:14px;
+}
+
+/* ACTIVATE */
+
+.activate{
+padding:70px 20px;
+text-align:center;
+}
+
+.activate-box{
+background:#101010;
+padding:40px;
+border-radius:12px;
+max-width:500px;
+margin:auto;
+}
+
+.key-box{
+margin-top:20px;
+font-size:20px;
+background:#000;
+padding:12px;
+border-radius:6px;
+}
+
+.copy-btn{
+margin-top:15px;
+padding:10px 20px;
+border:none;
+background:#00eaff;
+color:#000;
+border-radius:20px;
+}
+
+/* VIDEO */
+
+.video{
+padding:60px 20px;
+text-align:center;
+}
+
+/* STATUS */
+
+.status{
+padding:60px 20px;
+text-align:center;
+}
+
+.status-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+gap:20px;
+max-width:900px;
+margin:auto;
+}
+
+.status-card{
+background:#111;
+padding:25px;
+border-radius:10px;
+}
+
+footer{
+text-align:center;
+padding:40px;
+opacity:.6;
+}
+
+</style>
 
 </head>
 
 <body>
 
-<div class="container">
+<!-- HERO -->
 
-<h1>SN Design Studio Activation</h1>
+<section class="hero">
+
+<div>
+
+<h1>SN DESIGN STUDIO</h1>
+
+<h2>ULTRA ENGINE PLATFORM</h2>
+
+<p>
+AI Automation • Bot Network • Digital Engine
+</p>
+
+<a href="#activate" class="hero-btn">
+ACTIVATE PLATFORM
+</a>
+
+</div>
+
+</section>
+
+<!-- PLATFORMS -->
+
+<section class="platforms">
+
+<h2>ENGINE PLATFORMS</h2>
+
+<div class="platform-grid">
+
+<div class="platform-card">
+<h3>AI ENGINE</h3>
+<p>Neural Intelligence System</p>
+</div>
+
+<div class="platform-card">
+<h3>BOT FARM</h3>
+<p>Automation Network</p>
+</div>
+
+<div class="platform-card">
+<h3>ADS ENGINE</h3>
+<p>Traffic & Growth System</p>
+</div>
+
+<div class="platform-card">
+<h3>GAME BOT</h3>
+<p>Helper Automation</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- MODELS -->
+
+<section class="models">
+
+<h2>AI MODELS</h2>
+
+<div class="models-grid">
+
+<div class="model-card">AI Chat Engine</div>
+<div class="model-card">Image Generator</div>
+<div class="model-card">Video Generator</div>
+<div class="model-card">Voice Synth</div>
+<div class="model-card">Automation Bot</div>
+<div class="model-card">Task Runner</div>
+<div class="model-card">Crypto Bot</div>
+<div class="model-card">Ad Booster</div>
+<div class="model-card">Traffic AI</div>
+<div class="model-card">Game Helper</div>
+<div class="model-card">Content AI</div>
+<div class="model-card">Script AI</div>
+<div class="model-card">Data Miner</div>
+<div class="model-card">Analytics Engine</div>
+
+</div>
+
+</section>
+
+<!-- VIDEO -->
+
+<section class="video">
+
+<h2>INSTALLATION GUIDE</h2>
+
+<iframe width="560" height="315"
+src="https://www.youtube.com/embed/YOUTUBE_ID"
+frameborder="0"
+allowfullscreen></iframe>
+
+</section>
+
+<!-- ACTIVATE -->
+
+<section id="activate" class="activate">
+
+<h2>ACTIVATION GATEWAY</h2>
+
+<div class="activate-box">
 
 <p>Watch installation guide to unlock activation key</p>
 
-<div class="video">
-<div id="player"></div>
+<div class="key-box" id="key">
+SN-ACT-XXXXXX
 </div>
 
-<div id="keyPanel">
+<button class="copy-btn" onclick="copyKey()">
+COPY KEY
+</button>
 
-<h3>Your Activation Key</h3>
+<br><br>
 
-<div class="key" id="key"></div>
-
-<button onclick="copyKey()">Copy Key</button>
-
-<h3>Terminal Command</h3>
-
-<div class="terminal" id="terminalCmd"></div>
-
-<button onclick="copyCmd()">Copy Command</button>
+<a href="https://t.me/YOUR_BOT" target="_blank">
+VERIFY WITH TELEGRAM
+</a>
 
 </div>
 
+</section>
+
+<!-- STATUS -->
+
+<section class="status">
+
+<h2>ENGINE STATUS</h2>
+
+<div class="status-grid">
+
+<div class="status-card">
+AI Engines
+<br>
+14
 </div>
 
-<script src="assets/js/activate.js"></script>
+<div class="status-card">
+Platforms
+<br>
+4
+</div>
+
+<div class="status-card">
+Bots Online
+<br>
+4,000+
+</div>
+
+<div class="status-card">
+API Latency
+<br>
+21ms
+</div>
+
+</div>
+
+</section>
+
+<footer>
+
+SN DESIGN STUDIO  
+AI ENGINE PLATFORM
+
+</footer>
+
+<script>
+
+function generateKey(){
+
+let chars="ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+let result="SN-ACT-";
+
+for(let i=0;i<6;i++){
+result+=chars.charAt(Math.floor(Math.random()*chars.length));
+}
+
+document.getElementById("key").innerText=result;
+
+}
+
+generateKey();
+
+function copyKey(){
+
+let key=document.getElementById("key").innerText;
+
+navigator.clipboard.writeText(key);
+
+alert("Activation key copied");
+
+}
+
+</script>
 
 </body>
-
-</html>
+  </html>
