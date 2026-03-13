@@ -1,95 +1,57 @@
-const API_BASE = window.ENV_API || "/api"
+/**
+ * =====================================================
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: ACTIVATE CLIENT ENGINE
+ * VERSION: 1.0.0
+ * STATUS: ACTIVE
+ * LAST FIX: API CONNECT + KEY COPY SYSTEM
+ * =====================================================
+ */
 
-let player
+const API_ENDPOINT="/api/activate";
 
-function loadYouTube(){
+async function activateKey(){
 
-const tag = document.createElement("script")
-tag.src = "https://www.youtube.com/iframe_api"
-document.body.appendChild(tag)
+const key=document.getElementById("activate-key").value;
 
+if(!key){
+alert("กรุณาใส่ Activation Key");
+return;
 }
-
-function onYouTubeIframeAPIReady(){
-
-player = new YT.Player("player",{
-
-height:"360",
-width:"100%",
-videoId:window.VIDEO_ID || "VIDEO_ID",
-
-events:{
-onStateChange:onPlayerStateChange
-}
-
-})
-
-}
-
-function onPlayerStateChange(event){
-
-if(event.data === 0){
-unlockActivation()
-}
-
-}
-
-async function unlockActivation(){
-
-document.getElementById("keyPanel").style.display="block"
 
 try{
 
-const res = await fetch(`${API_BASE}/activate`,{
-method:"POST"
-})
+const res=await fetch(API_ENDPOINT,{
+method:"POST",
+headers:{
+"Content-Type":"application/json"
+},
+body:JSON.stringify({key})
+});
 
-const data = await res.json()
+const data=await res.json();
 
-renderKey(data)
-
-}catch(e){
-
-console.error(e)
-
+if(data.success){
+alert("ระบบเปิดใช้งานสำเร็จ");
+}else{
+alert("Key ไม่ถูกต้อง");
 }
 
+}catch(err){
+
+console.error(err);
+alert("API ERROR");
+
 }
-
-function renderKey(data){
-
-const key = data.key || "SN-XXXX-XXXX"
-
-document.getElementById("key").innerText = key
-
-const cmd = `./activate.sh ${key}`
-
-document.getElementById("terminalCmd").innerText = cmd
 
 }
 
 function copyKey(){
 
-const text = document.getElementById("key").innerText
+const key=document.getElementById("generated-key");
 
-navigator.clipboard.writeText(text)
+navigator.clipboard.writeText(key.value);
 
-alert("Activation key copied")
-
-}
-
-function copyCmd(){
-
-const text = document.getElementById("terminalCmd").innerText
-
-navigator.clipboard.writeText(text)
-
-alert("Command copied")
+alert("คัดลอก Key แล้ว");
 
 }
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-loadYouTube()
-
-})
