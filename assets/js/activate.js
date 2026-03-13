@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: ACTIVATE CLIENT ENGINE
- * VERSION: 1.0.0
+ * VERSION: 1.1.0
  * STATUS: ACTIVE
- * LAST FIX: API CONNECT + KEY COPY SYSTEM
+ * LAST FIX: API RESPONSE FIX
  * =====================================================
  */
 
@@ -26,15 +26,44 @@ method:"POST",
 headers:{
 "Content-Type":"application/json"
 },
-body:JSON.stringify({key})
+body:JSON.stringify({
+key:key,
+device_id:navigator.userAgent
+})
 });
 
 const data=await res.json();
 
-if(data.success){
+if(data.status==="ok"){
+
 alert("ระบบเปิดใช้งานสำเร็จ");
-}else{
+
+window.location.href="/create.html";
+
+}
+
+else if(data.status==="invalid_key"){
+
 alert("Key ไม่ถูกต้อง");
+
+}
+
+else if(data.status==="expired"){
+
+alert("Key หมดอายุ");
+
+}
+
+else if(data.status==="device_locked"){
+
+alert("Key ถูกใช้งานกับเครื่องอื่น");
+
+}
+
+else{
+
+alert("Activation Failed");
+
 }
 
 }catch(err){
