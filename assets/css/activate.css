@@ -2,9 +2,9 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: ACTIVATE PAGE STYLE
- * VERSION: 1.1.0
+ * VERSION: 1.2.0
  * STATUS: ACTIVE
- * LAST FIX: UI PLATFORM LAYOUT
+ * LAST FIX: ADD AI MODELS PREMIUM UI BOX
  * =====================================================
  */
 
@@ -163,6 +163,91 @@ opacity:0.7;
 }
 
 
+/* =====================================================
+   AI MODELS SECTION
+   PREMIUM ENGINE BOX
+   ===================================================== */
+
+.ai-models{
+
+margin-top:60px;
+
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+
+gap:20px;
+
+max-width:1100px;
+margin-left:auto;
+margin-right:auto;
+
+}
+
+
+/* MODEL BOX */
+
+.ai-model-card{
+
+background:linear-gradient(
+180deg,
+#0e1220,
+#0a0f1c
+);
+
+border:1px solid rgba(255,255,255,0.06);
+
+padding:22px 24px;
+
+border-radius:14px;
+
+font-size:16px;
+letter-spacing:0.4px;
+
+display:flex;
+align-items:center;
+
+transition:all .25s ease;
+
+cursor:pointer;
+
+}
+
+
+/* HOVER */
+
+.ai-model-card:hover{
+
+border-color:#00eaff;
+
+box-shadow:
+0 0 20px rgba(0,234,255,0.25),
+inset 0 0 12px rgba(0,234,255,0.08);
+
+transform:translateY(-3px);
+
+}
+
+
+/* COLOR ACCENT MODULES */
+
+.bot-automation:hover{
+border-color:#3ad1ff;
+}
+
+.bot-crypto:hover{
+border-color:#ffc400;
+}
+
+.bot-game:hover{
+border-color:#00ff8c;
+}
+
+.bot-dataminer:hover{
+border-color:#ff5e5e;
+}
+
+
+
 /* MOBILE */
 
 @media(max-width:900px){
@@ -175,4 +260,8 @@ grid-template-columns:1fr;
 height:250px;
 }
 
+.ai-models{
+grid-template-columns:1fr;
 }
+
+  }
