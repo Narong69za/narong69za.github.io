@@ -2,35 +2,36 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: ACTIVATE PAGE STYLE
- * VERSION: 1.0.0
+ * VERSION: 1.1.0
  * STATUS: ACTIVE
- * LAST FIX: INITIAL ACTIVATE UI SYSTEM
+ * LAST FIX: UI PLATFORM LAYOUT
  * =====================================================
  */
 
 body{
-background:#0a0f1c;
-font-family:Montserrat, sans-serif;
-color:#fff;
 margin:0;
-padding:0;
+font-family:Montserrat, sans-serif;
+background:#070b16;
+color:#fff;
 }
 
-.activate-hero{
+
+/* HERO */
+
+.hero{
 position:relative;
-width:100%;
-height:460px;
+height:500px;
 overflow:hidden;
 }
 
-.activate-hero img{
+.hero-bg{
 width:100%;
 height:100%;
 object-fit:cover;
-filter:brightness(0.5);
+filter:brightness(0.4);
 }
 
-.hero-overlay{
+.hero-content{
 position:absolute;
 top:50%;
 left:50%;
@@ -38,72 +39,140 @@ transform:translate(-50%,-50%);
 text-align:center;
 }
 
-.hero-overlay h1{
-font-size:46px;
+.hero-content h1{
+font-size:48px;
 letter-spacing:4px;
 margin:0;
 }
 
-.hero-overlay h2{
-margin-top:10px;
+.hero-content h2{
+margin-top:12px;
 font-size:22px;
 color:#00eaff;
 }
 
-.hero-overlay p{
-margin-top:12px;
+.hero-content p{
+margin-top:10px;
 opacity:0.8;
 }
 
-.activate-btn{
+.start-btn{
 display:inline-block;
-margin-top:20px;
+margin-top:25px;
 padding:14px 28px;
 background:#00eaff;
 color:#000;
-font-weight:bold;
 border-radius:8px;
 text-decoration:none;
+font-weight:bold;
 }
 
-.activate-container{
-max-width:900px;
+
+/* ACTIVATE SECTION */
+
+.activate-section{
+padding:70px 20px;
+max-width:1200px;
 margin:auto;
-padding:60px 20px;
 }
 
-.activate-card{
-background:#121a2f;
-padding:40px;
-border-radius:12px;
+
+.activate-box{
+display:grid;
+grid-template-columns:1fr 420px;
+gap:40px;
+}
+
+
+/* LEFT */
+
+.activate-left h3{
+font-size:26px;
+margin-bottom:10px;
+}
+
+.video-wrapper{
+margin-top:20px;
+border-radius:10px;
+overflow:hidden;
 box-shadow:0 0 30px rgba(0,0,0,0.6);
 }
 
-.activate-card h3{
-font-size:26px;
-margin-bottom:20px;
+.video-wrapper iframe{
+width:100%;
+height:360px;
+border:none;
 }
 
-.key-box{
+
+/* RIGHT */
+
+.activate-right{
+background:#11182c;
+padding:30px;
+border-radius:12px;
+box-shadow:0 0 20px rgba(0,0,0,0.6);
+}
+
+.activate-right h3{
+font-size:24px;
+margin-bottom:10px;
+}
+
+.activate-right p{
+opacity:0.8;
+}
+
+
+/* INPUT */
+
+.key-input{
+margin-top:20px;
 display:flex;
 gap:10px;
-margin-top:20px;
 }
 
-.key-box input{
+.key-input input{
 flex:1;
 padding:12px;
-background:#0a0f1c;
-border:1px solid #2d3a5f;
-color:#fff;
 border-radius:6px;
+border:1px solid #28365e;
+background:#070b16;
+color:#fff;
 }
 
-.key-box button{
+.key-input button{
 padding:12px 18px;
-background:#00eaff;
 border:none;
+border-radius:6px;
+background:#00eaff;
+color:#000;
 font-weight:bold;
 cursor:pointer;
-border-radius:6px;
+}
+
+.key-input button:hover{
+opacity:0.85;
+}
+
+
+.activate-info{
+margin-top:16px;
+font-size:14px;
+opacity:0.7;
+}
+
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.activate-box{
+grid-template-columns:1fr;
+}
+
+.video-wrapper iframe{
+height:250px;
+}
+
 }
