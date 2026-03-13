@@ -2,111 +2,89 @@
 =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: ACTIVATE PLATFORM
-VERSION: 1.1.0
+VERSION: 1.3.0
 STATUS: ACTIVE
-LAST FIX: UI STRUCTURE IMPROVED
+LAST FIX: ADD YOUTUBE VERIFY + KEY SYSTEM
 =====================================================
 -->
 
-<!DOCTYPE html>
-<html lang="th">
+<section class="ai-models">
 
-<head>
+<h2>AI MODELS</h2>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<div class="ai-model-card">AI Chat Engine</div>
+<div class="ai-model-card">Image Generator</div>
+<div class="ai-model-card">Video Generator</div>
+<div class="ai-model-card">Voice Synth</div>
 
-<title>SN DESIGN STUDIO - ACTIVATE</title>
-
-<link rel="stylesheet" href="/assets/css/activate.css">
-
-</head>
-
-<body>
-
-<section class="hero">
-
-<img src="/assets/images/activate-hero.webp" class="hero-bg">
-
-<div class="hero-content">
-
-<h1>SN DESIGN STUDIO</h1>
-
-<h2>AI BOT ACTIVATION PLATFORM</h2>
-
-<p>
-Telegram Bot • AI Engine • Creator Tools
-</p>
-
-<a href="#activate-section" class="start-btn">
-เริ่มเปิดใช้งาน
-</a>
-
-</div>
+<div class="ai-model-card">Automation Bot</div>
+<div class="ai-model-card">Task Runner</div>
+<div class="ai-model-card">Crypto Bot</div>
+<div class="ai-model-card">Ad Booster</div>
+<div class="ai-model-card">Traffic AI</div>
+<div class="ai-model-card">Game Helper</div>
+<div class="ai-model-card">Content AI</div>
+<div class="ai-model-card">Script AI</div>
+<div class="ai-model-card">Data Miner</div>
+<div class="ai-model-card">Analytics Engine</div>
 
 </section>
 
 
-<section class="activate-section" id="activate-section">
+<!-- YOUTUBE VERIFY -->
 
-<div class="activate-box">
+<section class="youtube-verify">
 
-<div class="activate-left">
-
-<h3>รับ Activation Key</h3>
+<h3>Unlock System Access</h3>
 
 <p>
-ดูวิดีโอเพื่อรับ Key สำหรับเปิดใช้งานระบบ
+Follow the official channel and watch the video completely
+to receive your activation key.
 </p>
 
-<div class="video-wrapper">
+<div class="youtube-box">
 
 <iframe
+width="100%"
+height="220"
 src="https://www.youtube.com/embed/YOUR_VIDEO_ID"
+title="YouTube video player"
+frameborder="0"
 allowfullscreen>
 </iframe>
 
 </div>
 
-</div>
+<a
+href="https://youtube.com/@sndesignstudio"
+target="_blank"
+class="btn-follow">
 
+Subscribe Channel
 
-<div class="activate-right">
-
-<h3>Activate System</h3>
-
-<p>
-นำ KEY ที่ได้มาวางด้านล่าง
-</p>
-
-<div class="key-input">
-
-<input
-id="activate-key"
-placeholder="Activation Key"
-/>
-
-<button onclick="activateKey()">
-Activate
-</button>
-
-</div>
-
-<div class="activate-info">
-
-<p>
-KEY จะถูกผูกกับอุปกรณ์ของคุณอัตโนมัติ
-</p>
-
-</div>
-
-</div>
-
-</div>
+</a>
 
 </section>
 
-<script src="/assets/js/activate.js"></script>
 
-</body>
-</html>
+<!-- KEY ACTIVATION -->
+
+<section class="activation-box">
+
+<h3>Enter Activation Key</h3>
+
+<input
+type="text"
+id="activationKey"
+placeholder="ENTER ACCESS KEY"
+/>
+
+<button onclick="activateSystem()">
+
+Unlock Engine
+
+</button>
+
+<p id="status"></p>
+
+</section>
