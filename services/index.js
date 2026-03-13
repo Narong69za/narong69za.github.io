@@ -81,7 +81,69 @@ app.use("/api/crypto/webhook",
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+// ================= ACTIVATION =================
 
+const db = require("../db/db");
+
+app.post("/api/activate", async (req, res) => {
+
+  try {
+
+    const { key, device_id } = req.body;
+
+    if (!key) {
+      return res.json({
+        status: "error",
+        message: "KEY_REQUIRED"
+      });
+    }
+
+    const result = await db.query(
+      "SELECT * FROM licenses WHERE license_key=?",
+      [key]
+    );
+
+    if (!result.length) {
+      return res.json({ status: "invalid_key" });
+    }
+
+    const license = result[0];
+
+    const now = Date.now();
+    const expire = new Date(license.expire_at).getTime();
+
+    if (expire < now) {
+      return res.json({ status: "expired" });
+    }
+
+    if (license.device_id && license.device_id !== device_id) {
+      return res.json({ status: "device_locked" });
+    }
+
+    if (!license.device_id) {
+      await db.query(
+        "UPDATE licenses SET device_id=? WHERE license_key=?",
+        [device_id, key]
+      );
+    }
+
+    return res.json({
+      status: "ok",
+      plan: license.plan,
+      expire: license.expire_at
+    });
+
+  } catch (err) {
+
+    console.error("ACTIVATE ERROR:", err);
+
+    res.json({
+      status: "server_error"
+    });
+
+  }
+
+});
 // ================= ROUTES =================
 
 // 🔒 Admin protected
