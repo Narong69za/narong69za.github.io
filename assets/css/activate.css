@@ -1,170 +1,20 @@
-/**
-=====================================================
-PROJECT: SN DESIGN STUDIO
-MODULE: ACTIVATE PAGE STYLE
-VERSION: 2.0.0
-STATUS: PRODUCTION
-LAST FIX: FULL ENGINE UI ALIGNMENT
-=====================================================
-*/
-
-body{
-margin:0;
-font-family:Montserrat,sans-serif;
-background:#070b16;
-color:#fff;
-}
-
-
-
-/* HERO */
-
-.hero{
-position:relative;
-height:500px;
-overflow:hidden;
-}
-
-.hero-bg{
-width:100%;
-height:100%;
-object-fit:cover;
-filter:brightness(0.35);
-}
-
-.hero-content{
-position:absolute;
-top:50%;
-left:50%;
-transform:translate(-50%,-50%);
-text-align:center;
-}
-
-.hero-content h1{
-font-size:48px;
-letter-spacing:4px;
-margin:0;
-}
-
-.hero-content h2{
-margin-top:12px;
-font-size:22px;
-color:#00eaff;
-}
-
-.hero-content p{
-margin-top:10px;
-opacity:.8;
-}
-
-.start-btn{
-display:inline-block;
-margin-top:26px;
-padding:14px 28px;
-background:#00eaff;
-color:#000;
-border-radius:8px;
-text-decoration:none;
-font-weight:bold;
-}
-
-
-
-/* ACTIVATE SECTION */
-
-.activate-section{
-padding:70px 20px;
-max-width:1200px;
-margin:auto;
-}
-
-.activate-box{
-display:grid;
-grid-template-columns:1fr 420px;
-gap:40px;
-}
-
-
-
-/* VIDEO */
-
-.video-wrapper{
-margin-top:20px;
-border-radius:12px;
-overflow:hidden;
-box-shadow:0 0 30px rgba(0,0,0,.6);
-}
-
-.video-wrapper iframe{
-width:100%;
-height:360px;
-border:none;
-}
-
-
-
-/* RIGHT PANEL */
-
-.activate-right{
-background:#11182c;
-padding:30px;
-border-radius:12px;
-box-shadow:0 0 20px rgba(0,0,0,.6);
-}
-
-
-
-/* KEY INPUT */
-
-.key-input{
-margin-top:20px;
-display:flex;
-gap:10px;
-}
-
-.key-input input{
-flex:1;
-padding:12px;
-border-radius:6px;
-border:1px solid #28365e;
-background:#070b16;
-color:#fff;
-}
-
-.key-input button{
-padding:12px 18px;
-border:none;
-border-radius:6px;
-background:#00eaff;
-color:#000;
-font-weight:bold;
-cursor:pointer;
-}
-
-.activate-info{
-margin-top:14px;
-font-size:14px;
-opacity:.7;
-}
-
-
-
-/* AI MODELS */
+/* =====================================================
+AI MODULE PLATFORM
+===================================================== */
 
 .ai-models{
 
-margin-top:70px;
+margin-top:90px;
 
 display:grid;
 
-grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
 
-gap:20px;
+gap:28px;
 
-max-width:1100px;
+max-width:1150px;
 
 margin-left:auto;
-
 margin-right:auto;
 
 padding:0 20px;
@@ -172,81 +22,151 @@ padding:0 20px;
 }
 
 
+/* MODULE CARD */
 
 .ai-model-card{
 
+position:relative;
+
 background:linear-gradient(
 180deg,
-#0e1220,
+#10162b,
 #0a0f1c
 );
 
+border-radius:16px;
+
+padding:26px;
+
 border:1px solid rgba(255,255,255,0.06);
 
-padding:22px;
+box-shadow:
+0 8px 28px rgba(0,0,0,.55);
 
-border-radius:14px;
-
-font-size:16px;
+transition:all .35s ease;
 
 display:flex;
+flex-direction:column;
+justify-content:space-between;
 
-align-items:center;
+min-height:170px;
 
-transition:all .25s ease;
-
-cursor:pointer;
+overflow:hidden;
 
 }
 
 
+/* TITLE */
+
+.ai-model-card h4{
+
+margin:0;
+font-size:18px;
+letter-spacing:.5px;
+font-weight:700;
+
+}
+
+
+/* DESCRIPTION */
+
+.ai-model-card p{
+
+margin-top:8px;
+font-size:14px;
+opacity:.75;
+line-height:1.4;
+
+}
+
+
+/* ACTION BUTTON */
+
+.module-btn{
+
+margin-top:18px;
+
+display:inline-block;
+
+padding:10px 16px;
+
+font-size:13px;
+
+border-radius:6px;
+
+background:rgba(0,234,255,0.08);
+
+border:1px solid rgba(0,234,255,.3);
+
+color:#00eaff;
+
+text-decoration:none;
+
+width:max-content;
+
+transition:.2s;
+
+}
+
+
+.module-btn:hover{
+
+background:#00eaff;
+color:#000;
+
+}
+
+
+/* HOVER EFFECT */
 
 .ai-model-card:hover{
+
+transform:translateY(-6px);
 
 border-color:#00eaff;
 
 box-shadow:
 
-0 0 20px rgba(0,234,255,0.25),
-
-inset 0 0 12px rgba(0,234,255,0.08);
-
-transform:translateY(-3px);
+0 0 26px rgba(0,234,255,0.25),
+0 10px 40px rgba(0,0,0,.8);
 
 }
 
 
+/* GLOW ACCENTS */
 
-/* COLOR ACCENTS */
+.bot-automation::before,
+.bot-crypto::before,
+.bot-game::before,
+.bot-dataminer::before{
 
-.bot-automation:hover{
-border-color:#3ad1ff;
+content:"";
+
+position:absolute;
+
+top:0;
+left:0;
+
+width:100%;
+height:3px;
+
 }
 
-.bot-crypto:hover{
-border-color:#ffc400;
+
+/* COLORS */
+
+.bot-automation::before{
+background:#3ad1ff;
 }
 
-.bot-game:hover{
-border-color:#00ff8c;
+.bot-crypto::before{
+background:#ffc400;
 }
 
-.bot-dataminer:hover{
-border-color:#ff5e5e;
+.bot-game::before{
+background:#00ff8c;
 }
 
-
-
-/* MOBILE */
-
-@media(max-width:900px){
-
-.activate-box{
-grid-template-columns:1fr;
-}
-
-.video-wrapper iframe{
-height:240px;
-}
-
+.bot-dataminer::before{
+background:#ff5e5e;
 }
