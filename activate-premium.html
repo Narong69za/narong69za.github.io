@@ -1,0 +1,83 @@
+<!-- ========================================================= -->
+<!-- SN DESIGN STUDIO                                         -->
+<!-- FILE : activate-premium.html                             -->
+<!-- ROLE : PREMIUM LICENSE ACTIVATION PAGE                   -->
+<!-- PACKAGE : PREMIUM                                        -->
+<!-- VERSION : 1.0                                            -->
+<!-- SYSTEM : CORE LICENSE SERVER                             -->
+<!-- STATUS : PRODUCTION                                      -->
+<!-- ========================================================= -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SN DESIGN STUDIO | PREMIUM ACTIVATE</title>
+
+<link rel="stylesheet" href="activate.css">
+
+</head>
+
+
+<body>
+
+<div class="sn-container">
+
+<div class="sn-header">
+
+<h1>SN DESIGN STUDIO</h1>
+<p>PREMIUM LICENSE ACTIVATION</p>
+
+</div>
+
+
+<div class="sn-package">
+
+<h2>PREMIUM PACKAGE</h2>
+
+<ul>
+<li>Full Automation Engine</li>
+<li>Multi Account Support</li>
+<li>Priority Task System</li>
+<li>Reward Collector</li>
+<li>30 Days License</li>
+</ul>
+
+</div>
+
+
+<div class="sn-activation">
+
+<label>Device HWID</label>
+
+<input type="text" id="hwid" placeholder="Enter Device ID">
+
+<label>Start Date</label>
+
+<input type="date" id="start">
+
+<button onclick="generatePREMIUM()">Generate License</button>
+
+</div>
+
+
+<div class="sn-license">
+
+<h3>Your License</h3>
+
+<pre id="licenseOutput"></pre>
+
+</div>
+
+</div>
+
+
+<script src="activate.js"></script>
+
+</body>
+
+</html>
