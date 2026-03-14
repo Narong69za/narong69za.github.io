@@ -1,12 +1,11 @@
-<!-- ========================================================= -->
-<!-- SN DESIGN STUDIO                                         -->
-<!-- FILE : activate-pro.html                                 -->
-<!-- ROLE : PRO LICENSE ACTIVATION PAGE                       -->
-<!-- PACKAGE : PRO                                            -->
-<!-- VERSION : 1.0                                            -->
-<!-- SYSTEM : CORE LICENSE SERVER                             -->
-<!-- STATUS : PRODUCTION                                      -->
-<!-- ========================================================= -->
+<!-- ===================================================== -->
+<!-- PROJECT: SN DESIGN STUDIO                            -->
+<!-- FILE: activate-pro.html                              -->
+<!-- MODULE: PRO LICENSE ACTIVATION PAGE                  -->
+<!-- VERSION: 1.0                                         -->
+<!-- STATUS: ACTIVE                                       -->
+<!-- SYSTEM: ACTIVATE CLIENT ENGINE                       -->
+<!-- ===================================================== -->
 
 <!DOCTYPE html>
 <html lang="en">
@@ -18,65 +17,58 @@
 
 <title>SN DESIGN STUDIO | PRO ACTIVATE</title>
 
-<link rel="stylesheet" href="activate.css">
+<link rel="stylesheet" href="/activate.css">
 
 </head>
 
-
 <body>
 
-<div class="sn-container">
-
-<div class="sn-header">
+<div class="activate-container">
 
 <h1>SN DESIGN STUDIO</h1>
-<p>PRO LICENSE ACTIVATION</p>
+
+<h2>PRO PACKAGE ACTIVATION</h2>
+
+<div class="activate-box">
+
+<label>Activation Key</label>
+
+<input
+type="text"
+id="activate-key"
+placeholder="SN-PRO-XXXXX"
+/>
+
+<button onclick="activateKey()">
+Activate
+</button>
 
 </div>
 
+<div class="generate-box">
 
-<div class="sn-package">
+<h3>Generate Key</h3>
 
-<h2>PRO PACKAGE</h2>
+<input
+type="text"
+id="generated-key"
+readonly
+/>
 
-<ul>
-<li>Automation Engine</li>
-<li>Task Manager</li>
-<li>Reward Collector</li>
-<li>30 Days License</li>
-</ul>
+<button onclick="generatePRO()">
+Generate PRO Key
+</button>
 
-</div>
-
-
-<div class="sn-activation">
-
-<label>Device HWID</label>
-
-<input type="text" id="hwid" placeholder="Enter Device ID">
-
-<label>Start Date</label>
-
-<input type="date" id="start">
-
-<button onclick="generatePRO()">Generate License</button>
-
-</div>
-
-
-<div class="sn-license">
-
-<h3>Your License</h3>
-
-<pre id="licenseOutput"></pre>
+<button onclick="copyKey()">
+Copy Key
+</button>
 
 </div>
 
 </div>
 
-
-<script src="activate.js"></script>
+<script src="/activate.js"></script>
+<script src="/activate-client.js"></script>
 
 </body>
-
 </html>
