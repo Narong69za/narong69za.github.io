@@ -2,9 +2,9 @@
 ===================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: ACTIVATE PLATFORM
-VERSION: 2.0.0
+VERSION: 2.1.0
 STATUS: PRODUCTION
-LAST FIX: FULL ENGINE UI + CSS ALIGNMENT + JS ACTIVATE
+LAST FIX: YOUTUBE EMBED FIX + FONT LOAD + SECURITY
 =====================================================
 -->
 
@@ -18,11 +18,15 @@ LAST FIX: FULL ENGINE UI + CSS ALIGNMENT + JS ACTIVATE
 
 <title>Official Website — SN DESIGN STUDIO</title>
 
+<!-- FONT (MASTER BRAND FONT) -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
 <link rel="stylesheet" href="/assets/css/activate.css">
 
 </head>
 
 <body>
+
 
 <!-- HERO SECTION -->
 
@@ -31,6 +35,7 @@ LAST FIX: FULL ENGINE UI + CSS ALIGNMENT + JS ACTIVATE
 <img
 src="/assets/images/activate-hero.webp"
 class="hero-bg"
+alt="SN DESIGN STUDIO Activation"
 >
 
 <div class="hero-content">
@@ -73,8 +78,12 @@ Bot Systems • Activation Control
 <div class="video-wrapper">
 
 <iframe
-src="https://www.youtube.com/embed/@SnDesignStudio-Design"
+src="https://www.youtube.com/embed?listType=user_uploads&list=SnDesignStudio-Design"
+title="SN DESIGN STUDIO Activation Guide"
+loading="lazy"
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
 allowfullscreen
+referrerpolicy="strict-origin-when-cross-origin"
 ></iframe>
 
 </div>
@@ -100,6 +109,7 @@ allowfullscreen
 type="text"
 id="activate-key"
 placeholder="วาง Activation Key"
+autocomplete="off"
 >
 
 <button id="activate-btn">
