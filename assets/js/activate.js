@@ -1,86 +1,33 @@
 /**
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
- * MODULE: ACTIVATE CLIENT ENGINE
- * VERSION: 1.1.0
+ * MODULE: LICENSE GENERATOR ENGINE
+ * VERSION: 1.0
  * STATUS: ACTIVE
- * LAST FIX: API RESPONSE FIX
  * =====================================================
  */
 
-const API_ENDPOINT="/api/activate";
+function generatePRO(){
 
-async function activateKey(){
+const device=navigator.userAgent.slice(0,10)
 
-const key=document.getElementById("activate-key").value;
+const date=new Date().toISOString().split("T")[0]
 
-if(!key){
-alert("กรุณาใส่ Activation Key");
-return;
-}
+const key="SN-PRO-"+device+"-"+date+"-30D"
 
-try{
-
-const res=await fetch(API_ENDPOINT,{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-key:key,
-device_id:navigator.userAgent
-})
-});
-
-const data=await res.json();
-
-if(data.status==="ok"){
-
-alert("ระบบเปิดใช้งานสำเร็จ");
-
-window.location.href="/create.html";
+document.getElementById("generated-key").value=key
 
 }
 
-else if(data.status==="invalid_key"){
 
-alert("Key ไม่ถูกต้อง");
+function generatePREMIUM(){
 
-}
+const device=navigator.userAgent.slice(0,10)
 
-else if(data.status==="expired"){
+const date=new Date().toISOString().split("T")[0]
 
-alert("Key หมดอายุ");
+const key="SN-PREMIUM-"+device+"-"+date+"-30D"
 
-}
-
-else if(data.status==="device_locked"){
-
-alert("Key ถูกใช้งานกับเครื่องอื่น");
-
-}
-
-else{
-
-alert("Activation Failed");
-
-}
-
-}catch(err){
-
-console.error(err);
-alert("API ERROR");
-
-}
-
-}
-
-function copyKey(){
-
-const key=document.getElementById("generated-key");
-
-navigator.clipboard.writeText(key.value);
-
-alert("คัดลอก Key แล้ว");
+document.getElementById("generated-key").value=key
 
 }
