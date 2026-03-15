@@ -35,6 +35,7 @@ const userRoutes = require("../routes/user.routes");
 const thaiPaymentRoutes = require("../routes/thai-payment.route");
 const authRoutes = require("../routes/auth.route");
 const promptpayRoute = require("../routes/promptpay.route");
+const paymentStatusRoute = require("../routes/payment-status.route"); // ADDED
 const authMiddleware = require("../middleware/auth");
 const adminGuard = require("../middleware/admin.guard");
 const omiseRoute = require("../routes/omise.route");
@@ -81,6 +82,7 @@ app.use("/api/crypto/webhook",
 
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
 // ================= ACTIVATION =================
 
 const db = require("../db/db");
@@ -144,6 +146,7 @@ app.post("/api/activate", async (req, res) => {
   }
 
 });
+
 // ================= ROUTES =================
 
 // 🔒 Admin protected
@@ -163,6 +166,7 @@ app.use("/api/omise", authMiddleware, omiseRoute);
 app.use("/api/crypto", authMiddleware, cryptoRoute);
 
 app.use("/api/promptpay", authMiddleware, promptpayRoute);
+app.use("/api/payment", authMiddleware, paymentStatusRoute); // ADDED
 
 app.use("/auth", authRoutes);
 
