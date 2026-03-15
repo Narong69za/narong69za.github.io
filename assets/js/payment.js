@@ -339,3 +339,74 @@ document.addEventListener("DOMContentLoaded",async()=>{
   });
 
 });
+
+/* =====================================================
+PATCH MODULE
+PROJECT: SN DESIGN STUDIO
+MODULE: payment.js
+VERSION: v11.1.1
+STATUS: hotfix-addonly
+RESPONSIBILITY:
+- PromptPay safety validation
+- Transaction guard extension
+- Prevent invalid QR creation
+NOTE:
+ADD-ONLY PATCH
+DO NOT MODIFY EXISTING ENGINE
+===================================================== */
+
+(function(){
+
+  if(typeof payPromptPay!=="function"){
+    return;
+  }
+
+  const originalPayPromptPay = payPromptPay;
+
+  payPromptPay = async function(){
+
+    try{
+
+      const amountField = document.getElementById("qrAmount");
+
+      if(!amountField){
+        setStatus("QR INPUT ERROR");
+        TX_LOCK=false;
+        return;
+      }
+
+      const value = parseInt(amountField.value);
+
+      if(isNaN(value)){
+        setStatus("AMOUNT REQUIRED");
+        TX_LOCK=false;
+        return;
+      }
+
+      if(value<50){
+        setStatus("MIN 50 BAHT");
+        TX_LOCK=false;
+        return;
+      }
+
+      if(value>500){
+        setStatus("MAX 500 BAHT");
+        TX_LOCK=false;
+        return;
+      }
+
+      return originalPayPromptPay();
+
+    }catch(err){
+
+      console.error("PROMPTPAY PATCH ERROR",err);
+
+      setStatus("PROMPTPAY ERROR");
+
+      TX_LOCK=false;
+
+    }
+
+  };
+
+})();
