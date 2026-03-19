@@ -2,10 +2,8 @@
 <!-- PROJECT: SN DESIGN STUDIO                            -->
 <!-- FILE: activate-premium.html                          -->
 <!-- MODULE: PREMIUM LICENSE ACTIVATION PAGE              -->
-<!-- VERSION: 1.1.0                                       -->
-<!-- STATUS: ACTIVE                                       -->
-<!-- SYSTEM: ACTIVATE CLIENT ENGINE                       -->
-<!-- LAST FIX: ADD HWID FIELD (ADD ONLY)                  -->
+<!-- VERSION: 2.0.0                                       -->
+<!-- STATUS: PAYMENT READY                                -->
 <!-- ===================================================== -->
 
 <!DOCTYPE html>
@@ -27,8 +25,10 @@
 <div class="activate-container">
 
 <h1>SN DESIGN STUDIO</h1>
-
 <h2>PREMIUM PACKAGE ACTIVATION</h2>
+
+<!-- 🔥 USER DISPLAY -->
+<div id="user-info" style="margin-bottom:10px;color:#00ffcc;"></div>
 
 <div class="activate-box">
 
@@ -49,8 +49,6 @@ Activate
 <div class="generate-box">
 
 <h3>Generate Key</h3>
-
-<!-- ADD ONLY : HWID FIELD -->
 
 <label>Device ID</label>
 
@@ -77,10 +75,126 @@ Copy Key
 
 </div>
 
+<!-- ===================================================== -->
+<!-- 🔥 PAYMENT SECTION (ADD ONLY) -->
+<!-- ===================================================== -->
+
+<div class="generate-box" style="margin-top:30px;">
+
+<h3>💎 PREMIUM PAYMENT (299฿)</h3>
+
+<p>
+[TH] คัดลอกลิงก์ไปเปิดใน Google Chrome แล้วชำระเงิน<br>
+[EN] Copy link and open in browser to pay
+</p>
+
+<input
+type="text"
+id="payment-link"
+readonly
+style="width:100%;margin-bottom:10px;"
+/>
+
+<button onclick="generatePaymentLink()">
+Generate Payment Link
+</button>
+
+<button onclick="copyPaymentLink()">
+Copy Payment Link
+</button>
+
+</div>
+
 </div>
 
 <script src="/activate.js"></script>
 <script src="/activate-client.js"></script>
+
+<!-- ===================================================== -->
+<!-- 🔥 CORE SCRIPT -->
+<!-- ===================================================== -->
+
+<script>
+
+// =============================
+// GET PARAMS
+// =============================
+const params = new URLSearchParams(window.location.search)
+
+const user = params.get("user")
+const hwid_param = params.get("hwid")
+
+// set hwid
+if (hwid_param) {
+    document.getElementById("hwid").value = hwid_param
+}
+
+// show user
+if (user) {
+    document.getElementById("user-info").innerText = "User: " + user
+}
+
+// =============================
+// PAYMENT CONFIG
+// =============================
+const AMOUNT = 299
+
+// =============================
+// GENERATE PAYMENT LINK
+// =============================
+function generatePaymentLink() {
+
+    if (!user || !hwid_param) {
+        alert("Missing user or hwid")
+        return
+    }
+
+    const api = "https://vagally-transequatorial-frederic.ngrok-free.dev/payment/payment"
+
+    const payload = {
+        order_id: "PREMIUM_" + Date.now(),
+        amount: AMOUNT
+    }
+
+    fetch(api, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const paymentUrl = data.payment_url || "NO_URL_RETURNED"
+
+        document.getElementById("payment-link").value = paymentUrl
+
+    })
+    .catch(() => {
+        alert("Payment API Error")
+    })
+}
+
+// =============================
+// COPY
+// =============================
+function copyPaymentLink() {
+
+    const input = document.getElementById("payment-link")
+
+    if (!input.value) {
+        alert("No link")
+        return
+    }
+
+    input.select()
+    document.execCommand("copy")
+
+    alert("Copied!")
+}
+
+</script>
 
 </body>
 </html>
