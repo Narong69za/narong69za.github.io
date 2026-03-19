@@ -84,3 +84,59 @@ navigator.clipboard.writeText(key.value);
 alert("คัดลอก Key แล้ว");
 
 }
+/* =====================================================
+QR AUTO GENERATE ENGINE (ADD ONLY)
+===================================================== */
+
+function getQueryParams() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    user: params.get("user"),
+    hwid: params.get("hwid"),
+    amount: params.get("amount")
+  };
+}
+
+async function generateQR() {
+
+  const { user, hwid, amount } = getQueryParams();
+
+  if (!amount) {
+    console.warn("No amount found");
+    return;
+  }
+
+  try {
+
+    const res = await fetch("/qr/payment/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        order_id: user + "_" + Date.now(),
+        amount: parseInt(amount)
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.qrImage) {
+
+      document.getElementById("qr-container").innerHTML =
+        `<img src="${data.qrImage}" width="240">`;
+
+    } else {
+      document.getElementById("qr-container").innerHTML =
+        `<p>QR GENERATE FAILED</p>`;
+    }
+
+  } catch (err) {
+    console.error("QR ERROR", err);
+  }
+
+}
+
+window.addEventListener("load", () => {
+  generateQR();
+});
