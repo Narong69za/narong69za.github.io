@@ -2,43 +2,96 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE : API ACTIVATE
- * VERSION: 1.2.0
- * STATUS : ACTIVE
- * PURPOSE: Activation Key API (Device bound, real DB)
- * LAST FIX: HWID API binding
+ * VERSION: 2.0.0 (PRODUCTION FIXED)
  * =====================================================
  */
 
 import express from "express";
 const router = express.Router();
-import db from "../db/db.js"; // DB connection module
+import db from "../db/db.js";
 
+// =============================================
 // POST /api/activate
+// =============================================
 router.post("/activate", async (req, res) => {
+
   try {
+
     const { key, device_id } = req.body;
 
-    if (!key) return res.json({ status: "error", message: "KEY_REQUIRED" });
+    // =============================
+    // VALIDATE INPUT
+    // =============================
+    if (!key) {
+      return res.json({ status: "error", message: "KEY_REQUIRED" });
+    }
 
-    const result = await db.query("SELECT * FROM licenses WHERE license_key=?", [key]);
+    if (!device_id) {
+      return res.json({ status: "error", message: "DEVICE_REQUIRED" });
+    }
 
-    if (!result.length) return res.json({ status: "invalid_key" });
+    // =============================
+    // FIND LICENSE
+    // =============================
+    const [rows] = await db.query(
+      "SELECT * FROM licenses WHERE license_key=? LIMIT 1",
+      [key]
+    );
 
-    const license = result[0];
+    if (!rows.length) {
+      return res.json({ status: "invalid_key" });
+    }
+
+    const license = rows[0];
+
+    // =============================
+    // EXPIRE CHECK
+    // =============================
     const now = Date.now();
     const expire = new Date(license.expire_date).getTime();
 
-    if (expire < now) return res.json({ status: "expired" });
-    if (license.device_id && license.device_id !== device_id) return res.json({ status: "device_locked" });
+    if (expire < now) {
+      return res.json({ status: "expired" });
+    }
 
-    if (!license.device_id) await db.query("UPDATE licenses SET device_id=? WHERE license_key=?", [device_id, key]);
+    // =============================
+    // DEVICE LOCK CHECK
+    // =============================
+    if (license.device_id && license.device_id !== device_id) {
+      return res.json({ status: "device_locked" });
+    }
 
-    return res.json({ status: "ok", plan: license.package, expire: license.expire_date });
+    // =============================
+    // BIND DEVICE (FIRST TIME)
+    // =============================
+    if (!license.device_id) {
+
+      await db.query(
+        "UPDATE licenses SET device_id=? WHERE license_key=?",
+        [device_id, key]
+      );
+
+    }
+
+    // =============================
+    // SUCCESS
+    // =============================
+    return res.json({
+      status: "ok",
+      plan: license.package,
+      expire: license.expire_date
+    });
 
   } catch (err) {
+
     console.error("ACTIVATE ERROR:", err);
-    res.json({ status: "server_error" });
+
+    return res.status(500).json({
+      status: "server_error"
+    });
+
   }
+
 });
 
 export default router;
