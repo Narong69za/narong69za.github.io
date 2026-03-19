@@ -1,23 +1,18 @@
 <!-- ===================================================== -->
 <!-- PROJECT: SN DESIGN STUDIO                            -->
 <!-- FILE: activate-pro.html                              -->
-<!-- MODULE: PRO LICENSE ACTIVATION PAGE                  -->
-<!-- VERSION: 2.0.0                                       -->
-<!-- STATUS: PAYMENT READY                                -->
+<!-- VERSION: FINAL CLEAN (QR + PAYMENT FIXED)            -->
 <!-- ===================================================== -->
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>SN DESIGN STUDIO | PRO ACTIVATE</title>
 
 <link rel="stylesheet" href="/activate.css">
-
 </head>
 
 <body>
@@ -27,170 +22,87 @@
 <h1>SN DESIGN STUDIO</h1>
 <h2>PRO PACKAGE ACTIVATION</h2>
 
-<!-- 🔥 USER DISPLAY -->
+<!-- USER -->
 <div id="user-info" style="margin-bottom:10px;color:#00ffcc;"></div>
 
+<!-- ========================= -->
+<!-- HWID + KEY -->
+<!-- ========================= -->
 <div class="generate-box">
 
 <h3>Generate Key</h3>
 
 <label>Device ID</label>
+<input type="text" id="hwid" readonly placeholder="DEVICE ID"/>
 
-<input
-type="text"
-id="hwid"
-readonly
-placeholder="DEVICE ID"
-/>
+<input type="text" id="generated-key" readonly/>
 
-<input
-type="text"
-id="generated-key"
-readonly
-/>
-
-<button onclick="generatePRO()">
-Generate PRO Key
-</button>
-
-<button onclick="copyKey()">
-Copy Key
-</button>
+<button onclick="generatePRO()">Generate PRO Key</button>
+<button onclick="copyKey()">Copy Key</button>
 
 </div>
 
-<!-- 🔥 ADD ตรงนี้ -->
+<!-- ========================= -->
+<!-- QR PAYMENT -->
+<!-- ========================= -->
 <div class="qr-box">
 
-  <h3>Payment QR</h3>
+<h3>Payment QR</h3>
 
-  <div id="qr-container">
-    <p>กำลังสร้าง QR...</p>
-  </div>
+<div id="qr-container">
+<p>กำลังสร้าง QR...</p>
+</div>
 
 </div>
 
-<!-- ===================================================== -->
-<!-- 🔥 PAYMENT SECTION (ADD ONLY) -->
-<!-- ===================================================== -->
-
+<!-- ========================= -->
+<!-- LINK PAYMENT -->
+<!-- ========================= -->
 <div class="generate-box" style="margin-top:30px;">
 
 <h3>💳 PRO PAYMENT (99฿)</h3>
 
 <p>
-[TH] คัดลอกลิงก์ไปเปิดใน Google Chrome แล้วชำระเงิน<br>
-[EN] Copy link and open in browser to pay
+[TH] คัดลอกลิงก์ไปเปิดใน Chrome<br>
+[EN] Copy link and open in browser
 </p>
 
-<input
-type="text"
-id="payment-link"
-readonly
-style="width:100%;margin-bottom:10px;"
-/>
+<input type="text" id="payment-link" readonly style="width:100%;margin-bottom:10px;"/>
 
-<button onclick="generatePaymentLink()">
-Generate Payment Link
-</button>
-
-<button onclick="copyPaymentLink()">
-Copy Payment Link
-</button>
+<button onclick="generatePaymentLink()">Generate Payment Link</button>
+<button onclick="copyPaymentLink()">Copy Payment Link</button>
 
 </div>
 
 </div>
 
-<script src="/activate.js"></script>
-
-<!-- ===================================================== -->
-<!-- 🔥 CORE SCRIPT -->
-<!-- ===================================================== -->
-
+<!-- ========================= -->
+<!-- CORE SCRIPT -->
+<!-- ========================= -->
 <script>
 
 // =============================
-// GET PARAMS
+// CONFIG (สำคัญ)
 // =============================
-const params = new URLSearchParams(window.location.search)
-
-const user = params.get("user")
-const hwid_param = params.get("hwid")
-
-// set hwid
-if (hwid_param) {
-    document.getElementById("hwid").value = hwid_param
-}
-
-// show user
-if (user) {
-    document.getElementById("user-info").innerText = "User: " + user
-}
+const API_QR = "https://vagally-transequatorial-frederic.ngrok-free.dev/qr/payment/create";
+const API_PAYMENT = "https://vagally-transequatorial-frederic.ngrok-free.dev/payment/payment";
 
 // =============================
-// PAYMENT CONFIG
+// PARAMS
 // =============================
-const AMOUNT = 99
+const params = new URLSearchParams(window.location.search);
+const user = params.get("user") || "guest";
+const hwid = params.get("hwid") || "unknown";
 
-// =============================
-// GENERATE PAYMENT LINK
-// =============================
-function generatePaymentLink() {
-
-    if (!user || !hwid_param) {
-        alert("Missing user or hwid")
-        return
-    }
-
-    // 🔥 ใช้ endpoint จริงของคุณ
-    const api = "https://vagally-transequatorial-frederic.ngrok-free.dev/payment/payment"
-
-    const payload = {
-        order_id: "PRO_" + Date.now(),
-        amount: AMOUNT
-    }
-
-    fetch(api, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-    })
-    .then(res => res.json())
-    .then(data => {
-
-        // 🔥 คุณต้องแก้ backend ให้ return payment_url
-        const paymentUrl = data.payment_url || "NO_URL_RETURNED"
-
-        document.getElementById("payment-link").value = paymentUrl
-
-    })
-    .catch(() => {
-        alert("Payment API Error")
-    })
-}
+// set UI
+document.getElementById("hwid").value = hwid;
+document.getElementById("user-info").innerText = "User: " + user;
 
 // =============================
-// COPY
+// QR GENERATE (🔥 ตัวหลัก)
 // =============================
-function copyPaymentLink() {
+async function generateQR(){
 
-    const input = document.getElementById("payment-link")
+  const box = document.getElementById("qr-container");
 
-    if (!input.value) {
-        alert("No link")
-        return
-    }
-
-    input.select()
-    document.execCommand("copy")
-
-    alert("Copied!")
-}
-
-</script>
-
-</body>
-</html>
+  box.innerHTML
