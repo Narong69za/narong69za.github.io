@@ -22,55 +22,31 @@
 <h1>SN DESIGN STUDIO</h1>
 <h2>PREMIUM PACKAGE ACTIVATION</h2>
 
-<!-- USER -->
-<div id="user-info" style="margin-bottom:10px;color:#00ffcc;"></div>
+<div id="user-info"></div>
 
-<!-- ========================= -->
-<!-- ACTIVATION -->
-<!-- ========================= -->
 <div class="activate-box">
-
-<h3>Activation</h3>
-
-<label>Activation Key</label>
-<input type="text" id="activate-key" placeholder="SN-PREMIUM-XXXXX"/>
-
-<button onclick="activateKey()">Activate</button>
-
-<div id="activate-status">READY</div>
-
+  <input type="text" id="activate-key" placeholder="SN-PREMIUM-XXXXX">
+  <button onclick="activateKey()">Activate</button>
 </div>
 
-<!-- ========================= -->
-<!-- HWID + KEY -->
-<!-- ========================= -->
 <div class="generate-box">
+  <input type="text" id="hwid" readonly>
+  <input type="text" id="generated-key" readonly>
 
-<h3>Generate Key</h3>
-
-<label>Device ID</label>
-<input type="text" id="hwid" readonly/>
-
-<label>Generated Key</label>
-<input type="text" id="generated-key" readonly/>
-
-<button onclick="generatePREMIUM()">Generate PREMIUM Key</button>
-<button onclick="copyKey()">Copy Key</button>
-
+  <button onclick="generatePREMIUM()">Generate Key</button>
+  <button onclick="copyKey()">Copy Key</button>
 </div>
 
-<!-- ========================= -->
-<!-- QR -->
-<!-- ========================= -->
 <div class="qr-box">
-
-<h3>Payment QR</h3>
-
-<div id="qr-container">
-<p>กำลังโหลด QR...</p>
+  <h3>Payment QR</h3>
+  <div id="qr-container">
+    <p>กำลังสร้าง QR...</p>
+  </div>
 </div>
 
 </div>
+
+<script src="/activate.js"></script>
 
 <!-- ========================= -->
 <!-- PAYMENT LINK -->
