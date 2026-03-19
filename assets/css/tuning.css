@@ -1,183 +1,42 @@
 :root { 
-    --primary: #38bdf8; 
-    --bg: #020617; 
-    --card: #0f172a; 
-    --border: #334155;
-    --text: #f8fafc; 
-    --danger: #ef4444;
-    --success: #4ade80;
+    --primary: #38bdf8; --bg: #020617; --card: #0f172a; 
+    --text: #f8fafc; --success: #4ade80; --border: #334155;
 }
 
-/* พื้นฐานและโครงสร้างหลัก */
 body { 
     background: var(--bg); 
     color: var(--text); 
-    font-family: 'Inter', -apple-system, sans-serif; 
+    font-family: 'Segoe UI', Tahoma, sans-serif; 
     margin: 0; 
-    height: 100vh;
-    overflow: hidden; 
-}
-
-.tuning-container { 
-    display: flex; 
-    flex-direction: column; 
     height: 100vh; 
-}
-
-/* แถบเมนูด้านบน */
-.top-nav { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center;
-    padding: 10px 20px; 
-    background: var(--card); 
-    border-bottom: 1px solid var(--border); 
-}
-
-.logo { font-weight: bold; letter-spacing: 1px; }
-.logo span { color: var(--primary); }
-
-.status-tag { 
-    background: var(--danger); 
-    padding: 4px 12px; 
-    border-radius: 4px; 
-    font-size: 0.75rem; 
-    font-weight: bold;
-}
-
-/* พื้นที่ Dashboard */
-.dashboard { 
-    display: flex; 
-    flex: 1; 
-    padding: 10px; 
-    gap: 10px; 
     overflow: hidden;
+    /* ใช้รูปภาพที่สกัดได้เป็น BG */
+    background-image: linear-gradient(rgba(2, 6, 23, 0.9), rgba(2, 6, 23, 0.9)), url('../img/00000524.png');
+    background-size: cover;
 }
 
-/* ส่วนของตารางจูน */
-.table-area { 
-    flex: 2; 
-    background: var(--card); 
-    padding: 15px; 
-    border-radius: 8px; 
-    border: 1px solid var(--border);
-    display: flex;
-    flex-direction: column;
+/* ปรับแต่งปุ่มและ Select */
+#file-selector, .btn-tool, .btn-save {
+    background: #1e293b; color: white; border: 1px solid var(--border);
+    padding: 5px 10px; border-radius: 4px; cursor: pointer;
 }
+.btn-save { border-color: var(--success); color: var(--success); }
 
-.header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
+.tuning-container { display: flex; flex-direction: column; height: 100vh; }
+.top-nav { display: flex; justify-content: space-between; padding: 10px 20px; background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid var(--border); }
+.status-tag { background: var(--success); color: #000; padding: 2px 10px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; }
 
-.header-row h2 { margin: 0; font-size: 1.1rem; color: var(--primary); }
+.dashboard { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; }
+.table-area { flex: 3; background: rgba(15, 23, 42, 0.9); padding: 15px; border-radius: 10px; border: 1px solid var(--border); display: flex; flex-direction: column; }
 
-.table-responsive { 
-    flex: 1;
-    overflow: auto; 
-    background: #000;
-    border-radius: 4px;
-}
+/* ตารางจูนแบบ Heatmap */
+table { width: 100%; border-collapse: collapse; font-size: 0.75rem; text-align: center; }
+th { background: #1e293b; padding: 8px; border: 1px solid var(--border); position: sticky; top: 0; }
+td { border: 1px solid var(--border); padding: 10px 5px; cursor: crosshair; transition: 0.2s; }
+td:hover { transform: scale(1.1); filter: brightness(1.5); z-index: 5; }
+td.selected { outline: 2px solid white; box-shadow: 0 0 10px var(--primary); }
 
-/* ปรับแต่งตาราง 16x16 */
-table { 
-    width: 100%; 
-    border-collapse: collapse; 
-    font-size: 0.75rem; 
-    color: #cbd5e1;
-}
-
-th {
-    background: #1e293b;
-    padding: 5px;
-    border: 1px solid var(--border);
-    position: sticky;
-    top: 0;
-}
-
-td { 
-    border: 1px solid var(--border); 
-    padding: 10px 5px; 
-    text-align: center; 
-    cursor: pointer; 
-    min-width: 45px;
-    transition: all 0.1s;
-}
-
-td:hover {
-    background: rgba(56, 189, 248, 0.2);
-    transform: scale(1.05);
-    z-index: 10;
-}
-
-td.selected { 
-    background: var(--primary) !important; 
-    color: #000; 
-    font-weight: bold;
-}
-
-/* แผง Monitor ด้านขวา */
-.monitor-panel { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    gap: 10px; 
-}
-
-.gauge-box {
-    background: var(--card);
-    padding: 15px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    text-align: center;
-}
-
-.gauge-box label {
-    font-size: 0.7rem;
-    color: #94a3b8;
-    text-transform: uppercase;
-}
-
-.big-value { 
-    font-size: 3.5rem; 
-    color: var(--primary); 
-    font-weight: bold; 
-    text-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
-}
-
-/* Terminal Log */
-.terminal { 
-    background: #000; 
-    flex: 1; 
-    padding: 12px; 
-    font-family: 'Consolas', 'Monaco', monospace; 
-    color: var(--success); 
-    font-size: 0.7rem; 
-    overflow-y: auto; 
-    border: 1px solid var(--border);
-    border-radius: 4px;
-}
-
-.terminal div { margin-bottom: 4px; border-left: 2px solid var(--success); padding-left: 8px; }
-
-/* ปุ่มกด */
-button {
-    background: #1e293b;
-    color: white;
-    border: 1px solid var(--border);
-    padding: 6px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.8rem;
-}
-
-button:hover { background: var(--primary); color: #000; }
-
-/* รองรับมือถือ */
-@media (max-width: 900px) { 
-    .dashboard { flex-direction: column; overflow-y: auto; } 
-    .monitor-panel { flex: none; height: auto; }
-    .big-value { font-size: 2.5rem; }
-  }
+.monitor-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+.gauge-box { background: var(--card); padding: 20px; border-radius: 10px; border: 1px solid var(--border); text-align: center; }
+.big-value { font-size: 3.5rem; color: var(--primary); font-weight: bold; text-shadow: 0 0 15px rgba(56,189,248,0.5); }
+.terminal { background: #000; flex: 1; padding: 10px; font-family: monospace; color: var(--success); font-size: 0.7rem; overflow-y: auto; border-radius: 5px; }
