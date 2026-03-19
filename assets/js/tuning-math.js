@@ -2,34 +2,53 @@ const ROWS = 16;
 const COLS = 16;
 let mapData = [];
 
-// 1. สร้างตารางเริ่มต้น
-function initMap() {
-    // สร้างข้อมูลจำลอง (หรือดึงจากไฟล์)
-    mapData = Array.from({ length: ROWS }, () => 
-        Array.from({ length: COLS }, () => Math.floor(Math.random() * 100) + 100)
-    );
-    renderTable();
-    addLog("System: Map Initialized. Ready for tuning.");
+// ฟังก์ชันดึงค่าจากไฟล์จริงที่สกัดมาได้
+async function loadTuningFile(fileSuffix) {
+    if(!fileSuffix) return;
+    const fileName = `f_0000${fileSuffix}`;
+    const filePath = `Core/Data/${fileName}`;
+    
+    addLog(`System: Requesting binary data from ${fileName}...`);
+    
+    try {
+        const response = await fetch(filePath);
+        if (!response.ok) throw new Error("File not found");
+        
+        const buffer = await response.arrayBuffer();
+        const rawData = new Uint8Array(buffer);
+        
+        // นำข้อมูล 256 bytes แรก (16x16) มาใส่ตาราง
+        mapData = [];
+        for (let i = 0; i < ROWS; i++) {
+            let row = [];
+            for (let j = 0; j < COLS; j++) {
+                // อ่านค่าทีละ Byte จากไฟล์ Binary
+                row.push(rawData[i * COLS + j] || 0);
+            }
+            mapData.push(row);
+        }
+        
+        renderTable();
+        addLog(`Success: Loaded 256 bytes from ${fileName}`);
+        document.getElementById('connection-status').style.background = "#4ade80";
+        document.getElementById('connection-status').innerText = "CONNECTED";
+        
+    } catch (err) {
+        addLog(`Error: Cannot load ${fileName}. Make sure the file exists in Core/Data/`);
+    }
 }
 
-// 2. แสดงผลตารางลงใน ID "tuning-map"
 function renderTable() {
     const table = document.getElementById('tuning-map');
-    if (!table) return;
-
-    let html = '';
-    // สร้าง Header Column (RPM/Load)
-    html += '<thead><tr><th>Load \\ RPM</th>';
-    for (let c = 0; c < COLS; c++) html += `<th>\${(c + 1) * 500}</th>`;
+    let html = '<thead><tr><th>RPM</th>';
+    for (let c = 0; c < COLS; c++) html += `<th>${(c+1)*500}</th>`;
     html += '</tr></thead><tbody>';
 
     for (let i = 0; i < ROWS; i++) {
-        html += '<tr>';
-        html += `<td class="axis-label">\${(i + 1) * 10} kPa</td>`; // Label แถว
+        html += `<tr><td style="background:#1e293b; font-weight:bold;">${(i+1)*10}</td>`;
         for (let j = 0; j < COLS; j++) {
             const val = mapData[i][j];
-            const color = getColor(val);
-            html += `<td style="background-color: \${color};" contenteditable="true" onblur="updateValue(\${i},\${j},this.innerText)">\${val}</td>`;
+            html += `<td style="background-color: ${getColor(val)};" onclick="this.classList.toggle('selected')">${val}</td>`;
         }
         html += '</tr>';
     }
@@ -37,32 +56,36 @@ function renderTable() {
     table.innerHTML = html;
 }
 
-// 3. ฟังก์ชันปรับค่า +5% / -5% (ที่ปุ่มใน HTML เรียกใช้)
-function adjustValue(multiplier) {
-    for (let i = 0; i < ROWS; i++) {
-        for (let j = 0; j < COLS; j++) {
-            mapData[i][j] = Math.round(mapData[i][j] * multiplier);
-        }
-    }
-    renderTable();
-    addLog(`Adjusted Map by \${(multiplier > 1 ? '+5%' : '-5%')}`);
+function getColor(val) {
+    // คำนวณสีแบบ Heatmap (0=น้ำเงิน, 255=แดง)
+    const ratio = val / 255;
+    const hue = (1 - ratio) * 240; 
+    return `hsla(${hue}, 70%, 50%, 0.4)`;
 }
 
-// 4. ระบบ Log
 function addLog(msg) {
     const log = document.getElementById('log-content');
-    if (log) {
-        const time = new Date().toLocaleTimeString();
-        log.innerHTML += `<div>[\${time}] \${msg}</div>`;
-        log.scrollTop = log.scrollHeight;
+    log.innerHTML += `<div>> ${msg}</div>`;
+    log.scrollTop = log.scrollHeight;
+}
+
+function adjustValue(multiplier) {
+    const selected = document.querySelectorAll('td.selected');
+    if(selected.length === 0) {
+        addLog("Alert: Please select cells first!");
+        return;
     }
+    selected.forEach(td => {
+        let current = parseInt(td.innerText);
+        td.innerText = Math.round(current * multiplier);
+        td.style.backgroundColor = getColor(parseInt(td.innerText));
+    });
+    addLog(`Modified ${selected.length} values.`);
 }
 
-// ฟังก์ชันคำนวณสี (ให้เหมือนโปรแกรมจูน)
-function getColor(val) {
-    const hue = (1 - (val - 100) / 150) * 240; // สีน้ำเงินไปแดง
-    return `hsla(\${hue}, 70%, 50%, 0.3)`;
-}
-
-window.onload = initMap;
-        
+// เริ่มต้นด้วยตารางเปล่า
+window.onload = () => {
+    mapData = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
+    renderTable();
+    addLog("SN DESIGN TUNING: Initialized.");
+};
