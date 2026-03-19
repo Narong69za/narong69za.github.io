@@ -3,49 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN DESIGN TUNING - Dashboard</title>
-    <link rel="stylesheet" href="assets/css/tuning.css">
-    
+    <title>SN DESIGN TUNING | System</title>
+    <link rel="stylesheet" href="Assets/css/tuning.css">
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>SN DESIGN TUNING</h1>
-            <p>Car Tuning & Performance System</p>
-        </header>
+    <div class="tuning-container">
+        <nav class="top-nav">
+            <div class="logo">SN DESIGN <span>TUNING</span></div>
+            <div id="connection-status" class="status-tag">DISCONNECTED</div>
+        </nav>
 
-        <main>
-            <section class="status-panel">
-                <div class="card">
-                    <h3>สถานะการเชื่อมต่อ</h3>
-                    <div id="connection-status" class="status online">พร้อมใช้งาน</div>
+        <main class="dashboard">
+            <section class="table-area">
+                <div class="header-row">
+                    <h2>Fuel Base Map (VE Table)</h2>
+                    <div class="actions">
+                        <button onclick="adjustValue(1.05)">+5%</button>
+                        <button onclick="adjustValue(0.95)">-5%</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tuning-map">
+                        </table>
                 </div>
             </section>
 
-            <section class="control-grid">
-                <div class="control-card">
-                    <h4>Engine Mapping</h4>
-                    <button class="btn">เปิดไฟล์จูน</button>
+            <aside class="monitor-panel">
+                <div class="gauge-box">
+                    <label>AFR Target</label>
+                    <div id="val-afr" class="big-value">14.7</div>
                 </div>
-                <div class="control-card">
-                    <h4>Data Log</h4>
-                    <button class="btn btn-outline">ดูบันทึกข้อมูล</button>
+                <div class="terminal">
+                    <div id="log-content"></div>
                 </div>
-            </section>
-
-            <section class="terminal-view">
-                <h4>System Output (Log)</h4>
-                <div id="log-display">
-                    [System] เริ่มต้นระบบ SN DESIGN...<br>
-                    [System] ค้นหา Config จาก CarTuningSetup...<br>
-                    [Ready] พร้อมสำหรับการสแกน
-                </div>
-            </section>
+            </aside>
         </main>
-
-        <footer>
-            <p>&copy; 2026 SN DESIGN TUNING Project</p>
-        </footer>
     </div>
+    <script src="Assets/js/tuning-math.js"></script>
 </body>
 </html>
