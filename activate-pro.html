@@ -30,23 +30,6 @@
 <!-- 🔥 USER DISPLAY -->
 <div id="user-info" style="margin-bottom:10px;color:#00ffcc;"></div>
 
-<div class="activate-box">
-
-<label>Activation Key</label>
-
-<input
-type="text"
-id="activate-key"
-placeholder="SN-PRO-XXXXX"
-/>
-
-<button onclick="activateKey()">
-Activate
-</button>
-
-</div>
-
-
 <div class="generate-box">
 
 <h3>Generate Key</h3>
@@ -73,6 +56,17 @@ Generate PRO Key
 <button onclick="copyKey()">
 Copy Key
 </button>
+
+</div>
+
+<!-- 🔥 ADD ตรงนี้ -->
+<div class="qr-box">
+
+  <h3>Payment QR</h3>
+
+  <div id="qr-container">
+    <p>กำลังสร้าง QR...</p>
+  </div>
 
 </div>
 
