@@ -46,32 +46,75 @@ Activate
 
 </div>
 
+<div class="activate-box">
+
+  <h3>Activation</h3>
+
+  <label>Activation Key</label>
+
+  <input
+    type="text"
+    id="activate-key"
+    placeholder="SN-PREMIUM-XXXXX"
+    autocomplete="off"
+  />
+
+  <button onclick="activateKey()">
+    Activate
+  </button>
+
+  <div id="activate-status" class="activate-info">
+    ระบบพร้อมใช้งาน
+  </div>
+
+</div>
+
+
 <div class="generate-box">
 
-<h3>Generate Key</h3>
+  <h3>Generate Key</h3>
 
-<label>Device ID</label>
+  <label>Device ID</label>
 
-<input
-type="text"
-id="hwid"
-readonly
-placeholder="DEVICE ID"
-/>
+  <input
+    type="text"
+    id="hwid"
+    readonly
+    placeholder="DEVICE ID"
+  />
 
-<input
-type="text"
-id="generated-key"
-readonly
-/>
+  <label>Generated Key</label>
 
-<button onclick="generatePREMIUM()">
-Generate PREMIUM Key
-</button>
+  <input
+    type="text"
+    id="generated-key"
+    readonly
+    placeholder="GENERATED KEY"
+  />
 
-<button onclick="copyKey()">
-Copy Key
-</button>
+  <div class="btn-group">
+
+    <button onclick="generatePREMIUM()">
+      Generate PREMIUM Key
+    </button>
+
+    <button onclick="copyKey()">
+      Copy Key
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- 🔥 PAYMENT QR BLOCK (สำคัญมาก) -->
+<div class="qr-box">
+
+  <h3>Payment QR</h3>
+
+  <div id="qr-container">
+    <p>กำลังสร้าง QR...</p>
+  </div>
 
 </div>
 
