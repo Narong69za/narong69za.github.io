@@ -28,32 +28,33 @@
 <!-- ========================= -->
 <!-- HWID + KEY -->
 <!-- ========================= -->
+<div class="activate-container">
+
+<h1>SN DESIGN STUDIO</h1>
+<h2>PRO PACKAGE ACTIVATION</h2>
+
+<div id="user-info"></div>
+
 <div class="generate-box">
+  <label>Device ID</label>
+  <input type="text" id="hwid" readonly>
 
-<h3>Generate Key</h3>
+  <input type="text" id="generated-key" readonly>
 
-<label>Device ID</label>
-<input type="text" id="hwid" readonly placeholder="DEVICE ID"/>
-
-<input type="text" id="generated-key" readonly/>
-
-<button onclick="generatePRO()">Generate PRO Key</button>
-<button onclick="copyKey()">Copy Key</button>
-
+  <button onclick="generatePRO()">Generate PRO Key</button>
+  <button onclick="copyKey()">Copy Key</button>
 </div>
 
-<!-- ========================= -->
-<!-- QR PAYMENT -->
-<!-- ========================= -->
 <div class="qr-box">
-
-<h3>Payment QR</h3>
-
-<div id="qr-container">
-<p>กำลังสร้าง QR...</p>
+  <h3>Payment QR</h3>
+  <div id="qr-container">
+    <p>กำลังสร้าง QR...</p>
+  </div>
 </div>
 
 </div>
+
+<script src="/activate.js"></script>
 
 <!-- ========================= -->
 <!-- LINK PAYMENT -->
