@@ -14,10 +14,9 @@
  * =====================================================
  */
 
-const API_ACTIVATE = "/api/activate";
-const API_QR = "/qr/payment/create";
-
-/* =============================
+const API_ACTIVATE = "https://vagally-transequatorial-frederic.ngrok-free.dev/api/activate";
+const API_QR = "https://vagally-transequatorial-frederic.ngrok-free.dev/qr/payment/create";
+/*============================
    GET PARAMS
 ============================= */
 function getParams() {
