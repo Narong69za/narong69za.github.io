@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN DESIGN TUNING - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>SN DESIGN TUNING</h1>
+            <p>Car Tuning & Performance System</p>
+        </header>
+
+        <main>
+            <section class="status-panel">
+                <div class="card">
+                    <h3>สถานะการเชื่อมต่อ</h3>
+                    <div id="connection-status" class="status online">พร้อมใช้งาน</div>
+                </div>
+            </section>
+
+            <section class="control-grid">
+                <div class="control-card">
+                    <h4>Engine Mapping</h4>
+                    <button class="btn">เปิดไฟล์จูน</button>
+                </div>
+                <div class="control-card">
+                    <h4>Data Log</h4>
+                    <button class="btn btn-outline">ดูบันทึกข้อมูล</button>
+                </div>
+            </section>
+
+            <section class="terminal-view">
+                <h4>System Output (Log)</h4>
+                <div id="log-display">
+                    [System] เริ่มต้นระบบ SN DESIGN...<br>
+                    [System] ค้นหา Config จาก CarTuningSetup...<br>
+                    [Ready] พร้อมสำหรับการสแกน
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&copy; 2026 SN DESIGN TUNING Project</p>
+        </footer>
+    </div>
+</body>
+</html>
