@@ -1,7 +1,7 @@
 <!-- ===================================================== -->
 <!-- PROJECT: SN DESIGN STUDIO                            -->
 <!-- FILE: activate-premium.html                          -->
-<!-- VERSION: FINAL CLEAN (QR + PAYMENT FIXED)            -->
+<!-- VERSION: FINAL PRODUCTION READY                      -->
 <!-- ===================================================== -->
 
 <!DOCTYPE html>
@@ -10,7 +10,6 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>SN DESIGN STUDIO | PREMIUM ACTIVATE</title>
 
 <link rel="stylesheet" href="/activate.css">
@@ -27,53 +26,33 @@
 <div id="user-info" style="margin-bottom:10px;color:#00ffcc;"></div>
 
 <!-- ========================= -->
-<!-- ACTIVATION (เหลืออันเดียว) -->
+<!-- ACTIVATION -->
 <!-- ========================= -->
 <div class="activate-box">
 
 <h3>Activation</h3>
 
 <label>Activation Key</label>
-
-<input
-  type="text"
-  id="activate-key"
-  placeholder="SN-PREMIUM-XXXXX"
-  autocomplete="off"
-/>
+<input type="text" id="activate-key" placeholder="SN-PREMIUM-XXXXX"/>
 
 <button onclick="activateKey()">Activate</button>
 
-<div id="activate-status" class="activate-info">
-  ระบบพร้อมใช้งาน
-</div>
+<div id="activate-status">READY</div>
 
 </div>
 
 <!-- ========================= -->
-<!-- GENERATE KEY -->
+<!-- HWID + KEY -->
 <!-- ========================= -->
 <div class="generate-box">
 
 <h3>Generate Key</h3>
 
 <label>Device ID</label>
-
-<input
-  type="text"
-  id="hwid"
-  readonly
-  placeholder="DEVICE ID"
-/>
+<input type="text" id="hwid" readonly/>
 
 <label>Generated Key</label>
-
-<input
-  type="text"
-  id="generated-key"
-  readonly
-  placeholder="GENERATED KEY"
-/>
+<input type="text" id="generated-key" readonly/>
 
 <button onclick="generatePREMIUM()">Generate PREMIUM Key</button>
 <button onclick="copyKey()">Copy Key</button>
@@ -81,74 +60,68 @@
 </div>
 
 <!-- ========================= -->
-<!-- QR PAYMENT -->
+<!-- QR -->
 <!-- ========================= -->
 <div class="qr-box">
 
 <h3>Payment QR</h3>
 
 <div id="qr-container">
-<p>กำลังสร้าง QR...</p>
+<p>กำลังโหลด QR...</p>
 </div>
 
 </div>
 
 <!-- ========================= -->
-<!-- LINK PAYMENT -->
+<!-- PAYMENT LINK -->
 <!-- ========================= -->
-<div class="generate-box" style="margin-top:30px;">
+<div class="generate-box">
 
 <h3>💎 PREMIUM PAYMENT (299฿)</h3>
 
-<p>
-[TH] คัดลอกลิงก์ไปเปิดใน Chrome<br>
-[EN] Copy link and open in browser
-</p>
+<input type="text" id="payment-link" readonly style="width:100%;margin-bottom:10px;"/>
 
-<input
-  type="text"
-  id="payment-link"
-  readonly
-  style="width:100%;margin-bottom:10px;"
-/>
-
-<button onclick="generatePaymentLink()">Generate Payment Link</button>
-<button onclick="copyPaymentLink()">Copy Payment Link</button>
+<button onclick="generatePaymentLink()">Generate Link</button>
+<button onclick="copyPaymentLink()">Copy Link</button>
 
 </div>
 
 </div>
 
 <!-- ========================= -->
-<!-- CORE SCRIPT -->
+<!-- SCRIPT -->
 <!-- ========================= -->
 <script>
 
 // =============================
-// CONFIG (สำคัญมาก)
+// CONFIG
 // =============================
 const API_QR = "https://vagally-transequatorial-frederic.ngrok-free.dev/qr/payment/create";
 const API_PAYMENT = "https://vagally-transequatorial-frederic.ngrok-free.dev/payment/payment";
 
 // =============================
-// PARAMS
+// INIT
 // =============================
-const params = new URLSearchParams(window.location.search);
-const user = params.get("user") || "guest";
-const hwid = params.get("hwid") || "unknown";
+document.addEventListener("DOMContentLoaded", () => {
 
-// set UI
-document.getElementById("hwid").value = hwid;
-document.getElementById("user-info").innerText = "User: " + user;
+  const params = new URLSearchParams(window.location.search);
+
+  const user = params.get("user") || "guest";
+  const hwid = params.get("hwid") || navigator.userAgent.slice(0,20);
+
+  document.getElementById("hwid").value = hwid;
+  document.getElementById("user-info").innerText = "User: " + user;
+
+  generateQR(user);
+
+});
 
 // =============================
-// QR GENERATE (🔥 ตัวสำคัญ)
+// QR ENGINE
 // =============================
-async function generateQR(){
+async function generateQR(user){
 
   const box = document.getElementById("qr-container");
-
-  box.innerHTML = "<p>กำลังสร้าง QR...</p>";
 
   try{
 
@@ -163,81 +136,4 @@ async function generateQR(){
       })
     });
 
-    const data = await res.json();
-
-    if(data.qr_image){
-
-      box.innerHTML = `<img src="${data.qr_image}" width="260">`;
-
-    }else{
-
-      box.innerHTML = "<p>QR ERROR</p>";
-
-    }
-
-  }catch(err){
-
-    console.error(err);
-    box.innerHTML = "<p>API ERROR</p>";
-
-  }
-}
-
-// =============================
-// PAYMENT LINK
-// =============================
-function generatePaymentLink(){
-
-  fetch(API_PAYMENT,{
-    method:"POST",
-    headers:{
-      "Content-Type":"application/json"
-    },
-    body:JSON.stringify({
-      order_id:"PREMIUM_"+Date.now(),
-      amount:299
-    })
-  })
-  .then(res=>res.json())
-  .then(data=>{
-
-    const link = data.payment_url || "NO_URL";
-    document.getElementById("payment-link").value = link;
-
-  })
-  .catch(()=>{
-    alert("Payment API Error");
-  });
-
-}
-
-// =============================
-// COPY
-// =============================
-function copyPaymentLink(){
-
-  const input = document.getElementById("payment-link");
-
-  if(!input.value){
-    alert("No link");
-    return;
-  }
-
-  input.select();
-  document.execCommand("copy");
-
-  alert("Copied!");
-}
-
-// =============================
-// START
-// =============================
-window.onload = generateQR;
-
-</script>
-
-<!-- 🔥 ใช้เฉพาะตัวนี้ (ถ้ามี activateKey / generatePREMIUM) -->
-<script src="/activate.js"></script>
-
-</body>
-</html>
+    const data = await res
