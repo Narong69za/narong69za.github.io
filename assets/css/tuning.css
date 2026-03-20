@@ -3,97 +3,100 @@
     --card-bg: rgba(10, 10, 20, 0.95);
     --neon-blue: #00d2ff;
     --neon-red: #ff003c;
-    --text-main: #e2e8f0;
+    --text-main: #f8fafc;
     --border-color: #1e293b;
 }
+
+* { box-sizing: border-box; touch-action: manipulation; }
 
 body {
     background: var(--bg-dark);
     color: var(--text-main);
-    font-family: 'Segoe UI', Roboto, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     margin: 0;
     height: 100vh;
     overflow: hidden;
-    /* พื้นหลังแบบตาราง Grid รถซิ่ง */
-    background-image: 
-        linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.8)),
-        radial-gradient(circle at center, #1e293b 1px, transparent 1px);
-    background-size: 100% 100%, 30px 30px;
+    background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('../img/00000524.png');
+    background-size: cover;
 }
 
 .tuning-container { display: flex; flex-direction: column; height: 100vh; }
 
 .top-nav {
     display: flex; justify-content: space-between; align-items: center;
-    padding: 15px 25px;
-    background: linear-gradient(90deg, #050505, #101020);
+    padding: 10px 20px;
+    background: #050505;
     border-bottom: 2px solid var(--neon-blue);
-    box-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
 }
 
-.logo { font-weight: 900; font-size: 1.4rem; font-style: italic; letter-spacing: 2px; }
-.logo span { color: var(--neon-red); text-shadow: 0 0 10px var(--neon-red); }
+.logo { font-weight: 900; letter-spacing: 1px; }
+.logo span { color: var(--neon-red); text-shadow: 0 0 8px var(--neon-red); }
 
-.dashboard { display: flex; flex: 1; padding: 15px; gap: 15px; overflow: hidden; }
+.status-tag { background: var(--neon-blue); color: #000; padding: 2px 10px; border-radius: 4px; font-weight: bold; font-size: 0.7rem; }
 
-/* พื้นที่ตารางจูน */
+/* จัดการ Layout แนวนอน */
+.dashboard {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: 10px;
+    gap: 10px;
+    overflow: hidden;
+}
+
+@media (orientation: landscape) {
+    .dashboard { flex-direction: row; }
+    .table-area { flex: 2.5; }
+    .monitor-panel { flex: 1; min-width: 250px; }
+    .big-value { font-size: 2.8rem; }
+}
+
 .table-area {
-    flex: 3; background: var(--card-bg);
-    border-radius: 12px; border: 1px solid var(--border-color);
-    padding: 15px; display: flex; flex-direction: column;
-    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 12px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
 }
+
+.header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.header-row h2 { margin: 0; font-size: 0.9rem; color: var(--neon-blue); }
 
 .table-responsive {
-    flex: 1; overflow: auto; border-radius: 8px;
-    background: #050505; border: 1px solid #334155;
+    flex: 1;
+    overflow: auto;
+    background: #000;
+    border: 1px solid var(--border-color);
 }
 
-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 800px; }
-
-/* หัวแถวและหัวคอลัมน์ */
-th { background: #0f172a; color: var(--neon-blue); padding: 12px; border: 1px solid #1e293b; }
+table { width: 100%; border-collapse: collapse; font-size: 0.75rem; min-width: 800px; }
+th { background: #111; color: var(--neon-blue); padding: 8px; border: 1px solid var(--border-color); position: sticky; top: 0; }
+td { border: 1px solid var(--border-color); padding: 10px 5px; text-align: center; cursor: pointer; }
 td:first-child { background: #1e1e2e; color: var(--neon-red); font-weight: bold; }
-
-/* ปรับแต่งช่องจูน (Cell) */
-td {
-    border: 1px solid #1e293b; padding: 12px 5px; cursor: pointer;
-    transition: all 0.1s ease;
-}
-
-td:hover { filter: brightness(1.5); transform: scale(1.05); z-index: 10; }
-
-/* เมื่อเลือกหลายช่อง */
-td.selected {
-    outline: 2px solid var(--neon-blue);
-    box-shadow: 0 0 15px var(--neon-blue);
-    position: relative; z-index: 5;
-}
-
-/* เกจ์วัดด้านข้าง */
-.monitor-panel { flex: 1; display: flex; flex-direction: column; gap: 15px; }
+td.selected { outline: 2px solid white; box-shadow: 0 0 10px var(--neon-blue); z-index: 5; }
 
 .gauge-box {
-    background: var(--card-bg); padding: 25px; border-radius: 12px;
-    border-left: 4px solid var(--neon-red); text-align: center;
+    background: var(--card-bg);
+    padding: 15px;
+    border-radius: 10px;
+    border-left: 4px solid var(--neon-red);
+    text-align: center;
+    margin-bottom: 10px;
 }
 
-.big-value {
-    font-size: 4rem; color: var(--neon-red); font-weight: 900;
-    text-shadow: 0 0 20px rgba(255, 0, 60, 0.4);
-    font-family: 'Courier New', monospace;
-}
-
-/* ปุ่มควบคุม */
-button {
-    background: #1a1a2e; color: white; border: 1px solid var(--neon-blue);
-    padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
-    text-transform: uppercase; transition: 0.3s;
-}
-
-button:hover { background: var(--neon-blue); color: black; box-shadow: 0 0 10px var(--neon-blue); }
+.big-value { font-size: 3.5rem; color: var(--neon-red); font-weight: 900; text-shadow: 0 0 15px rgba(255,0,60,0.4); }
 
 .terminal {
-    background: #000; flex: 1; padding: 12px; font-family: 'Consolas', monospace;
-    color: #4ade80; font-size: 0.75rem; border: 1px solid #1e293b;
+    background: #000;
+    flex: 1;
+    padding: 8px;
+    font-family: monospace;
+    color: #4ade80;
+    font-size: 0.65rem;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
 }
+
+#file-selector, button { background: #1a1a2e; color: #fff; border: 1px solid var(--neon-blue); padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; }
+            
