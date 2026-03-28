@@ -1,0 +1,98 @@
+<!-- =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: payment.html
+VERSION: v11.1.0
+STATUS: production-enterprise
+LAYER: payment-ui
+RESPONSIBILITY:
+- Enterprise AI SaaS Payment Engine UI
+- 5 Engine Grid System
+- CTA UI BOX LOCKED (no structural change)
+DEPENDS ON:
+- /assets/css/payment.css
+- /assets/js/payment.js
+LAST FIX:
+- add stripe engine
+- enterprise polling compatible
+===================================================== -->
+
+<!DOCTYPE html>
+<html lang="th">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SN DESIGN PAYMENT ENGINE</title>
+
+<link rel="stylesheet" href="/assets/css/payment.css">
+<script src="https://cdn.omise.co/omise.js"></script>
+
+</head>
+
+<body>
+
+<div class="payment-header">
+  <h1>SN DESIGN PAYMENT ENGINE</h1>
+  <p>Enterprise AI Payment Console</p>
+</div>
+
+<div class="payment-grid">
+
+  <div class="engine-card omise" data-method="omise">
+    <h2>💳 OMISE CARD ENGINE</h2>
+    <p>Visa / Master / JCB Secure Gateway</p>
+    <button class="engine-btn">ENTER CARD SYSTEM</button>
+  </div>
+
+  <div class="engine-card truemoney" data-method="truemoney">
+    <h2>🟠 TRUEMONEY WALLET</h2>
+    <p>Direct Wallet Integration</p>
+    <button class="engine-btn">CONNECT WALLET</button>
+  </div>
+
+  <div class="engine-card scb" data-method="promptpay">
+    <h2>🟣 SCB QR ENGINE</h2>
+    <p>Dynamic PromptPay QR</p>
+    <button class="engine-btn">GENERATE QR</button>
+  </div>
+
+  <div class="engine-card crypto" data-method="crypto">
+    <h2>🟡 CRYPTO PAYMENT CORE</h2>
+    <p>USDT / BNB / TON Gateway</p>
+    <button class="engine-btn">OPEN CRYPTO GATE</button>
+  </div>
+
+  <div class="engine-card stripe" data-method="stripe">
+    <h2>💠 STRIPE GLOBAL PAY</h2>
+    <p>Visa / Mastercard / Apple Pay</p>
+    <button class="engine-btn">OPEN STRIPE CHECKOUT</button>
+  </div>
+
+</div>
+
+<div id="paymentBox" class="payment-box"></div>
+
+<div id="paymentStatus" class="status">
+STATUS: IDLE
+</div>
+
+<script src="/assets/js/config.js"></script>
+<script src="/assets/js/payment.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded",()=>{
+
+  document.querySelectorAll(".engine-card").forEach(card=>{
+    card.addEventListener("click",()=>{
+      const method = card.dataset.method;
+      if(typeof setMethod === "function"){
+        setMethod(method);
+      }
+    });
+  });
+
+});
+</script>
+
+</body>
+</html>

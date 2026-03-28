@@ -1,0 +1,142 @@
+/* =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: payment.css
+VERSION: v11.1.0
+STATUS: production-enterprise
+LAST FIX:
+- stripe accent added
+- enterprise layout stabilization
+===================================================== */
+
+:root{
+  --bg-main: radial-gradient(circle at top,#1a0000,#000 60%);
+  --card-bg: linear-gradient(145deg,#0b0b0b,#111);
+  --border-soft: rgba(255,255,255,0.08);
+  --status-color:#00ffd5;
+}
+
+body{
+  margin:0;
+  padding:0;
+  font-family:"Segoe UI",sans-serif;
+  background:var(--bg-main);
+  color:#fff;
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+
+.payment-header{
+  text-align:center;
+  padding:60px 20px 30px;
+  width:100%;
+}
+
+.payment-header h1{
+  font-size:28px;
+  letter-spacing:3px;
+}
+
+.payment-header p{
+  opacity:.6;
+}
+
+.payment-grid{
+  width:100%;
+  max-width:1200px;
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:28px;
+  padding:20px;
+}
+
+.engine-card{
+  background:var(--card-bg);
+  border-radius:18px;
+  padding:28px;
+  text-align:center;
+  border:1px solid var(--border-soft);
+  transition:.3s;
+  cursor:pointer;
+}
+
+.engine-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 35px rgba(255,0,0,.35);
+}
+
+.engine-btn{
+  padding:18px 38px;
+  border-radius:50px;
+  border:none;
+  font-weight:700;
+  font-size:14px;
+  cursor:pointer;
+  transition:.25s;
+}
+
+.engine-btn:hover{
+  transform:scale(1.05);
+}
+
+.omise .engine-btn{
+  background:gold;
+  color:#000;
+}
+
+.truemoney .engine-btn{
+  background:#ff7a00;
+  color:#fff;
+}
+
+.scb .engine-btn{
+  background:#6a1b9a;
+  color:#fff;
+}
+
+.crypto .engine-btn{
+  background:#ffd600;
+  color:#000;
+}
+
+.stripe .engine-btn{
+  background:#635bff;
+  color:#fff;
+}
+
+.payment-box{
+  width:100%;
+  max-width:850px;
+  margin:30px auto;
+  padding:40px;
+  background:#0b0b0b;
+  border-radius:22px;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.status{
+  width:100%;
+  text-align:center;
+  margin:30px 0 80px;
+  font-weight:bold;
+  letter-spacing:2px;
+  color:var(--status-color);
+}
+
+.payment-box input,
+.payment-box select{
+  width:100%;
+  padding:14px;
+  margin-bottom:20px;
+  border-radius:12px;
+  border:1px solid rgba(255,255,255,.15);
+  background:#111;
+  color:#fff;
+}
+
+@media(max-width:900px){
+  .payment-grid{
+    grid-template-columns:1fr;
+  }
+}

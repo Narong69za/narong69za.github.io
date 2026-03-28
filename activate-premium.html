@@ -1,0 +1,185 @@
+<!-- ===================================================== -->
+<!-- PROJECT: SN DESIGN STUDIO                            -->
+<!-- FILE: activate-premium.html                          -->
+<!-- VERSION: FINAL PRODUCTION READY                      -->
+<!-- ===================================================== -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SN DESIGN STUDIO | PREMIUM ACTIVATE</title>
+
+<link rel="stylesheet" href="/activate.css">
+</head>
+
+<body>
+
+<div class="activate-container">
+
+<h1>SN DESIGN STUDIO</h1>
+<h2>PREMIUM PACKAGE ACTIVATION</h2>
+
+<div id="user-info"></div>
+
+<div class="activate-box">
+  <input type="text" id="activate-key" placeholder="SN-PREMIUM-XXXXX">
+  <button onclick="activateKey()">Activate</button>
+</div>
+
+<div class="generate-box">
+  <input type="text" id="hwid" readonly>
+  <input type="text" id="generated-key" readonly>
+
+  <button onclick="generatePREMIUM()">Generate Key</button>
+  <button onclick="copyKey()">Copy Key</button>
+</div>
+
+<div class="qr-box">
+  <h3>Payment QR</h3>
+  <div id="qr-container">
+    <p>กำลังสร้าง QR...</p>
+  </div>
+</div>
+
+<!-- PAYMENT LINK -->
+<div class="generate-box">
+<h3>💎 PREMIUM PAYMENT (299฿)</h3>
+
+<input type="text" id="payment-link" readonly style="width:100%;margin-bottom:10px;"/>
+
+<button onclick="generatePaymentLink()">Generate Link</button>
+<button onclick="copyPaymentLink()">Copy Link</button>
+</div>
+
+</div>
+
+<script>
+
+// =============================
+// CONFIG
+// =============================
+const API_BASE = "https://vagally-transequatorial-frederic.ngrok-free.dev";
+const API_ACTIVATE = API_BASE + "/api/activate";
+const API_QR = API_BASE + "/qr/payment/create";
+
+// =============================
+// INIT
+// =============================
+document.addEventListener("DOMContentLoaded", () => {
+
+  const params = new URLSearchParams(window.location.search);
+
+  const user = params.get("user") || "guest";
+  const hwid = params.get("hwid") || navigator.userAgent.slice(0,20);
+
+  document.getElementById("hwid").value = hwid;
+  document.getElementById("user-info").innerText = "User: " + user;
+
+  generateQR();
+
+});
+
+// =============================
+// QR ENGINE
+// =============================
+async function generateQR(){
+
+  const box = document.getElementById("qr-container");
+
+  try{
+
+    const res = await fetch(API_QR,{
+      method:"POST",
+      headers:{
+        "Content-Type":"application/json"
+      },
+      body:JSON.stringify({
+        order_id:"PREMIUM_"+Date.now(),
+        amount:299
+      })
+    });
+
+    const data = await res.json();
+
+    if(data.qr_image){
+
+      box.innerHTML = `
+        <img src="${data.qr_image}" width="260"/>
+        <p>สแกนเพื่อชำระเงิน</p>
+      `;
+
+    }else{
+      box.innerHTML = "<p>QR ไม่สำเร็จ</p>";
+    }
+
+  }catch(err){
+
+    console.error(err);
+    box.innerHTML = "<p>API ERROR</p>";
+
+  }
+
+}
+
+// =============================
+// ACTIVATE
+// =============================
+async function activateKey(){
+
+  const key = document.getElementById("activate-key").value;
+
+  if(!key) return alert("กรุณาใส่ Key");
+
+  try{
+
+    const res = await fetch(API_ACTIVATE,{
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body:JSON.stringify({
+        key:key,
+        device_id:document.getElementById("hwid").value
+      })
+    });
+
+    const data = await res.json();
+
+    if(data.status==="ok"){
+      alert("เปิดใช้งานสำเร็จ");
+      window.location.href="/create.html";
+    }else{
+      alert(data.status);
+    }
+
+  }catch(err){
+    alert("API ERROR");
+  }
+
+}
+
+// =============================
+// COPY
+// =============================
+function copyKey(){
+  const el = document.getElementById("generated-key");
+  navigator.clipboard.writeText(el.value);
+  alert("Copied");
+}
+
+function generatePaymentLink(){
+  const link = window.location.href;
+  document.getElementById("payment-link").value = link;
+}
+
+function copyPaymentLink(){
+  const el = document.getElementById("payment-link");
+  el.select();
+  document.execCommand("copy");
+  alert("Copied");
+}
+
+</script>
+
+</body>
+</html>

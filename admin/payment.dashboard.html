@@ -1,0 +1,393 @@
+<!-- =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: admin/payment.dashboard.html
+VERSION: v9.3.1
+STATUS: production-engine
+LAYER: admin-finance
+RESPONSIBILITY:
+- finance summary
+- credit policy
+- payment records
+- realtime analytics
+- owner admin control
+LAST FIX:
+- fixed API_BASE usage
+- restored system status rendering
+- fixed dashboard data loading
+===================================================== -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+body{
+background:#0b0b0f;
+color:#fff;
+font-family:Montserrat,sans-serif;
+margin:0;
+}
+
+header{
+padding:20px;
+font-size:22px;
+background:linear-gradient(90deg,#8b0000,#001f3f);
+font-weight:bold;
+}
+
+.dashboard{padding:20px;}
+
+.card-container{
+display:flex;
+gap:20px;
+flex-wrap:wrap;
+}
+
+.card{
+flex:1;
+min-width:220px;
+background:rgba(255,255,255,0.05);
+padding:20px;
+border-radius:12px;
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,0.1);
+}
+
+.card h3{
+margin:0 0 10px 0;
+font-size:14px;
+color:#aaa;
+}
+
+.card p{
+margin:0;
+font-size:22px;
+font-weight:bold;
+}
+
+.policy-box{
+margin-top:20px;
+background:rgba(255,255,255,0.04);
+padding:15px;
+border-radius:10px;
+border:1px solid rgba(255,255,255,0.08);
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+th,td{
+padding:10px;
+border-bottom:1px solid rgba(255,255,255,0.1);
+text-align:left;
+}
+
+button{
+background:#8b0000;
+color:#fff;
+padding:8px 14px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+}
+
+.status-bar{
+margin-top:10px;
+color:#00ffcc;
+font-size:13px;
+}
+
+canvas{
+margin-top:30px;
+}
+
+</style>
+</head>
+
+<body>
+
+<header>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</header>
+
+<div class="dashboard">
+
+<div class="status-bar" id="systemStatus">
+ENGINE STATUS: INITIALIZING...
+</div>
+
+<div class="card-container">
+
+<div class="card">
+<h3>Total Credit Sold</h3>
+<p id="sold">0</p>
+</div>
+
+<div class="card">
+<h3>Total Credit Used</h3>
+<p id="used">0</p>
+</div>
+
+<div class="card">
+<h3>Net Credit Balance</h3>
+<p id="balance">0</p>
+</div>
+
+<div class="card">
+<h3>Active Users</h3>
+<p id="users">0</p>
+</div>
+
+</div>
+
+<div class="policy-box">
+<h3>Credit Policy</h3>
+<div id="policy"></div>
+</div>
+
+<canvas id="revenueChart"></canvas>
+
+<button onclick="exportCSV()">Export CSV</button>
+
+<table id="paymentTable">
+
+<thead>
+<tr>
+<th>User</th>
+<th>Method</th>
+<th>Amount</th>
+<th>Currency</th>
+<th>Status</th>
+<th>Date</th>
+</tr>
+</thead>
+
+<tbody></tbody>
+
+</table>
+
+</div>
+
+<script>
+
+/* ================= API BASE ================= */
+
+const API_BASE = window.API_BASE || "";
+const API = API_BASE + "/api/admin";
+
+let chartInstance;
+
+
+/* ================= AUTH VALIDATION ================= */
+
+async function validateOwner(){
+
+try{
+
+const res = await fetch(API_BASE + "/auth/me",{credentials:"include"});
+
+if(res.status === 401){
+
+const redirect = encodeURIComponent("/admin/payment.dashboard.html");
+
+window.location.href = "/login.html?redirect=" + redirect;
+
+return false;
+
+}
+
+if(!res.ok) return false;
+
+const user = await res.json();
+
+if(user.role !== "owner"){
+
+window.location.href="/create.html";
+
+return false;
+
+}
+
+return true;
+
+}catch(err){
+
+console.error("AUTH ERROR",err);
+
+return false;
+
+}
+
+}
+
+
+/* ================= SAFE FETCH ================= */
+
+async function safeFetch(url){
+
+const res = await fetch(url,{credentials:"include"});
+
+if(!res.ok) throw new Error("API FAIL");
+
+return res.json();
+
+}
+
+
+/* ================= SUMMARY ================= */
+
+async function loadSummary(){
+
+const data = await safeFetch(API + "/finance-summary");
+
+document.getElementById("sold").innerText=data.totalCreditSold;
+document.getElementById("used").innerText=data.totalCreditUsed;
+document.getElementById("balance").innerText=data.netCreditBalance;
+document.getElementById("users").innerText=data.activeUsers;
+
+}
+
+
+/* ================= POLICY ================= */
+
+async function loadPolicy(){
+
+const data = await safeFetch(API + "/credit-policy");
+
+let html=`
+Base Rate: 1 THB = ${data.baseRate} credits<br>
+Min Topup: ${data.minTopup} THB<br>
+Binance Rate: 1 USD = ${data.binanceRate} THB<br><br>
+<b>Bonus Tiers:</b><br>
+`;
+
+data.bonusTiers.forEach(t=>{
+html+=`≥ ${t.min} THB → +${t.bonusPercent}% bonus<br>`;
+});
+
+document.getElementById("policy").innerHTML=html;
+
+}
+
+
+/* ================= TABLE ================= */
+
+async function loadTable(){
+
+const data = await safeFetch(API + "/finance-recent");
+
+const tbody = document.querySelector("#paymentTable tbody");
+
+tbody.innerHTML="";
+
+data.forEach(row=>{
+
+tbody.innerHTML+=`
+<tr>
+<td>${row.user_id}</td>
+<td>${row.method}</td>
+<td>${row.amount}</td>
+<td>${row.currency||"-"}</td>
+<td>${row.status}</td>
+<td>${row.created_at}</td>
+</tr>
+`;
+
+});
+
+}
+
+
+/* ================= CHART ================= */
+
+async function loadChart(){
+
+const data = await safeFetch(API + "/finance-daily");
+
+const ctx = document.getElementById("revenueChart");
+
+if(chartInstance) chartInstance.destroy();
+
+chartInstance = new Chart(ctx,{
+type:"line",
+data:{
+labels:data.map(d=>d.date),
+datasets:[{
+label:"Daily Credit Sale",
+data:data.map(d=>d.total),
+borderColor:"#ff0000",
+fill:false
+}]
+}
+});
+
+}
+
+
+/* ================= CSV ================= */
+
+function exportCSV(){
+
+let table = document.getElementById("paymentTable").outerHTML;
+
+let blob = new Blob([table],{type:"text/csv"});
+
+let a = document.createElement("a");
+
+a.href = URL.createObjectURL(blob);
+
+a.download = "payments.csv";
+
+a.click();
+
+}
+
+
+/* ================= INIT ================= */
+
+async function init(){
+
+document.getElementById("systemStatus").innerText="ENGINE STATUS: AUTH CHECK";
+
+const ok = await validateOwner();
+
+if(!ok) return;
+
+document.getElementById("systemStatus").innerText="ENGINE STATUS: LOADING DATA";
+
+try{
+
+await loadSummary();
+await loadPolicy();
+await loadTable();
+await loadChart();
+
+document.getElementById("systemStatus").innerText="ENGINE STATUS: LIVE (PRODUCTION)";
+
+}catch(err){
+
+console.error(err);
+
+document.getElementById("systemStatus").innerText="ENGINE STATUS: ERROR LOADING DATA";
+
+}
+
+}
+
+
+/* ================= REALTIME ================= */
+
+setInterval(init,15000);
+
+init();
+
+</script>
+
+</body>
+  </html>

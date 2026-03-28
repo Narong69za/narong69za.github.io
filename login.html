@@ -1,0 +1,94 @@
+<!-- ===================================================== -->
+<!-- SN DESIGN STUDIO -->
+<!-- FILE: login.html -->
+<!-- VERSION: V4.0 OAUTH COOKIE FLOW -->
+<!-- STATUS: PRODUCTION STABLE -->
+<!-- ===================================================== -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SN DESIGN LOGIN</title>
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  flex-direction:column;
+}
+h1{
+  letter-spacing:2px;
+  margin-bottom:30px;
+}
+button{
+  padding:14px 28px;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+  background:#fff;
+  color:#000;
+  border-radius:4px;
+  font-weight:bold;
+}
+button:hover{
+  opacity:.8;
+}
+.status{
+  margin-top:20px;
+  font-size:14px;
+  opacity:.7;
+}
+</style>
+</head>
+
+<body>
+
+<h1>SN DESIGN LOGIN</h1>
+
+<button onclick="loginWithGoogle()">
+  LOGIN WITH GOOGLE
+</button>
+
+<div class="status" id="status"></div>
+
+<script>
+
+// =====================================================
+// AUTO CHECK IF ALREADY LOGGED IN
+// =====================================================
+async function checkAuth(){
+  try{
+    const res = await fetch("https://sn-designstudio.dev/auth/me",{
+      credentials:"include",
+      cache:"no-store"
+    });
+
+    if(res.status === 200){
+      window.location.replace("/create.html");
+    }
+  }catch(e){
+    console.log("not logged in");
+  }
+}
+
+checkAuth();
+
+// =====================================================
+// REDIRECT TO BACKEND OAUTH
+// =====================================================
+function loginWithGoogle(){
+  window.location.href = "https://sn-design-api.onrender.com/auth/google";
+}
+
+</script>
+
+</body>
+</html>

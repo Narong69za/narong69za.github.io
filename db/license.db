@@ -1,0 +1,111 @@
+# =====================================================
+# PROJECT : SN DESIGN STUDIO
+# MODULE  : LICENSE DATABASE MODEL
+# VERSION : 1.0.0
+# STATUS  : ACTIVE
+# LAST FIX: INITIAL LICENSE TABLE
+# =====================================================
+
+import sqlite3
+from datetime import datetime
+
+DB_PATH="db/license.db"
+
+
+def connect():
+
+    return sqlite3.connect(DB_PATH)
+
+
+def create_tables():
+
+    conn=connect()
+    cur=conn.cursor()
+
+    cur.execute("""
+
+    CREATE TABLE IF NOT EXISTS licenses(
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    license_key TEXT UNIQUE,
+
+    package TEXT,
+
+    device_id TEXT,
+
+    start_date TEXT,
+
+    expire_date TEXT,
+
+    status TEXT,
+
+    created_at TEXT
+
+    )
+
+    """)
+
+    conn.commit()
+    conn.close()
+
+
+def create_license(key,package,expire):
+
+    conn=connect()
+    cur=conn.cursor()
+
+    cur.execute("""
+
+    INSERT INTO licenses(
+    license_key,
+    package,
+    start_date,
+    expire_date,
+    status,
+    created_at
+    )
+
+    VALUES(?,?,?,?,?,?)
+
+    """,(key,package,datetime.now().date(),expire,"active",datetime.now()))
+
+    conn.commit()
+    conn.close()
+
+
+def get_license(key):
+
+    conn=connect()
+    cur=conn.cursor()
+
+    cur.execute(
+
+    "SELECT * FROM licenses WHERE license_key=?",
+
+    (key,)
+
+    )
+
+    data=cur.fetchone()
+
+    conn.close()
+
+    return data
+
+
+def bind_device(key,device):
+
+    conn=connect()
+    cur=conn.cursor()
+
+    cur.execute(
+
+    "UPDATE licenses SET device_id=? WHERE license_key=?",
+
+    (device,key)
+
+    )
+
+    conn.commit()
+    conn.close()

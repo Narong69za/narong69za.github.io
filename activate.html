@@ -1,0 +1,169 @@
+<!--
+===================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: ACTIVATE PLATFORM
+VERSION: 2.2.0
+STATUS: PRODUCTION READY (USER + HWID ENABLED)
+=====================================================
+-->
+
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Official Website — SN DESIGN STUDIO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/assets/css/activate.css">
+
+</head>
+
+<body>
+
+<!-- HERO -->
+<section class="hero">
+
+<img src="/assets/images/activate-hero.webp" class="hero-bg">
+
+<div class="hero-content">
+<h1>SN DESIGN STUDIO</h1>
+<h2>BOT ACTIVATION PLATFORM</h2>
+<p>Bot Systems • Activation Control</p>
+
+<a href="#activate" class="start-btn">
+เริ่มเปิดใช้งานระบบ
+</a>
+</div>
+
+</section>
+
+<!-- ACTIVATE -->
+<section id="activate" class="activate-section">
+
+<div class="activate-box">
+
+<!-- LEFT -->
+<div class="activate-left">
+
+<h3>Activation Video</h3>
+
+<p>ดูวิดีโอเพื่อรับ Activation Key</p>
+
+<div class="video-wrapper">
+
+<iframe
+src="https://www.youtube.com/embed?listType=user_uploads&list=SnDesignStudio-Design"
+loading="lazy"
+allowfullscreen
+></iframe>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="activate-right">
+
+<h3>Enter Activation Key</h3>
+
+<p>กรอก Activation Key เพื่อเปิดใช้งาน</p>
+
+<!-- 🔥 แสดง USER -->
+<div id="user-display" style="margin-bottom:10px; color:#00ffcc;"></div>
+
+<div class="key-input">
+
+<input type="text" id="activate-key" placeholder="วาง Activation Key">
+
+<button id="activate-btn">
+Activate
+</button>
+
+</div>
+
+<div id="activate-status" class="activate-info">
+ระบบพร้อมใช้งาน
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- AI -->
+<section class="ai-models">
+<div class="ai-model-card bot-automation">Automation Bot System</div>
+<div class="ai-model-card bot-crypto">Crypto Tracking Bot</div>
+<div class="ai-model-card bot-game">Game Helper Bot</div>
+<div class="ai-model-card bot-dataminer">Telegram Data Miner</div>
+</section>
+
+<script src="/assets/js/activate.js"></script>
+
+<!-- 🔥🔥 CORE SCRIPT (สำคัญสุด) -->
+<script>
+
+const params = new URLSearchParams(window.location.search)
+
+const user = params.get("user")
+const hwid = params.get("hwid")
+
+console.log("USER:", user)
+console.log("HWID:", hwid)
+
+// แสดง user
+if (user) {
+    document.getElementById("user-display").innerText = "User: " + user
+}
+
+// 🔥 Activate Button Logic
+document.getElementById("activate-btn").addEventListener("click", async () => {
+
+    const key = document.getElementById("activate-key").value
+
+    if (!key) {
+        alert("กรุณาใส่ Activation Key")
+        return
+    }
+
+    document.getElementById("activate-status").innerText = "กำลังตรวจสอบ..."
+
+    try {
+
+        const res = await fetch("https://vagally-transequatorial-frederic.ngrok-free.dev/activate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                key: key,
+                user: user,
+                hwid: hwid,
+                plan: "free"
+            })
+        })
+
+        const data = await res.json()
+
+        if (data.status === "success") {
+            document.getElementById("activate-status").innerText = "✅ เปิดใช้งานสำเร็จ"
+        } else {
+            document.getElementById("activate-status").innerText = "❌ " + (data.message || "Activation Failed")
+        }
+
+    } catch (err) {
+        document.getElementById("activate-status").innerText = "❌ Server Error"
+    }
+
+})
+
+</script>
+
+</body>
+</html>

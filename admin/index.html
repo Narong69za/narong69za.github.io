@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>ADMIN SN AI</title>
+
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
+<link rel="stylesheet" href="/admin/admin.css">
+
+</head>
+
+<body>
+
+<h1>🔥ADMIN SN AI</h1>
+
+<div class="grid">
+
+<div class="card">
+<h2>SERVER</h2>
+<pre id="server"></pre>
+<button onclick="restart()">RESTART</button>
+</div>
+
+<div class="card">
+<h2>LIVE USERS</h2>
+<pre id="users"></pre>
+</div>
+
+<div class="card">
+<h2>QUEUE</h2>
+<pre id="queue"></pre>
+<button onclick="clearQueue()">CLEAR QUEUE</button>
+</div>
+
+<div class="card">
+<h2>WALLET</h2>
+<button onclick="testTopup()">TEST +50</button>
+<pre id="wallet"></pre>
+</div>
+
+</div>
+
+<script src="/admin/guard.js"></script>
+<script src="/admin/admin.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SN DESIGN TUNING | Professional System</title>
+    <link rel="stylesheet" href="assets/css/tuning.css">
+</head>
+<body>
+    <div class="tuning-container">
+        <nav class="top-nav">
+            <div class="logo">SN DESIGN <span>TUNING</span></div>
+            <div id="connection-status" class="status-tag">READY</div>
+        </nav>
+
+        <main class="dashboard">
+            <section class="table-area">
+                <div class="header-row">
+                    <div class="title-group">
+                        <h2>Fuel Base Map (VE Table)</h2>
+                        <select id="file-selector" onchange="loadTuningFile(this.value)">
+                            <option value="">-- Select Map File --</option>
+                            <option value="01">Map 01 (f_000001)</option>
+                            <option value="0a">Map 10 (f_00000a)</option>
+                            <option value="0f">Map 15 (f_00000f)</option>
+                        </select>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-tool" onclick="adjustValue(1.05)">+5%</button>
+                        <button class="btn-tool" onclick="adjustValue(0.95)">-5%</button>
+                        <button class="btn-save" onclick="saveBin()">SAVE BIN</button>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table id="tuning-map"></table>
+                </div>
+            </section>
+
+            <aside class="monitor-panel">
+                <div class="gauge-box">
+                    <label>AFR Target</label>
+                    <div id="val-afr" class="big-value">14.70</div>
+                </div>
+                <div class="terminal">
+                    <div id="log-content"></div>
+                </div>
+            </aside>
+        </main>
+    </div>
+    <script src="assets/js/tuning-math.js"></script>
+</body>
+</html>
