@@ -21,6 +21,31 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 <link rel="preload" as="image" href="assets/images/hero.png">
 <link rel="stylesheet" href="assets/css/master.css">
 
+<style>
+    @media (max-width: 768px) {
+        .ultra-system-panel {
+            width: 92% !important;
+            max-width: 380px !important;
+            margin: 20px auto !important;
+            padding: 15px !important;
+            box-sizing: border-box;
+        }
+        .system-row {
+            font-size: 13px !important;
+            padding: 8px 0 !important;
+        }
+        .system-label {
+            font-size: 11px !important;
+            letter-spacing: 1px;
+        }
+    }
+    /* คุมสัดส่วน Panel ให้ดูเป็นระเบียบทุกหน้าจอ */
+    .ultra-system-panel {
+        display: block;
+        overflow: hidden;
+    }
+</style>
+
 </head>
 
 <body class="index-page">
@@ -71,7 +96,7 @@ ULTRA ENTERPRISE STATUS
 <div class="system-label">Server</div>
 <div class="system-state online">
 <span class="dot"></span>
-<span id="server-status">ULTRA ONLINE</span>
+<span id="server-status">CONNECTING...</span>
 </div>
 </div>
 
@@ -79,15 +104,15 @@ ULTRA ENTERPRISE STATUS
 <div class="system-label">CPU Load</div>
 <div class="system-state online">
 <span class="dot"></span>
-<span id="cpu-load">0.0%</span>
+<span id="cpu-load">---</span>
 </div>
 </div>
 
 <div class="system-row">
-<div class="system-label">RAM Free</div>
+<div class="system-label">RAM Available</div>
 <div class="system-state online">
 <span class="dot"></span>
-<span id="ram-usage">0.00 GB</span>
+<span id="ram-usage">---</span>
 </div>
 </div>
 
@@ -103,7 +128,7 @@ ULTRA ENTERPRISE STATUS
 <div class="system-label">AI Engine</div>
 <div class="system-state online">
 <span class="dot"></span>
-<span id="ai-status">CONNECTED</span>
+<span id="ai-status">WAITING</span>
 </div>
 </div>
 
@@ -162,29 +187,31 @@ document.querySelectorAll("[data-template]").forEach(el=>{
 </script>
 
 <script>
-// เปลี่ยนมาใช้ API บน VPS โดยตรง
+// ตรวจสอบว่า API URL ของคุณถูกต้อง (หากใช้ HTTPS หน้าเว็บ API ก็ควรเป็น HTTPS)
 const MONITOR_API = "https://api.sn-designstudio.dev/api/admin/system-status";
 
 async function updateStatus() {
    try {
       const response = await fetch(MONITOR_API);
+      if (!response.ok) throw new Error('Network response was not ok');
+      
       const data = await response.json();
 
       if (data.success) {
          const m = data.monitor;
          
-         // Binding ข้อมูล Hardware เข้ากับ UI เดิม
+         // Binding ข้อมูลจริงจาก VPS
          document.getElementById("cpu-load").innerText = m.cpu + "%";
          document.getElementById("ram-usage").innerText = m.ramUsed + " GB";
          document.getElementById("user-count").innerText = m.users;
          
-         // สถานะระบบหลัก
+         // อัปเดตสถานะหลัก
          document.getElementById("server-status").innerText = "ULTRA ONLINE";
-         document.getElementById("ai-status").innerText = m.status === "ULTRA_STABLE" ? "CONNECTED" : "STABILIZING";
+         document.getElementById("ai-status").innerText = "CONNECTED";
       }
    } catch (e) {
-      console.log("STATUS SYNC ERROR:", e);
-      // แสดงสถานะกรณีเซิร์ฟเวอร์มีปัญหา
+      console.log("STATUS SYNC ERROR", e);
+      // หากเชื่อมต่อไม่ได้ ให้แสดงผลเป็น OFFLINE
       document.getElementById("server-status").innerText = "OFFLINE";
       document.getElementById("cpu-load").innerText = "---";
       document.getElementById("ram-usage").innerText = "---";
@@ -192,10 +219,11 @@ async function updateStatus() {
    }
 }
 
-// อัปเดตทุก 5 วินาที (สไตล์ Enterprise Monitoring)
+// อัปเดตทุก 5 วินาที
 setInterval(updateStatus, 5000);
 updateStatus();
 </script>
 
 </body>
 </html>
+
