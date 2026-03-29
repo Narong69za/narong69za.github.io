@@ -1,16 +1,10 @@
 /**
  * =====================================================
- * PROJECT: SN DESIGN STUDIO
- * MODULE: create-nav.js
- * VERSION: v1.1 (Production Fixed)
- * STATUS: production
- * LAST FIX: 2026-03-29
- * - Fixed Bearer Token Authorization
- * - Fixed Credit Display (user-credits span)
- * - Restored Diamond Emoji Logic
+ * PROJECT: SN DESIGN STUDIO | MODULE: create-nav.js
+ * VERSION: v1.1.1 (Production URL Fixed)
  * =====================================================
  */
-
+const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
 const DEV_MODE = false;
 
 /* ================= STYLE INJECT ================= */
@@ -32,7 +26,7 @@ const DEV_MODE = false;
             border:1px solid rgba(0,255,200,0.4);
             background:linear-gradient(90deg,#00ffd5,#00aaff);
             color:#000; font-weight:600; cursor:pointer;
-            transition:all .25s ease;
+            transition:all .25s ease; display:none; align-items:center; gap:8px;
         }
         .credit-btn-premium:hover{
             transform:translateY(-2px);
@@ -47,21 +41,18 @@ const DEV_MODE = false;
     if(document.querySelector(".create-top-nav")) return;
     const nav=document.createElement("div");
     nav.className="create-top-nav";
-
-    // แก้ไขจุดนี้: ใส่ � และเพิ่ม span สำหรับโชว์ตัวเลขเครดิต
     nav.innerHTML=`
     <div class="create-nav-left">
-        <button id="btn-credit" class="credit-btn-premium" style="display:none;">
-            � <span id="user-credits">0</span> Credits
+        <button id="btn-credit" class="credit-btn-premium">
+            � <span id="user-credits-nav">0</span> Credits
         </button>
     </div>
     <div class="create-nav-right">
-        <button id="btn-admin" class="credit-btn-premium" style="display:none;">
+        <button id="btn-admin" class="credit-btn-premium">
             ⚙ PAYMENT CONTROL
         </button>
     </div>
     `;
-
     document.body.prepend(nav);
     requestAnimationFrame(()=>{
         document.body.style.paddingTop = nav.offsetHeight + "px";
@@ -72,42 +63,38 @@ const DEV_MODE = false;
 async function loadUserStatus(){
     const creditBtn = document.getElementById("btn-credit");
     const adminBtn  = document.getElementById("btn-admin");
-    const creditText = document.getElementById("user-credits");
+    const creditTextNav = document.getElementById("user-credits-nav");
+    const creditTextBody = document.getElementById("userCredits"); // สำหรับหน้า create.html
 
-    // � ดึง Token จาก LocalStorage
     const token = localStorage.getItem("token");
+    if(!token) return;
 
     try{
+        /* FIXED: Added backticks and config URL */
         const res = await fetch(`${API_BASE}/auth/me`,{
             method: "GET",
             headers: {
-                "Authorization": `Bearer ${token}`, // ส่งกุญแจไปให้ Backend 5002
+                "Authorization": `Bearer ${token}`,
                 "Content-Type": "application/json"
             },
             cache:"no-store"
         });
 
         if(!res.ok){
-            if(!DEV_MODE && res.status===401){
-                window.location.href="/login.html";
-            }
+            if(!DEV_MODE && res.status===401) window.location.href="/login.html";
             return;
         }
 
         const user = await res.json();
+        const credits = user.credits || 0;
         
-        // � อัปเดตยอดเงินลงใน span
-        if(creditText) creditText.innerText = user.credits || 0;
+        if(creditTextNav) creditTextNav.innerText = credits;
+        if(creditTextBody) creditTextBody.innerText = credits;
 
         const role = (user.role || "").toLowerCase();
-
-        /* ================= ROLE CONTROL ================= */
-        if(role === "owner"){
-            if(creditBtn) creditBtn.style.display="inline-flex";
-            if(adminBtn)  adminBtn.style.display="inline-flex";
-        }else{
-            if(creditBtn) creditBtn.style.display="inline-flex";
-            if(adminBtn)  adminBtn.style.display="none";
+        if(creditBtn) creditBtn.style.display="inline-flex";
+        if(role === "owner" || role === "admin"){
+            if(adminBtn) adminBtn.style.display="inline-flex";
         }
 
     }catch(err){
@@ -117,14 +104,10 @@ async function loadUserStatus(){
 
 document.addEventListener("DOMContentLoaded", loadUserStatus);
 
-/* ================= BUTTON NAVIGATION ================= */
 document.addEventListener("click",(e)=>{
-    const targetId = e.target.closest('button')?.id || e.target.id;
-    if(targetId === "btn-credit"){
-        window.location.href="/payment.html";
-    }
-    if(targetId === "btn-admin"){
-        window.location.href="/admin/payment.dashboard.html";
-    }
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    if(btn.id === "btn-credit") window.location.href="/payment.html";
+    if(btn.id === "btn-admin") window.location.href="/admin/payment.dashboard.html";
 });
 
