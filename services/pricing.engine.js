@@ -1,4 +1,4 @@
-export function calculateCost(model){
+function calculateCost(model){
 
  if(model==="gen4.5") return 15
  if(model==="gen4_image") return 5
@@ -7,3 +7,5 @@ export function calculateCost(model){
  return 5
 
 }
+module.exports = { calculateCost };
+module.exports = { calculateCost };
