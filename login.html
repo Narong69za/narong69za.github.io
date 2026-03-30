@@ -1,10 +1,3 @@
-<!-- ===================================================== -->
-<!-- SN DESIGN STUDIO -->
-<!-- FILE: login.html -->
-<!-- VERSION: V4.0 OAUTH COOKIE FLOW -->
-<!-- STATUS: PRODUCTION STABLE -->
-<!-- ===================================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -27,24 +20,30 @@ body{
 h1{
   letter-spacing:2px;
   margin-bottom:30px;
+  text-shadow: 0 0 15px rgba(0, 255, 213, 0.4);
 }
 button{
-  padding:14px 28px;
+  padding:16px 32px;
   font-size:16px;
   border:none;
   cursor:pointer;
   background:#fff;
   color:#000;
-  border-radius:4px;
+  border-radius:30px; /* ปรับให้โค้งมนเข้ากับธีมใหม่ */
   font-weight:bold;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(255,255,255,0.2);
 }
 button:hover{
-  opacity:.8;
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 213, 0.6);
+  background: #00ffd5;
 }
 .status{
   margin-top:20px;
   font-size:14px;
   opacity:.7;
+  color: #00ffd5;
 }
 </style>
 </head>
@@ -59,36 +58,61 @@ button:hover{
 
 <div class="status" id="status"></div>
 
+<script src="assets/js/config.js"></script>
+
 <script>
+// ดึงค่า URL จาก CONFIG ที่เราตั้งไว้
+const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
 
 // =====================================================
 // AUTO CHECK IF ALREADY LOGGED IN
 // =====================================================
 async function checkAuth(){
+  const statusEl = document.getElementById("status");
+  const token = localStorage.getItem("token");
+
+  // ถ้าไม่มี Token ในเครื่องเลย ให้รอ User กด Login
+  if(!token) return;
+
+  statusEl.innerText = "Checking session...";
+
   try{
-    const res = await fetch("https://sn-designstudio.dev/auth/me",{
-      credentials:"include",
+    // เปลี่ยนไปเช็คที่ Backend API โดยตรง
+    const res = await fetch(`${API_BASE}/auth/me`,{
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
       cache:"no-store"
     });
 
     if(res.status === 200){
+      statusEl.innerText = "Redirecting...";
       window.location.replace("/create.html");
     }
   }catch(e){
-    console.log("not logged in");
+    console.log("Not logged in or token expired");
+    statusEl.innerText = "";
   }
 }
 
+// เริ่มเช็คทันทีที่เปิดหน้า
 checkAuth();
 
 // =====================================================
 // REDIRECT TO BACKEND OAUTH
 // =====================================================
 function loginWithGoogle(){
-  window.location.href = "https://api.sn-designstudio.dev/auth/google";
+  const statusEl = document.getElementById("status");
+  statusEl.innerText = "Redirecting to Google...";
+  
+  // ส่งไปที่ Backend OAuth เป๊ะๆ ตาม CONFIG
+  window.location.href = `${API_BASE}/auth/google`;
 }
 
 </script>
 
 </body>
 </html>
+
