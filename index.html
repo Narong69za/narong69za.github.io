@@ -1,32 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Official Website — SN DESIGN STUDIO</title>
     <meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
-    <meta name="keywords" content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
-    <meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
-    <meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
-    <meta property="og:image" content="assets/images/hero.png">
-    <meta property="og:type" content="website">
-    <link rel="preload" as="image" href="assets/images/hero.png">
     <link rel="stylesheet" href="assets/css/master.css">
     
     <style>
-        .service-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); text-align: left; }
+        /* จัดระเบียบ Grid แนวนอนและระบบแสง Glow */
+        .service-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.2fr; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); text-align: left; }
         .service-row:last-child { border-bottom: none; }
         .service-name { font-family: 'Courier New', monospace; font-size: 13px; color: rgba(255,255,255,0.8); }
-        .service-meta { display: block; font-size: 9px; color: #444; margin-top: 2px; }
-        .service-metrics { font-size: 11px; color: #888; text-align: center; }
-        .service-state.online .dot { width: 6px; height: 6px; box-shadow: 0 0 10px #00ffd5; }
-        @media(max-width:768px){ .service-row { grid-template-columns: 1fr; gap: 5px; } .service-metrics { text-align: left; } }
+        .service-meta { display: block; font-size: 8px; color: #444; }
+        
+        /* ระบบแจ้งเตือนสีแดง (Red Glow) */
+        .glow-green { color: #00ffd5; text-shadow: 0 0 10px #00ffd5; }
+        .glow-red { color: #ff0033; text-shadow: 0 0 10px #ff0033; }
+        .dot-red { background: #ff0033 !important; box-shadow: 0 0 10px #ff0033 !important; }
+        
+        @media(max-width:768px){ .service-row { grid-template-columns: 1fr; gap: 5px; } }
     </style>
 </head>
 
 <body class="index-page">
-
     <div id="nav"></div>
 
     <section class="marquee-wrap">
@@ -34,7 +31,7 @@
     </section>
 
     <section class="hero-master">
-        <img src="assets/images/hero.png" alt="SN Design Studio AI creator ecosystem cinematic power red branding" loading="eager">
+        <img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
         <div class="hero-content-bottom fade-up">
             <h1>Build Viral AI Content Faster</h1>
             <p>Dark Creator Ecosystem for AI Video.</p>
@@ -57,25 +54,19 @@
                     <div class="system-state online"><span class="dot"></span><span id="server-status">SYNCING</span></div>
                 </div>
 
-                <div class="system-row">
-                    <div class="system-label">Payment Gateway</div>
-                    <div class="system-state online"><span class="dot"></span>ACTIVE</div>
-                </div>
-
                 <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
-                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 12px; text-align: left;">
-                        �️ SERVICE INSTANCE MONITOR (REAL-TIME)
-                    </div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 12px;">�️ SERVICE INSTANCE MONITOR</div>
                     
-                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 10px; font-size: 9px; color: #555; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
-                        <div style="text-align: left;">SERVICE NAME</div>
-                        <div>CPU</div>
-                        <div>MEM</div>
-                        <div>STATUS</div>
+                    <div class="service-row" style="font-size: 9px; color: #555; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                        <div>PROCESS</div>
+                        <div style="text-align:center">CPU</div>
+                        <div style="text-align:center">RAM</div>
+                        <div style="text-align:center">UPTIME</div>
+                        <div style="text-align:center">STATUS</div>
                     </div>
 
                     <div id="pm2-list-display">
-                        <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 20px;">SYNCING ENGINE DATA...</div>
+                        <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 20px;">CONNECTING TO ENGINE...</div>
                     </div>
                 </div>
 
@@ -84,16 +75,13 @@
                     <div class="system-state online"><span class="dot"></span><span id="ai-status">CONNECTED</span></div>
                 </div>
 
-                <div class="system-row">
-                    <div class="system-label">Network Traffic</div>
-                    <div class="system-state online"><span class="dot"></span>ULTRA SECURE</div>
-                </div>
-
                 <div id="network-graph-section" style="margin-top: 15px; background: rgba(0, 255, 200, 0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(0, 255, 200, 0.06);">
                     <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 10px;">NETWORK WAVEFRONT (PACKETS/s)</div>
                     <canvas id="network-graph-canvas" style="width: 100%; height: 60px;"></canvas>
                 </div>
-            </div> </div> </section>
+            </div> 
+        </div> 
+    </section>
 
     <section class="ultra-intro-zone">
         <div class="container">
@@ -112,9 +100,9 @@
     <script src="assets/js/nav.js"></script>
 
     <script>
-        /**
-         * 1. TEMPLATE REDIRECTION SYSTEM
-         */
+        const API_BASE = "https://api.sn-designstudio.dev";
+
+        // 1. TEMPLATE REDIRECT
         document.querySelectorAll("[data-template]").forEach(el => {
             el.addEventListener("click", () => {
                 const model = el.dataset.template;
@@ -122,122 +110,85 @@
             });
         });
 
-        /**
-         * 2. PM2 MASTER MONITOR SYSTEM (REAL-TIME DASHBOARD)
-         */
-        const API_BASE = "https://api.sn-designstudio.dev";
-
-        // ระบบ Monitor หลัก
+        // 2. PM2 REAL-TIME SYNC
         async function syncUltraSystem() {
             try {
                 const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
                 const data = await response.json();
 
-                if (data.success) {
+                if (data.success && data.services) {
                     const listDisplay = document.getElementById("pm2-list-display");
                     const serverStatus = document.getElementById("server-status");
 
-                    // อัปเดตสถานะ Main Server ตามสถานะของ API process
                     const masterProc = data.services.find(s => s.name.includes('api'));
-                    if (serverStatus) {
-                        serverStatus.innerText = masterProc && masterProc.status === 'online' ? "ULTRA ONLINE" : "OFFLINE";
-                    }
+                    if (serverStatus) serverStatus.innerText = masterProc && masterProc.status === 'online' ? "ULTRA ONLINE" : "OFFLINE";
 
-                    // ฉีดข้อมูล Services ทุกตัวลงตารางแบบละเอียด
                     if (listDisplay) {
                         listDisplay.innerHTML = data.services.map(proc => {
                             const isOnline = proc.status === 'online';
-                            const color = isOnline ? '#00ffd5' : '#ff0033';
+                            const statusClass = isOnline ? 'glow-green' : 'glow-red';
+                            const dotClass = isOnline ? '' : 'dot-red';
+                            const uptimeMin = Math.floor(proc.uptime / 60000);
+                            const uptimeText = uptimeMin > 60 ? Math.floor(uptimeMin/60) + "h" : uptimeMin + "m";
+
                             return `
                                 <div class="service-row">
                                     <div>
                                         <span class="service-name">${proc.name.toUpperCase()}</span>
-                                        <span class="service-meta">R: ${proc.restarts || 0} | U: LIVE</span>
+                                        <span class="service-meta">RESTARTS: ${proc.restarts}</span>
                                     </div>
-                                    <div class="service-metrics">${proc.cpu}%</div>
-                                    <div class="service-metrics">${proc.memory}M</div>
-                                    <div class="system-state ${isOnline ? 'online' : ''}" style="justify-content: center; font-size: 10px; color: ${color};">
-                                        <span class="dot" style="background: ${color}; box-shadow: 0 0 10px ${color}"></span>
-                                        ${isOnline ? 'RUNNING' : 'STOPPED'}
+                                    <div style="text-align:center; color:#888; font-size:11px;">${proc.cpu}%</div>
+                                    <div style="text-align:center; color:#888; font-size:11px;">${proc.memory}M</div>
+                                    <div style="text-align:center; color:#555; font-size:11px;">${uptimeText}</div>
+                                    <div style="display:flex; justify-content:center; align-items:center; gap:8px;" class="${statusClass}">
+                                        <span class="dot ${dotClass}" style="width:6px; height:6px;"></span>
+                                        <span style="font-size:10px;">${isOnline ? 'RUNNING' : 'STOPPED'}</span>
                                     </div>
                                 </div>`;
                         }).join('');
                     }
                 }
             } catch (err) {
-                console.error("CRITICAL_SYNC_ERROR:", err);
-                const serverStatus = document.getElementById("server-status");
-                if (serverStatus) serverStatus.innerText = "OFFLINE";
+                if(document.getElementById("server-status")) document.getElementById("server-status").innerText = "OFFLINE";
             }
         }
 
-        // เริ่มต้น Monitor ทุก 4 วินาที
-        setInterval(syncUltraSystem, 4000);
-        syncUltraSystem();
-
-        /**
-         * 3. REAL-TIME NETWORK GRAPH SYSTEM
-         * วาดกราฟเส้นนีออนด้วย Canvas เพื่อจำลองทราฟฟิกจริง
-         */
+        // 3. NETWORK GRAPH (CAMELCASE FIXED)
         const canvas = document.getElementById('network-graph-canvas');
-        const ctx = canvas.getContext('get-context' || '2d');
-        const history = [];
-        const limit = 50;
+        const ctx = canvas.getContext('2d');
+        let graphHistory = new Array(50).fill(0);
 
-        // ฟังก์ชันวาดกราฟเส้น
-        function updateNetworkGraph() {
-            // จำลองข้อมูล (แทนที่ด้วย Network stats จริงจาก Backend ถ้ามี)
-            const value = 20 + Math.random() * 60 + (Math.sin(Date.now() / 1000) * 10);
-            history.push(value);
-            if (history.length > limit) history.shift();
-
+        function drawGraph() {
             if (!ctx) return;
             const w = canvas.width;
             const h = canvas.height;
-            const step = w / limit;
+            graphHistory.push(20 + Math.random() * 60);
+            graphHistory.shift();
 
-            ctx.clear_rect(0, 0, w, h);
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#00ffd5';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 255, 213, 0.5)';
 
-            // วาดเส้นตารางจางๆ
-            ctx.stroke_style = "rgba(0,255,200,0.03)";
-            for (let i = 0; i < limit; i += 5) {
-                ctx.move_to(i * step, 0);
-                ctx.line_to(i * step, h);
-            }
-            ctx.stroke();
-
-            // วาดเส้นกราฟนีออน
-            ctx.begin_path();
-            ctx.line_join = "round";
-            ctx.line_width = 1.5;
-            ctx.stroke_style = "#00ffd5"; // สีเขียวนีออนตามธีม
-            ctx.shadow_blur = 10;
-            ctx.shadow_color = "rgba(0,255,213,0.6)";
-
-            for (let i = 0; i < history.length; i++) {
+            const step = w / 49;
+            for (let i = 0; i < graphHistory.length; i++) {
                 const x = i * step;
-                const y = h - (history[i] / 100) * h;
-                if (i === 0) ctx.move_to(x, y);
-                else ctx.line_to(x, y);
+                const y = h - (graphHistory[i] / 100 * h);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
             }
             ctx.stroke();
-
-            // เคลียร์ผลลัพธ์แสงเงาหลังวาด
-            ctx.shadow_blur = 0;
-            ctx.shadow_color = 'transparent';
+            requestAnimationFrame(drawGraph);
         }
 
-        // ปรับขนาด Canvas ให้ตรงกับหน้าจอ
-        function resizeCanvas() {
-            canvas.width = canvas.parentElement.offsetWidth;
-            canvas.height = 60;
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
-
-        // อัปเดตกราฟทุก 200ms เพื่อความลื่นไหล
-        setInterval(updateNetworkGraph, 200);
+        function resize() { canvas.width = canvas.parentElement.offsetWidth; canvas.height = 60; }
+        window.addEventListener('resize', resize);
+        resize();
+        drawGraph();
+        setInterval(syncUltraSystem, 4000);
+        syncUltraSystem();
     </script>
 </body>
 </html>
