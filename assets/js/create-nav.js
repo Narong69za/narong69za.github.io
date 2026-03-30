@@ -1,11 +1,11 @@
 /**
  * =====================================================
  * PROJECT: SN DESIGN STUDIO | MODULE: create-nav.js
- * VERSION: v1.1.2 (Redirect Domain Fixed)
+ * VERSION: v1.1.5 (URL Token Capture & Absolute Redirect)
  * =====================================================
  */
 const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
-const FRONTEND_BASE = "https://sn-designstudio.dev"; // กำหนดโดเมนหน้าบ้านให้ชัดเจน
+const FRONTEND_BASE = "https://sn-designstudio.dev"; 
 const DEV_MODE = false;
 
 /* ================= STYLE INJECT ================= */
@@ -62,13 +62,24 @@ const DEV_MODE = false;
 
 /* ================= USER STATUS LOAD ================= */
 async function loadUserStatus(){
+    // [FIX 1] ดักจับ Token จาก URL (กรณี Google Redirect กลับมา)
+    const urlParams = new URLSearchParams(window.location.search);
+    const tokenFromUrl = urlParams.get('token');
+    
+    if (tokenFromUrl) {
+        localStorage.setItem("token", tokenFromUrl);
+        // ล้าง URL ให้สะอาด (ลบ ?token=... ออกจาก Browser Address Bar)
+        const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+        window.history.replaceState({}, document.title, cleanUrl);
+    }
+
     const creditBtn = document.getElementById("btn-credit");
-    const adminBtn  = document.getElementById("admin-btn"); // ตรวจสอบ ID ให้ตรงกับ CSS
+    const adminBtn  = document.getElementById("admin-btn");
     const creditTextNav = document.getElementById("user-credits-nav");
-    const creditTextBody = document.getElementById("userCredits"); // สำหรับหน้า create.html
+    const creditTextBody = document.getElementById("userCredits");
 
     const token = localStorage.getItem("token");
-    if(!token) return;
+    if(!token) return; // ถ้าไม่มี Token จะหยุดทำงาน ข้อมูลจะขึ้นเป็น - หรือ 0
 
     try{
         const res = await fetch(`${API_BASE}/auth/me`,{
@@ -81,21 +92,24 @@ async function loadUserStatus(){
         });
 
         if(!res.ok){
-            // แก้ไข: ระบุ URL เต็มสำหรับหน้า Login
-            if(!DEV_MODE && res.status===401) window.location.href = `${FRONTEND_BASE}/login.html`;
+            if(!DEV_MODE && res.status===401) {
+                localStorage.removeItem("token");
+                window.location.href = `${FRONTEND_BASE}/login.html`;
+            }
             return;
         }
 
         const user = await res.json();
         const credits = user.credits || 0;
         
+        // อัปเดตตัวเลขเครดิต
         if(creditTextNav) creditTextNav.innerText = credits;
         if(creditTextBody) creditTextBody.innerText = credits;
 
-        const role = (user.role || "").toLowerCase();
+        // แสดงปุ่มตามสิทธิ์
         if(creditBtn) creditBtn.style.display="inline-flex";
         
-        // ตรวจสอบทั้งปุ่ม admin-btn และ btn-admin ตามที่พี่ตั้งค่าไว้
+        const role = (user.role || "").toLowerCase();
         const adminElement = adminBtn || document.getElementById("btn-admin");
         if(role === "owner" || role === "admin"){
             if(adminElement) adminElement.style.display="inline-flex";
@@ -108,11 +122,12 @@ async function loadUserStatus(){
 
 document.addEventListener("DOMContentLoaded", loadUserStatus);
 
+/* ================= CLICK EVENTS ================= */
 document.addEventListener("click",(e)=>{
     const btn = e.target.closest('button');
     if(!btn) return;
 
-    // แก้ไข: ระบุ Absolute URL เพื่อป้องกันการหลงโดเมน
+    // [FIX 2] ใช้ Absolute URL เพื่อบังคับให้วิ่งไปโดเมนหน้าบ้านเสมอ
     if(btn.id === "btn-credit") {
         window.location.href = `${FRONTEND_BASE}/payment.html`;
     }

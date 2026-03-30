@@ -29,7 +29,7 @@ exports.googleRedirect = async (req, res) => {
 
   const state = crypto.randomBytes(32).toString("hex");
 
-  res.redirect('https://sn-designstudio.dev/create.html');
+  res.redirect(`https://sn-designstudio.dev/create.html?token=${token}`);
 
   res.cookie("oauth_state", state, {
     ...COOKIE_OPTIONS,
@@ -43,7 +43,7 @@ exports.googleRedirect = async (req, res) => {
 
   const url = googleService.generateAuthUrl(state);
 
-  return res.redirect(url);
+  return res.redirect(`https://sn-designstudio.dev/create.html?token=${token}`);
 };
 
 
@@ -107,7 +107,7 @@ const redirectTarget = "https://sn-designstudio.dev/create.html";
 res.clearCookie("oauth_state", COOKIE_OPTIONS);
 res.clearCookie("oauth_redirect", COOKIE_OPTIONS);
 
-return res.redirect(redirectTarget);
+return res.redirect(`https://sn-designstudio.dev/create.html?token=${token}`);
 
 } catch (err) {
 
