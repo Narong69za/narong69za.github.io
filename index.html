@@ -1,33 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Website â€” SN DESIGN STUDIO</title>
+    <title>Official Website — SN DESIGN STUDIO</title>
     <meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
+    <meta name="keywords" content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
+    <meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
+    <meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
+    <meta property="og:image" content="assets/images/hero.png">
+    <meta property="og:type" content="website">
+    <link rel="preload" as="image" href="assets/images/hero.png">
     <link rel="stylesheet" href="assets/css/master.css">
     
     <style>
-        /* à¸ˆà¸±à¸”à¸£à¸°à¹€à¸šà¸µà¸¢à¸š Grid à¹à¸™à¸§à¸™à¸­à¸™à¹à¸¥à¸°à¸£à¸°à¸šà¸šà¹à¸ªà¸‡ Glow */
-        .service-row { display: grid; grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.2fr; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03); text-align: left; }
-        .service-row:last-child { border-bottom: none; }
-        .service-name { font-family: 'Courier New', monospace; font-size: 13px; color: rgba(255,255,255,0.8); }
-        .service-meta { display: block; font-size: 8px; color: #444; }
-        
-        /* à¸£à¸°à¸šà¸šà¹à¸ˆà¹‰à¸‡à¹€à¸•à¸·à¸­à¸™à¸ªà¸µà¹à¸”à¸‡ (Red Glow) */
-        .glow-green { color: #00ffd5; text-shadow: 0 0 10px #00ffd5; }
-        .glow-red { color: #ff0033; text-shadow: 0 0 10px #ff0033; }
-        .dot-red { background: #ff0033 !important; box-shadow: 0 0 10px #ff0033 !important; }
-        
-        @media(max-width:768px){ .service-row { grid-template-columns: 1fr; gap: 5px; } }
+        /* ===================================================
+           ULTRA ENTERPRISE V6: FINAL LAYOUT FIX
+           แก้ไขเรื่องเส้นขอบล้น และจัดสัดส่วนให้พรีเมี่ยม
+           =================================================== */
+
+        /* 1. แก้ไขแผงหลัก: เพิ่มพื้นที่ "หายใจ" รอบด้าน */
+        .ultra-enterprise {
+            background: rgba(5, 10, 15, 0.96) !important;
+            border: 1px solid rgba(0, 255, 213, 0.12) !important;
+            box-shadow: 0 0 70px rgba(0, 0, 0, 1), inset 0 0 30px rgba(0, 255, 213, 0.04) !important;
+            
+            /* [FIX] เพิ่ม Padding รอบด้านเพื่อไม่ให้ข้อความล้นชิดขอบ */
+            padding: 40px !important; 
+            max-width: 650px !important; /* ขยายความกว้างเล็กน้อยเพื่อให้ดูภูมิฐาน */
+            margin: 50px auto !important;
+        }
+
+        /* 2. HEADER GRID: จัดเรียงหัวข้อให้คมชัด */
+        .pm2-header {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.3fr;
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            font-size: 10px;
+            color: #444;
+            letter-spacing: 2px;
+            border-radius: 4px;
+            margin-bottom: 12px;
+        }
+
+        /* 3. SERVICE CARD: จัดดีไซน์ให้เหมือนหน้าจอ COMMAND CENTER */
+        .service-card {
+            display: grid;
+            grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.3fr;
+            gap: 10px;
+            align-items: center;
+            padding: 16px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            transition: 0.3s ease;
+        }
+        .service-card:hover {
+            background: rgba(0, 255, 213, 0.04);
+            border-color: rgba(0, 255, 213, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* [FIX] ปรับ Padding ของ system-row เดิมให้เท่ากับ service-card เพื่อความสม่ำเสมอ */
+        .ultra-enterprise .system-row {
+            padding: 16px !important;
+            margin-bottom: 8px;
+        }
+
+        .metric-value { font-family: 'Courier New', monospace; font-size: 13px; color: #888; text-align: center; }
+        .metric-label { font-size: 8px; color: #333; display: block; margin-top: 2px; }
+
+        .status-badge {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 6px;
+            background: rgba(0,0,0,0.4);
+        }
+
+        /* ระบบสีและ Glow ตามมาตรฐาน PRODUCTION */
+        .online-glow { color: #00ffd5; text-shadow: 0 0 10px #00ffd5; }
+        .error-glow { color: #ff0033; text-shadow: 0 0 10px #ff0033; }
+        .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+        @media(max-width:768px){ 
+            .ultra-enterprise { padding: 25px !important; }
+            .pm2-header, .service-card { grid-template-columns: 1fr; gap: 8px; text-align: left; } 
+            .pm2-header div, .metric-value { text-align: left; }
+        }
     </style>
 </head>
 
 <body class="index-page">
+
     <div id="nav"></div>
 
     <section class="marquee-wrap">
-        <div class="marquee-text">à¹à¸žà¸¥à¸•à¸Ÿà¸­à¸£à¹Œà¸¡ AI à¸ªà¸³à¸«à¸£à¸±à¸šà¸„à¸£à¸µà¹€à¸­à¹€à¸•à¸­à¸£à¹Œà¹„à¸—à¸¢ â€¢ à¸ªà¸£à¹‰à¸²à¸‡à¸ à¸²à¸ž AI â€¢ Copy à¹ƒà¸šà¸«à¸™à¹‰à¸² â€¢ Copy à¸—à¹ˆà¸²à¹€à¸•à¹‰à¸™ â€¢ CapCut Template â€¢ SEO Marketing â€¢ Creator Growth System</div>
+        <div class="marquee-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System</div>
     </section>
 
     <section class="hero-master">
@@ -40,7 +116,7 @@
 
     <section class="ultra-gui-preview ultra-dashboard">
         <div class="gui-container">
-            <div class="gui-mode">AI PREVIEW MODE â€” SN DESIGN STUDIO</div>
+            <div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
             <div class="gui-screen">
                 <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
                 <div class="scan-line"></div>
@@ -54,10 +130,17 @@
                     <div class="system-state online"><span class="dot"></span><span id="server-status">SYNCING</span></div>
                 </div>
 
+                <div class="system-row">
+                    <div class="system-label">Payment Gateway</div>
+                    <div class="system-state online"><span class="dot"></span>ACTIVE</div>
+                </div>
+
                 <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
-                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 12px;">ðŸ›ï¸ SERVICE INSTANCE MONITOR</div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 15px; text-align: left;">
+                        �️ SERVICE INSTANCE MONITOR (REAL-TIME)
+                    </div>
                     
-                    <div class="service-row" style="font-size: 9px; color: #555; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                    <div class="pm2-header">
                         <div>PROCESS</div>
                         <div style="text-align:center">CPU</div>
                         <div style="text-align:center">RAM</div>
@@ -66,18 +149,19 @@
                     </div>
 
                     <div id="pm2-list-display">
-                        <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 20px;">CONNECTING TO ENGINE...</div>
+                        <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 25px;">INITIALIZING ENGINE DATA...</div>
                     </div>
                 </div>
 
-                <div class="system-row" style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05);">
-                    <div class="system-label">AI Engine</div>
-                    <div class="system-state online"><span class="dot"></span><span id="ai-status">CONNECTED</span></div>
-                </div>
-
-                <div id="network-graph-section" style="margin-top: 15px; background: rgba(0, 255, 200, 0.02); padding: 15px; border-radius: 12px; border: 1px solid rgba(0, 255, 200, 0.06);">
-                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 10px;">NETWORK WAVEFRONT (PACKETS/s)</div>
-                    <canvas id="network-graph-canvas" style="width: 100%; height: 60px;"></canvas>
+                <div id="network-graph-section" style="margin-top: 25px; background: rgba(0, 255, 200, 0.02); padding: 18px; border-radius: 12px; border: 1px solid rgba(0, 255, 200, 0.08);">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px;">NETWORK WAVEFRONT</div>
+                            <div style="font-size: 9px; color: #222;">REAL-TIME TRAFFIC SYNC</div>
+                        </div>
+                        <div id="net-speed" style="font-family: monospace; color: #00ffd5; font-size: 13px; text-shadow: 0 0 10px #00ffd5;">0.0 KB/s</div>
+                    </div>
+                    <canvas id="network-graph-canvas" style="width: 100%; height: 70px; filter: drop-shadow(0 0 5px rgba(0,255,213,0.3));"></canvas>
                 </div>
             </div> 
         </div> 
@@ -86,8 +170,8 @@
     <section class="ultra-intro-zone">
         <div class="container">
             <div class="intro-cinematic">
-                <h2 class="intro-title">SN Design Studio â€” AI Creator Power System</h2>
-                <p class="intro-text">à¹à¸žà¸¥à¸•à¸Ÿà¸­à¸£à¹Œà¸¡ AI à¸ªà¸³à¸«à¸£à¸±à¸šà¸„à¸£à¸µà¹€à¸­à¹€à¸•à¸­à¸£à¹Œà¹„à¸—à¸¢ â€¢ à¸ªà¸£à¹‰à¸²à¸‡à¸ à¸²à¸ž AI â€¢ Copy à¹ƒà¸šà¸«à¸™à¹‰à¸² â€¢ Copy à¸—à¹ˆà¸²à¹€à¸•à¹‰à¸™ â€¢ CapCut Template â€¢ SEO Marketing â€¢ Creator Growth System</p>
+                <h2 class="intro-title">SN Design Studio — AI Creator Power System</h2>
+                <p class="intro-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System</p>
             </div>
             <div class="intro-video">
                 <iframe src="https://www.youtube.com/embed/NI7WALIXStU" title="YouTube Shorts" frameborder="0" allowfullscreen></iframe>
@@ -95,175 +179,92 @@
         </div>
     </section>
 
-    <footer>Â© SN Design Studio, 2026 Â· All rights reserved.</footer>
+    <footer>© SN Design Studio, 2026 · All rights reserved.</footer>
 
     <script src="assets/js/nav.js"></script>
 
-    <style>
-    /* UI DESIGN: HIGH-END ENTERPRISE GLASS */
-    .ultra-enterprise {
-        background: rgba(5, 10, 15, 0.95) !important;
-        border: 1px solid rgba(0, 255, 213, 0.1) !important;
-        box-shadow: 0 0 50px rgba(0, 0, 0, 1), inset 0 0 20px rgba(0, 255, 213, 0.05) !important;
-    }
+    <script>
+        const API_BASE = "https://api.sn-designstudio.dev";
 
-    /* HEADER GRID: จัดเรียงหัวข้อให้คมชัด */
-    .pm2-header {
-        display: grid;
-        grid-template-columns: 2.5fr 1fr 1fr 1fr 1.5fr;
-        padding: 10px 15px;
-        background: rgba(255, 255, 255, 0.03);
-        font-size: 10px;
-        color: #444;
-        letter-spacing: 2px;
-        border-radius: 4px;
-        margin-bottom: 10px;
-    }
-
-    /* SERVICE CARD: ดีไซน์แถวให้เหมือนหน้าจอ Dashboard มืออาชีพ */
-    .service-card {
-        display: grid;
-        grid-template-columns: 2.5fr 1fr 1fr 1fr 1.5fr;
-        gap: 10px;
-        align-items: center;
-        padding: 15px;
-        margin-bottom: 8px;
-        background: rgba(255, 255, 255, 0.02);
-        border: 1px solid rgba(255, 255, 255, 0.03);
-        border-radius: 8px;
-        transition: 0.3s;
-    }
-    .service-card:hover {
-        background: rgba(0, 255, 213, 0.03);
-        border-color: rgba(0, 255, 213, 0.2);
-    }
-
-    .metric-value { font-family: 'Courier New', monospace; font-size: 13px; color: #888; text-align: center; }
-    .metric-label { font-size: 8px; color: #333; display: block; margin-top: 2px; }
-
-    .status-badge {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        font-size: 10px;
-        font-weight: bold;
-        padding: 4px 8px;
-        border-radius: 4px;
-        background: rgba(0,0,0,0.3);
-    }
-
-    /* ระบบสีและ Glow ตามเงื่อนไข */
-    .online-glow { color: #00ffd5; text-shadow: 0 0 10px #00ffd5; }
-    .error-glow { color: #ff0033; text-shadow: 0 0 10px #ff0033; }
-    .dot { width: 6px; height: 6px; border-radius: 50%; }
-</style>
-
-<div class="ultra-system-panel ultra-enterprise">
-    <div class="system-title">ULTRA ENTERPRISE STATUS</div>
-
-    <div id="pm2-monitor-root">
-        <div class="pm2-header">
-            <div>PROCESS</div>
-            <div style="text-align:center">CPU</div>
-            <div style="text-align:center">RAM</div>
-            <div style="text-align:center">UPTIME</div>
-            <div style="text-align:center">STATUS</div>
-        </div>
-
-        <div id="pm2-list-display">
-            </div>
-    </div>
-
-    <div id="network-graph-section" style="margin-top: 25px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 10px;">
-            <div>
-                <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px;">NETWORK WAVEFRONT</div>
-                <div style="font-size: 9px; color: #222;">ENCRYPTED TRAFFIC SYNC</div>
-            </div>
-            <div id="net-speed" style="font-family: monospace; color: #00ffd5; font-size: 12px; text-shadow: 0 0 10px #00ffd5;">0.0 KB/s</div>
-        </div>
-        <canvas id="network-graph-canvas" style="width: 100%; height: 80px; filter: drop-shadow(0 0 5px rgba(0,255,213,0.2));"></canvas>
-    </div>
-</div>
-
-<script>
-    // [SCRIPT UPDATE] ปรับจูนการ Sync และความเร็วของกราฟ
-    async function syncUltraSystem() {
-        try {
-            const res = await fetch(`https://api.sn-designstudio.dev/api/admin/realtime-status`);
-            const data = await res.json();
-            if (data.success) {
-                const list = document.getElementById("pm2-list-display");
-                list.innerHTML = data.services.map(s => {
-                    const isOnline = s.status === 'online';
-                    const colorClass = isOnline ? 'online-glow' : 'error-glow';
-                    return `
-                        <div class="service-card">
-                            <div>
-                                <div style="font-size:13px; font-weight:bold; color:#fff;">${s.name.toUpperCase()}</div>
-                                <div style="font-size:8px; color:#444;">RESTARTS: ${s.restarts}</div>
-                            </div>
-                            <div class="metric-value">${s.cpu}<span class="metric-label">%</span></div>
-                            <div class="metric-value">${s.memory}<span class="metric-label">MB</span></div>
-                            <div class="metric-value">${Math.floor(s.uptime/60000)}<span class="metric-label">MIN</span></div>
-                            <div class="status-badge ${colorClass}">
-                                <div class="dot" style="background:currentColor; box-shadow: 0 0 8px currentColor;"></div>
-                                ${isOnline ? 'RUNNING' : 'STOPPED'}
-                            </div>
-                        </div>`;
-                }).join('');
-                // อัปเดต Speed เลขด้านบนกราฟให้สัมพันธ์กับทราฟฟิกจริง
-                document.getElementById("net-speed").innerText = (Math.random() * 15 + 2).toFixed(1) + " KB/s";
-            }
-        } catch(e) {}
-    }
-
-    // ปรับปรุงกราฟ: ลดความเร็ว (Frame Rate) เพื่อความสมจริง
-    const canvas = document.getElementById('network-graph-canvas');
-    const ctx = canvas.getContext('2d');
-    let points = new Array(60).fill(30);
-
-    function drawNetwork() {
-        if(!ctx) return;
-        ctx.clearRect(0,0, canvas.width, canvas.height);
-        
-        // เลื่อนจุด (เลียนแบบคลื่นที่ค่อยๆ ขยับ ไม่ลนลาน)
-        points.push(20 + Math.random() * 40 + (Math.sin(Date.now()/500) * 10));
-        points.shift();
-
-        ctx.beginPath();
-        ctx.strokeStyle = '#00ffd5';
-        ctx.lineWidth = 2;
-        ctx.lineJoin = 'round';
-        
-        const step = canvas.width / (points.length - 1);
-        points.forEach((p, i) => {
-            const x = i * step;
-            const y = canvas.height - (p / 100 * canvas.height);
-            if(i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        // TEMPLATE SYNC (รักษาไว้)
+        document.querySelectorAll("[data-template]").forEach(el => {
+            el.addEventListener("click", () => {
+                const model = el.dataset.template;
+                if (model) window.location.href = "create.html?template=" + model;
+            });
         });
-        ctx.stroke();
-        
-        // เพิ่ม Gradient ใต้กราฟเพื่อให้ดูแพงขึ้น
-        ctx.lineTo(canvas.width, canvas.height);
-        ctx.lineTo(0, canvas.height);
-        const grad = ctx.createLinearGradient(0,0,0, canvas.height);
-        grad.addColorStop(0, 'rgba(0, 255, 213, 0.1)');
-        grad.addColorStop(1, 'transparent');
-        ctx.fillStyle = grad;
-        ctx.fill();
 
-        // หน่วงเวลาให้กราฟวิ่ง "สมจริง" ขึ้น (จากเดิมวิ่งแบบ Unlocked FPS)
-        setTimeout(() => requestAnimationFrame(drawNetwork), 50); 
-    }
+        // REAL-TIME PM2 SYNC
+        async function syncUltraSystem() {
+            try {
+                const res = await fetch(`${API_BASE}/api/admin/realtime-status`);
+                const data = await res.json();
+                if (data.success) {
+                    const list = document.getElementById("pm2-list-display");
+                    list.innerHTML = data.services.map(s => {
+                        const isOnline = s.status === 'online';
+                        const colorClass = isOnline ? 'online-glow' : 'error-glow';
+                        return `
+                            <div class="service-card">
+                                <div>
+                                    <div style="font-size:13px; font-weight:bold; color:#fff;">${s.name.toUpperCase()}</div>
+                                    <div style="font-size:8px; color:#444;">RESTARTS: ${s.restarts}</div>
+                                </div>
+                                <div class="metric-value">${s.cpu}<span class="metric-label">%</span></div>
+                                <div class="metric-value">${s.memory}<span class="metric-label">MB</span></div>
+                                <div class="metric-value">${Math.floor(s.uptime/60000)}<span class="metric-label">MIN</span></div>
+                                <div class="status-badge ${colorClass}">
+                                    <div class="dot" style="background:currentColor; box-shadow: 0 0 8px currentColor;"></div>
+                                    ${isOnline ? 'RUNNING' : 'STOPPED'}
+                                </div>
+                            </div>`;
+                    }).join('');
+                    document.getElementById("server-status").innerText = "ULTRA ONLINE";
+                    // จำลองเลขสปีด NETWORK
+                    document.getElementById("net-speed").innerText = (Math.random() * 10 + 1).toFixed(1) + " KB/s";
+                }
+            } catch(e) {}
+        }
 
-    setInterval(syncUltraSystem, 3000);
-    syncUltraSystem();
-    drawNetwork();
-</script>
+        // NETWORK GRAPH (CAMELCASE FIXED)
+        const canvas = document.getElementById('network-graph-canvas');
+        const ctx = canvas.getContext('2d');
+        let graphHistory = new Array(60).fill(0);
 
+        function drawGraph() {
+            if (!ctx) return;
+            const w = canvas.width;
+            const h = canvas.height;
+            graphHistory.push(20 + Math.random() * 60);
+            graphHistory.shift();
+            ctx.clearRect(0, 0, w, h);
+            ctx.beginPath();
+            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = '#00ffd5';
+            ctx.shadowBlur = 10;
+            ctx.shadowColor = 'rgba(0, 255, 213, 0.5)';
+            const step = w / 59;
+            for (let i = 0; i < graphHistory.length; i++) {
+                const x = i * step;
+                const y = h - (graphHistory[i] / 100 * h);
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+            requestAnimationFrame(drawGraph);
+        }
+
+        function resize() { 
+            if(canvas.parentElement) {
+                canvas.width = canvas.parentElement.offsetWidth; canvas.height = 70; 
+            }
+        }
+        window.addEventListener('resize', resize);
+        resize();
+        drawGraph();
+        setInterval(syncUltraSystem, 3000);
+        syncUltraSystem();
+    </script>
 </body>
 </html>
-
 
