@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,7 +25,7 @@
     </section>
 
     <section class="hero-master">
-        <img src="assets/images/hero.png" alt="SN Design Studio AI creator ecosystem cinematic power red branding" loading="eager">
+        <img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
         <div class="hero-content-bottom fade-up">
             <h1>Build Viral AI Content Faster</h1>
             <p>Dark Creator Ecosystem for AI Video.</p>
@@ -58,13 +57,19 @@
                 </div>
 
                 <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
-                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 12px; text-align: left;">
-                        �️ SERVICE INSTANCE MONITOR
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 15px; text-align: left;">
+                        �️ SERVICE INSTANCE MONITOR (REAL-TIME)
                     </div>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 10px; font-size: 9px; color: #555; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                        <div style="text-align: left;">SERVICE NAME</div>
+                        <div>CPU</div>
+                        <div>MEM</div>
+                        <div>STATUS</div>
+                    </div>
+
                     <div id="pm2-list-display">
-                        <div class="system-row" style="opacity: 0.5;">
-                            <div class="system-label" style="font-size: 12px;">Initializing Engine...</div>
-                        </div>
+                        <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 20px;">SYNCING ENGINE DATA...</div>
                     </div>
                 </div>
 
@@ -101,48 +106,75 @@
     <script src="assets/js/nav.js"></script>
 
     <script>
-        // 1. TEMPLATE REDIRECTION
-        document.querySelectorAll("[data-template]").forEach(el => {
-            el.addEventListener("click", () => {
-                const model = el.dataset.template;
-                if (model) window.location.href = "create.html?template=" + model;
-            });
-        });
+    /**
+     * 1. MASTER API CONFIG
+     */
+    const API_BASE = "https://api.sn-designstudio.dev";
 
-        // 2. PM2 MASTER MONITOR
-        const API_BASE = "https://api.sn-designstudio.dev";
-        async function syncUltraSystem() {
-            try {
-                const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
-                const data = await response.json();
-                if (data.success) {
-                    const listDisplay = document.getElementById("pm2-list-display");
-                    const serverStatus = document.getElementById("server-status");
-                    if (serverStatus) serverStatus.innerText = "ULTRA ONLINE";
+    /**
+     * 2. TEMPLATE REDIRECTION SYSTEM
+     */
+    document.querySelectorAll("[data-template]").forEach(el => {
+       el.addEventListener("click", () => {
+          const model = el.dataset.template;
+          if (model) {
+             window.location.href = "create.html?template=" + model;
+          }
+       });
+    });
 
-                    if (listDisplay) {
-                        listDisplay.innerHTML = data.services.map(proc => `
-                            <div class="system-row" style="padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                                <div class="system-label" style="font-family: 'Courier New', monospace; font-size: 13px; color: rgba(255,255,255,0.7);">
-                                    ${proc.name.toUpperCase()}
-                                    <span style="font-size: 10px; display: block; color: #555; margin-top: 2px;">CPU: ${proc.cpu}% | MEM: ${proc.memory}MB</span>
-                                </div>
-                                <div class="system-state ${proc.status === 'online' ? 'online' : ''}" style="color: ${proc.status === 'online' ? '#00ffd5' : '#ff0033'}">
-                                    <span class="dot" style="background: ${proc.status === 'online' ? '#00ffd5' : '#ff0033'}; box-shadow: 0 0 12px ${proc.status === 'online' ? '#00ffd5' : 'rgba(255,0,51,0.5)'}"></span>
-                                    ${proc.status === 'online' ? 'RUNNING' : 'STOPPED'}
-                                </div>
-                            </div>`).join('');
-                    }
-                }
-            } catch (err) {
-                console.error("SYNC_ERROR", err);
+    /**
+     * 3. PM2 MASTER MONITOR SYSTEM (REAL-TIME)
+     */
+    async function syncUltraSystem() {
+        try {
+            const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
+            const data = await response.json();
+
+            if (data.success) {
+                const listDisplay = document.getElementById("pm2-list-display");
                 const serverStatus = document.getElementById("server-status");
-                if (serverStatus) serverStatus.innerText = "OFFLINE";
+
+                // อัปเดตสถานะ Main Server ตามสถานะของ API process
+                const masterProc = data.services.find(s => s.name.includes('api'));
+                if (serverStatus) {
+                    serverStatus.innerText = masterProc && masterProc.status === 'online' ? "ULTRA ONLINE" : "OFFLINE";
+                }
+
+                // ฉีดข้อมูล Services ทุกตัวลงตาราง
+                if (listDisplay) {
+                    listDisplay.innerHTML = data.services.map(proc => {
+                        const isOnline = proc.status === 'online';
+                        const color = isOnline ? '#00ffd5' : '#ff0033';
+                        
+                        return `
+                        <div class="system-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
+                            <div style="text-align: left;">
+                                <span style="font-family: 'Courier New', monospace; font-size: 12px; color: rgba(255,255,255,0.8);">${proc.name.toUpperCase()}</span>
+                                <span style="display: block; font-size: 8px; color: #444; margin-top: 2px;">R: ${proc.restarts || 0} | U: LIVE</span>
+                            </div>
+                            <div style="font-size: 11px; color: #888; text-align: center;">${proc.cpu}%</div>
+                            <div style="font-size: 11px; color: #888; text-align: center;">${proc.memory}M</div>
+                            <div class="system-state ${isOnline ? 'online' : ''}" style="justify-content: center; font-size: 10px; color: ${color};">
+                                <span class="dot" style="background: ${color}; box-shadow: 0 0 10px ${color}; width: 6px; height: 6px;"></span>
+                                ${isOnline ? 'RUNNING' : 'STOPPED'}
+                            </div>
+                        </div>`;
+                    }).join('');
+                }
             }
+        } catch (err) {
+            console.error("SYNC_ERROR", err);
+            const serverStatus = document.getElementById("server-status");
+            if (serverStatus) serverStatus.innerText = "OFFLINE";
         }
-        setInterval(syncUltraSystem, 5000);
-        syncUltraSystem();
+    }
+
+    // เริ่มทำงานเรียลไทม์ (อัปเดตทุก 4 วินาที)
+    setInterval(syncUltraSystem, 4000);
+    syncUltraSystem();
     </script>
+
 </body>
 </html>
 
