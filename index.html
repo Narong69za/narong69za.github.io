@@ -168,7 +168,20 @@ document.querySelectorAll("[data-template]").forEach(el => {
  */
 
 <script>
+/**
+ * ULTRA MASTER MONITOR SYSTEM (PREMIUM EDITION)
+ * ดีไซน์แบบ COMMAND CENTER: มีสีสัน แถบพลังงาน และข้อมูลครบถ้วน
+ */
 const API_BASE = "https://api.sn-designstudio.dev";
+
+// ฟังก์ชันแปลงเวลา Uptime ให้ดูง่าย
+function formatUptime(ms) {
+    const sec = Math.floor(ms / 1000);
+    const min = Math.floor(sec / 60);
+    const hr = Math.floor(min / 60);
+    if (hr > 0) return hr + "h " + (min % 60) + "m";
+    return min + "m " + (sec % 60) + "s";
+}
 
 async function syncUltraSystem() {
     try {
@@ -178,31 +191,58 @@ async function syncUltraSystem() {
         if (data.success) {
             const listDisplay = document.getElementById("pm2-list-display");
             const serverStatus = document.getElementById("server-status");
-            const aiStatus = document.getElementById("ai-status");
 
-            // 1. อัปเดตสถานะ Main Server ตามจริง
+            // อัปเดตสถานะ Main Server
             const masterProc = data.services.find(s => s.name.includes('api'));
             if (serverStatus) {
                 serverStatus.innerText = masterProc && masterProc.status === 'online' ? "ULTRA ONLINE" : "OFFLINE";
             }
 
-            // 2. ฉีดข้อมูล Services ทุกตัวลงตารางแบบละเอียด
+            // ฉีดข้อมูลแบบ "Premium Grid Dashboard"
             if (listDisplay) {
                 listDisplay.innerHTML = data.services.map(proc => {
                     const isOnline = proc.status === 'online';
-                    const color = isOnline ? '#00ffd5' : '#ff0033';
+                    const statusColor = isOnline ? '#00ffd5' : '#ff0033';
+                    const cpuPercent = proc.cpu || 0;
+                    const memUsed = proc.memory || 0;
                     
+                    // สีของแถบพลังงานตามความโหลด
+                    const cpuColor = cpuPercent > 80 ? '#ff0033' : (cpuPercent > 50 ? '#ffaa00' : '#00ffd5');
+
                     return `
-                    <div class="system-row" style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.03);">
-                        <div style="text-align: left;">
-                            <span style="font-family: 'Courier New', monospace; font-size: 12px; color: rgba(255,255,255,0.8);">${proc.name.toUpperCase()}</span>
-                            <span style="display: block; font-size: 8px; color: #444; margin-top: 2px;">R: ${proc.restarts || 0} | U: LIVE</span>
+                    <div style="background: rgba(255,255,255,0.02); margin-bottom: 12px; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); transition: 0.3s hover;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <span style="font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; color: #fff; letter-spacing: 1px;">
+                                    ${proc.name.toUpperCase()}
+                                </span>
+                                <span style="font-size: 10px; color: #555; display: block;">UPTIME: ${formatUptime(proc.uptime)} | RESTARTS: ${proc.restarts}</span>
+                            </div>
+                            <div style="color: ${statusColor}; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px; text-shadow: 0 0 10px ${statusColor}44;">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; box-shadow: 0 0 10px ${statusColor};"></span>
+                                ${proc.status.toUpperCase()}
+                            </div>
                         </div>
-                        <div style="font-size: 11px; color: #888; text-align: center;">${proc.cpu}%</div>
-                        <div style="font-size: 11px; color: #888; text-align: center;">${proc.memory}M</div>
-                        <div class="system-state ${isOnline ? 'online' : ''}" style="justify-content: center; font-size: 10px; color: ${color};">
-                            <span class="dot" style="background: ${color}; box-shadow: 0 0 10px ${color}; width: 6px; height: 6px;"></span>
-                            ${isOnline ? 'RUNNING' : 'STOPPED'}
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px;">
+                                    <span>CPU LOAD</span>
+                                    <span style="color: ${cpuColor}">${cpuPercent}%</span>
+                                </div>
+                                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+                                    <div style="width: ${cpuPercent}%; height: 100%; background: ${cpuColor}; box-shadow: 0 0 8px ${cpuColor}66; transition: 0.5s;"></div>
+                                </div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px;">
+                                    <span>MEMORY</span>
+                                    <span>${memUsed}MB</span>
+                                </div>
+                                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;">
+                                    <div style="width: ${(memUsed / 1024) * 100}%; height: 100%; background: #00aaff; box-shadow: 0 0 8px #00aaff66; transition: 0.5s;"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>`;
                 }).join('');
@@ -210,23 +250,15 @@ async function syncUltraSystem() {
         }
     } catch (err) {
         console.error("SYNC_ERROR", err);
-        const serverStatus = document.getElementById("server-status");
-        if (serverStatus) serverStatus.innerText = "OFFLINE";
+        if (document.getElementById("server-status")) document.getElementById("server-status").innerText = "OFFLINE";
     }
 }
 
-// อัปเดตแบบเรียลไทม์ทุก 3-5 วินาที
+// อัปเดตทุก 4 วินาที
 setInterval(syncUltraSystem, 4000);
 syncUltraSystem();
-
-/* โครงสร้างปุ่มคลิกเดิมของพี่ (รักษาไว้ห้ามลบ) */
-document.querySelectorAll("[data-template]").forEach(el => {
-   el.addEventListener("click", () => {
-      const model = el.dataset.template;
-      if (model) window.location.href = "create.html?template=" + model;
-   });
-});
 </script>
+
 
 </body>
 </html>
