@@ -102,7 +102,7 @@ exports.googleCallback = async (req, res) => {
   maxAge: 7 * 24 * 60 * 60 * 1000
 });
 
-const redirectTarget = req.cookies.oauth_redirect || "/create.html";
+const redirectTarget = "https://sn-designstudio.dev/create.html";
 
 res.clearCookie("oauth_state", COOKIE_OPTIONS);
 res.clearCookie("oauth_redirect", COOKIE_OPTIONS);
