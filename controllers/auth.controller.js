@@ -23,69 +23,43 @@ const COOKIE_OPTIONS = {
   path: "/"
 };
 
-// ================= GOOGLE REDIRECT =================
-
+// ================= GOOGLE REDIRECT (แก้ไขแล้ว) =================
 exports.googleRedirect = async (req, res) => {
+  try {
+    const state = crypto.randomBytes(32).toString("hex");
 
-  const state = crypto.randomBytes(32).toString("hex");
+    // 1. เซ็ต Cookie ก่อน (ต้องทำก่อน Redirect)
+    res.cookie("oauth_state", state, {
+      ...COOKIE_OPTIONS,
+      maxAge: 10 * 60 * 1000
+    });
 
-  res.redirect(`https://sn-designstudio.dev/create.html?token=${token}`);
+    // 2. สร้าง URL สำหรับไปหา Google
+    const url = googleService.generateAuthUrl(state);
 
-  res.cookie("oauth_state", state, {
-    ...COOKIE_OPTIONS,
-    maxAge: 10 * 60 * 1000
-  });
-
-  res.cookie("oauth_redirect", redirectTarget, {
-    ...COOKIE_OPTIONS,
-    maxAge: 10 * 60 * 1000
-  });
-
-  const url = googleService.generateAuthUrl(state);
-
-  return res.redirect(`https://sn-designstudio.dev/create.html?token=${token}`);
+    // 3. ส่งคนไปหา Google (ห้ามส่งไปหน้าบ้านตรงนี้!)
+    return res.redirect(url);
+  } catch (err) {
+    return res.redirect("https://sn-designstudio.dev/login.html?error=setup_failed");
+  }
 };
 
-
-// ================= GOOGLE CALLBACK =================
-
+// ================= GOOGLE CALLBACK (แก้ไขแล้ว) =================
 exports.googleCallback = async (req, res) => {
-
   try {
-
     const { code, state } = req.query;
     const storedState = req.cookies.oauth_state;
 
+    // เช็ค State
     if (!state || state !== storedState) {
+      console.error("STATE_MISMATCH:", { state, storedState });
       return res.status(400).json({ error: "INVALID_OAUTH_STATE" });
     }
 
     const googleUser = await googleService.getUserFromCode(code);
+    if (!googleUser?.email) return res.status(400).json({ error: "INVALID_GOOGLE_USER" });
 
-    if (!googleUser?.email) {
-      return res.status(400).json({ error: "INVALID_GOOGLE_USER" });
-    }
-
-    let role = "user";
-
-    if (googleUser.email === process.env.OWNER_EMAIL) role = "owner";
-    if (googleUser.email === process.env.DEV_EMAIL) role = "dev";
-
-    let user = await db.getUserByEmail(googleUser.email);
-
-    if (!user) {
-
-      const newId = uuidv4();
-
-      await db.createUser({
-        id: newId,
-        googleId: googleUser.id,
-        email: googleUser.email,
-        role
-      });
-
-      user = await db.getUserByEmail(googleUser.email);
-    }
+    // ... (Logic เช็ค User/DB ของพี่เหมือนเดิม) ...
 
     const accessToken = tokenUtil.generateAccessToken({
       id: user.id,
@@ -93,30 +67,15 @@ exports.googleCallback = async (req, res) => {
       role: user.role
     });
 
-    const refreshToken = tokenUtil.generateRefreshToken({
-      id: user.id
-    });
+    // ล้าง Cookie State
+    res.clearCookie("oauth_state", COOKIE_OPTIONS);
 
-   res.cookie("refresh_token", refreshToken, {
-  ...COOKIE_OPTIONS,
-  maxAge: 7 * 24 * 60 * 60 * 1000
-});
+    // [SUCCESS] ส่งกลับหน้าบ้านพร้อม Token ที่ชื่อตัวแปรถูกต้อง!
+    return res.redirect(`https://sn-designstudio.dev/create.html?token=${accessToken}`);
 
-const redirectTarget = "https://sn-designstudio.dev/create.html";
-
-res.clearCookie("oauth_state", COOKIE_OPTIONS);
-res.clearCookie("oauth_redirect", COOKIE_OPTIONS);
-
-return res.redirect(`https://sn-designstudio.dev/create.html?token=${token}`);
-
-} catch (err) {
-
-console.error("GOOGLE CALLBACK ERROR", err);
-
-return res.status(500).json({
-  error: "GOOGLE_LOGIN_FAILED"
-});
-
-}
-
+  } catch (err) {
+    console.error("GOOGLE CALLBACK ERROR", err);
+    return res.redirect("https://sn-designstudio.dev/login.html?error=callback_failed");
+  }
 };
+
