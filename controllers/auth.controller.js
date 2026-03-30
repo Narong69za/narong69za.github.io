@@ -29,7 +29,7 @@ exports.googleRedirect = async (req, res) => {
 
   const state = crypto.randomBytes(32).toString("hex");
 
-  const redirectTarget = req.query.redirect || "/create.html";
+  res.redirect('https://sn-designstudio.dev/create.html');
 
   res.cookie("oauth_state", state, {
     ...COOKIE_OPTIONS,

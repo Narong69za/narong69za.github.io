@@ -4,7 +4,7 @@
  * =====================================================
  */
 
-const API_BASE = "https://vagally-transequatorial-frederic.ngrok-free.dev";
+const API_BASE = "https://api.sn-designstudio.dev";
 
 const API_ACTIVATE = API_BASE + "/api/activate";
 const API_QR = API_BASE + "/qr/payment/create";
@@ -73,7 +73,7 @@ async function activateKey() {
     switch (data.status) {
       case "ok":
         alert("เปิดใช้งานสำเร็จ");
-        window.location.href = "/create.html";
+        window.location.href = "https://sn-designstudio.dev/create.html";
         break;
       case "invalid_key":
         alert("Key ไม่ถูกต้อง");

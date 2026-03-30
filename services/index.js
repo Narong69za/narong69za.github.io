@@ -1,204 +1,128 @@
-// =====================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: services/index.js
-// VERSION: v
-// STATUS: production-final
-// LAYER: core-server
-// RESPONSIBILITY:
-// - initialize express app
-// - register middleware
-// - secure admin routes
-// - register webhooks (raw first)
-// DEPENDS ON:
-// - middleware/auth.js
-// - middleware/admin.guard.js
-// - routes/*
-// LAST FIX: 2026-03-08
-// - removed delayed listen
-// - secured admin routes
-// - fixed crypto webhook registration
-// =====================================================
-
 require("dotenv").config();
+const express = require("express"), 
+      cors = require("cors"), 
+      multer = require("multer"), 
+      cookieParser = require("cookie-parser"),
+      session = require("express-session"); // [ADDED] ระบบ Session สำหรับ Google Auth
 
-const express = require("express");
-const cors = require("cors");
-const multer = require("multer");
-const cookieParser = require("cookie-parser");
+const fs = require('fs'), 
+      path = require('path'), 
+      { exec } = require("child_process"), 
+      dbModule = require("../db/db");
 
-const config = require("../config/system.config");
+const authMiddleware = require("../middleware/auth"), 
+      adminGuard = require("../middleware/admin.guard");
 
-const adminRoutes = require("../routes/admin.routes");
-const stripeRoute = require("../routes/stripe.route");
-const stripeWebhook = require("../routes/stripe.webhook");
-const userRoutes = require("../routes/user.routes");
-const thaiPaymentRoutes = require("../routes/thai-payment.route");
-const authRoutes = require("../routes/auth.route");
-const promptpayRoute = require("../routes/promptpay.route");
-const paymentStatusRoute = require("../routes/payment-status.route"); // ADDED
-const authMiddleware = require("../middleware/auth");
-const adminGuard = require("../middleware/admin.guard");
-const omiseRoute = require("../routes/omise.route");
-const omiseWebhook = require("../routes/omise.webhook");
-const cryptoRoute = require("../routes/crypto.route");
-const cryptoWebhook = require("../routes/crypto.webhook");
-const usageCheck = require("../services/usage-check");
-const { create } = require("../controllers/create.controller.js");
+// [MASTER] Import pm2
+const pm2 = require('pm2');
 
-const app = express();
+const app = express(), FRONTEND_PATH = "/home/ubuntu/narong69za.github.io";
+const db = dbModule.sqlite || dbModule;
 
-app.get("/healthz", (req, res) => {
-  res.status(200).send("OK");
-});
+// [MASTER CONFIG] ตั้งค่า Trust Proxy สำหรับการรันหลัง Coolify/Docker
+app.set("trust proxy", 1);
 
-// ================= CORS =================
+const safeRequire = (p) => {
+    const f = path.join(FRONTEND_PATH, p.endsWith('.js') ? p : p + '.js');
+    if (fs.existsSync(f)) {
+        try { delete require.cache[require.resolve(f)]; return require(f); } catch (e) { return null; }
+    }
+    return null;
+};
 
-app.use(cors({
-  origin: ["https://sn-designstudio.dev"],
-  credentials: true
+const adminRoutes = safeRequire("routes/admin.routes"), 
+      authRoutes = safeRequire("routes/auth.route"), 
+      stripeRoute = safeRequire("routes/stripe.route");
+const userRoutes = safeRequire("routes/user.routes"), 
+      thaiPaymentRoutes = safeRequire("routes/thai-payment.route"), 
+      promptpayRoute = safeRequire("routes/promptpay.route");
+const paymentStatusRoute = safeRequire("routes/payment-status.route"), 
+      cryptoRoute = safeRequire("routes/crypto.route"), 
+      usageCheck = safeRequire("services/usage-check");
+const { create } = safeRequire("controllers/create.controller") || {};
+
+// =====================================================
+// [ZONE: MIDDLEWARES]
+// =====================================================
+
+// [ADDED] แก้ไขปัญหา INVALID_OAUTH_STATE โดยการใช้ Session ข้ามโดเมน
+app.use(session({
+    secret: process.env.JWT_SECRET || "SN_ULTRA_ENGINE_2026_SECURE_KEY",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+        domain: '.sn-designstudio.dev', // บังคับให้ Cookie ใช้ได้ทั้งหน้าบ้านและ API
+        secure: true,                   // ต้องเป็น true เพราะใช้ HTTPS
+        sameSite: 'none',               // อนุญาตให้ Google ส่งค่ากลับมาหาเราได้
+        maxAge: 1000 * 60 * 60          // อายุ 1 ชั่วโมง
+    }
 }));
 
+app.use(cors({ 
+    origin: ["https://sn-designstudio.dev", "https://narong69za.github.io"], 
+    credentials: true 
+}));
 app.use(cookieParser());
-
-// ================= WEBHOOKS =================
-// MUST COME BEFORE JSON PARSER
-
-app.use("/api/stripe/webhook",
-  express.raw({ type: "application/json" }),
-  stripeWebhook
-);
-
-app.use("/api/omise/webhook",
-  express.raw({ type: "application/json" }),
-  omiseWebhook
-);
-
-app.use("/api/crypto/webhook",
-  express.raw({ type: "application/json" }),
-  cryptoWebhook
-);
-
-// ================= BODY PARSER =================
-
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
-// ================= ACTIVATION =================
+// =====================================================
+// [ZONE: MONITORING APIs]
+// =====================================================
 
-const db = require("../db/db");
-
-app.post("/api/activate", async (req, res) => {
-
-  try {
-
-    const { key, device_id } = req.body;
-
-    if (!key) {
-      return res.json({
-        status: "error",
-        message: "KEY_REQUIRED"
-      });
-    }
-
-    const result = await db.query(
-      "SELECT * FROM licenses WHERE license_key=?",
-      [key]
-    );
-
-    if (!result.length) {
-      return res.json({ status: "invalid_key" });
-    }
-
-    const license = result[0];
-
-    const now = Date.now();
-    const expire = new Date(license.expire_at).getTime();
-
-    if (expire < now) {
-      return res.json({ status: "expired" });
-    }
-
-    if (license.device_id && license.device_id !== device_id) {
-      return res.json({ status: "device_locked" });
-    }
-
-    if (!license.device_id) {
-      await db.query(
-        "UPDATE licenses SET device_id=? WHERE license_key=?",
-        [device_id, key]
-      );
-    }
-
-    return res.json({
-      status: "ok",
-      plan: license.plan,
-      expire: license.expire_at
+// 1. ระบบ Monitor เดิม (Python)
+app.get("/api/admin/system-status", (req, res) => {
+    exec("python3 /home/ubuntu/sn-payment-core/monitor_api.py", (err, stdout) => {
+        let monitorData = { cpu: "0.0", ramUsed: "0.0", diskUsed: "0.0", status: "ONLINE" };
+        try { if (stdout) { const data = JSON.parse(stdout.toString().trim()); monitorData.cpu = parseFloat(data.cpu || 0).toFixed(1); monitorData.ramUsed = parseFloat(data.ram || 0).toFixed(1); monitorData.diskUsed = parseFloat(data.disk || 0).toFixed(1); } } catch (e) {}
+        if (db && typeof db.get === 'function') {
+            db.get("SELECT COUNT(*) as count FROM users", (e, row) => {
+                res.json({ success: true, monitor: { ...monitorData, users: row ? row.count : 0, status: "ULTRA_STABLE" } });
+            });
+        } else { res.json({ success: true, monitor: { ...monitorData, users: "N/A", db_status: "CHECK_EXPORT" } }); }
     });
+});
 
-  } catch (err) {
+// 2. [NEW] ระบบ Real-time PM2 Monitor
+app.get("/api/admin/realtime-status", (req, res) => {
+    pm2.connect((err) => {
+        if (err) return res.status(500).json({ success: false, error: "PM2 Connection Failed" });
 
-    console.error("ACTIVATE ERROR:", err);
+        pm2.list((err, list) => {
+            pm2.disconnect();
+            if (err) return res.status(500).json({ success: false, error: "Failed to fetch process list" });
 
-    res.json({
-      status: "server_error"
+            const services = list.map(proc => ({
+                name: proc.name,
+                status: proc.pm2_env.status,
+                cpu: proc.monit ? proc.monit.cpu : 0,
+                memory: proc.monit ? Math.round(proc.monit.memory / 1024 / 1024) : 0,
+                uptime: proc.pm2_env.pm_uptime ? (Date.now() - proc.pm2_env.pm_uptime) : 0,
+                restarts: proc.pm2_env.restart_time
+            }));
+            res.json({ success: true, services });
+        });
     });
-
-  }
-
 });
 
-// ================= ROUTES =================
+// =====================================================
+// [ZONE: BUSINESS ROUTES]
+// =====================================================
 
-// 🔒 Admin protected
-app.use("/api/admin",
-  authMiddleware,
-  adminGuard,
-  adminRoutes
-);
+if (adminRoutes) app.use("/api/admin", authMiddleware, adminGuard, adminRoutes);
+if (userRoutes) app.use("/api/user", authMiddleware, userRoutes);
+if (promptpayRoute) app.use("/api/promptpay", promptpayRoute);
+if (stripeRoute) app.use("/api/stripe", authMiddleware, stripeRoute);
+if (thaiPaymentRoutes) app.use("/api/thai-payment", authMiddleware, thaiPaymentRoutes);
+if (cryptoRoute) app.use("/api/crypto", authMiddleware, cryptoRoute);
+if (paymentStatusRoute) app.use("/api/payment", authMiddleware, paymentStatusRoute);
+if (authRoutes) app.use("/auth", authRoutes);
 
-// User APIs
-app.use("/api/user", authMiddleware, userRoutes);
+const upload = multer({ storage: multer.memoryStorage() });
+if (create) app.post("/api/render", authMiddleware, usageCheck, upload.any(), create);
 
-app.use("/api/stripe", authMiddleware, stripeRoute);
-app.use("/api/thai-payment", authMiddleware, thaiPaymentRoutes);
+app.get("/healthz", (req, res) => res.status(200).send("OK"));
+app.get("/", (req, res) => res.send("SN ULTRA ENGINE MASTER ONLINE"));
 
-app.use("/api/omise", authMiddleware, omiseRoute);
-app.use("/api/crypto", authMiddleware, cryptoRoute);
+app.listen(5002, () => console.log("⭐ [MASTER] ONLINE ON PORT 5002"));
 
-app.use("/api/promptpay", authMiddleware, promptpayRoute);
-app.use("/api/payment", authMiddleware, paymentStatusRoute); // ADDED
-
-app.use("/auth", authRoutes);
-
-// ================= RENDER ENGINE =================
-
-const upload = multer({
-  storage: multer.memoryStorage(),
-});
-
-app.post(
-  "/api/render",
-  authMiddleware,
-  usageCheck,
-  upload.any(),
-  create
-);
-
-// ================= STATUS =================
-
-app.get("/api/status/server", (req, res) => {
-  res.json({ server: "online" });
-});
-
-app.get("/", (req, res) => {
-  res.send("SN DESIGN API RUNNING");
-});
-
-// ================= START =================
-
-const PORT = process.env.PORT || 10000;
-
-app.listen(PORT, () => {
-  console.log("ULTRA ENGINE RUNNING:", PORT);
-  console.log("SYSTEM MODE:", process.env.NODE_ENV || "production");
-});

@@ -89,8 +89,10 @@ async function checkAuth(){
 
     if(res.status === 200){
       statusEl.innerText = "Redirecting...";
-      window.location.replace("/create.html");
-    }
+      window.location.replace("https://sn-designstudio.dev/create.html"); 
+
+}
+
   }catch(e){
     console.log("Not logged in or token expired");
     statusEl.innerText = "";

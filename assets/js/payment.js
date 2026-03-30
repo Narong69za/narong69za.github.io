@@ -1,15 +1,18 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.js
-VERSION: v11.1.0
+VERSION: v11.1.2 (Security & Domain Fixed)
 STATUS: production-enterprise
 RESPONSIBILITY:
 - Enterprise Payment Engine Controller
 - Omise / TrueMoney / PromptPay / Crypto / Stripe
-- Auth Guard
+- Auth Guard (Bearer Token Fixed)
 - Payment Status Polling
 - Anti Double Credit Guard
 ===================================================== */
+
+const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
+const FRONTEND_BASE = "https://sn-designstudio.dev"; // ระบุโดเมนหน้าบ้านให้ชัดเจน
 
 const paymentBox = document.getElementById("paymentBox");
 const statusEl = document.getElementById("paymentStatus");
@@ -34,24 +37,33 @@ function resetUI(){
   }
 }
 
-/* AUTH */
+/* AUTH - แก้ไขให้ใช้ Bearer Token เหมือนหน้าอื่น */
 
 async function checkAuth(){
-  try{
+  const token = localStorage.getItem("token");
+  if(!token){
+    window.location.replace(`${FRONTEND_BASE}/login.html`);
+    return false;
+  }
 
+  try{
     const res = await fetch(`${API_BASE}/auth/me`,{
-      credentials:"include"
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      }
     });
 
     if(res.status!==200){
-      window.location.replace("/login.html");
+      window.location.replace(`${FRONTEND_BASE}/login.html`);
       return false;
     }
 
     return true;
 
   }catch(err){
-    window.location.replace("/login.html");
+    window.location.replace(`${FRONTEND_BASE}/login.html`);
     return false;
   }
 }
@@ -137,10 +149,10 @@ async function handleConfirm(){
 
 }
 
-/* OMISE */
+/* OMISE - แก้ไข Headers */
 
 function payOmise(){
-
+  const tokenLocal = localStorage.getItem("token");
   Omise.setPublicKey("pkey_live");
 
   Omise.createToken("card",{
@@ -159,8 +171,10 @@ function payOmise(){
 
     const res = await fetch(API_BASE+"/api/omise/create-charge",{
       method:"POST",
-      credentials:"include",
-      headers:{ "Content-Type":"application/json" },
+      headers:{ 
+        "Content-Type":"application/json",
+        "Authorization": `Bearer ${tokenLocal}`
+      },
       body:JSON.stringify({
         token:response.id,
         product:"credit_pack_1"
@@ -181,14 +195,16 @@ function payOmise(){
 
 }
 
-/* TRUEMONEY */
+/* TRUEMONEY - แก้ไข Headers */
 
 async function payTrueMoney(){
-
+  const tokenLocal = localStorage.getItem("token");
   const res = await fetch(API_BASE+"/api/omise/create-truewallet",{
     method:"POST",
-    credentials:"include",
-    headers:{ "Content-Type":"application/json" },
+    headers:{ 
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${tokenLocal}`
+    },
     body:JSON.stringify({
       product:"credit_pack_1"
     })
@@ -205,10 +221,10 @@ async function payTrueMoney(){
 
 }
 
-/* PROMPTPAY */
+/* PROMPTPAY - แก้ไข Headers */
 
 async function payPromptPay(){
-
+  const tokenLocal = localStorage.getItem("token");
   const amount=parseInt(document.getElementById("qrAmount").value);
 
   if(!amount || amount<50 || amount>500){
@@ -219,8 +235,10 @@ async function payPromptPay(){
 
   const res = await fetch(API_BASE+"/api/scb/create-qr",{
     method:"POST",
-    credentials:"include",
-    headers:{ "Content-Type":"application/json" },
+    headers:{ 
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${tokenLocal}`
+    },
     body:JSON.stringify({amount})
   });
 
@@ -242,17 +260,19 @@ async function payPromptPay(){
 
 }
 
-/* CRYPTO */
+/* CRYPTO - แก้ไข Headers */
 
 async function payCrypto(){
-
+  const tokenLocal = localStorage.getItem("token");
   const usd=document.getElementById("usdSelect").value;
   const coin=document.getElementById("coinSelect").value;
 
   const res = await fetch(API_BASE+"/api/crypto/create-order",{
     method:"POST",
-    credentials:"include",
-    headers:{ "Content-Type":"application/json" },
+    headers:{ 
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${tokenLocal}`
+    },
     body:JSON.stringify({usd,coin})
   });
 
@@ -267,14 +287,16 @@ async function payCrypto(){
 
 }
 
-/* STRIPE */
+/* STRIPE - แก้ไข Headers */
 
 async function payStripe(){
-
+  const tokenLocal = localStorage.getItem("token");
   const res = await fetch(API_BASE+"/api/stripe/create-checkout",{
     method:"POST",
-    credentials:"include",
-    headers:{ "Content-Type":"application/json" },
+    headers:{ 
+      "Content-Type":"application/json",
+      "Authorization": `Bearer ${tokenLocal}`
+    },
     body:JSON.stringify({
       product:"credit_pack_1"
     })
@@ -291,10 +313,10 @@ async function payStripe(){
 
 }
 
-/* POLLING */
+/* POLLING - แก้ไข Headers */
 
 function startPolling(txId){
-
+  const tokenLocal = localStorage.getItem("token");
   if(POLL_INTERVAL){
     clearInterval(POLL_INTERVAL);
   }
@@ -302,7 +324,7 @@ function startPolling(txId){
   POLL_INTERVAL=setInterval(async()=>{
 
     const res = await fetch(API_BASE+"/api/payment/status?tx="+txId,{
-      credentials:"include"
+      headers: { "Authorization": `Bearer ${tokenLocal}` }
     });
 
     const data = await res.json();
@@ -341,72 +363,42 @@ document.addEventListener("DOMContentLoaded",async()=>{
 });
 
 /* =====================================================
-PATCH MODULE
-PROJECT: SN DESIGN STUDIO
-MODULE: payment.js
-VERSION: v11.1.1
-STATUS: hotfix-addonly
-RESPONSIBILITY:
-- PromptPay safety validation
-- Transaction guard extension
-- Prevent invalid QR creation
-NOTE:
-ADD-ONLY PATCH
-DO NOT MODIFY EXISTING ENGINE
+PATCH MODULE (PROMPTPAY SAFETY)
 ===================================================== */
 
 (function(){
-
-  if(typeof payPromptPay!=="function"){
-    return;
-  }
-
+  if(typeof payPromptPay!=="function") return;
   const originalPayPromptPay = payPromptPay;
-
   payPromptPay = async function(){
-
     try{
-
       const amountField = document.getElementById("qrAmount");
-
       if(!amountField){
         setStatus("QR INPUT ERROR");
         TX_LOCK=false;
         return;
       }
-
       const value = parseInt(amountField.value);
-
       if(isNaN(value)){
         setStatus("AMOUNT REQUIRED");
         TX_LOCK=false;
         return;
       }
-
       if(value<50){
         setStatus("MIN 50 BAHT");
         TX_LOCK=false;
         return;
       }
-
       if(value>500){
         setStatus("MAX 500 BAHT");
         TX_LOCK=false;
         return;
       }
-
       return originalPayPromptPay();
-
     }catch(err){
-
       console.error("PROMPTPAY PATCH ERROR",err);
-
       setStatus("PROMPTPAY ERROR");
-
       TX_LOCK=false;
-
     }
-
   };
-
 })();
+
