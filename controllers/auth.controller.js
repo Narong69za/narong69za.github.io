@@ -1,4 +1,4 @@
-st crypto = require("crypto");
+const crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
 const googleService = require("../services/google.service");
 const tokenUtil = require("../utils/token.util");
