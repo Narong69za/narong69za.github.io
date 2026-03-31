@@ -1,8 +1,8 @@
-const crypto = require("crypto");
+st crypto = require("crypto");
 const { v4: uuidv4 } = require("uuid");
 const googleService = require("../services/google.service");
 const tokenUtil = require("../utils/token.util");
-const db = require("../db/db"); // <--- ต้องมีตัวนี้เพื่อคุยกับฐานข้อมูล
+const db = require("../db/db");
 
 const COOKIE_OPTIONS = {
   httpOnly: true,
@@ -31,20 +31,35 @@ exports.googleCallback = async (req, res) => {
 
     const googleUser = await googleService.getUserFromCode(code);
     
-    // --- จุดเช็คฐานข้อมูล ---
+    // ดึงข้อมูล User (ใช้ email เป็นหลัก)
     let user = await db.getUserByEmail(googleUser.email);
+    
     if (!user) {
       const newId = uuidv4();
-      await db.createUser({ id: newId, googleId: googleUser.id, email: googleUser.email, role: "user" });
+      // [FIX] ปรับให้ตรงกับ Schema: google_id
+      await db.createUser({ 
+        id: newId, 
+        google_id: googleUser.id, 
+        email: googleUser.email, 
+        role: "user",
+        credits: 0 
+      });
       user = await db.getUserByEmail(googleUser.email);
     }
 
-    const accessToken = tokenUtil.generateAccessToken({ id: user.id, email: user.email, role: user.role });
+    const accessToken = tokenUtil.generateAccessToken({ 
+      id: user.id, 
+      email: user.email, 
+      role: user.role 
+    });
+
+    res.cookie("access_token", accessToken, { ...COOKIE_OPTIONS, maxAge: 60 * 60 * 1000 });
     res.clearCookie("oauth_state", COOKIE_OPTIONS);
 
-    // [SUCCESS] ส่งกลับพร้อม Token
+    // ส่งกลับหน้าบ้านพร้อมแต้มเด้ง
     return res.redirect(`https://sn-designstudio.dev/create.html?token=${accessToken}`);
   } catch (err) {
+    console.error("AUTH_ERROR:", err);
     return res.status(500).json({ error: "GOOGLE_LOGIN_FAILED" });
   }
 };
