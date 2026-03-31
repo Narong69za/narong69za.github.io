@@ -1,20 +1,10 @@
-// =====================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: routes/auth.route.js
-// VERSION: v
-// STATUS: production-fixed
-// LAYER: auth
-// RESPONSIBILITY:
-// - google oauth
-// - jwt protected profile
-// - logout
-// DEPENDS ON:
-// - middleware/auth.js
-// - controllers/auth.controller.js
-// LAST FIX: 2026-03-08
-// - fixed undefined controller crash
-// - protected routes fallback
-// =====================================================
+/**
+ * =====================================================
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: routes/auth.route.js
+ * VERSION: v1.6.0 (FINAL FIX - DATABASE CONNECTED)
+ * =====================================================
+ */
 
 const express = require("express");
 const router = express.Router();
@@ -25,43 +15,33 @@ const authMiddleware = require("../middleware/auth");
 // ===============================
 // OAUTH ENTRY
 // ===============================
-
 router.get("/google", authController.googleRedirect);
 
 // ===============================
 // OAUTH CALLBACK
 // ===============================
-
 router.get("/google/callback", authController.googleCallback);
 
 // ===============================
-// PROTECTED USER PROFILE
+// PROTECTED USER PROFILE (แก้ไขจุดนี้!)
 // ===============================
-
-router.get("/me", authMiddleware, (req, res) => {
-  return res.json({
-    id: req.user?.id,
-    email: req.user?.email,
-    role: req.user?.role
-  });
-});
+// เปลี่ยนจากฟังก์ชันเดิม มาใช้ getMe จาก Controller เพื่อดึงเครดิตจาก DB
+router.get("/me", authMiddleware, authController.getMe);
 
 // ===============================
 // LOGOUT
 // ===============================
-
 router.get("/logout", (req, res) => {
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
-
+  res.clearCookie("access_token", { domain: ".sn-designstudio.dev", path: "/" });
+  res.clearCookie("refresh_token", { domain: ".sn-designstudio.dev", path: "/" });
   return res.json({ status: "LOGGED_OUT" });
 });
 
 router.post("/logout", (req, res) => {
-  res.clearCookie("access_token");
-  res.clearCookie("refresh_token");
-
+  res.clearCookie("access_token", { domain: ".sn-designstudio.dev", path: "/" });
+  res.clearCookie("refresh_token", { domain: ".sn-designstudio.dev", path: "/" });
   return res.json({ status: "LOGGED_OUT" });
 });
 
 module.exports = router;
+
