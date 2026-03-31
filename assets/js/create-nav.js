@@ -91,7 +91,7 @@
         const role = (user.role || '').toLowerCase();
         if (role === 'admin' || role === 'dev') {
             rightBtn = `
-                <a href="payment.dashboard.html" style="pointer-events:auto; text-decoration:none; background:rgba(255,0,85,0.1); color:#ff0055; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:12px; border:1px solid #ff0055; box-shadow:0 0 15px rgba(255,0,85,0.2);">
+                <a href="admin/payment.dashboard.html" style="pointer-events:auto; text-decoration:none; background:rgba(255,0,85,0.1); color:#ff0055; padding:8px 16px; border-radius:20px; font-weight:bold; font-size:12px; border:1px solid #ff0055; box-shadow:0 0 15px rgba(255,0,85,0.2);">
                     ⚙️ ระบบควบคุม
                 </a>
             `;
