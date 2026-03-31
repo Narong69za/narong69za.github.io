@@ -1,33 +1,31 @@
-/**
- * =====================================================
- * PROJECT: SN DESIGN STUDIO
- * MODULE: controllers/payment-status.controller.js
- * VERSION: v1.0.0
- * STATUS: production
- * RESPONSIBILITY:
- * - transaction status check
- * - used by polling system
- * =====================================================
- */
+const sqlite3 = require('sqlite3').verbose();
+const path = require('path');
+const dbPath = '/home/ubuntu/sn-payment-core/database.db';
 
-exports.checkStatus = async (req,res)=>{
+exports.checkStatus = async (req, res) => {
+  const db = new sqlite3.Database(dbPath);
+  try {
+    const tx = req.query.tx;
+    if (!tx) return res.json({ status: "invalid" });
 
-  try{
+    // ค้นหาในตารางว่า txId นี้จ่ายหรือยัง
+    const sql = "SELECT status FROM payments WHERE txId = ?";
+    
+    db.get(sql, [tx], (err, row) => {
+      if (err) {
+        console.error(err);
+        return res.json({ status: "error" });
+      }
+      
+      if (!row) return res.json({ status: "not_found" });
 
-    const tx=req.query.tx;
-
-    if(!tx){
-      return res.json({ status:"invalid" });
-    }
-
-    return res.json({
-      status:"pending"
+      // ส่งสถานะจริงกลับไป (pending หรือ success)
+      res.json({ status: row.status });
     });
 
-  }catch(err){
-
-    res.json({ status:"error" });
-
+  } catch (err) {
+    res.json({ status: "error" });
+  } finally {
+    db.close();
   }
-
 };

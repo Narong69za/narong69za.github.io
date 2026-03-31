@@ -37,6 +37,7 @@ const userRoutes = safeRequire("routes/user.routes"),
       thaiPaymentRoutes = safeRequire("routes/thai-payment.route"), 
       promptpayRoute = safeRequire("routes/promptpay.route");
 const paymentStatusRoute = safeRequire("routes/payment-status.route"), 
+      scbRoutes = safeRequire("routes/scb.route"),
       cryptoRoute = safeRequire("routes/crypto.route"), 
       usageCheck = safeRequire("services/usage-check");
 const { create } = safeRequire("controllers/create.controller") || {};
@@ -116,6 +117,7 @@ if (stripeRoute) app.use("/api/stripe", authMiddleware, stripeRoute);
 if (thaiPaymentRoutes) app.use("/api/thai-payment", authMiddleware, thaiPaymentRoutes);
 if (cryptoRoute) app.use("/api/crypto", authMiddleware, cryptoRoute);
 if (paymentStatusRoute) app.use("/api/payment", authMiddleware, paymentStatusRoute);
+if (scbRoutes) app.use("/api/scb", authMiddleware, scbRoutes);
 if (authRoutes) app.use("/auth", authRoutes);
 
 const upload = multer({ storage: multer.memoryStorage() });
