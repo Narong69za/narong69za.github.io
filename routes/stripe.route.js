@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const authMiddleware = require("../middleware/auth"); // [SECURITY]
+const authMiddleware = require("../middleware/auth"); // [SECURITY RETURN]
 const CREDIT_POLICY = require("../config/credit.policy");
 
 router.post("/create-checkout", authMiddleware, async (req, res) => {
