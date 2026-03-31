@@ -1,19 +1,28 @@
-exports.processWallet = async (req, res) => {
+const sqlite3 = require('sqlite3').verbose();
+const dbPath = '/home/ubuntu/sn-payment-core/database.db';
+
+exports.processGiftLink = async (req, res) => {
+  const db = new sqlite3.Database(dbPath);
   try {
-    const { amount, phoneNumber } = req.body;
-    if (!amount) return res.json({ error: "NO_AMOUNT" });
-    
-    // ตรงนี้คือจุดเชื่อมกับ API TrueMoney หรือระบบเช็คซองของพี่
+    const { amount, giftLink } = req.body;
+    if (!giftLink) return res.json({ success: false, message: "กรุณาใส่ลิงก์ซองของขวัญ" });
+
     const txId = "TMN_" + Date.now();
     
-    // สมมติส่ง URL สำหรับยืนยันการจ่ายกลับไป
-    res.json({
-      success: true,
-      txId,
-      message: "READY_FOR_WALLET_PAYMENT",
-      amount
+    // บันทึกลง DB รอการตรวจสอบ (สถานะ pending)
+    const sql = "INSERT INTO payments (txId, amount, status, method) VALUES (?, ?, 'pending', 'truemoney')";
+    db.run(sql, [txId, amount], (err) => {
+      if (err) return res.json({ success: false, error: err.message });
+      
+      res.json({
+        success: true,
+        txId,
+        message: "ระบบกำลังตรวจสอบซองของขวัญ..."
+      });
     });
   } catch (err) {
-    res.json({ error: "TRUEMONEY_ERROR" });
+    res.json({ success: false, error: err.message });
+  } finally {
+    db.close();
   }
 };
