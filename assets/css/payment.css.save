@@ -158,20 +158,4 @@ body{
 }
 .qr-header { background: #6a1b9a; color: #fff; padding: 20px; text-align: center; }
 .qr-body { padding: 30px; display: flex; flex-direction: column; align-items: center; text-align: center; }
-.qr-frame { border: 8px solid #f4f4f4; border-radius: 16px; padding: 10px; margin-bottom: 20px; }
-.qr-footer { background: #f8f8f8; padding: 15px; text-align: center; border-top: 1px dashed #ddd; }
-.close-qr-btn { 
-  background: #222; color: #fff; border: none; padding: 12px 30px; 
-  border-radius: 50px; cursor: pointer; font-weight: bold; 
-}
-@keyframes qrPop {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-@media(max-width:900px){
-  .payment-grid{
-    grid-template-columns:1fr;
-  }
-}
-
+.qr-frame { border: 8px s
