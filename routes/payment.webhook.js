@@ -1,29 +1,25 @@
-// routes/payment.webhook.js
-
 const express = require("express");
-const db = require("../db/db");
-
 const router = express.Router();
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-router.post("/webhook/payment", async (req,res)=>{
+// ตัวรับ Webhook จาก Stripe
+router.post("/stripe", express.raw({type: 'application/json'}), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
 
-  const { userId, amount, secret } = req.body;
-
-  if(secret !== process.env.PAYMENT_SECRET){
-    return res.status(403).json({error:"Unauthorized"});
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
-  try{
-
-    await db.updateCredit(userId,amount);
-    await db.createTransaction(userId,amount,"topup");
-
-    res.json({success:true});
-
-  }catch(err){
-    res.status(500).json({error:err.message});
+  if (event.type === 'checkout.session.completed') {
+    const session = event.data.object;
+    // --- จุดนี้พี่เขียน Logic เติมเครดิตลง Database ได้เลย ---
+    console.log(" STRIPE PAYMENT SUCCESS:", session.id);
   }
 
+  res.json({received: true});
 });
 
 module.exports = router;
