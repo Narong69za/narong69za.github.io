@@ -1,60 +1,131 @@
 require("dotenv").config();
+const express = require("express"), 
+      cors = require("cors"), 
+      multer = require("multer"), 
+      cookieParser = require("cookie-parser"),
+      session = require("express-session");
 
-const express = require("express");
-const cors = require("cors");
-const bodyParser = require("body-parser");
+const fs = require('fs'), 
+      path = require('path'), 
+      { exec } = require("child_process"), 
+      dbModule = require("../db/db");
 
-const MODEL_ROUTER = require("./services/model.router");
-const runwayPoller = require("./services/runwayml/v1/runway.poller");
-const authMiddleware = require("./middleware/auth");
-const paymentWebhook = require("./routes/payment.webhook");
-const db = require("./db/db");
+const authMiddleware = require("../middleware/auth"), 
+      adminGuard = require("../middleware/admin.guard");
 
-const app = express();
+const pm2 = require('pm2');
 
-app.use(cors({
-  origin: [
-    "https://sn-designstudio.dev"
-  ],
-  credentials: true
-}));
-app.use(bodyParser.json());
+const app = express(), FRONTEND_PATH = "/home/ubuntu/narong69za.github.io";
+const db = dbModule.sqlite || dbModule;
 
-app.use(paymentWebhook);
+app.set("trust proxy", 1);
 
-app.post("/api/create", authMiddleware, async (req,res)=>{
-
-  try{
-
-    if(req.user.id !== 1){ // dev bypass id=1
-      await db.deductCredit(req.user.id,1);
+const safeRequire = (p) => {
+    const f = path.join(FRONTEND_PATH, p.endsWith('.js') ? p : p + '.js');
+    if (fs.existsSync(f)) {
+        try { delete require.cache[require.resolve(f)]; return require(f); } catch (e) { return null; }
     }
+    return null;
+};
 
-    const result = await MODEL_ROUTER.run({
-      engine:req.body.engine,
-      mode:req.body.mode,
-      prompt:req.body.prompt,
-      files:{
-        fileAUrl:req.body.fileAUrl,
-        fileBUrl:req.body.fileBUrl
-      }
+const adminRoutes = safeRequire("routes/admin.routes"), 
+      authRoutes = safeRequire("routes/auth.route"), 
+      stripeRoute = safeRequire("routes/stripe.route");
+const userRoutes = safeRequire("routes/user.routes"), 
+      thaiPaymentRoutes = safeRequire("routes/thai-payment.route"), 
+      promptpayRoute = safeRequire("routes/promptpay.route");
+const paymentStatusRoute = safeRequire("routes/payment-status.route"), 
+      scbRoutes = safeRequire("routes/scb.route"),
+      tmnRoutes = safeRequire("routes/truemoney.route"),
+      cryptoRoute = safeRequire("routes/crypto.route"), 
+      usageCheck = safeRequire("services/usage-check");
+const { create } = safeRequire("controllers/create.controller") || {};
+
+// =====================================================
+// [ZONE: MIDDLEWARES]
+// =====================================================
+
+app.use(session({
+    secret: process.env.JWT_SECRET || "SN_ULTRA_ENGINE_2026_SECURE_KEY",
+    resave: false,
+    saveUninitialized: true,
+    cookie: { 
+        domain: '.sn-designstudio.dev',
+        secure: true,                   
+        sameSite: 'none',               
+        maxAge: 1000 * 60 * 60          
+    }
+}));
+
+// ปรับ CORS ให้รองรับการเรียกจาก IP และโดเมนหลักอย่างสมบูรณ์
+app.use(cors({ 
+    origin: ["https://sn-designstudio.dev", "https://narong69za.github.io", "http://103.234.238.14:5002"], 
+    credentials: true 
+}));
+app.use(cookieParser());
+app.use(express.json({ limit: "10mb" }));
+app.use(express.urlencoded({ extended: true, limit: "10mb" }));
+
+// =====================================================
+// [ZONE: MONITORING APIs]
+// =====================================================
+
+app.get("/api/admin/system-status", (req, res) => {
+    exec("python3 /home/ubuntu/sn-payment-core/monitor_api.py", (err, stdout) => {
+        let monitorData = { cpu: "0.0", ramUsed: "0.0", diskUsed: "0.0", status: "ONLINE" };
+        try { if (stdout) { const data = JSON.parse(stdout.toString().trim()); monitorData.cpu = parseFloat(data.cpu || 0).toFixed(1); monitorData.ramUsed = parseFloat(data.ram || 0).toFixed(1); monitorData.diskUsed = parseFloat(data.disk || 0).toFixed(1); } } catch (e) {}
+        if (db && typeof db.get === 'function') {
+            db.get("SELECT COUNT(*) as count FROM users", (e, row) => {
+                res.json({ success: true, monitor: { ...monitorData, users: row ? row.count : 0, status: "ULTRA_STABLE" } });
+            });
+        } else { res.json({ success: true, monitor: { ...monitorData, users: "N/A", db_status: "CHECK_EXPORT" } }); }
     });
-
-    res.json({success:true,data:result});
-
-  }catch(err){
-    res.status(500).json({error:err.message});
-  }
-
 });
 
-app.get("/api/me", authMiddleware, async (req,res)=>{
-  res.json(req.user);
+app.get("/api/admin/realtime-status", (req, res) => {
+    pm2.connect((err) => {
+        if (err) return res.status(500).json({ success: false, error: "PM2 Connection Failed" });
+        pm2.list((err, list) => {
+            pm2.disconnect();
+            if (err) return res.status(500).json({ success: false, error: "Failed to fetch processes" });
+            const services = list.map(proc => ({
+                name: proc.name,
+                status: proc.pm2_env.status,
+                cpu: proc.monit ? proc.monit.cpu : 0,
+                memory: proc.monit ? Math.round(proc.monit.memory / 1024 / 1024) : 0,
+                uptime: proc.pm2_env.pm_uptime ? (Date.now() - proc.pm2_env.pm_uptime) : 0,
+                restarts: proc.pm2_env.restart_time
+            }));
+            res.json({ success: true, services });
+        });
+    });
 });
 
-const PORT = process.env.PORT || 3000;
+// =====================================================
+// [ZONE: BUSINESS ROUTES]
+// =====================================================
 
-app.listen(PORT,()=>{
-  console.log("SERVER RUNNING:",PORT);
-  runwayPoller.start();
+// [PATCH] เพิ่ม Endpoint ตรวจสอบสถานะ User สำหรับ Dashboard
+app.get("/auth/me", authMiddleware, (req, res) => {
+    res.json({ success: true, user: req.user });
 });
+
+if (adminRoutes) app.use("/api/admin", adminGuard, adminRoutes);
+if (userRoutes) app.use("/api/user", userRoutes);
+if (promptpayRoute) app.use("/api/promptpay", promptpayRoute);
+if (stripeRoute) app.use("/api/stripe", stripeRoute);
+if (thaiPaymentRoutes) app.use("/api/thai-payment", thaiPaymentRoutes);
+if (cryptoRoute) app.use("/api/crypto", cryptoRoute);
+if (paymentStatusRoute) app.use("/api/payment", paymentStatusRoute);
+if (scbRoutes) app.use("/api/scb", scbRoutes);
+if (tmnRoutes) app.use("/api/truemoney", tmnRoutes);
+if (authRoutes) app.use("/auth", authRoutes);
+
+const upload = multer({ storage: multer.memoryStorage() });
+if (create) app.post("/api/render", usageCheck, upload.any(), create);
+
+app.get("/healthz", (req, res) => res.status(200).send("OK"));
+app.get("/", (req, res) => res.send("SN ULTRA ENGINE MASTER ONLINE"));
+
+app.listen(5002, "0.0.0.0", () => console.log("⭐ [MASTER] ONLINE ON PORT 5002"));
+
