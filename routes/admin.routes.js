@@ -9,19 +9,32 @@
 // - credit analytics
 // - transaction reports
 // - credit policy viewer
+// - system realtime status (INJECTED)
 // DEPENDS ON:
 // - db/db.js
 // - config/credit.policy.js
+// - services/monitor.controller.js (NEW DEPENDENCY)
 // LAST FIX: 2026-03-08
 // - unified credit-based reporting
 // - added credit-policy endpoint
 // - hardened finance queries
+// - integrated pm2 monitor for dashboard sync
 // =====================================================
 
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
 const CREDIT_POLICY = require("../config/credit.policy");
+
+// 🔥 [INJECTED] นำเข้า Monitor Controller เพื่อเชื่อมต่อหน้า index.html
+const monitorController = require('../services/monitor.controller');
+
+// ================================
+// [INJECTED] SYSTEM MONITOR (FOR DASHBOARD)
+// ================================
+// ท่อนี้จะส่งข้อมูลให้ index.html บรรทัดที่ 178 โดยตรง
+// ผลลัพธ์: กราฟ NETWORK WAVEFRONT วิ่ง, สถานะขึ้น ULTRA ONLINE
+router.get("/realtime-status", monitorController.getRealtimeStatus);
 
 // ================================
 // FINANCE SUMMARY (CREDIT BASED)
