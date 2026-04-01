@@ -38,6 +38,7 @@ const userRoutes = safeRequire("routes/user.routes"),
       promptpayRoute = safeRequire("routes/promptpay.route");
 const paymentStatusRoute = safeRequire("routes/payment-status.route"), 
       scbRoutes = safeRequire("routes/scb.route"),
+      tmnRoutes = safeRequire("routes/truemoney.route"),
       cryptoRoute = safeRequire("routes/crypto.route"), 
       usageCheck = safeRequire("services/usage-check");
 const { create } = safeRequire("controllers/create.controller") || {};
@@ -110,18 +111,19 @@ app.get("/api/admin/realtime-status", (req, res) => {
 // [ZONE: BUSINESS ROUTES]
 // =====================================================
 
-if (adminRoutes) app.use("/api/admin", authMiddleware, adminGuard, adminRoutes);
-if (userRoutes) app.use("/api/user", authMiddleware, userRoutes);
+if (adminRoutes) app.use("/api/admin", adminGuard, adminRoutes);
+if (userRoutes) app.use("/api/user", userRoutes);
 if (promptpayRoute) app.use("/api/promptpay", promptpayRoute);
-if (stripeRoute) app.use("/api/stripe", authMiddleware, stripeRoute);
-if (thaiPaymentRoutes) app.use("/api/thai-payment", authMiddleware, thaiPaymentRoutes);
-if (cryptoRoute) app.use("/api/crypto", authMiddleware, cryptoRoute);
-if (paymentStatusRoute) app.use("/api/payment", authMiddleware, paymentStatusRoute);
-if (scbRoutes) app.use("/api/scb", authMiddleware, scbRoutes);
+if (stripeRoute) app.use("/api/stripe", stripeRoute);
+if (thaiPaymentRoutes) app.use("/api/thai-payment", thaiPaymentRoutes);
+if (cryptoRoute) app.use("/api/crypto", cryptoRoute);
+if (paymentStatusRoute) app.use("/api/payment", paymentStatusRoute);
+if (scbRoutes) app.use("/api/scb", scbRoutes);
+if (tmnRoutes) app.use("/api/truemoney", tmnRoutes);
 if (authRoutes) app.use("/auth", authRoutes);
 
 const upload = multer({ storage: multer.memoryStorage() });
-if (create) app.post("/api/render", authMiddleware, usageCheck, upload.any(), create);
+if (create) app.post("/api/render", usageCheck, upload.any(), create);
 
 app.get("/healthz", (req, res) => res.status(200).send("OK"));
 app.get("/", (req, res) => res.send("SN ULTRA ENGINE MASTER ONLINE"));

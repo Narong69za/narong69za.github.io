@@ -9,6 +9,7 @@ RESPONSIBILITY:
 - Auth Guard (Bearer Token Fixed)
 - Payment Status Polling
 - Anti Double Credit Guard
+- Premium SCB Pop-up Controller
 ===================================================== */
 
 const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
@@ -81,17 +82,17 @@ function setMethod(method){
 function renderMethodUI(method){
 
   if(method==="omise"){
-    paymentBox.innerHTML=`<button id="confirmBtn">ชำระด้วยบัตร</button>`;
+    paymentBox.innerHTML=`<button id="confirmBtn" class="engine-btn" style="background:gold; color:black;">ชำระด้วยบัตร</button>`;
   }
 
   if(method==="truemoney"){
-    paymentBox.innerHTML=`<button id="confirmBtn">ชำระผ่าน TrueMoney Wallet</button>`;
+    paymentBox.innerHTML=`<button id="confirmBtn" class="engine-btn" style="background:#ff7a00; color:white;">ชำระผ่าน TrueMoney Wallet</button>`;
   }
 
   if(method==="promptpay"){
     paymentBox.innerHTML=`
       <input type="number" id="qrAmount" placeholder="ขั้นต่ำ 50 - สูงสุด 500 บาท">
-      <button id="confirmBtn">สร้าง QR PromptPay</button>
+      <button id="confirmBtn" class="engine-btn" style="background:#6a1b9a; color:white;">สร้าง QR PromptPay</button>
       <div id="qrResult"></div>
     `;
   }
@@ -113,12 +114,12 @@ function renderMethodUI(method){
         <option value="TON">TON</option>
       </select>
 
-      <button id="confirmBtn">ชำระด้วย Crypto</button>
+      <button id="confirmBtn" class="engine-btn" style="background:#ffd600; color:black;">ชำระด้วย Crypto</button>
     `;
   }
 
   if(method==="stripe"){
-    paymentBox.innerHTML=`<button id="confirmBtn">Stripe Checkout</button>`;
+    paymentBox.innerHTML=`<button id="confirmBtn" class="engine-btn" style="background:#635bff; color:white;">Stripe Checkout</button>`;
   }
 
   const btn=document.getElementById("confirmBtn");
@@ -171,7 +172,7 @@ function payOmise(){
 
     const res = await fetch(API_BASE+"/api/omise/create-charge",{
       method:"POST",
-      headers:{ 
+      headers:{
         "Content-Type":"application/json",
         "Authorization": `Bearer ${tokenLocal}`
       },
@@ -201,7 +202,7 @@ async function payTrueMoney(){
   const tokenLocal = localStorage.getItem("token");
   const res = await fetch(API_BASE+"/api/omise/create-truewallet",{
     method:"POST",
-    headers:{ 
+    headers:{
       "Content-Type":"application/json",
       "Authorization": `Bearer ${tokenLocal}`
     },
@@ -221,11 +222,12 @@ async function payTrueMoney(){
 
 }
 
-/* PROMPTPAY - แก้ไข Headers */
+/* PROMPTPAY - [MODIFIED] To support Premium Pop-up */
 
 async function payPromptPay(){
   const tokenLocal = localStorage.getItem("token");
-  const amount=parseInt(document.getElementById("qrAmount").value);
+  const amountField = document.getElementById("qrAmount");
+  const amount=parseInt(amountField.value);
 
   if(!amount || amount<50 || amount>500){
     setStatus("INVALID AMOUNT");
@@ -235,7 +237,7 @@ async function payPromptPay(){
 
   const res = await fetch(API_BASE+"/api/scb/create-qr",{
     method:"POST",
-    headers:{ 
+    headers:{
       "Content-Type":"application/json",
       "Authorization": `Bearer ${tokenLocal}`
     },
@@ -245,12 +247,18 @@ async function payPromptPay(){
   const data = await res.json();
 
   if(data.qrImage){
+    // [MODIFIED] Render into Pop-up Modal instead of paymentBox
+    const qrFrame = document.getElementById("qrFrame");
+    const qrModal = document.getElementById("qrModal");
+    const displayAmount = document.getElementById("displayAmount");
 
-    document.getElementById("qrResult").innerHTML=
-      `<img src="${data.qrImage}" width="220">`;
+    if(qrFrame && qrModal){
+      qrFrame.innerHTML = `<img src="${data.qrImage}" width="250" style="display:block;">`;
+      displayAmount.innerText = amount;
+      qrModal.style.display = "flex";
+    }
 
     setStatus("WAITING PAYMENT");
-
     startPolling(data.txId);
 
   }else{
@@ -269,7 +277,7 @@ async function payCrypto(){
 
   const res = await fetch(API_BASE+"/api/crypto/create-order",{
     method:"POST",
-    headers:{ 
+    headers:{
       "Content-Type":"application/json",
       "Authorization": `Bearer ${tokenLocal}`
     },
@@ -293,7 +301,7 @@ async function payStripe(){
   const tokenLocal = localStorage.getItem("token");
   const res = await fetch(API_BASE+"/api/stripe/create-checkout",{
     method:"POST",
-    headers:{ 
+    headers:{
       "Content-Type":"application/json",
       "Authorization": `Bearer ${tokenLocal}`
     },
@@ -330,12 +338,15 @@ function startPolling(txId){
     const data = await res.json();
 
     if(data.status==="success"){
-
       setStatus("PAYMENT SUCCESS");
+      
+      // Close Modal on Success
+      const qrModal = document.getElementById("qrModal");
+      if(qrModal) qrModal.style.display = "none";
 
       clearInterval(POLL_INTERVAL);
       TX_LOCK=false;
-
+      alert("ชำระเงินสำเร็จ! เครดิตของคุณถูกเติมเรียบร้อยแล้ว");
     }
 
   },5000);
@@ -359,6 +370,18 @@ document.addEventListener("DOMContentLoaded",async()=>{
       }
     });
   });
+
+  // [ADDED] Close Modal Event
+  const closeBtn = document.getElementById("closeQr");
+  const qrModal = document.getElementById("qrModal");
+  if(closeBtn && qrModal){
+    closeBtn.onclick = () => {
+      qrModal.style.display = "none";
+      TX_LOCK = false;
+      setStatus("IDLE");
+      if(POLL_INTERVAL) clearInterval(POLL_INTERVAL);
+    };
+  }
 
 });
 

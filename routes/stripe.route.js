@@ -1,82 +1,39 @@
-// =====================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: routes/stripe.route.js
-// VERSION: v
-// STATUS: production-final
-// LAYER: gateway
-// RESPONSIBILITY:
-// - create stripe checkout session
-// - calculate credit via centralized policy
-// - attach metadata (userId, credits)
-// DEPENDS ON:
-// - config/credit.policy.js
-// - services/stripe.service.js
-// - middleware/auth.js
-// LAST FIX: 2026-03-08
-// - removed hardcoded product map
-// - unified credit calculation
-// =====================================================
-
 const express = require("express");
 const router = express.Router();
-
-const stripeService = require("../services/stripe.service");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const authMiddleware = require("../middleware/auth");
 const CREDIT_POLICY = require("../config/credit.policy");
 
-// =====================================================
-// CREATE CHECKOUT SESSION
-// =====================================================
-
 router.post("/create-checkout", authMiddleware, async (req, res) => {
-
   try {
+    const userId = req.user.id;
+    const amountTHB = req.body.amount || req.body.amountTHB;
 
-    const userId = req.user?.id;
-    const { amountTHB } = req.body;
+    if (!amountTHB) return res.status(400).json({ error: "NO_AMOUNT" });
 
-    if (!userId) {
-      return res.status(401).json({ error: "UNAUTHORIZED" });
-    }
+    const creditResult = CREDIT_POLICY.calculateCreditFromTHB(amountTHB);
+    const amountSatang = Math.round(amountTHB * 100);
 
-    if (!amountTHB || amountTHB < CREDIT_POLICY.MIN_TOPUP_THB) {
-      return res.status(400).json({ error: "MIN_TOPUP_NOT_REACHED" });
-    }
-
-    // ===============================
-    // 🔥 CENTRAL CREDIT CALCULATION
-    // ===============================
-
-    const creditResult =
-      CREDIT_POLICY.calculateCreditFromTHB(amountTHB);
-
-    const totalCredit = creditResult.totalCredit;
-
-    // Stripe ใช้หน่วยเป็น satang (เหมือน Omise)
-    const amountSatang = amountTHB * 100;
-
-    const session = await stripeService.createCheckout({
-      name: "SN Design Credit Topup",
-      amount: amountSatang,
-      userId,
-      credits: totalCredit
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [{
+        price_data: {
+          currency: "thb",
+          product_data: { name: "SN Design Credit Topup" },
+          unit_amount: amountSatang,
+        },
+        quantity: 1,
+      }],
+      mode: "payment",
+      success_url: "https://sn-designstudio.dev/payment.html?status=success",
+      cancel_url: "https://sn-designstudio.dev/payment.html?status=cancel",
+      metadata: { userId: userId.toString(), credits: creditResult.totalCredit }
     });
 
-    return res.json({
-      url: session.url,
-      creditPreview: creditResult
-    });
-
+    return res.json({ success: true, url: session.url });
   } catch (err) {
-
-    console.error("STRIPE CREATE ERROR:", err);
-
-    return res.status(500).json({
-      error: "STRIPE_CREATE_FAILED"
-    });
-
+    res.status(500).json({ success: false, error: err.message });
   }
-
 });
 
 module.exports = router;
