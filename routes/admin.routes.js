@@ -1,180 +1,66 @@
 // =====================================================
 // PROJECT: SN DESIGN STUDIO
 // MODULE: routes/admin.routes.js
-// VERSION: v
-// STATUS: production-final
-// LAYER: admin
-// RESPONSIBILITY:
-// - finance summary
-// - credit analytics
-// - transaction reports
-// - credit policy viewer
-// - system realtime status (INJECTED)
-// DEPENDS ON:
-// - db/db.js
-// - config/credit.policy.js
-// - services/monitor.controller.js (NEW DEPENDENCY)
-// LAST FIX: 2026-03-08
-// - unified credit-based reporting
-// - added credit-policy endpoint
-// - hardened finance queries
-// - integrated pm2 monitor for dashboard sync
+// VERSION: v11.7.0 (MATCHING FRONTEND FETCH CALLS)
 // =====================================================
 
 const express = require("express");
 const router = express.Router();
 const db = require("../db/db");
 const CREDIT_POLICY = require("../config/credit.policy");
+const adminFinanceController = require('../controllers/admin.finance.controller');
 
-// 🔥 [INJECTED] นำเข้า Monitor Controller เพื่อเชื่อมต่อหน้า index.html
-const monitorController = require('../services/monitor.controller');
+// 1. ดึงข้อมูลภาพรวม (Dashboard Cards)
+// หน้าบ้านเรียก: /admin/overview
+router.get("/overview", adminFinanceController.getFinanceSummary);
 
-// ================================
-// [INJECTED] SYSTEM MONITOR (FOR DASHBOARD)
-// ================================
-// ท่อนี้จะส่งข้อมูลให้ index.html บรรทัดที่ 178 โดยตรง
-// ผลลัพธ์: กราฟ NETWORK WAVEFRONT วิ่ง, สถานะขึ้น ULTRA ONLINE
-router.get("/realtime-status", monitorController.getRealtimeStatus);
-
-// ================================
-// FINANCE SUMMARY (CREDIT BASED)
-// ================================
-
-router.get("/finance-summary", async (req, res) => {
-
-  try {
-
-    const totalTopup = await queryOne(`
-      SELECT COALESCE(SUM(amount),0) as total
-      FROM transactions
-      WHERE type='topup'
-    `);
-
-    const totalRender = await queryOne(`
-      SELECT COALESCE(SUM(amount),0) as total
-      FROM transactions
-      WHERE type='render'
-    `);
-
-    const totalUsers = await queryOne(`
-      SELECT COUNT(*) as total
-      FROM users
-    `);
-
-    const totalSuccessfulPayments = await queryOne(`
-      SELECT COUNT(*) as total
-      FROM payment_logs
-      WHERE status='success'
-    `);
-
-    res.json({
-      totalCreditSold: totalTopup.total,
-      totalCreditUsed: totalRender.total,
-      netCreditBalance: totalTopup.total - totalRender.total,
-      activeUsers: totalUsers.total,
-      successfulPayments: totalSuccessfulPayments.total
-    });
-
-  } catch (err) {
-
-    console.error("FINANCE SUMMARY ERROR:", err);
-    res.status(500).json({ error: "FINANCE_SUMMARY_FAILED" });
-
-  }
-
+// 2. ดึงนโยบายเครดิต (Credit Policy Board)
+// หน้าบ้านเรียก: /admin/credit-policy
+router.get("/credit-policy", (req, res) => {
+  res.json({
+    baseRate: CREDIT_POLICY.BASE_RATE || "1 THB = 100 Credits",
+    minTopup: CREDIT_POLICY.MIN_TOPUP_THB || 50,
+    engineCost: CREDIT_POLICY.ENGINE_COST || { runway: 150, gemini: 10 }
+  });
 });
 
-// ================================
-// DAILY CREDIT SOLD (CHART)
-// ================================
-
-router.get("/finance-daily", async (req, res) => {
-
+// 3. ดึงรายการล่าสุด (Recent Transactions Table)
+// หน้าบ้านเรียก: /admin/recent
+router.get("/recent", async (req, res) => {
   try {
-
     const rows = await queryAll(`
-      SELECT DATE(created_at) as date,
-             SUM(amount) as total
-      FROM transactions
-      WHERE type='topup'
-      GROUP BY DATE(created_at)
+      SELECT user_id, method, amount, currency, status, created_at 
+      FROM payment_logs 
+      ORDER BY created_at DESC LIMIT 50
+    `);
+    res.json(rows);
+  } catch (err) {
+    res.status(500).json({ error: "RECENT_FAIL" });
+  }
+});
+
+// 4. ดึงกราฟรายวัน (Daily Chart)
+// หน้าบ้านเรียก: /admin/daily
+router.get("/daily", async (req, res) => {
+  try {
+    const rows = await queryAll(`
+      SELECT DATE(created_at) as date, SUM(amount) as total 
+      FROM credit_transactions 
+      WHERE type='topup' OR type='add' 
+      GROUP BY DATE(created_at) 
       ORDER BY DATE(created_at) ASC
     `);
-
     res.json(rows);
-
   } catch (err) {
-
-    console.error("FINANCE DAILY ERROR:", err);
-    res.status(500).json({ error: "FINANCE_DAILY_FAILED" });
-
+    res.status(500).json({ error: "DAILY_FAIL" });
   }
-
 });
 
-// ================================
-// RECENT PAYMENTS
-// ================================
-
-router.get("/finance-recent", async (req, res) => {
-
-  try {
-
-    const rows = await queryAll(`
-      SELECT user_id,
-             method,
-             amount,
-             currency,
-             status,
-             created_at
-      FROM payment_logs
-      ORDER BY created_at DESC
-      LIMIT 50
-    `);
-
-    res.json(rows);
-
-  } catch (err) {
-
-    console.error("FINANCE RECENT ERROR:", err);
-    res.status(500).json({ error: "FINANCE_RECENT_FAILED" });
-
-  }
-
-});
-
-// ================================
-// CREDIT POLICY VIEW (DYNAMIC)
-// ================================
-
-router.get("/credit-policy", (req, res) => {
-
-  res.json({
-    baseRate: CREDIT_POLICY.BASE_RATE,
-    minTopup: CREDIT_POLICY.MIN_TOPUP_THB,
-    binanceRate: CREDIT_POLICY.BINANCE_THB_RATE,
-    bonusTiers: CREDIT_POLICY.BONUS_TIERS,
-    engineCost: CREDIT_POLICY.ENGINE_COST
-  });
-
-});
-
-// ================================
-// HELPERS
-// ================================
-
-function queryOne(sql) {
-  return new Promise((resolve, reject) => {
-    db.sqlite.get(sql, [], (err, row) => {
-      if (err) return reject(err);
-      resolve(row || { total: 0 });
-    });
-  });
-}
-
+// --- HELPERS ---
 function queryAll(sql) {
   return new Promise((resolve, reject) => {
-    db.sqlite.all(sql, [], (err, rows) => {
+    const connection = db.sqlite || db;
+    connection.all(sql, [], (err, rows) => {
       if (err) return reject(err);
       resolve(rows || []);
     });
