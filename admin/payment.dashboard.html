@@ -12,105 +12,188 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at top left, #1a1a2e, #0f0f13); color: #e2e8f0; }
         .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .neon-border { box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); border: 1px solid rgba(0, 255, 204, 0.3); }
-        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
     </style>
 </head>
 <body class="min-h-screen pb-12">
-    <header class="sticky top-0 z-50 glass border-b border-white/10 px-8 py-4 flex justify-between items-center">
+
+    <header class="sticky top-0 z-50 glass border-b border-white/10 px-6 py-4 flex justify-between items-center">
         <div class="flex items-center gap-3">
-            <div class="p-2 bg-red-600 rounded-lg shadow-lg shadow-red-900/20"><i data-lucide="shield-check" class="w-6 h-6 text-white"></i></div>
-            <h1 class="text-xl font-bold tracking-tighter uppercase italic">SN <span class="text-red-500 underline decoration-red-500/30">Design Studio</span><span class="block text-[10px] tracking-[0.2em] text-gray-400 font-normal">Enterprise Payment Control</span></h1>
+            <div class="p-2 bg-red-600 rounded-lg shadow-lg shadow-red-900/20"><i data-lucide="shield-check" class="w-5 h-5 text-white"></i></div>
+            <h1 class="text-lg font-bold tracking-tighter uppercase italic">SN <span class="text-red-500">Design Studio</span></h1>
         </div>
-        <div id="systemStatus" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold">
-            <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> INITIALIZING...
+        <div id="systemStatus" class="text-[10px] font-bold text-yellow-500 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-yellow-500 animate-pulse"></span> CHECKING AUTH...
         </div>
     </header>
-    <main class="max-w-7xl mx-auto px-6 mt-8 space-y-8">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="glass p-6 rounded-2xl border-l-4 border-emerald-500/50 hover:bg-white/5 transition-all">
-                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Total Credit Sold</h3>
-                <p class="text-3xl font-bold tracking-tight text-white"><span id="sold">0</span> <small class="text-sm font-normal text-gray-500">THB</small></p>
+
+    <main class="max-w-5xl mx-auto px-4 mt-6 space-y-6">
+
+        <section class="glass p-6 rounded-3xl border-emerald-500/30 border-2">
+            <h2 class="text-sm font-black text-emerald-400 mb-4 flex items-center gap-2 uppercase tracking-widest">
+                <i data-lucide="terminal" class="w-4 h-4"></i> Admin Command Center
+            </h2>
+            <div class="flex flex-col md:flex-row gap-3">
+                <input type="text" id="directUserId" placeholder="Enter User ID or Email..." class="flex-1 bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 transition-all text-sm">
+                <button onclick="openManageCredit(document.getElementById('directUserId').value)" class="bg-emerald-600 hover:bg-emerald-500 px-8 py-3 rounded-xl font-bold transition-all shadow-lg shadow-emerald-900/40 text-sm">
+                    MANAGE USER
+                </button>
             </div>
-            <div class="glass p-6 rounded-2xl border-l-4 border-red-500/50 hover:bg-white/5 transition-all">
-                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Total Credit Used</h3>
-                <p id="used" class="text-3xl font-bold tracking-tight text-white">0</p>
+        </section>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass p-4 rounded-2xl border-l-4 border-emerald-500">
+                <h3 class="text-gray-500 text-[10px] uppercase font-bold mb-1">Sold (THB)</h3>
+                <p id="sold" class="text-xl font-bold">0</p>
             </div>
-            <div class="glass p-6 rounded-2xl border-l-4 border-cyan-500/50 hover:bg-white/5 transition-all">
-                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Net Balance</h3>
-                <p id="balance" class="text-3xl font-bold tracking-tight text-white">0</p>
+            <div class="glass p-4 rounded-2xl border-l-4 border-red-500">
+                <h3 class="text-gray-500 text-[10px] uppercase font-bold mb-1">Used</h3>
+                <p id="used" class="text-xl font-bold">0</p>
             </div>
-            <div class="glass p-6 rounded-2xl border-l-4 border-indigo-500/50 hover:bg-white/5 transition-all">
-                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Active Users</h3>
-                <p id="users" class="text-3xl font-bold tracking-tight text-white">0</p>
+            <div class="glass p-4 rounded-2xl border-l-4 border-cyan-500">
+                <h3 class="text-gray-500 text-[10px] uppercase font-bold mb-1">Balance</h3>
+                <p id="balance" class="text-xl font-bold">0</p>
+            </div>
+            <div class="glass p-4 rounded-2xl border-l-4 border-indigo-500">
+                <h3 class="text-gray-500 text-[10px] uppercase font-bold mb-1">Users</h3>
+                <p id="users" class="text-xl font-bold">0</p>
             </div>
         </div>
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 space-y-6">
-                <h2 class="text-lg font-bold flex items-center gap-2 text-emerald-400"><i data-lucide="cpu" class="w-5 h-5"></i> API CLUSTER STATUS</h2>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="glass p-4 rounded-xl border-emerald-500/20 border flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-emerald-400"><i data-lucide="mic-2" class="w-5 h-5"></i></div>
-                        <div><h4 class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">ElevenLabs</h4><span id="partner-eleven" class="text-lg font-bold text-emerald-400">CONNECTING...</span></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-4">
+                <h2 class="text-xs font-bold text-gray-500 flex items-center gap-2 uppercase tracking-widest">
+                    <i data-lucide="cpu" class="w-4 h-4 text-emerald-400"></i> Cluster Status
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="glass p-4 rounded-xl flex items-center gap-4">
+                        <div class="text-emerald-400"><i data-lucide="mic-2" class="w-5 h-5"></i></div>
+                        <div><h4 class="text-[9px] text-gray-500 uppercase font-bold">ElevenLabs</h4><span id="partner-eleven" class="text-sm font-bold text-emerald-400">LOADING...</span></div>
                     </div>
-                    <div class="glass p-4 rounded-xl border-white/10 flex items-center gap-4">
-                        <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-purple-400"><i data-lucide="box" class="w-5 h-5"></i></div>
-                        <div><h4 class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Replicate AI</h4><span id="partner-replicate" class="text-lg font-bold">SCANNING...</span></div>
+                    <div class="glass p-4 rounded-xl flex items-center gap-4">
+                        <div class="text-purple-400"><i data-lucide="box" class="w-5 h-5"></i></div>
+                        <div><h4 class="text-[9px] text-gray-500 uppercase font-bold">Replicate</h4><span id="partner-replicate" class="text-sm font-bold">SCANNING...</span></div>
                     </div>
                 </div>
             </div>
-            <div class="glass p-6 rounded-2xl border-white/10"><h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-red-500"><i data-lucide="book-open" class="w-5 h-5"></i> POLICY</h2><div id="policy" class="text-sm text-gray-400 italic">Loading...</div></div>
+            <div class="glass p-5 rounded-2xl">
+                <h2 class="text-xs font-bold text-red-500 mb-3 uppercase tracking-widest italic">Credit Policy</h2>
+                <div id="policy" class="text-xs text-gray-500 leading-relaxed italic font-light">Loading...</div>
+            </div>
         </div>
-        <div class="glass p-8 rounded-3xl"><div class="flex justify-between items-center mb-8"><div><h2 class="text-2xl font-bold">Revenue Analytics</h2><p class="text-gray-500 text-sm italic">Live projection feed</p></div><button onclick="exportCSV()" class="bg-white/5 hover:bg-white/10 text-white px-6 py-2 rounded-xl border border-white/10 flex items-center gap-2 text-sm transition-all"><i data-lucide="download" class="w-4 h-4"></i> EXPORT CSV</button></div><div class="h-80"><canvas id="revenueChart"></canvas></div></div>
-        <div class="glass rounded-3xl overflow-hidden">
-            <div class="p-6 border-b border-white/10 flex justify-between items-center"><h2 class="text-lg font-bold">Recent Transactions</h2><div class="text-[9px] bg-red-600/20 text-red-500 px-3 py-1 rounded-full border border-red-500/20 uppercase font-black tracking-widest">Live Feed</div></div>
-            <div class="overflow-x-auto"><table id="paymentTable" class="w-full text-left"><thead class="bg-white/5 text-[10px] uppercase tracking-[0.2em] text-gray-500"><tr><th class="px-6 py-4">User</th><th class="px-6 py-4">Method</th><th class="px-6 py-4">Amount</th><th class="px-6 py-4 text-center">Action</th></tr></thead><tbody class="text-sm divide-y divide-white/5"></tbody></table></div>
+
+        <div class="glass rounded-2xl overflow-hidden">
+            <div class="p-5 border-b border-white/10 flex justify-between items-center">
+                <h2 class="text-sm font-bold uppercase tracking-widest">Recent Activity</h2>
+                <button onclick="exportCSV()" class="text-[9px] bg-white/5 px-3 py-1 rounded-md border border-white/10 hover:bg-white/10 transition-all uppercase">Export CSV</button>
+            </div>
+            <div class="overflow-x-auto">
+                <table id="paymentTable" class="w-full text-left text-xs">
+                    <thead class="bg-white/5 text-gray-500">
+                        <tr>
+                            <th class="px-6 py-3">USER</th>
+                            <th class="px-6 py-3">AMOUNT</th>
+                            <th class="px-6 py-3">STATUS</th>
+                            <th class="px-6 py-3 text-center">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
         </div>
     </main>
-    <div id="creditModal" class="fixed inset-0 z-[60] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass max-w-md w-full p-8 rounded-3xl neon-border"><h2 class="text-2xl font-bold mb-2 uppercase italic">Manage Credit</h2><p id="modalUserEmail" class="text-gray-500 text-sm mb-6 truncate italic"></p>
-            <div class="space-y-4"><div><label class="text-[10px] uppercase font-bold text-gray-400 mb-2 block tracking-widest">Amount (Credits)</label><input type="number" id="creditAmount" value="100" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 transition-all"></div>
-            <div class="grid grid-cols-2 gap-4"><button onclick="submitCredit('add')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-black transition-all">ADD</button><button onclick="submitCredit('remove')" class="bg-red-600 hover:bg-red-500 py-3 rounded-xl font-black transition-all">REMOVE</button></div></div>
-            <button onclick="closeModal()" class="w-full mt-6 text-gray-500 hover:text-white text-xs uppercase font-bold tracking-widest">Cancel</button>
+
+    <div id="creditModal" class="fixed inset-0 z-[60] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="glass max-w-sm w-full p-8 rounded-3xl neon-border">
+            <h2 class="text-xl font-black mb-1 uppercase italic tracking-tighter">Control User</h2>
+            <p id="modalUserEmail" class="text-gray-500 text-[10px] mb-6 truncate italic"></p>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[9px] uppercase font-bold text-gray-500 mb-2 block tracking-widest underline">Adjust Credits</label>
+                    <input type="number" id="creditAmount" value="100" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500 text-sm font-bold">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <button onclick="submitCredit('add')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-black text-xs transition-all shadow-lg shadow-emerald-900/30">ADD</button>
+                    <button onclick="submitCredit('remove')" class="bg-red-600 hover:bg-red-500 py-3 rounded-xl font-black text-xs transition-all shadow-lg shadow-red-900/30">REMOVE</button>
+                </div>
+            </div>
+            <button onclick="closeModal()" class="w-full mt-6 text-gray-500 hover:text-white text-[10px] uppercase font-bold tracking-[0.3em]">Cancel / Close</button>
         </div>
     </div>
+
     <script>
         lucide.createIcons();
         const API_BASE = "https://api.sn-designstudio.dev";
         const API = API_BASE + "/api/admin";
-        let chartInstance;
         let selectedUserId = null;
+
         async function validateOwner(){
-            try{ const res = await fetch(API_BASE + "/auth/me",{credentials:"include"}); if(!res.ok) { window.location.href="/login.html"; return false; } return true; } catch(e){ return false; }
+            try{
+                const res = await fetch(API_BASE + "/auth/me",{credentials:"include"});
+                if(!res.ok) { window.location.href="/login.html"; return false; }
+                const data = await res.json();
+                if(data.user?.role !== "admin" && data.user?.role !== "owner") { window.location.href="/create.html"; return false; }
+                return true;
+            } catch(e){ return false; }
         }
-        async function safeFetch(url){ const res = await fetch(url,{credentials:"include"}); if(!res.ok) throw new Error(); return res.json(); }
+
+        async function safeFetch(url){ const res = await fetch(url,{credentials:"include"}); return res.json(); }
+
         async function loadSummary(){
-            try { const data = await safeFetch(API + "/finance/overview");
-                if(data.local){ document.getElementById("sold").innerText = data.local.totalCreditSold.toLocaleString(); document.getElementById("used").innerText = data.local.totalCreditUsed.toLocaleString(); document.getElementById("balance").innerText = data.local.netCreditBalance.toLocaleString(); document.getElementById("users").innerText = data.local.activeUsers.toLocaleString(); }
-                if(data.partners){ document.getElementById("partner-eleven").innerText = data.partners.elevenlabs.remaining.toLocaleString() + " chars"; }
-            } catch(e){}
+            const data = await safeFetch(API + "/finance/overview");
+            if(data.local){
+                document.getElementById("sold").innerText = data.local.totalCreditSold.toLocaleString();
+                document.getElementById("used").innerText = data.local.totalCreditUsed.toLocaleString();
+                document.getElementById("balance").innerText = (data.local.totalCreditSold - data.local.totalCreditUsed).toLocaleString();
+                document.getElementById("users").innerText = data.local.activeUsers.toLocaleString();
+            }
+            if(data.partners?.elevenlabs) document.getElementById("partner-eleven").innerText = data.partners.elevenlabs.balance;
         }
+
         async function loadTable(){
-            try { const data = await safeFetch(API + "/finance/recent"); const tbody = document.querySelector("#paymentTable tbody"); tbody.innerHTML = "";
-                data.forEach(row => { tbody.innerHTML += `<tr class="hover:bg-white/[0.02] transition-all"><td class="px-6 py-5 font-bold italic text-white">${row.user_id}</td><td class="px-6 py-5 uppercase text-gray-500 text-xs">${row.method}</td><td class="px-6 py-5 font-black text-white">${row.amount} THB</td><td class="px-6 py-5 text-center"><button onclick="openManageCredit('${row.user_id}')" class="bg-emerald-600/20 text-emerald-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all">MANAGE</button></td></tr>`; });
-            } catch(e){}
+            const data = await safeFetch(API + "/finance/recent");
+            const tbody = document.querySelector("#paymentTable tbody");
+            tbody.innerHTML = "";
+            data.forEach(row => {
+                tbody.innerHTML += `
+                <tr class="hover:bg-white/5 transition-all">
+                    <td class="px-6 py-4 font-bold text-white italic">${row.user_id}</td>
+                    <td class="px-6 py-4 font-black text-emerald-400">${row.amount} <small class="text-gray-500 font-normal">THB</small></td>
+                    <td class="px-6 py-4 uppercase text-[9px] fonclassck">${row.status}</td>
+                    <td class="px-6 py-4 text-center">
+                        <button onclick="openManageCredit('${row.user_id}')" class="bg-emerald-600/20 text-emerald-500 border border-emerald-500/30 px-4 py-2 rounded-lg text-[9px] font-black hover:bg-emerald-600 hover:text-white transition-all">MANAGE</button>
+                    </td>
+                </tr>`;
+            });
+            lucide.createIcons();
         }
-        async function loadChart(){
-            try { const data = await safeFetch(API + "/finance/daily"); const ctx = document.getElementById("revenueChart").getContext("2d"); if(chartInstance) chartInstance.destroy();
-                chartInstance = new Chart(ctx,{ type:"line", data:{ labels: data.map(d=>d.date), datasets:[{ label: "REVENUE", data: data.map(d=>d.total), borderColor: "#10b981", tension: 0.4, fill: true, backgroundColor: "rgba(16, 185, 129, 0.1)" }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: "rgba(255,255,255,0.05)" } }, x: { grid: { display: false } } } } });
-            } catch(e){}
+
+        function openManageCredit(id) { 
+            if(!id) return alert("Please enter User ID");
+            selectedUserId = id; 
+            document.getElementById("modalUserEmail").innerText = "CONTROLLING ID: " + id;
+            document.getElementById("creditModal").classList.remove("hidden"); 
         }
-        function openManageCredit(id) { selectedUserId = id; document.getElementById("modalUserEmail").innerText = "Account ID: " + id; document.getElementById("creditModal").classList.remove("hidden"); }
         function closeModal() { document.getElementById("creditModal").classList.add("hidden"); }
+
         async function submitCredit(action) {
             const amount = document.getElementById("creditAmount").value;
-            try { const res = await fetch(`${API}/${action}-credit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: selectedUserId, amount: parseInt(amount) }), credentials: "include" });
-                if(res.ok) { alert("SUCCESS"); closeModal(); loadSummary(); }
-            } catch(e) { alert("ERROR"); }
+            const res = await fetch(`${API}/${action}-credit`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: selectedUserId, amount: parseInt(amount) }),
+                credentials: "include"
+            });
+            if(res.ok) { alert("SUCCESS"); closeModal(); loadSummary(); loadTable(); }
+            else { alert("FAIL TO UPDATE"); }
         }
-        async function init(){ const ok = await validateOwner(); if(!ok) return; document.getElementById("systemStatus").innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ENGINE LIVE`; loadSummary(); loadTable(); loadChart(); }
+
+        async function init(){
+            const ok = await validateOwner();
+            if(!ok) return;
+            document.getElementById("systemStatus").innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ENGINE LIVE`;
+            loadSummary(); loadTable();
+        }
         init();
-        setInterval(init, 60000);
     </script>
 </body>
 </html>
