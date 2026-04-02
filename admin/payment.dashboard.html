@@ -1,394 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="th">
 <head>
-<meta charset="UTF-8">
-<title>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-
-body{
-background:#0b0b0f;
-color:#fff;
-font-family:Montserrat,sans-serif;
-margin:0;
-}
-
-header{
-padding:20px;
-font-size:22px;
-background:linear-gradient(90deg,#8b0000,#001f3f);
-font-weight:bold;
-}
-
-.dashboard{padding:20px;}
-
-.card-container{
-display:flex;
-gap:20px;
-flex-wrap:wrap;
-}
-
-.card{
-flex:1;
-min-width:220px;
-background:rgba(255,255,255,0.05);
-padding:20px;
-border-radius:12px;
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,0.1);
-}
-
-.card h3{
-margin:0 0 10px 0;
-font-size:14px;
-color:#aaa;
-}
-
-.card p{
-margin:0;
-font-size:22px;
-font-weight:bold;
-}
-
-/* --- เพิ่มสไตล์สำหรับ Partner Status --- */
-.partner-container {
-display: flex;
-gap: 15px;
-margin-top: 20px;
-flex-wrap: wrap;
-}
-
-.partner-card {
-flex: 1;
-min-width: 180px;
-background: rgba(0, 255, 204, 0.05);
-padding: 15px;
-border-radius: 8px;
-border: 1px solid rgba(0, 255, 204, 0.2);
-}
-
-.partner-card h4 { margin: 0 0 5px 0; font-size: 12px; color: #00ffcc; text-transform: uppercase; }
-.partner-card span { font-size: 16px; font-weight: bold; }
-
-.policy-box{
-margin-top:20px;
-background:rgba(255,255,255,0.04);
-padding:15px;
-border-radius:10px;
-border:1px solid rgba(255,255,255,0.08);
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid rgba(255,255,255,0.1);
-text-align:left;
-}
-
-button{
-background:#8b0000;
-color:#fff;
-padding:8px 14px;
-border:none;
-border-radius:6px;
-cursor:pointer;
-margin-top: 20px;
-}
-
-.status-bar{
-margin-top:10px;
-color:#00ffcc;
-font-size:13px;
-}
-
-canvas{
-margin-top:30px;
-}
-
-.status-error { color: #ff4444; }
-.status-ok { color: #00ffcc; }
-
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN DESIGN STUDIO — ENTERPRISE CONTROL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: radial-gradient(circle at top left, #1a1a2e, #0f0f13); color: #e2e8f0; }
+        .glass { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .neon-border { box-shadow: 0 0 15px rgba(0, 255, 204, 0.1); border: 1px solid rgba(0, 255, 204, 0.3); }
+        .animate-pulse-slow { animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+    </style>
 </head>
-
-<body>
-
-<header>SN DESIGN STUDIO — ENTERPRISE PAYMENT CONTROL</header>
-
-<div class="dashboard">
-
-<div class="status-bar" id="systemStatus">
-ENGINE STATUS: INITIALIZING...
-</div>
-
-<div class="card-container">
-
-<div class="card">
-<h3>Total Credit Sold (THB)</h3>
-<p id="sold">0</p>
-</div>
-
-<div class="card">
-<h3>Total Credit Used</h3>
-<p id="used">0</p>
-</div>
-
-<div class="card">
-<h3>Net Credit Balance</h3>
-<p id="balance">0</p>
-</div>
-
-<div class="card">
-<h3>Active Users</h3>
-<p id="users">0</p>
-</div>
-
-</div>
-
-<div class="partner-container">
-    <div class="partner-card">
-        <h4>ElevenLabs Balance</h4>
-        <span id="partner-eleven">Loading...</span>
+<body class="min-h-screen pb-12">
+    <header class="sticky top-0 z-50 glass border-b border-white/10 px-8 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-red-600 rounded-lg shadow-lg shadow-red-900/20"><i data-lucide="shield-check" class="w-6 h-6 text-white"></i></div>
+            <h1 class="text-xl font-bold tracking-tighter uppercase italic">SN <span class="text-red-500 underline decoration-red-500/30">Design Studio</span><span class="block text-[10px] tracking-[0.2em] text-gray-400 font-normal">Enterprise Payment Control</span></h1>
+        </div>
+        <div id="systemStatus" class="flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/5 border border-white/10 text-xs font-semibold">
+            <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> INITIALIZING...
+        </div>
+    </header>
+    <main class="max-w-7xl mx-auto px-6 mt-8 space-y-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="glass p-6 rounded-2xl border-l-4 border-emerald-500/50 hover:bg-white/5 transition-all">
+                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Total Credit Sold</h3>
+                <p class="text-3xl font-bold tracking-tight text-white"><span id="sold">0</span> <small class="text-sm font-normal text-gray-500">THB</small></p>
+            </div>
+            <div class="glass p-6 rounded-2xl border-l-4 border-red-500/50 hover:bg-white/5 transition-all">
+                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Total Credit Used</h3>
+                <p id="used" class="text-3xl font-bold tracking-tight text-white">0</p>
+            </div>
+            <div class="glass p-6 rounded-2xl border-l-4 border-cyan-500/50 hover:bg-white/5 transition-all">
+                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Net Balance</h3>
+                <p id="balance" class="text-3xl font-bold tracking-tight text-white">0</p>
+            </div>
+            <div class="glass p-6 rounded-2xl border-l-4 border-indigo-500/50 hover:bg-white/5 transition-all">
+                <h3 class="text-gray-400 text-sm mb-1 uppercase tracking-wider font-semibold">Active Users</h3>
+                <p id="users" class="text-3xl font-bold tracking-tight text-white">0</p>
+            </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 space-y-6">
+                <h2 class="text-lg font-bold flex items-center gap-2 text-emerald-400"><i data-lucide="cpu" class="w-5 h-5"></i> API CLUSTER STATUS</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="glass p-4 rounded-xl border-emerald-500/20 border flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-emerald-400"><i data-lucide="mic-2" class="w-5 h-5"></i></div>
+                        <div><h4 class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">ElevenLabs</h4><span id="partner-eleven" class="text-lg font-bold text-emerald-400">CONNECTING...</span></div>
+                    </div>
+                    <div class="glass p-4 rounded-xl border-white/10 flex items-center gap-4">
+                        <div class="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center text-purple-400"><i data-lucide="box" class="w-5 h-5"></i></div>
+                        <div><h4 class="text-[10px] text-gray-400 uppercase font-bold tracking-widest">Replicate AI</h4><span id="partner-replicate" class="text-lg font-bold">SCANNING...</span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="glass p-6 rounded-2xl border-white/10"><h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-red-500"><i data-lucide="book-open" class="w-5 h-5"></i> POLICY</h2><div id="policy" class="text-sm text-gray-400 italic">Loading...</div></div>
+        </div>
+        <div class="glass p-8 rounded-3xl"><div class="flex justify-between items-center mb-8"><div><h2 class="text-2xl font-bold">Revenue Analytics</h2><p class="text-gray-500 text-sm italic">Live projection feed</p></div><button onclick="exportCSV()" class="bg-white/5 hover:bg-white/10 text-white px-6 py-2 rounded-xl border border-white/10 flex items-center gap-2 text-sm transition-all"><i data-lucide="download" class="w-4 h-4"></i> EXPORT CSV</button></div><div class="h-80"><canvas id="revenueChart"></canvas></div></div>
+        <div class="glass rounded-3xl overflow-hidden">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center"><h2 class="text-lg font-bold">Recent Transactions</h2><div class="text-[9px] bg-red-600/20 text-red-500 px-3 py-1 rounded-full border border-red-500/20 uppercase font-black tracking-widest">Live Feed</div></div>
+            <div class="overflow-x-auto"><table id="paymentTable" class="w-full text-left"><thead class="bg-white/5 text-[10px] uppercase tracking-[0.2em] text-gray-500"><tr><th class="px-6 py-4">User</th><th class="px-6 py-4">Method</th><th class="px-6 py-4">Amount</th><th class="px-6 py-4 text-center">Action</th></tr></thead><tbody class="text-sm divide-y divide-white/5"></tbody></table></div>
+        </div>
+    </main>
+    <div id="creditModal" class="fixed inset-0 z-[60] hidden bg-black/90 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="glass max-w-md w-full p-8 rounded-3xl neon-border"><h2 class="text-2xl font-bold mb-2 uppercase italic">Manage Credit</h2><p id="modalUserEmail" class="text-gray-500 text-sm mb-6 truncate italic"></p>
+            <div class="space-y-4"><div><label class="text-[10px] uppercase font-bold text-gray-400 mb-2 block tracking-widest">Amount (Credits)</label><input type="number" id="creditAmount" value="100" class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 outline-none focus:border-emerald-500/50 transition-all"></div>
+            <div class="grid grid-cols-2 gap-4"><button onclick="submitCredit('add')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-black transition-all">ADD</button><button onclick="submitCredit('remove')" class="bg-red-600 hover:bg-red-500 py-3 rounded-xl font-black transition-all">REMOVE</button></div></div>
+            <button onclick="closeModal()" class="w-full mt-6 text-gray-500 hover:text-white text-xs uppercase font-bold tracking-widest">Cancel</button>
+        </div>
     </div>
-    <div class="partner-card">
-        <h4>Replicate Status</h4>
-        <span id="partner-replicate">Loading...</span>
-    </div>
-    <div class="partner-card">
-        <h4>RunwayML Engine</h4>
-        <span class="status-ok">CONNECTED (GEN-4.5)</span>
-    </div>
-    <div class="partner-card">
-        <h4>Gemini AI</h4>
-        <span class="status-ok">LIVE (2.5-FLASH)</span>
-    </div>
-</div>
-<div class="policy-box">
-<h3>Credit Policy</h3>
-<div id="policy"></div>
-</div>
-
-<canvas id="revenueChart"></canvas>
-
-<button onclick="exportCSV()">Export CSV</button>
-
-<table id="paymentTable">
-
-<thead>
-<tr>
-<th>User</th>
-<th>Method</th>
-<th>Amount</th>
-<th>Currency</th>
-<th>Status</th>
-<th>Date</th>
-</tr>
-</thead>
-
-<tbody></tbody>
-
-</table>
-
-</div>
-
-<script>
-
-/* ================= API BASE ================= */
-
-const API_BASE = window.API_BASE || "https://api.sn-designstudio.dev";
-const API = API_BASE + "/api/admin";
-
-let chartInstance;
-
-
-/* ================= AUTH VALIDATION ================= */
-
-async function validateOwner(){
-try{
-const res = await fetch(API_BASE + "/auth/me",{credentials:"include"});
-if(res.status === 401){
-const redirect = encodeURIComponent("/admin/payment.dashboard.html");
-window.location.href = "/login.html?redirect=" + redirect;
-return false;
-}
-if(!res.ok) return false;
-const data = await res.json();
-const user = data.user || data; 
-if(user.role !== "owner" && user.role !== "admin"){
-window.location.href="https://sn-designstudio.dev/create.html";
-return false;
-}
-return true;
-}catch(err){
-console.error("AUTH ERROR",err);
-return false;
-}
-}
-
-
-/* ================= SAFE FETCH ================= */
-
-async function safeFetch(url){
-const res = await fetch(url,{credentials:"include"});
-if(!res.ok) throw new Error("API FAIL");
-return res.json();
-}
-
-
-/* ================= SUMMARY (UPDATED FOR PARTNER DATA) ================= */
-
-async function loadSummary(){
-// เรียก API ที่รวมข้อมูล Local + Partner
-const data = await safeFetch(API + "/finance/overview");
-
-// Mapping Local Data
-if(data.local) {
-    document.getElementById("sold").innerText = data.local.totalCreditSold.toLocaleString();
-    document.getElementById("used").innerText = data.local.totalCreditUsed.toLocaleString();
-    document.getElementById("balance").innerText = data.local.netCreditBalance.toLocaleString();
-    document.getElementById("users").innerText = data.local.activeUsers.toLocaleString();
-}
-
-// Mapping Partner Data (ส่วนเฉพาะกิจ)
-if(data.partners) {
-    const el = data.partners.elevenlabs;
-    const rep = data.partners.replicate;
-    
-    document.getElementById("partner-eleven").innerHTML = 
-        el.status === "active" ? `<span class="status-ok">${el.remaining.toLocaleString()} chars</span>` : `<span class="status-error">OFFLINE</span>`;
-        
-    document.getElementById("partner-replicate").innerHTML = 
-        rep.status === "active" ? `<span class="status-ok">${rep.type.toUpperCase()}</span>` : `<span class="status-error">OFFLINE</span>`;
-}
-}
-
-
-/* ================= POLICY ================= */
-
-async function loadPolicy(){
-try {
-    const data = await safeFetch(API + "/credit-policy");
-    let html=`
-    Base Rate: 1 THB = ${data.baseRate || 100} credits<br>
-    Min Topup: ${data.minTopup || 10} THB<br>
-    Binance Rate: 1 USD = ${data.binanceRate || 34} THB<br><br>
-    <b>Bonus Tiers:</b><br>
-    `;
-
-    if(data.bonusTiers) {
-        data.bonusTiers.forEach(t=>{
-            html+=`≥ ${t.min} THB → +${(t.bonusPercent * 100).toFixed(0)}% bonus<br>`;
-        });
-    }
-    document.getElementById("policy").innerHTML=html;
-} catch(e) {
-    document.getElementById("policy").innerHTML="Policy data currently unavailable.";
-}
-}
-
-
-/* ================= TABLE ================= */
-
-async function loadTable(){
-const data = await safeFetch(API + "/finance/recent");
-const tbody = document.querySelector("#paymentTable tbody");
-tbody.innerHTML="";
-data.forEach(row=>{
-tbody.innerHTML+=`
-<tr>
-<td>${row.user_id || 'N/A'}</td>
-<td>${row.method ? row.method.toUpperCase() : '-'}</td>
-<td>${row.amount || 0}</td>
-<td>${row.currency||"THB"}</td>
-<td><span class="status-${row.status}">${row.status}</span></td>
-<td>${new Date(row.created_at).toLocaleString()}</td>
-</tr>
-`;
-});
-}
-
-
-/* ================= CHART ================= */
-
-async function loadChart(){
-const data = await safeFetch(API + "/finance/daily");
-const ctx = document.getElementById("revenueChart");
-if(chartInstance) chartInstance.destroy();
-chartInstance = new Chart(ctx,{
-type:"line",
-data:{
-labels:data.map(d=>d.date),
-datasets:[{
-label:"Daily Credit Sale (THB)",
-data:data.map(d=>d.total),
-borderColor:"#00ffcc",
-backgroundColor: "rgba(0, 255, 204, 0.1)",
-fill:true,
-tension: 0.3
-}]
-},
-options: {
-    responsive: true,
-    scales: {
-        y: { beginAtZero: true, grid: { color: "rgba(255,255,255,0.05)" } },
-        x: { grid: { display: false } }
-    },
-    plugins: { legend: { labels: { color: "#fff" } } }
-}
-});
-}
-
-
-/* ================= CSV ================= */
-
-function exportCSV(){
-let table = document.getElementById("paymentTable");
-let rows = Array.from(table.rows);
-let csvContent = rows.map(row => Array.from(row.cells).map(cell => cell.innerText).join(",")).join("\n");
-let blob = new Blob([csvContent],{type:"text/csv"});
-let a = document.createElement("a");
-a.href = URL.createObjectURL(blob);
-a.download = "sn_payments_report.csv";
-a.click();
-}
-
-
-/* ================= INIT ================= */
-
-async function init(){
-document.getElementById("systemStatus").innerText="ENGINE STATUS: AUTH CHECK";
-const ok = await validateOwner();
-if(!ok) return;
-document.getElementById("systemStatus").innerText="ENGINE STATUS: LOADING DATA";
-try{
-await Promise.all([
-    loadSummary(),
-    loadPolicy(),
-    loadTable(),
-    loadChart()
-]);
-document.getElementById("systemStatus").innerText="ENGINE STATUS: LIVE (PRODUCTION)";
-}catch(err){
-console.error(err);
-document.getElementById("systemStatus").innerText="ENGINE STATUS: ERROR LOADING DATA";
-}
-}
-
-
-/* ================= REALTIME ================= */
-// ตั้งเวลา Refresh ทุก 30 วินาทีเพื่อความเสถียรของ API Partners
-setInterval(init, 30000);
-init();
-
-</script>
-
+    <script>
+        lucide.createIcons();
+        const API_BASE = "https://api.sn-designstudio.dev";
+        const API = API_BASE + "/api/admin";
+        let chartInstance;
+        let selectedUserId = null;
+        async function validateOwner(){
+            try{ const res = await fetch(API_BASE + "/auth/me",{credentials:"include"}); if(!res.ok) { window.location.href="/login.html"; return false; } return true; } catch(e){ return false; }
+        }
+        async function safeFetch(url){ const res = await fetch(url,{credentials:"include"}); if(!res.ok) throw new Error(); return res.json(); }
+        async function loadSummary(){
+            try { const data = await safeFetch(API + "/finance/overview");
+                if(data.local){ document.getElementById("sold").innerText = data.local.totalCreditSold.toLocaleString(); document.getElementById("used").innerText = data.local.totalCreditUsed.toLocaleString(); document.getElementById("balance").innerText = data.local.netCreditBalance.toLocaleString(); document.getElementById("users").innerText = data.local.activeUsers.toLocaleString(); }
+                if(data.partners){ document.getElementById("partner-eleven").innerText = data.partners.elevenlabs.remaining.toLocaleString() + " chars"; }
+            } catch(e){}
+        }
+        async function loadTable(){
+            try { const data = await safeFetch(API + "/finance/recent"); const tbody = document.querySelector("#paymentTable tbody"); tbody.innerHTML = "";
+                data.forEach(row => { tbody.innerHTML += `<tr class="hover:bg-white/[0.02] transition-all"><td class="px-6 py-5 font-bold italic text-white">${row.user_id}</td><td class="px-6 py-5 uppercase text-gray-500 text-xs">${row.method}</td><td class="px-6 py-5 font-black text-white">${row.amount} THB</td><td class="px-6 py-5 text-center"><button onclick="openManageCredit('${row.user_id}')" class="bg-emerald-600/20 text-emerald-500 px-4 py-2 rounded-lg text-xs font-bold hover:bg-emerald-600 hover:text-white transition-all">MANAGE</button></td></tr>`; });
+            } catch(e){}
+        }
+        async function loadChart(){
+            try { const data = await safeFetch(API + "/finance/daily"); const ctx = document.getElementById("revenueChart").getContext("2d"); if(chartInstance) chartInstance.destroy();
+                chartInstance = new Chart(ctx,{ type:"line", data:{ labels: data.map(d=>d.date), datasets:[{ label: "REVENUE", data: data.map(d=>d.total), borderColor: "#10b981", tension: 0.4, fill: true, backgroundColor: "rgba(16, 185, 129, 0.1)" }] }, options: { maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { grid: { color: "rgba(255,255,255,0.05)" } }, x: { grid: { display: false } } } } });
+            } catch(e){}
+        }
+        function openManageCredit(id) { selectedUserId = id; document.getElementById("modalUserEmail").innerText = "Account ID: " + id; document.getElementById("creditModal").classList.remove("hidden"); }
+        function closeModal() { document.getElementById("creditModal").classList.add("hidden"); }
+        async function submitCredit(action) {
+            const amount = document.getElementById("creditAmount").value;
+            try { const res = await fetch(`${API}/${action}-credit`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user_id: selectedUserId, amount: parseInt(amount) }), credentials: "include" });
+                if(res.ok) { alert("SUCCESS"); closeModal(); loadSummary(); }
+            } catch(e) { alert("ERROR"); }
+        }
+        async function init(){ const ok = await validateOwner(); if(!ok) return; document.getElementById("systemStatus").innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> ENGINE LIVE`; loadSummary(); loadTable(); loadChart(); }
+        init();
+        setInterval(init, 60000);
+    </script>
 </body>
-  </html>
-  
+</html>
