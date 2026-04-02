@@ -6,11 +6,57 @@
 <title>SN DESIGN PAYMENT ENGINE</title>
 <link rel="stylesheet" href="/assets/css/payment.css">
 <style>
+  /* --- สไตล์ดั้งเดิม --- */
   .timer-box { color: #ff4444; font-weight: bold; font-size: 14px; margin-bottom: 10px; }
   .qr-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:9999; }
   .qr-container { background:#fff; border-radius:20px; width:350px; text-align:center; overflow:hidden; padding-bottom: 15px; }
   .qr-header { background:#6a1b9a; color:#fff; padding:15px; }
   .close-qr-btn { background:#222; color:#fff; border:none; padding:10px 30px; border-radius:20px; cursor:pointer; margin-top:10px; }
+  
+  /* --- สไตล์สำหรับการจัดกึ่งกลาง CTA และปุ่มดาวน์โหลด --- */
+  
+  /* จัดกึ่งกลางคอนเทนเนอร์ CTA ที่จะเด้งออกมาใน paymentBox */
+  .method-confirm-area {
+      display: flex;
+      flex-direction: column;
+      align-items: center; 
+      justify-content: center; 
+      text-align: center;
+      width: 100%;
+      padding: 20px 0;
+  }
+  
+  /* จัดการความกว้างและจัดกึ่งกลางของ input/select/button ภายในพื้นที่ยืนยัน */
+  .method-confirm-area input,
+  .method-confirm-area select,
+  .method-confirm-area button.engine-btn {
+      width: 90%;
+      max-width: 300px;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+  }
+  
+  .method-confirm-area button.engine-btn {
+      margin-top: 15px;
+  }
+  
+  /* สไตล์ปุ่มดาวน์โหลด QR (สีเขียว) */
+  .download-qr-btn {
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 12px 30px;
+      border-radius: 25px;
+      cursor: pointer;
+      margin-top: 10px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: bold;
+      font-size: 14px;
+      transition: 0.3s;
+  }
+  .download-qr-btn:hover { background: #388e3c; }
 </style>
 </head>
 <body>
@@ -56,6 +102,9 @@
       <div id="qrTimer" class="timer-box">QR จะหมดอายุใน 05:00</div>
       <div id="qrFrame" class="qr-frame"></div>
       <p style="color:#333;">ยอดเงิน: <strong id="displayAmount" style="color:#6a1b9a;">0</strong> บาท</p>
+      
+      <div id="downloadContainer" style="margin-top: 10px;"></div>
+      
       <button id="closeQr" class="close-qr-btn">ปิดหน้าต่าง</button>
     </div>
   </div>
