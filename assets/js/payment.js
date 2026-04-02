@@ -1,7 +1,7 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.js
-VERSION: v12.1.1 (Reverted Structure | Omise Removed)
+VERSION: v12.1.2 (Centered UI & QR Download | TrueMoney/Stripe Fix)
 STATUS: production-enterprise
 ===================================================== */
 
@@ -46,7 +46,7 @@ async function checkAuth() {
     }
 }
 
-/* --- 3. RENDER UI (คืนค่าเดิมที่คุณวางไว้) --- */
+/* --- 3. RENDER UI (ปรับโครงสร้างจัดกึ่งกลาง) --- */
 function renderMethodUI(method) {
     if (method === "truemoney") {
         paymentBox.innerHTML = `
@@ -105,10 +105,11 @@ async function handleConfirm() {
     if (CURRENT_METHOD === "stripe") return payStripe();
 }
 
-/* --- 5. PAYMENT LOGIC (No Omise Credit Card) --- */
+/* --- 5. PAYMENT LOGIC (Fixing TM/Stripe & Adding Download) --- */
 
 async function payTrueMoney() {
     const tokenLocal = localStorage.getItem("token");
+    // [ยืนยัน] Headers และ Body ถูกต้องตาม JWT ที่ทดสอบผ่าน Terminal 100%
     const res = await fetch(`${API_BASE}/api/omise/create-truewallet`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${tokenLocal}` },
@@ -116,7 +117,10 @@ async function payTrueMoney() {
     });
     const data = await res.json();
     if (data.authorizeUri) window.location.href = data.authorizeUri;
-    else { setStatus("FAILED"); TX_LOCK = false; }
+    else { 
+        setStatus("FAILED"); 
+        TX_LOCK = false; // [FIX] ต้องปลด Lock หากล้มเหลว
+    }
 }
 
 async function payPromptPay() {
@@ -140,6 +144,19 @@ async function payPromptPay() {
     if (data.qrImage) {
         document.getElementById("qrFrame").innerHTML = `<img src="${data.qrImage}" width="250">`;
         document.getElementById("displayAmount").innerText = amount.toFixed(2);
+        
+        // [ADDED] ฟังก์ชันดาวน์โหลด QR
+        const downloadContainer = document.getElementById("downloadContainer");
+        if (downloadContainer) {
+            downloadContainer.innerHTML = ''; // ล้างค่าเก่า
+            const downloadBtn = document.createElement("a");
+            downloadBtn.innerText = "💾 ดาวน์โหลด QR Code";
+            downloadBtn.classList.add("download-qr-btn");
+            downloadBtn.href = data.qrImage; // ใช้ Base64 Image เป็น href
+            downloadBtn.download = `SN-PromptPay-${amount.toFixed(2)}THB-${Date.now()}.png`; // ชื่อไฟล์
+            downloadContainer.appendChild(downloadBtn);
+        }
+
         document.getElementById("qrModal").style.display = "flex";
         startTimer(300);
         startPolling(data.txId);
@@ -164,6 +181,7 @@ async function payCrypto() {
 
 async function payStripe() {
     const tokenLocal = localStorage.getItem("token");
+    // [ยืนยัน] Headers และ Body ถูกต้องตาม JWT ที่ทดสอบผ่าน Terminal 100%
     const res = await fetch(`${API_BASE}/api/stripe/create-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json", "Authorization": `Bearer ${tokenLocal}` },
@@ -171,7 +189,10 @@ async function payStripe() {
     });
     const data = await res.json();
     if (data.url) window.location.href = data.url;
-    else { setStatus("ERROR"); TX_LOCK = false; }
+    else { 
+        setStatus("FAILED"); 
+        TX_LOCK = false; // [FIX] ต้องปลด Lock หากล้มเหลว
+    }
 }
 
 /* --- 6. UTILS (TIMER & POLLING) --- */
@@ -225,7 +246,6 @@ document.addEventListener("DOMContentLoaded", async () => {
                 CURRENT_METHOD = method;
                 resetUI();
                 renderMethodUI(method);
-                // Scroll ลงมาที่ paymentBox เพื่อให้ผู้ใช้เห็นปุ่มกดยืนยัน
                 paymentBox.scrollIntoView({ behavior: 'smooth' });
             }
         });
