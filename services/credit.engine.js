@@ -12,4 +12,3 @@ function deductCredits(user,amount){
 
 }
 module.exports = { checkCredits, deductCredits };
-module.exports = { checkCredits, deductCredits };
