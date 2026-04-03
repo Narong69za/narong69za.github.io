@@ -1,6 +1,6 @@
 // =====================================================
 // [FRONTEND LOGIC] controllers/create.controller.js
-// VERSION: v11.0.0 (THE FINAL STABLE FIX)
+// VERSION: v11.5.0 (THE KILLER FIX - NO MORE REDECLARE)
 // =====================================================
 const { v4: uuidv4 } = require("uuid");
 const sqlite3 = require('sqlite3').verbose();
@@ -13,31 +13,32 @@ const DATA_FILE = path.join(FRONTEND_PATH, "Assets/js/engine.data.js");
 
 const db = new sqlite3.Database(DB_PATH);
 
+// --- ฟังก์ชันดึงข้อมูลแบบ "หุ้มเกราะ" ---
 const getEngineConfig = (target) => {
     try {
         if (!fs.existsSync(DATA_FILE)) return null;
-        const content = fs.readFileSync(DATA_FILE, 'utf8');
+        let content = fs.readFileSync(DATA_FILE, 'utf8');
 
-        // ✅ แก้ปัญหา 'Already declared' โดยการหุ้ม Function Scope (IIFE)
-        // เปลี่ยน 'export const' เป็น 'const' และครอบด้วยฟังก์ชันเพื่อให้รันเสร็จแล้วสลายตัวไป
-        const cleanJS = content.replace(/export\s+const\s+/g, 'const ');
-        const wrappedScript = `(function() { 
+        // 🔥 [FIX] เปลี่ยน export const เป็น var ทั้งหมด เพื่อป้องกันการประกาศซ้ำใน eval
+        const cleanJS = content.replace(/export\s+const\s+/g, 'var ');
+        
+        // 🔥 [FIX] ใช้ Function Scope เพื่อกักบริเวณตัวแปร ไม่ให้ตีกับ Global
+        const result = eval(`(function() { 
             ${cleanJS}; 
             return { ENGINE_DATA, CTA_MODEL_MASTER }; 
-        })()`;
+        })()`);
 
-        const { ENGINE_DATA, CTA_MODEL_MASTER } = eval(wrappedScript);
-
-        if (!CTA_MODEL_MASTER || !ENGINE_DATA) return null;
+        if (!result.CTA_MODEL_MASTER || !result.ENGINE_DATA) return null;
 
         // ค้นหา Key (1, 2, 3...) จาก alias หรือ cta
-        const entry = Object.entries(CTA_MODEL_MASTER).find(([k, v]) => 
+        const entry = Object.entries(result.CTA_MODEL_MASTER).find(([k, v]) => 
             v.alias === target || v.cta === target
         );
 
         if (!entry) return null;
+        
         const [id, ctaInfo] = entry;
-        const technical = ENGINE_DATA[id] || {};
+        const technical = result.ENGINE_DATA[id] || {};
 
         return {
             provider: technical.provider || ctaInfo.engine,
@@ -47,7 +48,7 @@ const getEngineConfig = (target) => {
             alias: ctaInfo.alias
         };
     } catch (e) {
-        // ถ้า error เรื่อง redeclare ให้ข้ามไปเลย เพราะข้อมูลอาจจะโหลดสำเร็จแล้ว
+        console.error("❌ INTERNAL SYNC ERROR:", e.message);
         return null;
     }
 };
@@ -57,24 +58,35 @@ exports.create = async (req, res) => {
         const { alias, template, prompt, is_test, master_key } = req.body;
         const target = alias || template;
 
-        // 1. Auth Bypass
+        // 1. MASTER BYPASS (สำหรับ Terminal)
         const user = (master_key === "SN_ULTRA_2026_SECRET") ? { id: "ADMIN-TERMINAL" } : req.user;
         if (!user) return res.status(401).json({ error: "UNAUTHORIZED" });
 
-        // 2. ดึง Config (ดึงใหม่ทุกครั้งให้ Sync กับ Frontend)
+        // 2. ดึง Config (ดึงตรงจาก Assets/js/engine.data.js เท่านั้น!)
+        // ลบบรรทัดเก่าที่เรียก getEngine(...) ทิ้งไปเลย
         const config = getEngineConfig(target);
-        if (!config) return res.status(404).json({ error: `ENGINE_DATA_NOT_SYNCED_FOR_${target}` });
+        
+        if (!config) {
+            return res.status(404).json({ error: `ENGINE_NOT_SYNCED_FOR_${target}` });
+        }
 
         const jobId = is_test ? `TEST-${uuidv4().slice(0,8)}` : `JOB-${uuidv4().slice(0,8)}`;
 
-        // 3. Sandbox Mode
+        // 3. SANDBOX MODE (เทสฟรี)
         if (is_test === true || is_test === "true") {
             db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
-            [jobId, user.id, config.provider, `[TEST] ${prompt || 'UI'}`, 0, 'test_success']);
-            return res.json({ status: "success", mode: "sandbox", job_id: jobId, engine: config.provider });
+            [jobId, user.id, config.provider, `[TEST] ${prompt || 'Terminal'}`, 0, 'test_success']);
+            
+            return res.json({ 
+                status: "success", 
+                mode: "sandbox", 
+                job_id: jobId, 
+                engine: config.provider,
+                model: config.modelId 
+            });
         }
 
-        // 4. Production Mode
+        // 4. PRODUCTION MODE (หักสต็อกจริง)
         db.serialize(() => {
             db.run("UPDATE admin_stocks SET remaining_stock = remaining_stock - 1 WHERE service_name = ?", [config.provider]);
             db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
@@ -84,7 +96,7 @@ exports.create = async (req, res) => {
         res.json({ status: "success", success: true, job_id: jobId, engine: config.provider });
 
     } catch (err) {
-        console.error("🔥 CONTROLLER ERROR:", err);
+        console.error("🔥 FINAL CONTROLLER ERROR:", err.message);
         res.status(500).json({ error: err.message });
     }
 };
