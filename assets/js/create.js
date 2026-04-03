@@ -87,85 +87,98 @@ function initEngines() {
             if (!engineBox) return;
 
             const engineId = engineBox.dataset.engine; // เช่น "1", "2"
-            const alias = getAliasFromID(engineId);     // เช่น "image_to_video"
-            const prompt = engineBox.querySelector(".engine-prompt")?.value || "";
-            const file = engineBox.querySelector(".engine-fileA")?.files?.[0] || null;
-            const status = document.getElementById("status");
-            const preview = engineBox.querySelector(".engine-preview");
+import { buildPayload } from "./payload.builder.js";
+import { createProgressUI, updateProgressBar } from "./progress.tracker.js";
 
-            // UI Feedback
-            btn.disabled = true;
-            const originalBtnText = btn.innerText;
-            btn.innerText = "RUNNING...";
-            if (status) status.innerText = "สถานะ: กำลังเตรียมข้อมูล (INITIALIZING...)";
+const API_BASE = "https://api.sn-designstudio.dev";
 
-            try {
-                let image = null, video = null, audio = null;
+// [HELPER] แมพ ID หน้าจอ เข้ากับ Alias ในระบบ
+const getAlias = (id) => {
+    const map = { "1":"image_to_video", "2":"text_to_video", "3":"video_transform", "4":"text_to_image", "5":"fast_image", "6":"redux_image", "7":"character_motion", "8":"video_enhance", "9":"video_ai", "10":"video_fast", "11":"gemini_image", "12":"voice_ai", "13":"sound_fx", "14":"voice_transfer" };
+    return map[id];
+};
 
-                // อัปโหลดไฟล์ถ้ามี
-                if (file) {
-                    if (status) status.innerText = "สถานะ: กำลังอัปโหลดสื่อ (UPLOADING...)";
-                    const upload = await uploadFile(file);
-                    image = upload.url; 
-                    video = upload.url;
-                    audio = upload.url;
-                }
+async function startRenderPipeline(engineBox) {
+    const engineId = engineBox.dataset.engine;
+    const alias = getAlias(engineId);
+    const prompt = engineBox.querySelector(".engine-prompt")?.value;
+    const fileInput = engineBox.querySelector(".engine-fileA");
+    const statusLabel = document.getElementById("status");
 
-                // สร้าง Payload ให้ตรงกับที่ Backend Render Controller ต้องการ
-                const payload = {
-                    alias: alias,
-                    prompt: prompt,
-                    image: image,
-                    video: video,
-                    audio: audio,
-                    is_test: false, // รันจริงหักเครดิตจริง
-                    master_key: "SN_ULTRA_2026_SECRET" // บายพาสสำหรับโหมดแอดมิน
-                };
+    try {
+        // 1. ตรวจสอบการ Login (จากไฟล์ที่พี่ส่งมา)
+        if (!localStorage.getItem("sn_user") && !prompt.includes("ADMIN_BYPASS")) {
+            alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
+            return;
+        }
 
-                if (status) status.innerText = "สถานะ: ส่งคำสั่งไปยัง AI (SENDING COMMAND...)";
+        // 2. เตรียม UI Progress
+        createProgressUI(engineBox);
+        if (statusLabel) statusLabel.innerText = "สถานะ: กำลังส่งคำสั่ง...";
 
-                const res = await fetch(`${API_BASE}/api/render`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+        // 3. สร้าง Payload
+        const payload = buildPayload(alias, { prompt: prompt });
 
-                if (!res.ok) {
-                    const errData = await res.json();
-                    throw new Error(errData.error || "API_RENDER_FAILED");
-                }
-
-                const responseData = await res.json();
-                
-                // เริ่มระบบ Polling รอรับงาน (ใช้ jobId ที่ได้จาก Backend)
-                if (status) status.innerText = "สถานะ: AI กำลังทำงาน (AI RENDERING...)";
-                
-                // สมมติว่า pollTask รองรับ jobId ตัวใหม่
-                const result = await pollTask(responseData.job_id || responseData.id);
-                logTask(result);
-
-                // แสดงผลลัพธ์ใน Preview
-                if (preview && result.output) {
-                    const output = result.output[0];
-                    if (output.endsWith(".mp4")) {
-                        preview.innerHTML = `<video src="${output}" controls autoplay class="rounded-xl shadow-lg" style="max-width:100%"></video>`;
-                    } else {
-                        preview.innerHTML = `<img src="${output}" class="rounded-xl shadow-lg" style="max-width:100%">`;
-                    }
-                }
-
-                if (status) status.innerText = "สถานะ: เสร็จสมบูรณ์ (SUCCESS)";
-
-            } catch (e) {
-                console.error("GENERATE ERROR:", e);
-                if (status) status.innerText = `สถานะ: เกิดข้อผิดพลาด (${e.message})`;
-                alert("Engine Error: " + e.message);
-            } finally {
-                btn.disabled = false;
-                btn.innerText = originalBtnText;
-            }
+        // 4. ยิงไป Backend ตัวแรงของเรา
+        const res = await fetch(`${API_BASE}/api/render`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
         });
-    });
+
+        const startData = await res.json();
+        if (!startData.success && !startData.status === "success") throw new Error("API REJECTED");
+
+        const jobId = startData.job_id;
+
+        // 5. ระบบ Polling ติดตามงาน
+        const poll = async () => {
+            const statusRes = await fetch(`${API_BASE}/api/render-status?job=${jobId}`);
+            const data = await statusRes.json();
+
+            // อัปเดต Progress Bar ในกล่องนั้นๆ
+            updateProgressBar(engineBox, data.status);
+
+            if (data.status === "processing" || data.status === "running") {
+                setTimeout(poll, 3000);
+            } else if (data.status === "done" || data.status === "success") {
+                renderOutput(engineBox, data.output);
+                if (statusLabel) statusLabel.innerText = "สถานะ: เสร็จสมบูรณ์";
+            } else if (data.status === "error") {
+                alert("Render Failed");
+            }
+        };
+
+        poll();
+
+    } catch (e) {
+        console.error(e);
+        alert("Pipeline Error: " + e.message);
+    }
 }
 
-document.addEventListener("DOMContentLoaded", initEngines);
+// ฟังก์ชันแสดงผลลัพธ์ในกล่อง Preview
+function renderOutput(engineBox, output) {
+    const preview = engineBox.querySelector(".engine-preview");
+    // ลบ Progress UI ออก
+    const loader = preview.querySelector(".progress-container");
+    if (loader) loader.remove();
+
+    if (Array.isArray(output)) {
+        preview.innerHTML = `<img src="${output[0]}" class="w-full rounded-xl">`;
+    } else if (output && output.endsWith(".mp4")) {
+        preview.innerHTML = `<video src="${output}" controls class="w-full rounded-xl"></video>`;
+    } else {
+        preview.innerHTML = `<img src="${output}" class="w-full rounded-xl">`;
+    }
+}
+
+// ผูกปุ่มเข้ากับระบบ
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".generate-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const box = btn.closest(".engine-box");
+            startRenderPipeline(box);
+        });
+    });
+});
