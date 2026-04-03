@@ -4,7 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 const DB_PATH = '/home/ubuntu/sn-payment-core/database.db';
-const DATA_FILE = '/home/ubuntu/narong69za.github.io/Assets/js/engine.data.js';
+const DATA_FILE = '/home/ubuntu/narong69za.github.io/assets/js/engine.data.js';
 const db = new sqlite3.Database(DB_PATH);
 
 exports.create = async (req, res) => {
