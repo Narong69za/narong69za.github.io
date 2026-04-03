@@ -8,42 +8,60 @@ exports.create = async (req, res) => {
    try {
       const { alias, prompt, is_test, master_key } = req.body;
       
-      // 1. [BYPASS AUTH] สำหรับเทสผ่าน Terminal
-      let user = req.user;
-      if (master_key === "SN_ULTRA_2026_SECRET") {
-          user = { id: "ADMIN-TESTER" };
-      } else if (!user) {
-          return res.status(401).json({ error: "UNAUTHORIZED" });
-      }
+      // 1. ระบุตัวตน (ถ้ามาด้วย Master Key ให้เป็น Admin)
+      let user = req.user || (master_key === "SN_ULTRA_2026_SECRET" ? { id: "ADMIN-TESTER" } : null);
+      if (!user) return res.status(401).json({ error: "UNAUTHORIZED" });
 
       const lockedEngineConfig = getEngine(alias);
-      const jobId = `TEST-${uuidv4().slice(0,8)}`;
+      const jobId = is_test ? `TEST-${uuidv4().slice(0,8)}` : `JOB-${uuidv4().slice(0,8)}`;
 
       // =====================================================
-      // 🚀 [SANDBOX MODE] - เทสฟรี ไม่หักเงิน ไม่ยิง AI จริง
+      // 🧪 [SANDBOX MODE] - เทสระบบฟรี ไม่หักเครดิต ไม่ยิง AI จริง
       // =====================================================
       if (is_test === true) {
-         // บันทึกงานลง DB เป็นสถานะ "TEST_SUCCESS" เพื่อให้โชว์ใน Dashboard
-         db.serialize(() => {
-            db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?, ?, ?, ?, ?, ?)", 
-            [jobId, user.id, lockedEngineConfig.provider, "[TEST] " + prompt, 0, 'test_success']);
-         });
+         db.run(
+            "INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?, ?, ?, ?, ?, ?)", 
+            [jobId, user.id, lockedEngineConfig.provider, "[SANDBOX] " + prompt, 0, 'test_success']
+         );
 
          return res.json({
             status: "success",
             mode: "sandbox",
-            message: "ระบบเชื่อมต่อปกติ (ไม่ได้หักเครดิตจริง)",
+            message: "Online & Connection Verified",
             jobId: jobId,
             engine: lockedEngineConfig.provider
          });
       }
 
       // =====================================================
-      // 💰 [PRODUCTION MODE] - หักเงินจริง ยิงจริง (ใช้ตอนเปิดระบบจริง)
+      // 💰 [PRODUCTION MODE] - รันจริง หักเงินจริง
       // =====================================================
       
-      // (ส่วนนี้คือ Logic เดิมที่ผมให้ไปก่อนหน้า... หักเครดิต User และยิง modelRouter.run)
-      // [ใส่โค้ดเดิมของพี่ตรงนี้...]
+      // -- เช็คและหักเครดิต User --
+      const ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+      const freeAllowed = await creditEngine.checkFreeUsage(ip);
+      if (!freeAllowed) {
+         const creditCheck = await creditEngine.checkAndUseCredit(user.id, alias, lockedEngineConfig.cost);
+         if (!creditCheck.allowed) return res.status(402).json({ error: "Not enough credits" });
+      }
+
+      // -- ยิงคำสั่งไปหา AI Provider จริง --
+      const result = await modelRouter.run({
+         userId: user.id,
+         engine: lockedEngineConfig.provider,
+         alias,
+         prompt,
+         files: req.files
+      });
+
+      // -- หักสต็อกพี่ และ บันทึกงานลง DB --
+      db.serialize(() => {
+         db.run("UPDATE admin_stocks SET remaining_stock = remaining_stock - 1 WHERE service_name = ?", [lockedEngineConfig.provider]);
+         db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?, ?, ?, ?, ?, ?)", 
+         [jobId, user.id, lockedEngineConfig.provider, prompt, lockedEngineConfig.cost, 'success']);
+      });
+
+      res.json({ status: "success", jobId: result.id, result });
 
    } catch (err) {
       console.error("CREATE ERROR:", err);
