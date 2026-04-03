@@ -1,594 +1,106 @@
-<!-- =====================================================
-PROJECT: SN DESIGN STUDIO
-MODULE: create.html
-VERSION: v9.7.2
-STATUS: production
-LAYER: frontend-ui
-LAST FIX:
-- THAI UI LABEL FOR ENGINE 1-14
-- STRUCTURE UNCHANGED
-===================================================== -->
-
 <!DOCTYPE html>
 <html lang="th">
-
 <head>
-
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>ULTRA ENGINE CONTROL</title>
-
-<link rel="stylesheet" href="/assets/css/create-premium.css">
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ULTRA ENGINE CONTROL</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #0b0f1a; color: white; }
+        .glass-card { background: rgba(30, 41, 59, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
+        .engine-box:hover { border-color: rgba(59, 130, 246, 0.5); transform: translateY(-5px); }
+        .generate-btn { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); transition: all 0.3s ease; }
+        .generate-btn:hover { box-shadow: 0 0 20px rgba(37, 99, 235, 0.5); }
+    </style>
 </head>
 
-<body>
-
-<div class="create-root create-container">
-
-<h1 class="title">ULTRA ENGINE CONTROL</h1>
-
-<div class="account-wrapper">
-
-<div class="user-header">
-<span id="userShort">-</span>
-</div>
-
-<div class="account-card">
-
-<div class="account-title">สถานะบัญชี</div>
-
-<div class="account-row">
-<span>อีเมล</span>
-<span id="userEmail">-</span>
-</div>
-
-<div class="account-row">
-<span>ระดับผู้ใช้</span>
-<span id="userRole">-</span>
-</div>
-
-<div class="account-row">
-<span>เครดิต</span>
-<span id="userCredits">0</span>
-</div>
-
-</div>
-</div>
-
-<div class="engine-wrap">
-
-<!-- ENGINE 1 -->
-<div class="engine engine-box engine-theme-1" data-engine="1" data-model="gen4_turbo">
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างวิดีโอจากข้อความ</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์คำสั่งเพื่อสร้างวิดีโอ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*,video/*,audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 01</button>
-
-</div>
-
-
-<!-- ENGINE 2 -->
-<div class="engine engine-box engine-theme-2" data-engine="2" data-model="gen4_image">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างภาพจากข้อความ</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์คำสั่งเพื่อสร้างภาพ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*,video/*,audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 02</button>
-
-</div>
-
-
-<!-- ENGINE 3 -->
-<div class="engine engine-box engine-theme-3" data-engine="3" data-model="gen4_turbo">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างวิดีโอจากภาพ</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์คำสั่งเพื่อสร้างวิดีโอ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*,video/*,audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 03</button>
-
-</div>
-
-
-<!-- ENGINE 4 -->
-<div class="engine engine-box engine-theme-4" data-engine="4" data-model="gen4_image">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างภาพ AI</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์คำสั่งเพื่อสร้างภาพ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*,video/*,audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 04</button>
-
-</div>
-
-
-<!-- ENGINE 5 -->
-<div class="engine engine-box engine-theme-5" data-engine="5" data-model="gen4_image_turbo">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างภาพ AI ความเร็วสูง</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์คำสั่งเพื่อสร้างภาพ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*,video/*,audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 05</button>
-
-</div>
-
-
-<!-- ENGINE 6 -->
-<div class="engine engine-box engine-theme-6" data-engine="6" data-model="act_two">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างการเคลื่อนไหวตัวละคร</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อธิบายการเคลื่อนไหวของตัวละคร..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*,video/*,audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 06</button>
-
-</div>
-
-
-<!-- ENGINE 7 -->
-<div class="engine engine-box engine-theme-7" data-engine="7" data-model="gen4_aleph">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">ปรับปรุงคุณภาพวิดีโอ</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อธิบายการปรับแต่งวิดีโอ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="video/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 07</button>
-
-</div>
-
-
-<!-- ENGINE 8 -->
-<div class="engine engine-box engine-theme-8" data-engine="8" data-model="veo3">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างวิดีโอ AI รุ่นใหม่</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อธิบายวิดีโอที่ต้องการสร้าง..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 08</button>
-
-</div>
-
-
-<!-- ENGINE 9 -->
-<div class="engine engine-box engine-theme-9" data-engine="9" data-model="veo3.1">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างวิดีโอ AI ขั้นสูง</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อธิบายวิดีโอที่ต้องการสร้าง..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="image/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 09</button>
-
-</div>
-
-
-<!-- ENGINE 10 -->
-<div class="engine engine-box engine-theme-10" data-engine="10" data-model="veo3.1_fast">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างวิดีโอ AI แบบเร็ว</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อธิบายวิดีโอที่ต้องการสร้าง..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 10</button>
-
-</div>
-
-
-<!-- ENGINE 11 -->
-<div class="engine engine-box engine-theme-11" data-engine="11" data-model="gemini_2.5_flash">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างภาพ AI (Gemini)</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์คำสั่งเพื่อสร้างภาพ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 11</button>
-
-</div>
-
-
-<!-- ENGINE 12 -->
-<div class="engine engine-box engine-theme-12" data-engine="12" data-model="eleven_multilingual_v2">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างเสียงพูด AI</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="พิมพ์ข้อความเพื่อสร้างเสียง..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 12</button>
-
-</div>
-
-
-<!-- ENGINE 13 -->
-<div class="engine engine-box engine-theme-13" data-engine="13" data-model="eleven_text_to_sound_v2">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">สร้างเสียงเอฟเฟกต์</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อธิบายเสียงที่ต้องการ..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 13</button>
-
-</div>
-
-
-<!-- ENGINE 14 -->
-<div class="engine engine-box engine-theme-14" data-engine="14" data-model="eleven_multilingual_sts_v2">
-
-<h2>⭐ AI ENGINE</h2>
-
-<div class="mode-row">
-<button class="mode-btn active-mode">เปลี่ยนเสียงพูด</button>
-</div>
-
-<div class="engine-detail">
-
-<textarea class="engine-prompt" placeholder="อัปโหลดเสียงต้นฉบับเพื่อเปลี่ยนเสียง..."></textarea>
-
-<div style="display:flex;gap:10px;justify-content:center;margin-top:10px">
-
-<select class="engine-resolution">
-<option value="720">720p</option>
-<option value="1080">1080p</option>
-</select>
-
-<input type="file" class="engine-fileA" accept="audio/*">
-
-</div>
-
-<div class="engine-credit">
-อัตราเครดิต <span class="credit-rate">0 credits / sec</span>
-</div>
-
-</div>
-
-<div class="engine-preview">Preview</div>
-
-<button class="generate-btn">ENGINE 14</button>
-
-</div>
-
-</div>
-
-
-<div class="status-bar">
-<span id="status">สถานะ: รอคำสั่ง</span>
-</div>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
+
+<div class="max-w-6xl mx-auto px-4 py-10">
+
+    <header class="flex flex-col items-center mb-12">
+        <h1 class="text-4xl md:text-6xl font-black tracking-tighter bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-indigo-600 mb-2">
+            ULTRA ENGINE CONTROL
+        </h1>
+        <div class="h-1 w-24 bg-blue-600 rounded-full"></div>
+    </header>
+
+    <div class="account-wrapper mb-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="glass-card p-6 rounded-3xl flex items-center space-x-4">
+            <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center text-2xl font-bold" id="userShort">
+                -
+            </div>
+            <div>
+                <p class="text-xs text-slate-500 uppercase tracking-widest">Account Status</p>
+                <p class="font-semibold truncate w-40" id="userEmail">-</p>
+            </div>
+        </div>
+        <div class="glass-card p-6 rounded-3xl">
+            <p class="text-xs text-slate-500 uppercase tracking-widest">User Level</p>
+            <p class="text-xl font-bold text-blue-400" id="userRole">-</p>
+        </div>
+        <div class="glass-card p-6 rounded-3xl border-l-4 border-l-emerald-500">
+            <p class="text-xs text-slate-500 uppercase tracking-widest">Total Credits</p>
+            <p class="text-3xl font-black text-emerald-400" id="userCredits">0</p>
+        </div>
+    </div>
+
+    <div class="engine-wrap grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-8">
+
+        <div class="engine engine-box glass-card p-8 rounded-[2rem] transition-all duration-300" data-engine="1" data-model="gen4_turbo">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-sm font-bold tracking-widest text-slate-500 uppercase">⭐ AI ENGINE 01</h2>
+                <span class="text-xs bg-blue-500/10 text-blue-400 px-2 py-1 rounded">Text to Video</span>
+            </div>
+
+            <textarea class="engine-prompt w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-sm focus:outline-none focus:border-blue-500 min-h-[100px] mb-4" placeholder="พิมพ์คำสั่งเพื่อสร้างวิดีโอ..."></textarea>
+
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <select class="engine-resolution bg-slate-800 border border-slate-700 rounded-lg p-2 text-xs focus:outline-none">
+                    <option value="720">720p HD</option>
+                    <option value="1080">1080p Full HD</option>
+                </select>
+                <div class="relative">
+                    <input type="file" class="engine-fileA absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    <div class="bg-slate-700 text-center py-2 rounded-lg text-[10px] font-bold uppercase tracking-tighter">Import Media</div>
+                </div>
+            </div>
+
+            <div class="engine-preview w-full aspect-video bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-center text-slate-700 text-xs italic mb-6">
+                Preview Area
+            </div>
+
+            <div class="flex items-center justify-between mb-4 px-2">
+                <span class="text-[10px] text-slate-500 uppercase">Rate:</span>
+                <span class="text-[10px] text-blue-400 font-bold"><span class="credit-rate">0</span> Credits / Sec</span>
+            </div>
+
+            <button class="generate-btn w-full py-4 rounded-xl font-black text-sm tracking-widest uppercase shadow-lg">
+                RUN ENGINE 01
+            </button>
+        </div>
+
+        <div class="engine engine-box glass-card p-8 rounded-[2rem] transition-all duration-300" data-engine="2" data-model="gen4_image">
+            <div class="flex justify-between items-start mb-6">
+                <h2 class="text-sm font-bold tracking-widest text-slate-500 uppercase">⭐ AI ENGINE 02</h2>
+                <span class="text-xs bg-purple-500/10 text-purple-400 px-2 py-1 rounded">Text to Image</span>
+            </div>
+            <textarea class="engine-prompt w-full bg-slate-900/50 border border-slate-700 rounded-xl p-4 text-sm focus:outline-none focus:border-purple-500 min-h-[100px] mb-4" placeholder="พิมพ์คำสั่งเพื่อสร้างภาพ..."></textarea>
+            <button class="generate-btn w-full py-4 rounded-xl font-black text-sm tracking-widest uppercase">RUN ENGINE 02</button>
+        </div>
+
+        </div>
+
+    <div class="fixed bottom-0 left-0 w-full bg-slate-900/90 backdrop-blur-md border-t border-slate-800 p-3 text-center">
+        <span class="text-xs font-mono text-blue-400 uppercase tracking-widest" id="status">สถานะ: ระบบพร้อมทำงาน (STABLE)</span>
+    </div>
 
 </div>
 
 <script src="assets/js/config.js?v=6.1.0"></script>
 <script type="module" src="assets/js/create.js?v=6.1.0"></script>
 <script src="assets/js/create-nav.js?v=6.1.0" defer></script>
-
-
 
 </body>
 </html>
