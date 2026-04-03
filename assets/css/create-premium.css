@@ -375,3 +375,37 @@ box-shadow:
 0 0 20px rgba(0,255,180,1),
 0 0 35px rgba(0,255,180,0.7);
   }
+
+/* [ADD-ON] เพิ่มต่อท้ายไฟล์เดิมได้เลยครับ */
+
+.engine-box {
+    backdrop-filter: blur(10px); /* เพิ่มความนวลแบบกระจก */
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* ปรับปุ่ม Generate ให้ดูมีพลังขึ้น */
+.generate-btn {
+    background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+    border: none;
+    color: white;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+    border-radius: 12px;
+    padding: 15px 20px;
+}
+
+.generate-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 25px rgba(37, 99, 235, 0.6);
+}
+
+/* แอนิเมชั่นตอนโหลด (Shimmer) */
+.shimmer-loading {
+    background: linear-gradient(90deg, #0f172a 25%, #1e293b 50%, #0f172a 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+@keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
