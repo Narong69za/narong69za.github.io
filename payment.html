@@ -1,116 +1,46 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SN DESIGN PAYMENT ENGINE</title>
-<link rel="stylesheet" href="/assets/css/payment.css">
-<style>
-  /* --- สไตล์ดั้งเดิม --- */
-  .timer-box { color: #ff4444; font-weight: bold; font-size: 14px; margin-bottom: 10px; }
-  .qr-modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display:none; justify-content:center; align-items:center; z-index:9999; }
-  .qr-container { background:#fff; border-radius:20px; width:350px; text-align:center; overflow:hidden; padding-bottom: 15px; }
-  .qr-header { background:#6a1b9a; color:#fff; padding:15px; }
-  .close-qr-btn { background:#222; color:#fff; border:none; padding:10px 30px; border-radius:20px; cursor:pointer; margin-top:10px; }
-  
-  /* --- สไตล์สำหรับการจัดกึ่งกลาง CTA และปุ่มดาวน์โหลด --- */
-  
-  /* จัดกึ่งกลางคอนเทนเนอร์ CTA ที่จะเด้งออกมาใน paymentBox */
-  .method-confirm-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center; 
-      justify-content: center; 
-      text-align: center;
-      width: 100%;
-      padding: 20px 0;
-  }
-  
-  /* จัดการความกว้างและจัดกึ่งกลางของ input/select/button ภายในพื้นที่ยืนยัน */
-  .method-confirm-area input,
-  .method-confirm-area select,
-  .method-confirm-area button.engine-btn {
-      width: 90%;
-      max-width: 300px;
-      margin-left: auto;
-      margin-right: auto;
-      display: block;
-  }
-  
-  .method-confirm-area button.engine-btn {
-      margin-top: 15px;
-  }
-  
-  /* สไตล์ปุ่มดาวน์โหลด QR (สีเขียว) */
-  .download-qr-btn {
-      background: #4caf50;
-      color: #fff;
-      border: none;
-      padding: 12px 30px;
-      border-radius: 25px;
-      cursor: pointer;
-      margin-top: 10px;
-      text-decoration: none;
-      display: inline-block;
-      font-weight: bold;
-      font-size: 14px;
-      transition: 0.3s;
-  }
-  .download-qr-btn:hover { background: #388e3c; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SECURE PAYMENT - SN DESIGN STUDIO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #05070a; color: white; }
+        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.05); }
+        .qr-gradient { background: linear-gradient(135deg, #00ffae 0%, #00c8ff 100%); }
+    </style>
 </head>
-<body>
+<body class="p-4 md:p-12 min-h-screen flex items-center justify-center">
+    <div class="max-w-md w-full glass p-8 rounded-[2.5rem] shadow-2xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-blue-500">RELOAD CREDITS</h1>
+            <p class="text-slate-500 text-[10px] uppercase tracking-widest mt-2">Secure Gateway v2026</p>
+        </header>
 
-<div class="payment-header">
-  <h1>SN DESIGN PAYMENT ENGINE</h1>
-  <p>Enterprise AI Payment Console</p>
-</div>
+        <div class="space-y-6">
+            <div class="grid grid-cols-2 gap-3">
+                <button class="bg-slate-800 py-3 rounded-2xl text-xs font-bold hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-500">100 Credits - ฿100</button>
+                <button class="bg-slate-800 py-3 rounded-2xl text-xs font-bold hover:bg-emerald-500/20 transition-all border border-transparent hover:border-emerald-500">500 Credits - ฿450</button>
+            </div>
 
-<div class="payment-grid">
-  <div class="engine-card truemoney" data-method="truemoney" style="border-left: 5px solid #ff7a00;">
-    <h2>🟠 TRUEMONEY WALLET</h2>
-    <p>Give Link Integration (Live)</p>
-    <button class="engine-btn">CONNECT WALLET</button>
-  </div>
+            <div class="bg-white p-6 rounded-3xl aspect-square flex flex-col items-center justify-center relative overflow-hidden">
+                <div id="qrCode" class="w-full h-full flex items-center justify-center text-slate-900 font-bold italic">
+                    <p class="text-xs">GENERATING QR...</p>
+                </div>
+                <div class="absolute bottom-0 w-full h-2 qr-gradient"></div>
+            </div>
 
-  <div class="engine-card scb" data-method="promptpay" style="border-left: 5px solid #6a1b9a;">
-    <h2>🟣 SCB QR ENGINE</h2>
-    <p>Dynamic PromptPay (Min 5 THB)</p>
-    <button class="engine-btn">GENERATE QR</button>
-  </div>
-
-  <div class="engine-card crypto" data-method="crypto" style="border-left: 5px solid #ffd600;">
-    <h2>🟡 CRYPTO CORE</h2>
-    <p>USDT / BNB / TON Gateway</p>
-    <button class="engine-btn">OPEN GATE</button>
-  </div>
-
-  <div class="engine-card stripe" data-method="stripe" style="border-left: 5px solid #635bff;">
-    <h2>🔵 STRIPE GLOBAL</h2>
-    <p>Visa / Mastercard / Apple Pay</p>
-    <button class="engine-btn">CHECKOUT</button>
-  </div>
-</div>
-
-<div id="paymentBox" class="payment-box"></div>
-<div id="paymentStatus" class="status">STATUS: IDLE</div>
-
-<div id="qrModal" class="qr-modal">
-  <div class="qr-container">
-    <div class="qr-header"><h3>SN DESIGN QR PAYMENT</h3></div>
-    <div style="padding:20px;">
-      <div id="qrTimer" class="timer-box">QR จะหมดอายุใน 05:00</div>
-      <div id="qrFrame" class="qr-frame"></div>
-      <p style="color:#333;">ยอดเงิน: <strong id="displayAmount" style="color:#6a1b9a;">0</strong> บาท</p>
-      
-      <div id="downloadContainer" style="margin-top: 10px;"></div>
-      
-      <button id="closeQr" class="close-qr-btn">ปิดหน้าต่าง</button>
+            <div class="text-center space-y-2">
+                <p class="text-[10px] text-slate-500 uppercase tracking-tighter">สแกนเพื่อชำระเงินผ่านแอปธนาคารทุกประเภท</p>
+                <div class="flex items-center justify-center gap-2">
+                    <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <span id="paymentStatus" class="text-xs font-bold text-emerald-400">รอรับยอดเงิน...</span>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
-
-<script src="/assets/js/config.js"></script>
-<script src="/assets/js/payment.js"></script>
+    <script src="assets/js/payment.js"></script>
 </body>
 </html>
