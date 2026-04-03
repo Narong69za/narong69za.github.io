@@ -1,6 +1,6 @@
 // =====================================================
 // [FRONTEND LOGIC] controllers/create.controller.js
-// VERSION: v10.6.0 (FINAL SYNC: TEMPLATE & ALIAS)
+// VERSION: v11.0.0 (THE FINAL STABLE FIX)
 // =====================================================
 const { v4: uuidv4 } = require("uuid");
 const sqlite3 = require('sqlite3').verbose();
@@ -8,56 +8,83 @@ const fs = require('fs');
 const path = require('path');
 
 const DB_PATH = '/home/ubuntu/sn-payment-core/database.db';
-const DATA_FILE = '/home/ubuntu/narong69za.github.io/assets/js/engine.data.js';
+const FRONTEND_PATH = "/home/ubuntu/narong69za.github.io";
+const DATA_FILE = path.join(FRONTEND_PATH, "Assets/js/engine.data.js");
 
 const db = new sqlite3.Database(DB_PATH);
 
 const getEngineConfig = (target) => {
     try {
+        if (!fs.existsSync(DATA_FILE)) return null;
         const content = fs.readFileSync(DATA_FILE, 'utf8');
-        const script = content.replace(/export const /g, 'var ') + "\n; ({ ENGINE_DATA, CTA_MODEL_MASTER });";
-        const { ENGINE_DATA, CTA_MODEL_MASTER } = eval(script);
 
-        // ค้นหาโดยเช็คทั้ง alias หรือ cta (template จากหน้าเว็บคือค่า CTA_01, CTA_02...)
-        const id = Object.keys(CTA_MODEL_MASTER).find(key => 
-            CTA_MODEL_MASTER[key].alias === target || CTA_MODEL_MASTER[key].cta === target
+        // ✅ แก้ปัญหา 'Already declared' โดยการหุ้ม Function Scope (IIFE)
+        // เปลี่ยน 'export const' เป็น 'const' และครอบด้วยฟังก์ชันเพื่อให้รันเสร็จแล้วสลายตัวไป
+        const cleanJS = content.replace(/export\s+const\s+/g, 'const ');
+        const wrappedScript = `(function() { 
+            ${cleanJS}; 
+            return { ENGINE_DATA, CTA_MODEL_MASTER }; 
+        })()`;
+
+        const { ENGINE_DATA, CTA_MODEL_MASTER } = eval(wrappedScript);
+
+        if (!CTA_MODEL_MASTER || !ENGINE_DATA) return null;
+
+        // ค้นหา Key (1, 2, 3...) จาก alias หรือ cta
+        const entry = Object.entries(CTA_MODEL_MASTER).find(([k, v]) => 
+            v.alias === target || v.cta === target
         );
 
-        if (!id) return null;
-        return { ...ENGINE_DATA[id], cost: CTA_MODEL_MASTER[id].cost || 10, alias: CTA_MODEL_MASTER[id].alias };
-    } catch (e) { return null; }
+        if (!entry) return null;
+        const [id, ctaInfo] = entry;
+        const technical = ENGINE_DATA[id] || {};
+
+        return {
+            provider: technical.provider || ctaInfo.engine,
+            modelId: technical.model || ctaInfo.model,
+            endpoint: technical.endpoint || ctaInfo.endpoint,
+            cost: ctaInfo.cost || 10,
+            alias: ctaInfo.alias
+        };
+    } catch (e) {
+        // ถ้า error เรื่อง redeclare ให้ข้ามไปเลย เพราะข้อมูลอาจจะโหลดสำเร็จแล้ว
+        return null;
+    }
 };
 
 exports.create = async (req, res) => {
     try {
-        // ดึง template (จากหน้าเว็บ) หรือ alias (จาก cURL)
-        const { template, alias, prompt, is_test, master_key } = req.body;
-        const targetIdentifier = template || alias; // ใช้ตัวไหนก็ได้ที่มีค่า
+        const { alias, template, prompt, is_test, master_key } = req.body;
+        const target = alias || template;
 
-        const user = (master_key === "SN_ULTRA_2026_SECRET") ? { id: "ADMIN-TEST" } : req.user;
+        // 1. Auth Bypass
+        const user = (master_key === "SN_ULTRA_2026_SECRET") ? { id: "ADMIN-TERMINAL" } : req.user;
         if (!user) return res.status(401).json({ error: "UNAUTHORIZED" });
 
-        const config = getEngineConfig(targetIdentifier);
-        if (!config) return res.status(404).json({ error: `ENGINE_NOT_FOUND_FOR_${targetIdentifier}` });
+        // 2. ดึง Config (ดึงใหม่ทุกครั้งให้ Sync กับ Frontend)
+        const config = getEngineConfig(target);
+        if (!config) return res.status(404).json({ error: `ENGINE_DATA_NOT_SYNCED_FOR_${target}` });
 
         const jobId = is_test ? `TEST-${uuidv4().slice(0,8)}` : `JOB-${uuidv4().slice(0,8)}`;
 
+        // 3. Sandbox Mode
         if (is_test === true || is_test === "true") {
             db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
-            [jobId, user.id, config.provider, `[TEST] ${prompt || 'UI Render'}`, 0, 'test_success']);
-            return res.json({ status: "success", success: true, mode: "sandbox", job_id: jobId });
+            [jobId, user.id, config.provider, `[TEST] ${prompt || 'UI'}`, 0, 'test_success']);
+            return res.json({ status: "success", mode: "sandbox", job_id: jobId, engine: config.provider });
         }
 
-        // PRODUCTION (รันจริง)
+        // 4. Production Mode
         db.serialize(() => {
             db.run("UPDATE admin_stocks SET remaining_stock = remaining_stock - 1 WHERE service_name = ?", [config.provider]);
             db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
             [jobId, user.id, config.provider, prompt || 'UI Render', config.cost, 'processing']);
         });
 
-        res.json({ status: "success", success: true, job_id: jobId });
+        res.json({ status: "success", success: true, job_id: jobId, engine: config.provider });
 
     } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
+        console.error("🔥 CONTROLLER ERROR:", err);
+        res.status(500).json({ error: err.message });
     }
 };
