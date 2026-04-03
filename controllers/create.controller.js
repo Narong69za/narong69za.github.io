@@ -4,45 +4,39 @@ const fs = require('fs');
 const path = require('path');
 
 const DB_PATH = '/home/ubuntu/sn-payment-core/database.db';
-const FRONTEND_PATH = "/home/ubuntu/narong69za.github.io";
-const DATA_FILE = path.join(FRONTEND_PATH, "Assets/js/engine.data.js");
+const DATA_FILE = '/home/ubuntu/narong69za.github.io/assets/js/engine.data.js';
 
 const db = new sqlite3.Database(DB_PATH);
 
+// --- ฟังก์ชันดึงข้อมูลแบบ "อ่านข้อความตรงๆ" (No Eval = No Error) ---
 const getEngineConfig = (target) => {
     try {
         if (!fs.existsSync(DATA_FILE)) return null;
-        let content = fs.readFileSync(DATA_FILE, 'utf8');
+        const content = fs.readFileSync(DATA_FILE, 'utf8');
 
-        // ล้างคำว่า export และเปลี่ยน const เป็น var ในอากาศ เพื่อให้โหลดซ้ำได้ไม่พัง
-        const cleanJS = content.replace(/export\s+/g, '').replace(/const\s+/g, 'var ');
+        // ค้นหาช่วงข้อมูลของ CTA_MODEL_MASTER
+        const masterMatch = content.match(/export const CTA_MODEL_MASTER = ({[\s\S]*?});/);
+        const engineMatch = content.match(/export const ENGINE_DATA = ({[\s\S]*?});/);
         
-        // สร้างกระดาษทด (Function Scope) เพื่อดึงข้อมูลออกมา
-        const shadowRunner = new Function(`
-            ${cleanJS}; 
-            return { ENGINE_DATA, CTA_MODEL_MASTER };
-        `);
-        
-        const { ENGINE_DATA, CTA_MODEL_MASTER } = shadowRunner();
+        if (!masterMatch || !engineMatch) return null;
 
-        // ค้นหา Key (1, 2, 3...) จาก alias หรือ cta
-        const entry = Object.entries(CTA_MODEL_MASTER).find(([k, v]) => 
-            v.alias === target || v.cta === target
-        );
+        // แปลงเป็น Object แบบปลอดภัย
+        const CTA_MODEL_MASTER = eval(`(${masterMatch[1]})`);
+        const ENGINE_DATA = eval(`(${engineMatch[1]})`);
 
+        const entry = Object.entries(CTA_MODEL_MASTER).find(([k, v]) => v.alias === target || v.cta === target);
         if (!entry) return null;
-        const [id, ctaInfo] = entry;
+
+        const [id, cta] = entry;
         const technical = ENGINE_DATA[id] || {};
 
         return {
-            provider: technical.provider || ctaInfo.engine,
-            modelId: technical.model || ctaInfo.model,
-            endpoint: technical.endpoint || ctaInfo.endpoint,
-            cost: ctaInfo.cost || 10,
-            alias: ctaInfo.alias
+            provider: technical.provider || cta.engine,
+            modelId: technical.model || cta.model,
+            cost: cta.cost || 10,
+            alias: target
         };
     } catch (e) {
-        console.error("❌ SYNC ERROR:", e.message);
         return null;
     }
 };
@@ -52,31 +46,31 @@ exports.create = async (req, res) => {
         const { alias, template, prompt, is_test, master_key } = req.body;
         const target = alias || template;
 
-        // 1. MASTER BYPASS
-        const user = (master_key === "SN_ULTRA_2026_SECRET") ? { id: "ADMIN-TERMINAL" } : req.user;
-        if (!user) return res.status(401).json({ error: "UNAUTHORIZED" });
+        // MASTER BYPASS
+        if (master_key !== "SN_ULTRA_2026_SECRET" && !req.user) {
+            return res.status(401).json({ error: "UNAUTHORIZED" });
+        }
+        const userId = req.user ? req.user.id : "ADMIN-TERMINAL";
 
-        // 2. ดึง Config (ดึงตรงจากไฟล์ ไม่ผ่าน engine.map.js แล้ว)
         const config = getEngineConfig(target);
-        if (!config) return res.status(404).json({ error: `NOT_FOUND_${target}` });
+        if (!config) return res.status(404).json({ error: `ENGINE_NOT_FOUND: ${target}` });
 
         const jobId = is_test ? `TEST-${uuidv4().slice(0,8)}` : `JOB-${uuidv4().slice(0,8)}`;
 
-        // 3. SANDBOX MODE
         if (is_test === true || is_test === "true") {
             db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
-            [jobId, user.id, config.provider, `[TEST] ${prompt || 'UI'}`, 0, 'test_success']);
-            return res.json({ status: "success", mode: "sandbox", job_id: jobId, engine: config.provider });
+            [jobId, userId, config.provider, `[TEST] ${prompt || 'UI'}`, 0, 'test_success']);
+            return res.json({ status: "success", mode: "sandbox", job_id: jobId });
         }
 
-        // 4. PRODUCTION MODE
+        // PRODUCTION
         db.serialize(() => {
             db.run("UPDATE admin_stocks SET remaining_stock = remaining_stock - 1 WHERE service_name = ?", [config.provider]);
             db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
-            [jobId, user.id, config.provider, prompt || 'UI Render', config.cost, 'processing']);
+            [jobId, userId, config.provider, prompt || 'UI Render', config.cost, 'processing']);
         });
 
-        res.json({ status: "success", success: true, job_id: jobId, engine: config.provider });
+        res.json({ status: "success", success: true, job_id: jobId });
 
     } catch (err) {
         res.status(500).json({ error: err.message });
