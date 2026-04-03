@@ -1,262 +1,45 @@
-/* =====================================================
-PROJECT: SN DESIGN STUDIO
-MODULE: payment.js
-VERSION: v12.1.2 (Centered UI & QR Download | TrueMoney/Stripe Fix)
-STATUS: production-enterprise
-===================================================== */
+/**
+ * [payment.js] - FULL ACCESS
+ * เชื่อมต่อ Stripe, PromptPay, SCB และ TrueMoney
+ */
 
-const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
-const FRONTEND_BASE = "https://sn-designstudio.dev";
-
-const paymentBox = document.getElementById("paymentBox");
-const statusEl = document.getElementById("paymentStatus");
-
-let CURRENT_METHOD = null;
-let TX_LOCK = false;
-let POLL_INTERVAL = null;
-let TIMER_INTERVAL = null;
-
-/* --- 1. STATUS & UI CONTROL --- */
-function setStatus(text) {
-    if (statusEl) statusEl.innerText = "STATUS: " + text;
-}
-
-function resetUI() {
-    if (paymentBox) paymentBox.innerHTML = "";
-    if (TIMER_INTERVAL) clearInterval(TIMER_INTERVAL);
-    if (POLL_INTERVAL) clearInterval(POLL_INTERVAL);
-    TX_LOCK = false;
-}
-
-/* --- 2. AUTH GUARD --- */
-async function checkAuth() {
-    const token = localStorage.getItem("token");
-    if (!token) {
-        window.location.replace(`${FRONTEND_BASE}/login.html`);
-        return false;
-    }
-    try {
-        const res = await fetch(`${API_BASE}/auth/me`, {
-            method: "GET",
-            headers: { "Authorization": `Bearer ${token}`, "Content-Type": "application/json" }
-        });
-        return res.status === 200;
-    } catch (err) {
-        return false;
-    }
-}
-
-/* --- 3. RENDER UI (ปรับโครงสร้างจัดกึ่งกลาง) --- */
-function renderMethodUI(method) {
-    if (method === "truemoney") {
-        paymentBox.innerHTML = `
-            <div class="method-confirm-area">
-                <p style="color:#ff7a00; margin-bottom:10px;">ชำระผ่าน TrueMoney Wallet (ระบบ Give Link)</p>
-                <button id="confirmBtn" class="engine-btn" style="background:#ff7a00; color:white;">ยืนยันการเชื่อมต่อ WALLET</button>
-            </div>`;
-    }
-
-    if (method === "promptpay") {
-        paymentBox.innerHTML = `
-            <div class="method-confirm-area">
-                <input type="number" id="qrAmount" placeholder="ระบุจำนวนเงิน (ขั้นต่ำ 5 บาท)" min="5" style="padding:12px; border-radius:10px; border:1px solid #ddd; margin-bottom:15px; width:90%; font-size:16px;">
-                <button id="confirmBtn" class="engine-btn" style="background:#6a1b9a; color:white;">GENERATE QR PROMPTPAY</button>
-            </div>`;
-    }
-
-    if (method === "crypto") {
-        paymentBox.innerHTML = `
-            <div class="method-confirm-area">
-                <select id="usdSelect" class="engine-btn" style="background:#333; margin-bottom:10px; width:90%;">
-                    <option value="10">10 USD</option>
-                    <option value="20">20 USD</option>
-                    <option value="50">50 USD</option>
-                </select>
-                <select id="coinSelect" class="engine-btn" style="background:#444; margin-bottom:15px; width:90%;">
-                    <option value="USDT">USDT (TRC20)</option>
-                    <option value="BNB">BNB (BEP20)</option>
-                    <option value="TON">TON</option>
-                </select>
-                <button id="confirmBtn" class="engine-btn" style="background:#ffd600; color:black;">OPEN CRYPTO GATEWAY</button>
-            </div>`;
-    }
-
-    if (method === "stripe") {
-        paymentBox.innerHTML = `
-            <div class="method-confirm-area">
-                <p style="color:#635bff; margin-bottom:10px;">Global Credit/Debit Card via Stripe</p>
-                <button id="confirmBtn" class="engine-btn" style="background:#635bff; color:white;">PROCEED TO CHECKOUT</button>
-            </div>`;
-    }
-
-    const btn = document.getElementById("confirmBtn");
-    if (btn) btn.addEventListener("click", handleConfirm);
-}
-
-/* --- 4. PAYMENT ROUTER --- */
-async function handleConfirm() {
-    if (TX_LOCK) return setStatus("TRANSACTION LOCKED");
-    TX_LOCK = true;
-    setStatus("PROCESSING...");
-
-    if (CURRENT_METHOD === "truemoney") return payTrueMoney();
-    if (CURRENT_METHOD === "promptpay") return payPromptPay();
-    if (CURRENT_METHOD === "crypto") return payCrypto();
-    if (CURRENT_METHOD === "stripe") return payStripe();
-}
-
-/* --- 5. PAYMENT LOGIC (Fixing TM/Stripe & Adding Download) --- */
-
-async function payTrueMoney() {
-    const tokenLocal = localStorage.getItem("token");
-    // [ยืนยัน] Headers และ Body ถูกต้องตาม JWT ที่ทดสอบผ่าน Terminal 100%
-    const res = await fetch(`${API_BASE}/api/omise/create-truewallet`, {
+// 1. ระบบ Stripe (บัตรเครดิต) - เปิดทันที!
+async function checkoutStripe(amount) {
+    const response = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${tokenLocal}` },
-        body: JSON.stringify({ product: "credit_pack_1" })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: amount }),
+        credentials: "include"
     });
-    const data = await res.json();
-    if (data.authorizeUri) window.location.href = data.authorizeUri;
-    else { 
-        setStatus("FAILED"); 
-        TX_LOCK = false; // [FIX] ต้องปลด Lock หากล้มเหลว
-    }
+    const session = await response.json();
+    if (session.url) window.location.href = session.url;
 }
 
-async function payPromptPay() {
-    const tokenLocal = localStorage.getItem("token");
-    const amount = parseFloat(document.getElementById("qrAmount")?.value);
-
-    if (!amount || amount < 5) {
-        alert("กรุณาระบุจำนวนเงินขั้นต่ำ 5 บาท");
-        setStatus("INVALID AMOUNT");
-        TX_LOCK = false;
-        return;
-    }
-
-    const res = await fetch(`${API_BASE}/api/scb/create-qr`, {
+// 2. ระบบ True Money (Gift Link/Serial) - เปิดทันที!
+async function topupTMN() {
+    const tmnLink = document.getElementById("tmn-link").value;
+    const response = await fetch("/api/truemoney", {
         method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${tokenLocal}` },
-        body: JSON.stringify({ amount })
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ link: tmnLink }),
+        credentials: "include"
     });
-    const data = await res.json();
+    const result = await response.json();
+    alert(result.message);
+}
 
+// 3. ระบบ PromptPay/SCB QR
+async function generateQR(amount, method) {
+    // method: 'promptpay' หรือ 'scb'
+    const response = await fetch(`/api/${method}/generate`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount: amount }),
+        credentials: "include"
+    });
+    const data = await response.json();
     if (data.qrImage) {
-        document.getElementById("qrFrame").innerHTML = `<img src="${data.qrImage}" width="250">`;
-        document.getElementById("displayAmount").innerText = amount.toFixed(2);
-        
-        // [ADDED] ฟังก์ชันดาวน์โหลด QR
-        const downloadContainer = document.getElementById("downloadContainer");
-        if (downloadContainer) {
-            downloadContainer.innerHTML = ''; // ล้างค่าเก่า
-            const downloadBtn = document.createElement("a");
-            downloadBtn.innerText = "💾 ดาวน์โหลด QR Code";
-            downloadBtn.classList.add("download-qr-btn");
-            downloadBtn.href = data.qrImage; // ใช้ Base64 Image เป็น href
-            downloadBtn.download = `SN-PromptPay-${amount.toFixed(2)}THB-${Date.now()}.png`; // ชื่อไฟล์
-            downloadContainer.appendChild(downloadBtn);
-        }
-
-        document.getElementById("qrModal").style.display = "flex";
-        startTimer(300);
-        startPolling(data.txId);
-    } else {
-        setStatus("ERROR"); TX_LOCK = false;
+        document.getElementById("qr-display").src = data.qrImage;
+        // เริ่ม Polling เช็คยอดโอน...
     }
 }
-
-async function payCrypto() {
-    const tokenLocal = localStorage.getItem("token");
-    const usd = document.getElementById("usdSelect").value;
-    const coin = document.getElementById("coinSelect").value;
-    const res = await fetch(`${API_BASE}/api/crypto/create-order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${tokenLocal}` },
-        body: JSON.stringify({ usd, coin })
-    });
-    const data = await res.json();
-    if (data.paymentUrl) window.location.href = data.paymentUrl;
-    else { setStatus("ERROR"); TX_LOCK = false; }
-}
-
-async function payStripe() {
-    const tokenLocal = localStorage.getItem("token");
-    // [ยืนยัน] Headers และ Body ถูกต้องตาม JWT ที่ทดสอบผ่าน Terminal 100%
-    const res = await fetch(`${API_BASE}/api/stripe/create-session`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${tokenLocal}` },
-        body: JSON.stringify({ product: "credit_pack_1" })
-    });
-    const data = await res.json();
-    if (data.url) window.location.href = data.url;
-    else { 
-        setStatus("FAILED"); 
-        TX_LOCK = false; // [FIX] ต้องปลด Lock หากล้มเหลว
-    }
-}
-
-/* --- 6. UTILS (TIMER & POLLING) --- */
-function startTimer(duration) {
-    let timer = duration;
-    const display = document.getElementById("qrTimer");
-    if (TIMER_INTERVAL) clearInterval(TIMER_INTERVAL);
-    TIMER_INTERVAL = setInterval(() => {
-        let mins = Math.floor(timer / 60);
-        let secs = timer % 60;
-        display.innerText = `QR จะหมดอายุใน ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        if (--timer < 0) {
-            clearInterval(TIMER_INTERVAL);
-            display.innerText = "QR หมดอายุแล้ว";
-            document.getElementById("qrFrame").style.opacity = "0.2";
-            TX_LOCK = false;
-        }
-    }, 1000);
-}
-
-function startPolling(txId) {
-    const tokenLocal = localStorage.getItem("token");
-    if (POLL_INTERVAL) clearInterval(POLL_INTERVAL);
-    POLL_INTERVAL = setInterval(async () => {
-        try {
-            const res = await fetch(`${API_BASE}/api/payment/status?tx=${txId}`, {
-                headers: { "Authorization": `Bearer ${tokenLocal}` }
-            });
-            const data = await res.json();
-            if (data.status === "success") {
-                clearInterval(POLL_INTERVAL);
-                clearInterval(TIMER_INTERVAL);
-                document.getElementById("qrModal").style.display = "none";
-                alert("ชำระเงินสำเร็จ!");
-                window.location.reload();
-            }
-        } catch (e) { console.error("Polling error"); }
-    }, 5000);
-}
-
-/* --- 7. INITIALIZE --- */
-document.addEventListener("DOMContentLoaded", async () => {
-    const ok = await checkAuth();
-    if (!ok) return;
-
-    // ผูก Event ให้กับ Card UI ของคุณ
-    document.querySelectorAll("[data-method]").forEach(el => {
-        el.addEventListener("click", () => {
-            const method = el.dataset.method;
-            if (method) {
-                CURRENT_METHOD = method;
-                resetUI();
-                renderMethodUI(method);
-                paymentBox.scrollIntoView({ behavior: 'smooth' });
-            }
-        });
-    });
-
-    // ปุ่มปิด Modal
-    const closeBtn = document.getElementById("closeQr");
-    if (closeBtn) {
-        closeBtn.onclick = () => {
-            document.getElementById("qrModal").style.display = "none";
-            resetUI();
-        };
-    }
-});
