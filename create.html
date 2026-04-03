@@ -5,22 +5,19 @@
     <title>ULTRA ENGINE CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #05070a; color: white; }
+        body { background: #05070a; color: white; font-family: sans-serif; }
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-        .gen-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); }
+        .gen-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); transition: all 0.2s; }
+        .gen-btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
     </style>
 </head>
 <body class="p-6">
     <div class="max-w-7xl mx-auto">
         <h1 class="text-4xl font-black text-center mb-12 text-blue-500 uppercase tracking-widest">SN ULTRA ENGINE</h1>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            EOF
-
-# บล็อกคำสั่งสำหรับสร้าง 14 กล่องแบบเร็วๆ
-for i in {1..14}; do
-cat << EOF >> /home/ubuntu/narong69za.github.io/create.html
-            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="$i">
-                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine $(printf "%02d" $i)</p>
+            
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="1">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 01</p>
                 <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
                 <div class="flex gap-2 mb-4">
                     <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1">
@@ -29,8 +26,113 @@ cat << EOF >> /home/ubuntu/narong69za.github.io/create.html
                     <input type="file" class="engine-fileA text-[10px] flex-1">
                 </div>
                 <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
-                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE $(printf "%02d" $i)</button>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 01</button>
             </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="2">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 02</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 02</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="3">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 03</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 03</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="4">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 04</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 04</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="5">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 05</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 05</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="6">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 06</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 06</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="7">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 07</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 07</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="8">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 08</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 08</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="9">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 09</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 09</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="10">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 10</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 10</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="11">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 11</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 11</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="12">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 12</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 12</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="13">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 13</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 13</button>
+            </div>
+
+            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="14">
+                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4">Engine 14</p>
+                <textarea class="engine-prompt w-full bg-slate-900 rounded-xl p-3 text-xs mb-4 h-20" placeholder="Enter prompt..."></textarea>
+                <div class="flex gap-2 mb-4"><select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1"><option value="720">720p</option><option value="1080">1080p</option></select><input type="file" class="engine-fileA text-[10px] flex-1"></div>
+                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[8px] italic">PREVIEW</div>
+                <button class="gen-btn generate-btn w-full py-3 rounded-xl font-bold text-[10px] uppercase">RUN ENGINE 14</button>
+            </div>
+
         </div>
     </div>
     <script src="assets/js/config.js"></script>
