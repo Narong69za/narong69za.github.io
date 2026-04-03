@@ -1,57 +1,80 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN ULTRA ENGINE CONTROL</title>
+    <meta charset="UTF-8">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background: #05070a; color: white; font-family: sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
-        .gen-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); transition: all 0.2s; }
-        .gen-btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
-    </style>
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .engine-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .engine-card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.5); }
+    </script>
 </head>
-<body class="p-6">
+<body class="bg-[#020408] text-white p-4 md:p-8">
     <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-black text-center mb-12 text-blue-500 uppercase tracking-widest">SN ULTRA ENGINE</h1>
-        <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+        <header class="flex justify-between items-center mb-10">
+            <h1 class="text-3xl font-black text-blue-500 uppercase italic">SN ULTRA ENGINE v10</h1>
+            <div id="user-status" class="text-[10px] bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 text-blue-400">STATUS: MASTER SYNCED</div>
+        </header>
+
+        <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            </div>
     </div>
+
     <script>
+        // รายชื่อ Engine และ Alias ที่ตรงกับ Backend ของมึง
         const engines = [
-            { id: 1, name: "สร้างวิดีโอจากข้อความ", model: "gen4_turbo" },
-            { id: 2, name: "สร้างภาพจากข้อความ", model: "gen4_image" },
-            { id: 3, name: "สร้างวิดีโอจากภาพ", model: "gen4_turbo" },
-            { id: 4, name: "สร้างภาพ AI", model: "gen4_image" },
-            { id: 5, name: "ภาพ AI ความเร็วสูง", model: "gen4_image_turbo" },
-            { id: 6, name: "การเคลื่อนไหวตัวละคร", model: "act_two" },
-            { id: 7, name: "ปรับปรุงคุณภาพวิดีโอ", model: "gen4_aleph" },
-            { id: 8, name: "สร้างวิดีโอ AI รุ่นใหม่", model: "veo3" },
-            { id: 9, name: "สร้างวิดีโอ AI ขั้นสูง", model: "veo3.1" },
-            { id: 10, name: "สร้างวิดีโอ AI แบบเร็ว", model: "veo3.1_fast" },
-            { id: 11, name: "สร้างภาพ AI (Gemini)", model: "gemini_2.5_flash" },
-            { id: 12, name: "สร้างเสียงพูด AI", model: "eleven_multilingual_v2" },
-            { id: 13, name: "สร้างเสียงเอฟเฟกต์", model: "eleven_text_to_sound_v2" },
-            { id: 14, name: "เปลี่ยนเสียงพูด", model: "eleven_multilingual_sts_v2" }
+            { id: "1", name: "Image to Video", alias: "image_to_video" },
+            { id: "2", name: "Text to Video", alias: "text_to_video" },
+            { id: "3", name: "Video Transform", alias: "video_transform" },
+            { id: "4", name: "Text to Image", alias: "text_to_image" },
+            { id: "5", name: "Fast Image AI", alias: "fast_image" },
+            { id: "6", name: "Redux Re-Image", alias: "redux_image" },
+            { id: "7", name: "Character Motion", alias: "character_motion" },
+            { id: "8", name: "Video Enhance", alias: "video_enhance" },
+            { id: "9", name: "Video AI Master", alias: "video_ai" },
+            { id: "10", name: "Video Fast Render", alias: "video_fast" },
+            { id: "11", name: "Gemini Image 2.5", alias: "gemini_image" },
+            { id: "12", name: "Voice AI Speech", alias: "voice_ai" },
+            { id: "13", name: "Sound FX Gen", alias: "sound_fx" },
+            { id: "14", name: "Voice Transfer", alias: "voice_transfer" }
         ];
+
         document.getElementById('engineGrid').innerHTML = engines.map(e => `
-            <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="${e.id}" data-model="${e.model}">
-                <p class="text-[10px] font-bold text-blue-500 uppercase mb-4 tracking-widest">Engine ${String(e.id).padStart(2, '0')}</p>
-                <h3 class="text-sm font-bold mb-4">${e.name}</h3>
-                <textarea class="engine-prompt w-full bg-slate-900 rounded-2xl p-3 text-xs mb-4 h-24 focus:outline-none focus:border-blue-500 border border-slate-800" placeholder="Enter prompt..."></textarea>
-                <div class="flex gap-2 mb-4">
-                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1">
-                        <option value="720">720p</option><option value="1080">1080p</option>
-                    </select>
-                    <input type="file" class="engine-fileA text-[10px] flex-1">
+            <div class="engine-box engine-card glass p-5 rounded-[2.5rem] flex flex-col h-full" data-engine="${e.id}" data-alias="${e.alias}">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-[9px] font-bold text-blue-500 tracking-tighter uppercase">ID: ${e.id.padStart(2,'0')}</span>
+                    <span class="credit-rate text-[9px] text-slate-500 uppercase">2 credits / sec</span>
                 </div>
-                <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[10px] italic text-slate-800 border border-slate-900">Preview Area</div>
-                <button class="gen-btn generate-btn w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Run Engine ${String(e.id).padStart(2, '0')}</button>
+                
+                <h3 class="text-sm font-bold mb-4 h-10 line-clamp-2">${e.name}</h3>
+
+                <div class="engine-preview w-full aspect-video bg-black/40 rounded-2xl mb-4 flex items-center justify-center overflow-hidden border border-white/5">
+                    <span class="text-[9px] text-slate-700 italic uppercase">Waiting for input...</span>
+                </div>
+
+                <textarea class="engine-prompt w-full bg-slate-900/80 rounded-xl p-3 text-xs mb-3 h-20 focus:ring-1 focus:ring-blue-500 outline-none border border-white/5" placeholder="Enter Prompt..."></textarea>
+
+                <div class="flex gap-2 mb-4">
+                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1 outline-none">
+                        <option value="720">720p (2c)</option>
+                        <option value="1080">1080p (4c)</option>
+                    </select>
+                    <label class="flex-1 bg-slate-800 rounded-lg p-2 text-[10px] text-center cursor-pointer hover:bg-slate-700 transition-colors">
+                        UPLOAD
+                        <input type="file" class="engine-fileA hidden">
+                    </label>
+                </div>
+
+                <button class="generate-btn mt-auto w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">
+                    Generate ${e.alias.replace('_',' ')}
+                </button>
             </div>
         `).join('');
-    </script>
-    <script src="assets/js/config.js"></script>
+     </script>
+     <script src="assets/js/config.js"></script>
     <script type="module" src="assets/js/create.js"></script>
     <script src="assets/js/create-nav.js" defer></script>
-    
-</body>
-</html>
+
+  </body>
+ </html>
+        
