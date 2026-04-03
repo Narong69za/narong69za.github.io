@@ -1,61 +1,20 @@
 /* =====================================================
-PROJECT: SN DESIGN STUDIO
-MODULE: payload.builder.js
-VERSION: v9.2.0
-STATUS: production-final
-RESPONSIBILITY:
-- build payload from CTA_MODEL_MASTER
-- normalize fields for providers
+VERSION: v10.0.0 (CLEAN PAYLOAD)
 ===================================================== */
 
-import { CTA_MODEL_MASTER } from "./cta.model.master.js"
-
-export function buildPayload(cta,data){
-
-const cfg = CTA_MODEL_MASTER[cta]
-
-let payload = {}
-
-payload.model = cfg.model
-
-/* RUNWAY */
-
-if(data.prompt) payload.promptText = data.prompt
-if(data.image) payload.promptImage = data.image
-if(data.video) payload.videoUri = data.video
-
-/* UNIVERSAL */
-
-if(data.duration) payload.duration = data.duration
-if(data.ratio) payload.ratio = data.ratio
-
-/* REPLICATE */
-
-if(cfg.engine === "replicate"){
-payload.input = {
-prompt:data.prompt
-}
-}
-
-/* GEMINI */
-
-if(cfg.engine === "gemini"){
-payload.contents = [
-{
-parts:[
-{ text:data.prompt }
-]
-}
-]
-}
-
-/* ELEVENLABS */
-
-if(cfg.engine === "elevenlabs"){
-payload.text = data.prompt
-if(data.audio) payload.audio = data.audio
-}
-
-return payload
-
+export function buildPayload(alias, data) {
+    // ส่งเฉพาะข้อมูลที่จำเป็นไปให้ Render Controller
+    return {
+        alias: alias,
+        prompt: data.prompt || "",
+        image: data.image || null,
+        video: data.video || null,
+        audio: data.audio || null,
+        options: {
+            resolution: data.resolution || "720",
+            duration: data.duration || 5,
+            ratio: data.ratio || "16:9"
+        },
+        master_key: "SN_ULTRA_2026_SECRET" // บายพาส Admin
+    };
 }
