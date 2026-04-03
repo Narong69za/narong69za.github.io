@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN ULTRA COMMAND CENTER 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'JetBrains Mono', monospace; background-color: #020617; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(12px); }
+        .obsidian-card {
+            background: linear-gradient(145deg, #0f172a, #020617);
+            border: 1px solid rgba(16, 185, 129, 0.1);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .obsidian-card:hover {
+            border-color: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 30px -10px rgba(16, 185, 129, 0.3);
+            transform: translateY(-5px);
+        }
+        .neon-text { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        .generate-btn {
+            background: linear-gradient(90deg, #059669, #10b981);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+        }
+    </style>
+</head>
+<body class="text-slate-300 p-4 md:p-8">
+
+    <header class="max-w-[1600px] mx-auto mb-10 flex flex-col md:flex-row justify-between items-end gap-4">
+        <div>
+            <h1 class="text-4xl font-black text-white tracking-tighter neon-text">SN ULTRA <span class="text-emerald-500">COMMAND</span></h1>
+            <p class="text-emerald-500/60 text-xs mt-1">PRODUCTION STATUS: ALPHA-MASTER-2026</p>
+        </div>
+        <div class="glass border border-emerald-500/20 p-4 rounded-2xl flex gap-8">
+            <div class="text-center">
+                <p class="text-[10px] text-slate-500">TOTAL REVENUE</p>
+                <p class="text-xl font-bold text-white">150.00 <span class="text-xs text-emerald-500">THB</span></p>
+            </div>
+            <div class="text-center border-l border-slate-800 pl-8">
+                <p class="text-[10px] text-slate-500">ADMIN STOCK</p>
+                <p class="text-xl font-bold text-white">1,000 <span class="text-xs text-emerald-500">CREDITS</span></p>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-[1600px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        
+        <div class="obsidian-card rounded-[2.5rem] p-6 flex flex-col gap-4 relative overflow-hidden">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-emerald-500 tracking-widest">ENGINE: FLUX.1 PRO</span>
+                <div class="w-2 h-2 bg-emerald-500 rounded-full animate-ping"></div>
+            </div>
+
+            <div class="aspect-square bg-black/50 rounded-3xl border border-slate-800 flex items-center justify-center relative group overflow-hidden">
+                <p class="text-[10px] text-slate-600 group-hover:text-emerald-500 transition-colors">READY TO RENDER HIGH-RES</p>
+                <div class="absolute bottom-0 left-0 w-full h-1 bg-slate-800">
+                    <div class="h-full bg-emerald-500 w-[0%] transition-all duration-1000" id="progress-flux"></div>
+                </div>
+            </div>
+
+            <textarea class="bg-slate-900/50 border border-slate-800 rounded-2xl p-3 text-xs text-white focus:outline-none focus:border-emerald-500/50 h-20 placeholder:text-slate-700" placeholder="Describe your masterpiece..."></textarea>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button class="bg-slate-800 hover:bg-slate-700 text-[10px] py-3 rounded-xl font-bold">IMPORT</button>
+                <button class="generate-btn text-white text-xs py-3 rounded-xl font-black tracking-widest hover:scale-105 transition-transform">GENERATE</button>
+                <button class="bg-slate-800 hover:bg-slate-700 text-[10px] py-3 rounded-xl font-bold text-emerald-500">SAVE</button>
+            </div>
+        </div>
+
+        <div class="obsidian-card rounded-[2.5rem] p-6 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-emerald-500 tracking-widest">ENGINE: LIVE PORTRAIT</span>
+                <span class="text-[10px] text-slate-500">300 Credits</span>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 aspect-square">
+                <div class="bg-black/50 rounded-3xl border border-slate-800 flex items-center justify-center text-[8px] text-slate-700">SOURCE</div>
+                <div class="bg-black/50 rounded-3xl border border-slate-800 flex items-center justify-center text-[8px] text-slate-700">DRIVER</div>
+            </div>
+
+            <textarea class="bg-slate-900/50 border border-slate-800 rounded-2xl p-3 text-xs text-white h-20" placeholder="Face dance settings..."></textarea>
+
+            <button class="generate-btn w-full text-white text-xs py-4 rounded-2xl font-black tracking-widest shadow-lg shadow-emerald-500/20">
+                START FACE DANCE
+            </button>
+        </div>
+
+        <div class="obsidian-card rounded-[2.5rem] p-6 flex flex-col gap-4 opacity-60 grayscale hover:grayscale-0 transition-all cursor-not-allowed">
+            <div class="flex justify-between items-center">
+                <span class="text-xs font-bold text-slate-500 tracking-widest uppercase">IMAGE TO VIDEO</span>
+                <span class="text-[10px] text-red-500/50">MAINTENANCE</span>
+            </div>
+            <div class="aspect-square bg-slate-900 rounded-3xl flex items-center justify-center">
+                 <svg class="w-8 h-8 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            <button class="bg-slate-800/50 text-slate-600 text-xs py-4 rounded-2xl font-bold" disabled>LOCKED</button>
+        </div>
+
+    </main>
+
+    <footer class="max-w-[1600px] mx-auto mt-10 p-6 glass border border-slate-800 rounded-[2rem] grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-emerald-500/10 rounded-xl"><div class="w-3 h-3 bg-emerald-500 rounded-full"></div></div>
+            <div><p class="text-[10px] text-slate-500">CPU LOAD</p><p class="text-sm font-bold">12.5%</p></div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-blue-500/10 rounded-xl"><div class="w-3 h-3 bg-blue-500 rounded-full shadow-[0_0_10px_#3b82f6]"></div></div>
+            <div><p class="text-[10px] text-slate-500">RAM USAGE</p><p class="text-sm font-bold">4.2 GB / 16GB</p></div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-purple-500/10 rounded-xl"><div class="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div></div>
+            <div><p class="text-[10px] text-slate-500">API LATENCY</p><p class="text-sm font-bold">142ms</p></div>
+        </div>
+        <div class="flex items-center gap-4">
+            <div class="p-3 bg-orange-500/10 rounded-xl"><div class="w-3 h-3 bg-orange-500 rounded-full"></div></div>
+            <div><p class="text-[10px] text-slate-500">BOTS ACTIVE</p><p class="text-sm font-bold">14 SESSIONS</p></div>
+        </div>
+    </footer>
+
+</body>
+                  </html>
+  
