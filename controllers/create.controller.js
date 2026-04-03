@@ -41,17 +41,18 @@ exports.create = async (req, res) => {
         const userId = req.user ? req.user.id : "ADMIN-TERMINAL";
 
         // 3. บันทึกลง Database (ใช้ข้อมูลจาก config ที่ดึงมาได้โดยตรง)
-        db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
-            [
-                jobId, 
-                userId, 
-                config.engine,        // มาจากไฟล์ master.js
-                prompt || "UI", 
-                is_test ? 0 : (config.cost || 10), 
-                is_test ? 'test_success' : 'processing'
-            ],
-            (err) => { if (err) console.error("❌ DB_INSERT_ERR:", err.message); }
-        );
+        db.run("INSERT INTO jobs (id, user_id, engine, alias, prompt, cost, status) VALUES (?,?,?,?,?,?,?)",
+    [
+        jobId,
+        userId,
+        config.engine,
+        config.alias, // เพิ่มอันนี้เข้าไป
+        prompt || "UI",
+        is_test ? 0 : (config.cost || 10),
+        is_test ? 'test_success' : 'processing'
+    ],
+    (err) => { if (err) console.error("❌ DB_INSERT_ERR:", err.message); }
+);
 
         // ตอบกลับ Client
         res.json({ 
