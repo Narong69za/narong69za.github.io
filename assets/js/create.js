@@ -1,101 +1,75 @@
-/** * [create.js] 
- * หัวใจหลักในการเชื่อมต่อ Backend
+/**
+ * [create.js] - MASTER SYNC
+ * เชื่อมต่อปุ่ม Generate ทั้ง 14 Engines
  */
-const API_BASE = "https://api.sn-designstudio.dev"; // พาร์ทเนอร์เปลี่ยนเป็น IP/Domain จริงของมึงนะ
+const API_BASE = ""; // ปล่อยว่างไว้เพราะรันบน Domain เดียวกัน
 
-// [MASTER FUNCTION] เริ่มต้นระบบ Render
-async function startRenderPipeline(engineBox) {
-    const alias = engineBox.dataset.alias;
-    const engineId = engineBox.dataset.engine;
-    const prompt = engineBox.querySelector(".engine-prompt").value;
-    const fileInput = engineBox.querySelector(".engine-fileA");
+async function runEngine(engineBox) {
     const btn = engineBox.querySelector(".generate-btn");
+    const alias = engineBox.dataset.alias;
+    const prompt = engineBox.querySelector(".engine-prompt").value;
+    const res = engineBox.querySelector(".engine-resolution").value;
+    const fileInput = engineBox.querySelector(".engine-fileA");
     const preview = engineBox.querySelector(".engine-preview");
 
-    if (!prompt && !fileInput.files[0]) return alert("กรุณาใส่ข้อมูล!");
+    if (!prompt && !fileInput.files[0]) return alert("กรุณาใส่ข้อมูล Prompt หรือรูปภาพ");
 
     try {
-        // 1. เปลี่ยนปุ่มเป็น Loading
-        const originalText = btn.innerText;
-        btn.innerText = "RENDERING...";
         btn.disabled = true;
-        preview.innerHTML = `<div class="animate-pulse text-blue-500 text-[9px] uppercase font-bold">Processing Engine ${engineId}...</div>`;
-
-        // 2. สร้าง FormData (รองรับทั้งข้อความและไฟล์)
+        btn.innerText = "กำลังเรนเดอร์...";
+        
+        // 1. เตรียม Data (ใช้ FormData เพื่อรองรับไฟล์)
         const formData = new FormData();
         formData.append("alias", alias);
         formData.append("prompt", prompt);
-        formData.append("resolution", engineBox.querySelector(".engine-resolution").value);
+        formData.append("resolution", res);
         if (fileInput.files[0]) formData.append("file", fileInput.files[0]);
 
-        // 3. ยิงไป Backend
+        // 2. ยิงเข้า Backend API
         const response = await fetch(`${API_BASE}/api/render`, {
             method: "POST",
-            body: formData, // ห้ามใส่ Content-Type เมื่อใช้ FormData
-            credentials: "include" // ส่ง Session/Cookie ไปด้วย
+            body: formData,
+            credentials: "include"
         });
 
-        const startResult = await response.json();
-        if (!startResult.success) throw new Error(startResult.message || "Server Rejected");
+        const result = await response.json();
+        if (!result.success) throw new Error(result.message);
 
-        const jobId = startResult.job_id;
+        // 3. Polling เช็คสถานะงาน
+        const jobId = result.job_id;
+        preview.innerHTML = `<div class="text-blue-500 animate-pulse text-[10px]">ENGINE IS WORKING...</div>`;
 
-        // 4. Polling ระบบติดตามงาน
-        let attempts = 0;
         const checkStatus = setInterval(async () => {
-            attempts++;
-            const statusRes = await fetch(`${API_BASE}/api/render-status?job=${jobId}`);
-            const data = await statusRes.json();
+            const statusRes = await fetch(`${API_BASE}/api/payment/status?job=${jobId}`);
+            const statusData = await statusRes.json();
 
-            console.log(`Job ${jobId} Status:`, data.status);
-
-            if (data.status === "completed" || data.status === "success") {
+            if (statusData.status === "success" || statusData.status === "completed") {
                 clearInterval(checkStatus);
-                renderOutput(preview, data.output_url); // แสดงผลลัพธ์
-                btn.innerText = "SUCCESS!";
-                setTimeout(() => { btn.innerText = originalText; btn.disabled = false; }, 3000);
-            } else if (data.status === "failed" || attempts > 100) {
-                clearInterval(checkStatus);
-                alert("งานนี้พัง หรือใช้เวลานานเกินไป!");
                 btn.disabled = false;
-                btn.innerText = originalText;
+                btn.innerText = "สำเร็จ!";
+                // แสดงผลลัพธ์ (รูป/วิดีโอ)
+                if (statusData.output_url.endsWith(".mp4")) {
+                    preview.innerHTML = `<video src="${statusData.output_url}" controls class="w-full h-full object-cover rounded-xl"></video>`;
+                } else {
+                    preview.innerHTML = `<img src="${statusData.output_url}" class="w-full h-full object-cover rounded-xl">`;
+                }
+            } else if (statusData.status === "failed") {
+                clearInterval(checkStatus);
+                alert("Render Failed!");
+                btn.disabled = false;
             }
-        }, 3000); // เช็คทุก 3 วินาที
+        }, 3000);
 
     } catch (err) {
-        console.error("Pipeline Error:", err);
-        alert(err.message);
+        alert("Error: " + err.message);
         btn.disabled = false;
+        btn.innerText = "ลองอีกครั้ง";
     }
 }
 
-// ฟังก์ชันโชว์รูปหรือวิดีโอที่เสร็จแล้ว
-function renderOutput(preview, url) {
-    if (url.endsWith(".mp4") || url.endsWith(".webm")) {
-        preview.innerHTML = `<video src="${url}" controls class="w-full h-full object-cover rounded-xl shadow-2xl animate-in zoom-in-95 duration-500"></video>`;
-    } else {
-        preview.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-xl shadow-2xl animate-in zoom-in-95 duration-500">`;
-    }
-}
-
-// ผูกปุ่มเข้ากับระบบเมื่อหน้าโหลดเสร็จ
+// ผูกเหตุการณ์คลิก
 document.addEventListener("DOMContentLoaded", () => {
     document.querySelectorAll(".generate-btn").forEach(btn => {
-        btn.addEventListener("click", () => {
-            startRenderPipeline(btn.closest(".engine-box"));
-        });
-    });
-
-    // File Preview เบื้องต้น
-    document.querySelectorAll(".engine-fileA").forEach(input => {
-        input.addEventListener("change", (e) => {
-            const preview = input.closest(".engine-box").querySelector(".engine-preview");
-            const file = e.target.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                preview.innerHTML = `<img src="${url}" class="w-full h-full object-cover rounded-xl opacity-50 border-2 border-dashed border-blue-500/50">`;
-            }
-        });
+        btn.addEventListener("click", () => runEngine(btn.closest(".engine-box")));
     });
 });
-                    
