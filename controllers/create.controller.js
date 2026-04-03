@@ -11,48 +11,16 @@ exports.create = async (req, res) => {
     try {
         const { alias, template, prompt, is_test } = req.body;
         const target = alias || template;
-
-        if (!fs.existsSync(DATA_FILE)) {
-            return res.status(500).json({ error: "MASTER_DATA_NOT_SYNCED" });
-        }
-
-        // อ่านไฟล์ Master Data สดๆ เพื่อป้องกันการประกาศตัวแปรซ้ำ
+        if (!fs.existsSync(DATA_FILE)) return res.status(500).json({ error: "DATA_FILE_MISSING" });
         const content = fs.readFileSync(DATA_FILE, 'utf8');
         const cleanJS = content.replace(/export const/g, 'var');
         const MASTER = new Function(`${cleanJS}; return CTA_MODEL_MASTER;`)();
-
-        // ค้นหา Engine ที่ต้องการจาก 1-14
-        const config = Object.values(MASTER).find(v => v.alias === target || v.cta === target);
-        
-        if (!config) {
-            return res.status(404).json({ error: `ENGINE_NOT_FOUND: ${target}` });
-        }
-
-        const jobId = is_test ? `TEST-${uuidv4().slice(0,8)}` : `JOB-${uuidv4().slice(0,8)}`;
-        const userId = (req.user && req.user.id) ? req.user.id : "ADMIN-TERMINAL";
-
-        // ลงบันทึกประวัติงานลง SQLite
+        const config = MASTER[target] || Object.values(MASTER).find(v => v.alias === target || v.cta === target);
+        if (!config) return res.status(404).json({ error: "ENGINE_NOT_FOUND" });
+        const jobId = is_test ? "TEST-"+uuidv4().slice(0,8) : "JOB-"+uuidv4().slice(0,8);
         db.run("INSERT INTO jobs (id, user_id, engine, prompt, cost, status) VALUES (?,?,?,?,?,?)", 
-            [
-                jobId, 
-                userId, 
-                config.engine, 
-                prompt || "RENDER", 
-                is_test ? 0 : 10, 
-                is_test ? 'test_success' : 'processing'
-            ]
+            [jobId, (req.user ? req.user.id : "ADMIN"), config.engine, prompt || "RENDER", is_test ? 0 : 10, is_test ? 'test_success' : 'processing']
         );
-
-        res.json({ 
-            status: "success", 
-            success: true, 
-            job_id: jobId, 
-            engine: config.engine, 
-            model: config.model 
-        });
-
-    } catch (err) {
-        console.error("🔥 CONTROLLER ERROR:", err.message);
-        res.status(500).json({ error: err.message });
-    }
+        res.json({ status: "success", success: true, job_id: jobId, engine: config.engine });
+    } catch (err) { res.status(500).json({ error: err.message }); }
 };
