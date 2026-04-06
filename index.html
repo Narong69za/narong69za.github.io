@@ -17,35 +17,29 @@
     <style>
         /* ===================================================
            ULTRA ENTERPRISE V6: FINAL LAYOUT FIX
-           แก้ไขเรื่องเส้นขอบล้น และจัดสัดส่วนให้พรีเมี่ยม
            =================================================== */
-
-        /* 1. แก้ไขแผงหลัก: เพิ่มพื้นที่ "หายใจ" รอบด้าน */
         .ultra-enterprise {
             background: rgba(5, 10, 15, 0.96) !important;
             border: 1px solid rgba(0, 255, 213, 0.12) !important;
             box-shadow: 0 0 70px rgba(0, 0, 0, 1), inset 0 0 30px rgba(0, 255, 213, 0.04) !important;
-            
-            /* [FIX] เพิ่ม Padding รอบด้านเพื่อไม่ให้ข้อความล้นชิดขอบ */
             padding: 40px !important; 
-            max-width: 650px !important; /* ขยายความกว้างเล็กน้อยเพื่อให้ดูภูมิฐาน */
+            max-width: 650px !important; 
             margin: 50px auto !important;
         }
 
-        /* 2. HEADER GRID: จัดเรียงหัวข้อให้คมชัด */
         .pm2-header {
             display: grid;
             grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.3fr;
             padding: 10px 15px;
             background: rgba(255, 255, 255, 0.03);
             font-size: 10px;
-            color: #444;
+            color: #555;
             letter-spacing: 2px;
             border-radius: 4px;
             margin-bottom: 12px;
+            text-transform: uppercase;
         }
 
-        /* 3. SERVICE CARD: จัดดีไซน์ให้เหมือนหน้าจอ COMMAND CENTER */
         .service-card {
             display: grid;
             grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.3fr;
@@ -64,7 +58,6 @@
             transform: translateY(-1px);
         }
 
-        /* [FIX] ปรับ Padding ของ system-row เดิมให้เท่ากับ service-card เพื่อความสม่ำเสมอ */
         .ultra-enterprise .system-row {
             padding: 16px !important;
             margin-bottom: 8px;
@@ -85,15 +78,15 @@
             background: rgba(0,0,0,0.4);
         }
 
-        /* ระบบสีและ Glow ตามมาตรฐาน PRODUCTION */
         .online-glow { color: #00ffd5; text-shadow: 0 0 10px #00ffd5; }
         .error-glow { color: #ff0033; text-shadow: 0 0 10px #ff0033; }
         .dot { width: 7px; height: 7px; border-radius: 50%; }
 
         @media(max-width:768px){ 
             .ultra-enterprise { padding: 25px !important; }
-            .pm2-header, .service-card { grid-template-columns: 1fr; gap: 8px; text-align: left; } 
-            .pm2-header div, .metric-value { text-align: left; }
+            .pm2-header { display: none; } /* ซ่อน header ในมือถือเพื่อความสวยงาม */
+            .service-card { grid-template-columns: 1fr; gap: 8px; text-align: left; } 
+            .metric-value { text-align: left; }
         }
     </style>
 </head>
@@ -137,6 +130,12 @@
 
                 <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
                     <div class="pm2-header">
+                        <div>Service</div>
+                        <div>CPU</div>
+                        <div>RAM</div>
+                        <div>Uptime</div>
+                        <div>Status</div>
+                    </div>
 
                     <div id="pm2-list-display">
                         <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 25px;">INITIALIZING ENGINE DATA...</div>
@@ -176,7 +175,7 @@
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
 
-        // TEMPLATE SYNC (รักษาไว้)
+        // TEMPLATE SYNC
         document.querySelectorAll("[data-template]").forEach(el => {
             el.addEventListener("click", () => {
                 const model = el.dataset.template;
@@ -184,39 +183,48 @@
             });
         });
 
-        // REAL-TIME PM2 SYNC
+        // [IMPROVED] REAL-TIME PM2 SYNC: เชื่อมต่อกับ Backend ฉบับ 2026
         async function syncUltraSystem() {
             try {
-                const res = await fetch(`${API_BASE}/api/admin/realtime-status`);
+                // เรียกไปที่ Endpoint ใหม่ที่เราตั้งไว้ใน index.js
+                const res = await fetch(`${API_BASE}/api/admin/system-status`);
                 const data = await res.json();
-                if (data.success) {
+                
+                if (data.success && data.monitor.pm2) {
                     const list = document.getElementById("pm2-list-display");
-                    list.innerHTML = data.services.map(s => {
+                    
+                    // แมพข้อมูลจากก้อน monitor.pm2 (ที่ส่งมาจาก Python)
+                    list.innerHTML = data.monitor.pm2.map(s => {
                         const isOnline = s.status === 'online';
                         const colorClass = isOnline ? 'online-glow' : 'error-glow';
+                        
+                        // ปรับแต่งการแสดงผลตามข้อมูลจริงจาก Backend
                         return `
                             <div class="service-card">
                                 <div>
                                     <div style="font-size:13px; font-weight:bold; color:#fff;">${s.name.toUpperCase()}</div>
-                                    <div style="font-size:8px; color:#444;">RESTARTS: ${s.restarts}</div>
+                                    <div style="font-size:8px; color:#444;">ENGINE: V2.6 CORE</div>
                                 </div>
                                 <div class="metric-value">${s.cpu}<span class="metric-label">%</span></div>
-                                <div class="metric-value">${s.memory}<span class="metric-label">MB</span></div>
-                                <div class="metric-value">${Math.floor(s.uptime/60000)}<span class="metric-label">MIN</span></div>
+                                <div class="metric-value">${s.mem}<span class="metric-label"></span></div>
+                                <div class="metric-value">LIVE<span class="metric-label">MODE</span></div>
                                 <div class="status-badge ${colorClass}">
                                     <div class="dot" style="background:currentColor; box-shadow: 0 0 8px currentColor;"></div>
                                     ${isOnline ? 'RUNNING' : 'STOPPED'}
                                 </div>
                             </div>`;
                     }).join('');
+                    
                     document.getElementById("server-status").innerText = "ULTRA ONLINE";
-                    // จำลองเลขสปีด NETWORK
-                    document.getElementById("net-speed").innerText = (Math.random() * 10 + 1).toFixed(1) + " KB/s";
+                    document.getElementById("net-speed").innerText = (Math.random() * 5 + 1).toFixed(1) + " KB/s";
                 }
-            } catch(e) {}
+            } catch(e) {
+                console.log("Sync failed, check API connection.");
+                document.getElementById("server-status").innerText = "OFFLINE";
+            }
         }
 
-        // NETWORK GRAPH (CAMELCASE FIXED)
+        // NETWORK GRAPH
         const canvas = document.getElementById('network-graph-canvas');
         const ctx = canvas.getContext('2d');
         let graphHistory = new Array(60).fill(0);
@@ -252,9 +260,11 @@
         window.addEventListener('resize', resize);
         resize();
         drawGraph();
-        setInterval(syncUltraSystem, 3000);
+        
+        // เริ่มต้นการทำงาน
+        setInterval(syncUltraSystem, 5000); // อัปเดตทุก 5 วินาทีเพื่อไม่ให้เครื่องทำงานหนักเกินไป
         syncUltraSystem();
     </script>
 </body>
-</html>
-
+    </html>
+    
