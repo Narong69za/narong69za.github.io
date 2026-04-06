@@ -1,0 +1,18 @@
+name: SN-FRONTEND-AUTO-DEPLOY
+
+on:
+  push:
+    branches:
+      - main  # หรือ master ตามที่มึงใช้
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🚀 Trigger Server Webhook
+        run: |
+          curl -X POST https://deploy.sn-designstudio.dev/webhook \
+          -H "Content-Type: application/json" \
+          -H "X-Hub-Signature-256: sha256=$(echo -n '' | openssl dgst -sha256 -hmac "${{ secrets.WEBHOOK_SECRET }}" | sed 's/.* //')" \
+          -d '{"ref": "refs/heads/main"}'
+          
