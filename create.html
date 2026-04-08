@@ -2,26 +2,35 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN ULTRA ENGINE v10 — CREATE (16 ENGINES)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/master.css">
     <style>
         .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
         .engine-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .engine-card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.5); }
-    </script>
+    </style>
 </head>
-<body class="bg-[#020408] text-white p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
+<body class="bg-[#020408] text-white">
+
+    <div class="max-w-7xl mx-auto p-4 md:p-8 pt-24">
         <header class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-black text-blue-500 uppercase italic">SN ULTRA ENGINE v10</h1>
+            <div>
+                <h1 class="text-3xl font-black text-blue-500 uppercase italic">SN ULTRA ENGINE v10</h1>
+                <p id="selected-template" class="text-[10px] text-slate-500 mt-1 uppercase tracking-widest">MODE: READY FOR PRODUCTION</p>
+            </div>
             <div id="user-status" class="text-[10px] bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 text-blue-400">STATUS: MASTER SYNCED</div>
         </header>
 
+        <!-- UI GRID สำหรับ 16 ENGINES -->
         <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            </div>
+            <!-- Engines will be rendered by the script below -->
+        </div>
     </div>
 
     <script>
-        // รายชื่อ Engine และ Alias ที่ตรงกับ Backend ของมึง
+        // ขยายฐานข้อมูลเป็น 16 ENGINES ตามที่คุณระบุ (เดิม 14 + 2 ใหม่)
         const engines = [
             { id: "1", name: "Image to Video", alias: "image_to_video" },
             { id: "2", name: "Text to Video", alias: "text_to_video" },
@@ -36,11 +45,14 @@
             { id: "11", name: "Gemini Image 2.5", alias: "gemini_image" },
             { id: "12", name: "Voice AI Speech", alias: "voice_ai" },
             { id: "13", name: "Sound FX Gen", alias: "sound_fx" },
-            { id: "14", name: "Voice Transfer", alias: "voice_transfer" }
+            { id: "14", name: "Voice Transfer", alias: "voice_transfer" },
+            { id: "15", name: "LipSync Master Pro", alias: "lipsync_pro" }, // Engine ใหม่ 1
+            { id: "16", name: "Face Swap AI Elite", alias: "face_swap_elite" } // Engine ใหม่ 2
         ];
 
         document.getElementById('engineGrid').innerHTML = engines.map(e => `
-            <div class="engine-box engine-card glass p-5 rounded-[2.5rem] flex flex-col h-full" data-engine="${e.id}" data-alias="${e.alias}">
+            <div class="engine-box engine-card glass p-5 rounded-[2.5rem] flex flex-col h-full" 
+                 data-engine="${e.id}" data-alias="${e.alias}" id="engine-${e.id}">
                 <div class="flex justify-between items-center mb-4">
                     <span class="text-[9px] font-bold text-blue-500 tracking-tighter uppercase">ID: ${e.id.padStart(2,'0')}</span>
                     <span class="credit-rate text-[9px] text-slate-500 uppercase">2 credits / sec</span>
@@ -48,33 +60,42 @@
                 
                 <h3 class="text-sm font-bold mb-4 h-10 line-clamp-2">${e.name}</h3>
 
-                <div class="engine-preview w-full aspect-video bg-black/40 rounded-2xl mb-4 flex items-center justify-center overflow-hidden border border-white/5">
-                    <span class="text-[9px] text-slate-700 italic uppercase">Waiting for input...</span>
+                <div class="engine-preview w-full aspect-video bg-black/40 rounded-2xl mb-4 flex items-center justify-center overflow-hidden border border-white/5 relative">
+                    <span class="text-[9px] text-slate-700 italic uppercase">Waiting for command...</span>
+                    <div class="loading-bar absolute bottom-0 left-0 h-1 bg-blue-600 transition-all duration-300" style="width: 0%"></div>
                 </div>
 
-                <textarea class="engine-prompt w-full bg-slate-900/80 rounded-xl p-3 text-xs mb-3 h-20 focus:ring-1 focus:ring-blue-500 outline-none border border-white/5" placeholder="Enter Prompt..."></textarea>
+                <textarea class="engine-prompt w-full bg-slate-900/80 rounded-xl p-3 text-xs mb-3 h-20 focus:ring-1 focus:ring-blue-500 outline-none border border-white/5" placeholder="Enter Prompt or Logic..."></textarea>
 
                 <div class="flex gap-2 mb-4">
-                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1 outline-none">
+                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1 outline-none border border-white/5">
                         <option value="720">720p (2c)</option>
                         <option value="1080">1080p (4c)</option>
                     </select>
-                    <label class="flex-1 bg-slate-800 rounded-lg p-2 text-[10px] text-center cursor-pointer hover:bg-slate-700 transition-colors">
+                    <label class="flex-1 bg-slate-800 rounded-lg p-2 text-[10px] text-center cursor-pointer hover:bg-slate-700 transition-colors border border-white/5">
                         UPLOAD
                         <input type="file" class="engine-fileA hidden">
                     </label>
                 </div>
 
                 <button class="generate-btn mt-auto w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">
-                    Generate ${e.alias.replace('_',' ')}
+                    Generate ${e.alias.replace(/_/g,' ')}
                 </button>
             </div>
         `).join('');
-     </script>
-     <script src="assets/js/config.js"></script>
+
+        // รับค่า template จาก URL เพื่อแสดงสถานะ
+        const params = new URLSearchParams(window.location.search);
+        const template = params.get('template');
+        if (template) {
+            document.getElementById('selected-template').innerText = `MODE: ${template.replace(/-/g, ' ').toUpperCase()}`;
+        }
+    </script>
+
+    <!-- ไฟล์ควบคุมการทำงานหลักที่พาร์ทเนอร์ระบุ -->
+    <script src="assets/js/config.js"></script>
+    <script src="assets/js/nav.js"></script>
     <script type="module" src="assets/js/create.js"></script>
     <script src="assets/js/create-nav.js" defer></script>
-
-  </body>
- </html>
-        
+</body>
+</html>
