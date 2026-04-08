@@ -3,45 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN ULTRA — MONITOR SYSTEM</title>
+    <title>SN ULTRA — COMMAND MONITOR</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'JetBrains Mono', monospace; background: #020408; color: #94a3b8; }
-        .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 213, 0.1); }
-        .status-card { transition: all 0.4s ease; border: 1px solid rgba(255,255,255,0.02); border-radius: 2rem; }
-        .status-card:hover { border-color: #00ffd5; box-shadow: 0 0 30px rgba(0, 255, 213, 0.1); }
+        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 213, 0.1); }
+        .status-card { transition: 0.4s ease; border: 1px solid rgba(255,255,255,0.02); border-radius: 2.5rem; }
+        .status-card:hover { border-color: #00ffd5; box-shadow: 0 0 30px rgba(0, 255, 213, 0.15); }
     </style>
 </head>
-<body class="p-4 md:p-10 pt-24">
+<body class="p-6 pt-28">
     <div id="nav-placeholder"></div>
-    <header class="max-w-7xl mx-auto mb-10">
-        <h1 class="text-4xl font-black text-white italic tracking-tighter">SN ULTRA <span class="text-[#00ffd5]">MONITOR</span></h1>
-        <p class="text-[10px] uppercase tracking-[0.5em] text-slate-500 mt-2">V2.6 Production Cluster</p>
-    </header>
     <main id="pm2-container" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="col-span-full py-20 text-center opacity-30 text-xs italic uppercase">Connecting to Master Engine...</div>
+        <div class="col-span-full py-20 text-center opacity-30 text-xs italic tracking-widest">CONNECTING TO MASTER ENGINE...</div>
     </main>
     <script src="assets/js/nav.js"></script>
     <script>
+        // ดึงข้อมูลจากพอร์ต 5002 โดยตรง
         const API_STATUS = "http://147.93.159.30:5002/api/admin/system-status";
         async function fetchStatus() {
             try {
                 const res = await fetch(API_STATUS);
                 const data = await res.json();
-                if (data.success) {
+                if (data.success && data.monitor.pm2) {
                     document.getElementById('pm2-container').innerHTML = data.monitor.pm2.map(s => `
-                        <div class="status-card glass p-6 flex flex-col gap-4">
+                        <div class="status-card glass p-8 flex flex-col gap-4">
                             <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-bold text-[#00ffd5] tracking-widest uppercase">${s.name}</span>
+                                <span class="text-[10px] font-black text-[#00ffd5] uppercase">${s.name}</span>
                                 <div class="w-2 h-2 rounded-full bg-[#00ffd5] shadow-[0_0_10px_#00ffd5] animate-pulse"></div>
                             </div>
                             <div class="text-3xl font-black text-white">${s.cpu}%</div>
-                            <div class="text-[9px] opacity-50 uppercase">MEM: ${s.mem} | ${s.status}</div>
+                            <div class="text-[9px] opacity-50 uppercase font-bold tracking-tighter">
+                                MEM: ${s.mem} | ${s.status.toUpperCase()}
+                            </div>
                         </div>
                     `).join('');
                 }
-            } catch (e) { console.error("API Offline"); }
+            } catch (e) { 
+                console.error("Monitor Error:", e);
+                document.getElementById('pm2-container').innerHTML = "<div class='col-span-full text-center text-red-500 text-xs uppercase'>❌ Master Engine Offline (Check Port 5002)</div>"; 
+            }
         }
         setInterval(fetchStatus, 3000); fetchStatus();
     </script>
