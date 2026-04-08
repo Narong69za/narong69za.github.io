@@ -1,158 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Official Website — SN DESIGN STUDIO</title>
-    <meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
-    <meta name="keywords" content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
-    <meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
-    <meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
-    <meta property="og:image" content="assets/images/hero.png">
-    <meta property="og:type" content="website">
-    <link rel="preload" as="image" href="assets/images/hero.png">
-    <link rel="stylesheet" href="assets/css/master.css">
-    
+    <title>SN DESIGN STUDIO — ULTRA MONITOR</title>
     <style>
-        .ultra-enterprise {
-            background: rgba(5, 10, 15, 0.96) !important;
-            border: 1px solid rgba(0, 255, 213, 0.12) !important;
-            box-shadow: 0 0 70px rgba(0, 0, 0, 1), inset 0 0 30px rgba(0, 255, 213, 0.04) !important;
-            padding: 40px !important; 
-            max-width: 650px !important; 
-            margin: 50px auto !important;
+        /* [ULTRA ENTERPRISE DESIGN] */
+        body { background: #050a0f; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 20px; }
+        .ultra-enterprise { background: rgba(5, 10, 15, 0.98); border: 1px solid rgba(0, 255, 213, 0.15); box-shadow: 0 0 50px #000; padding: 30px; max-width: 800px; margin: 40px auto; border-radius: 15px; }
+        .system-title { font-size: 12px; color: rgba(0, 255, 213, 0.5); letter-spacing: 5px; margin-bottom: 20px; border-bottom: 1px solid rgba(0, 255, 213, 0.1); padding-bottom: 10px; }
+        
+        .service-card { 
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; 
+            gap: 15px; align-items: center; padding: 15px; 
+            background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px; border-radius: 8px; transition: 0.3s;
         }
-
-        .pm2-header {
-            display: grid;
-            grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.3fr;
-            padding: 10px 15px;
-            background: rgba(255, 255, 255, 0.03);
-            font-size: 10px;
-            color: #555;
-            letter-spacing: 2px;
-            border-radius: 4px;
-            margin-bottom: 12px;
-            text-transform: uppercase;
-        }
-
-        .service-card {
-            display: grid;
-            grid-template-columns: 2.5fr 1fr 1fr 1.2fr 1.3fr;
-            gap: 10px;
-            align-items: center;
-            padding: 16px;
-            margin-bottom: 8px;
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            border-radius: 10px;
-            transition: 0.3s ease;
-        }
-        .service-card:hover {
-            background: rgba(0, 255, 213, 0.04);
-            border-color: rgba(0, 255, 213, 0.2);
-            transform: translateY(-1px);
-        }
-
-        .metric-value { font-family: 'Courier New', monospace; font-size: 13px; color: #888; text-align: center; }
-        .metric-label { font-size: 8px; color: #333; display: block; margin-top: 2px; }
-
-        .status-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 7px;
-            font-size: 10px;
-            font-weight: bold;
-            padding: 5px 10px;
-            border-radius: 6px;
-            background: rgba(0,0,0,0.4);
-        }
-
-        .online-glow { color: #00ffd5; text-shadow: 0 0 10px #00ffd5; }
-        .error-glow { color: #ff0033; text-shadow: 0 0 10px #ff0033; }
-        .dot { width: 7px; height: 7px; border-radius: 50%; }
-
-        @media(max-width:768px){ 
-            .ultra-enterprise { padding: 25px !important; }
-            .pm2-header { display: none; }
-            .service-card { grid-template-columns: 1fr; gap: 8px; text-align: left; } 
-            .metric-value { text-align: left; }
-        }
+        .service-card:hover { background: rgba(0, 255, 213, 0.05); border-color: rgba(0, 255, 213, 0.3); }
+        
+        .name { font-weight: bold; color: #00ffd5; text-transform: uppercase; font-size: 14px; }
+        .metric { font-family: monospace; color: #888; font-size: 13px; }
+        .status-badge { padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: bold; text-align: center; }
+        .online { background: rgba(0, 255, 213, 0.1); color: #00ffd5; box-shadow: 0 0 10px rgba(0, 255, 213, 0.2); }
+        
+        .server-core-status { display: flex; justify-content: space-between; margin-bottom: 20px; font-size: 13px; }
+        .pulse { width: 8px; height: 8px; background: #00ffd5; border-radius: 50%; display: inline-block; margin-right: 8px; animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
     </style>
 </head>
+<body>
 
-<body class="index-page">
-    <div id="nav"></div>
+    <div class="ultra-enterprise">
+        <div class="system-title">ULTRA ENTERPRISE MASTER STATUS</div>
+        
+        <div class="server-core-status">
+            <div><span class="pulse"></span>SERVER CORE: <span id="server-status" style="color: #00ffd5;">SYNCING...</span></div>
+            <div id="last-update" style="opacity: 0.4; font-size: 10px;">LOADING...</div>
+        </div>
 
-    <section class="hero-master">
-        <div class="ultra-system-panel ultra-enterprise">
-            <div class="system-title">ULTRA ENTERPRISE STATUS</div>
-
-            <div class="system-row" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <div class="system-label">Server Core</div>
-                <div class="system-state online"><span id="server-status">SYNCING</span></div>
-            </div>
-
-            <div id="pm2-monitor-root" style="margin-top: 15px;">
-                <div class="pm2-header">
-                    <div>Service</div>
-                    <div>CPU</div>
-                    <div>RAM</div>
-                    <div>Uptime</div>
-                    <div>Status</div>
-                </div>
-
-                <div id="pm2-list-display">
-                    <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 25px;">INITIALIZING ENGINE DATA...</div>
-                </div>
-            </div>
-        </div> 
-    </section>
+        <div id="pm2-list-display">
+            <div style="text-align: center; padding: 40px; opacity: 0.5;">INITIALIZING ENGINE DATA...</div>
+        </div>
+    </div>
 
     <script>
-        // [FIXED] เปลี่ยนเป็น Dynamic Origin เพื่อให้เชื่อมต่อ Backend ได้ทันทีไม่ว่าจะรันผ่าน IP หรือ Domain
-        const API_BASE = window.location.origin;
+        // [CONFIGURATION] ล็อคเป้าไปที่ IP และ Port ของ API โดยตรง
+        const API_URL = "http://147.93.159.30:5002/api/admin/system-status";
 
-        async function syncUltraSystem() {
+        async function updateMonitor() {
             try {
-                const res = await fetch(`${API_BASE}/api/admin/system-status`);
-                const data = await res.json();
-                
+                const response = await fetch(API_URL);
+                const data = await response.json();
+
                 if (data.success && data.monitor.pm2) {
-                    const list = document.getElementById("pm2-list-display");
+                    const listDisplay = document.getElementById("pm2-list-display");
                     
-                    list.innerHTML = data.monitor.pm2.map(s => {
-                        const isOnline = s.status === 'online';
-                        const colorClass = isOnline ? 'online-glow' : 'error-glow';
-                        
-                        return `
-                            <div class="service-card">
-                                <div>
-                                    <div style="font-size:13px; font-weight:bold; color:#fff;">${s.name.toUpperCase()}</div>
-                                    <div style="font-size:8px; color:#444;">ENGINE: V2.6 CORE</div>
-                                </div>
-                                <div class="metric-value">${s.cpu}<span class="metric-label">%</span></div>
-                                <div class="metric-value">${s.mem}<span class="metric-label"></span></div>
-                                <div class="metric-value">LIVE<span class="metric-label">MODE</span></div>
-                                <div class="status-badge ${colorClass}">
-                                    <div class="dot" style="background:currentColor; box-shadow: 0 0 8px currentColor;"></div>
-                                    ${isOnline ? 'RUNNING' : 'STOPPED'}
-                                </div>
-                            </div>`;
-                    }).join('');
-                    
+                    // อัปเดตตาราง Service
+                    listDisplay.innerHTML = data.monitor.pm2.map(service => `
+                        <div class="service-card">
+                            <div class="name">${service.name}</div>
+                            <div class="metric">CPU: ${service.cpu}%</div>
+                            <div class="metric">RAM: ${service.mem}</div>
+                            <div class="status-badge online">${service.status.toUpperCase()}</div>
+                        </div>
+                    `).join('');
+
                     document.getElementById("server-status").innerText = "ULTRA ONLINE";
+                    document.getElementById("last-update").innerText = "LAST SYNC: " + new Date().toLocaleTimeString();
                 }
-            } catch(e) {
-                console.log("Sync failed, check API connection.");
+            } catch (error) {
+                console.error("Monitor Sync Error:", error);
                 document.getElementById("server-status").innerText = "OFFLINE";
+                document.getElementById("server-status").style.color = "#ff0033";
             }
         }
 
-        setInterval(syncUltraSystem, 5000);
-        syncUltraSystem();
+        // สั่งอัปเดตทุก 5 วินาที
+        setInterval(updateMonitor, 5000);
+        updateMonitor(); // รันทันทีครั้งแรก
     </script>
 </body>
 </html>
