@@ -15,9 +15,6 @@
     <link rel="stylesheet" href="assets/css/master.css">
     
     <style>
-        /* ===================================================
-           ULTRA ENTERPRISE V6: FINAL LAYOUT FIX
-           =================================================== */
         .ultra-enterprise {
             background: rgba(5, 10, 15, 0.96) !important;
             border: 1px solid rgba(0, 255, 213, 0.12) !important;
@@ -58,11 +55,6 @@
             transform: translateY(-1px);
         }
 
-        .ultra-enterprise .system-row {
-            padding: 16px !important;
-            margin-bottom: 8px;
-        }
-
         .metric-value { font-family: 'Courier New', monospace; font-size: 13px; color: #888; text-align: center; }
         .metric-label { font-size: 8px; color: #333; display: block; margin-top: 2px; }
 
@@ -84,7 +76,7 @@
 
         @media(max-width:768px){ 
             .ultra-enterprise { padding: 25px !important; }
-            .pm2-header { display: none; } /* ซ่อน header ในมือถือเพื่อความสวยงาม */
+            .pm2-header { display: none; }
             .service-card { grid-template-columns: 1fr; gap: 8px; text-align: left; } 
             .metric-value { text-align: left; }
         }
@@ -92,113 +84,49 @@
 </head>
 
 <body class="index-page">
-
     <div id="nav"></div>
 
-    <section class="marquee-wrap">
-        <div class="marquee-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System</div>
-    </section>
-
     <section class="hero-master">
-        <img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
-        <div class="hero-content-bottom fade-up">
-            <h1>Build Viral AI Content Faster</h1>
-            <p>Dark Creator Ecosystem for AI Video.</p>
-        </div>
-    </section>
+        <div class="ultra-system-panel ultra-enterprise">
+            <div class="system-title">ULTRA ENTERPRISE STATUS</div>
 
-    <section class="ultra-gui-preview ultra-dashboard">
-        <div class="gui-container">
-            <div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
-            <div class="gui-screen">
-                <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
-                <div class="scan-line"></div>
+            <div class="system-row" style="display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div class="system-label">Server Core</div>
+                <div class="system-state online"><span id="server-status">SYNCING</span></div>
             </div>
 
-            <div class="ultra-system-panel ultra-enterprise">
-                <div class="system-title">ULTRA ENTERPRISE STATUS</div>
-
-                <div class="system-row">
-                    <div class="system-label">Server Core</div>
-                    <div class="system-state online"><span class="dot"></span><span id="server-status">SYNCING</span></div>
+            <div id="pm2-monitor-root" style="margin-top: 15px;">
+                <div class="pm2-header">
+                    <div>Service</div>
+                    <div>CPU</div>
+                    <div>RAM</div>
+                    <div>Uptime</div>
+                    <div>Status</div>
                 </div>
 
-                <div class="system-row">
-                    <div class="system-label">Payment Gateway</div>
-                    <div class="system-state online"><span class="dot"></span>ACTIVE</div>
+                <div id="pm2-list-display">
+                    <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 25px;">INITIALIZING ENGINE DATA...</div>
                 </div>
-
-                <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
-                    <div class="pm2-header">
-                        <div>Service</div>
-                        <div>CPU</div>
-                        <div>RAM</div>
-                        <div>Uptime</div>
-                        <div>Status</div>
-                    </div>
-
-                    <div id="pm2-list-display">
-                        <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 25px;">INITIALIZING ENGINE DATA...</div>
-                    </div>
-                </div>
-
-                <div id="network-graph-section" style="margin-top: 25px; background: rgba(0, 255, 200, 0.02); padding: 18px; border-radius: 12px; border: 1px solid rgba(0, 255, 200, 0.08);">
-                    <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom: 12px;">
-                        <div>
-                            <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px;">NETWORK WAVEFRONT</div>
-                            <div style="font-size: 9px; color: #222;">REAL-TIME TRAFFIC SYNC</div>
-                        </div>
-                        <div id="net-speed" style="font-family: monospace; color: #00ffd5; font-size: 13px; text-shadow: 0 0 10px #00ffd5;">0.0 KB/s</div>
-                    </div>
-                    <canvas id="network-graph-canvas" style="width: 100%; height: 70px; filter: drop-shadow(0 0 5px rgba(0,255,213,0.3));"></canvas>
-                </div>
-            </div> 
+            </div>
         </div> 
     </section>
 
-    <section class="ultra-intro-zone">
-        <div class="container">
-            <div class="intro-cinematic">
-                <h2 class="intro-title">SN Design Studio — AI Creator Power System</h2>
-                <p class="intro-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System</p>
-            </div>
-            <div class="intro-video">
-                <iframe src="https://www.youtube.com/embed/NI7WALIXStU" title="YouTube Shorts" frameborder="0" allowfullscreen></iframe>
-            </div>
-        </div>
-    </section>
-
-    <footer>© SN Design Studio, 2026 · All rights reserved.</footer>
-
-    <script src="assets/js/nav.js"></script>
-
     <script>
+        // [FIXED] เปลี่ยนเป็น Dynamic Origin เพื่อให้เชื่อมต่อ Backend ได้ทันทีไม่ว่าจะรันผ่าน IP หรือ Domain
         const API_BASE = window.location.origin;
-    
-        // TEMPLATE SYNC
-        document.querySelectorAll("[data-template]").forEach(el => {
-            el.addEventListener("click", () => {
-                const model = el.dataset.template;
-                if (model) window.location.href = "create.html?template=" + model;
-            });
-        });
 
-        // [IMPROVED] REAL-TIME PM2 SYNC: เชื่อมต่อกับ Backend ฉบับ 2026
         async function syncUltraSystem() {
             try {
-                // เรียกไปที่ Endpoint ใหม่ที่เราตั้งไว้ใน index.js
                 const res = await fetch(`${API_BASE}/api/admin/system-status`);
                 const data = await res.json();
                 
                 if (data.success && data.monitor.pm2) {
                     const list = document.getElementById("pm2-list-display");
                     
-                    // แมพข้อมูลจากก้อน monitor.pm2 (ที่ส่งมาจาก Python)
                     list.innerHTML = data.monitor.pm2.map(s => {
                         const isOnline = s.status === 'online';
                         const colorClass = isOnline ? 'online-glow' : 'error-glow';
                         
-                        // ปรับแต่งการแสดงผลตามข้อมูลจริงจาก Backend
                         return `
                             <div class="service-card">
                                 <div>
@@ -216,7 +144,6 @@
                     }).join('');
                     
                     document.getElementById("server-status").innerText = "ULTRA ONLINE";
-                    document.getElementById("net-speed").innerText = (Math.random() * 5 + 1).toFixed(1) + " KB/s";
                 }
             } catch(e) {
                 console.log("Sync failed, check API connection.");
@@ -224,47 +151,8 @@
             }
         }
 
-        // NETWORK GRAPH
-        const canvas = document.getElementById('network-graph-canvas');
-        const ctx = canvas.getContext('2d');
-        let graphHistory = new Array(60).fill(0);
-
-        function drawGraph() {
-            if (!ctx) return;
-            const w = canvas.width;
-            const h = canvas.height;
-            graphHistory.push(20 + Math.random() * 60);
-            graphHistory.shift();
-            ctx.clearRect(0, 0, w, h);
-            ctx.beginPath();
-            ctx.lineWidth = 1.5;
-            ctx.strokeStyle = '#00ffd5';
-            ctx.shadowBlur = 10;
-            ctx.shadowColor = 'rgba(0, 255, 213, 0.5)';
-            const step = w / 59;
-            for (let i = 0; i < graphHistory.length; i++) {
-                const x = i * step;
-                const y = h - (graphHistory[i] / 100 * h);
-                if (i === 0) ctx.moveTo(x, y);
-                else ctx.lineTo(x, y);
-            }
-            ctx.stroke();
-            requestAnimationFrame(drawGraph);
-        }
-
-        function resize() { 
-            if(canvas.parentElement) {
-                canvas.width = canvas.parentElement.offsetWidth; canvas.height = 70; 
-            }
-        }
-        window.addEventListener('resize', resize);
-        resize();
-        drawGraph();
-        
-        // เริ่มต้นการทำงาน
-        setInterval(syncUltraSystem, 5000); // อัปเดตทุก 5 วินาทีเพื่อไม่ให้เครื่องทำงานหนักเกินไป
+        setInterval(syncUltraSystem, 5000);
         syncUltraSystem();
     </script>
 </body>
-    </html>
-    
+</html>
