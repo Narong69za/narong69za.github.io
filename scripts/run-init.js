@@ -54,7 +54,7 @@ console.log("=================================");
 
 const sql = fs.readFileSync(SQL_PATH, "utf8");
 
-const db = new sqlite3.Database(DB_PATH);
+const db = new sqlite3.Database('/root/sn-payment-core/database.db');
 
 db.serialize(() => {
 

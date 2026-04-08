@@ -1,8 +1,8 @@
 const sqlite3 = require("sqlite3").verbose();
 
 // [FIXED] เปลี่ยนให้ชี้ไปที่ไฟล์ฐานข้อมูลจริงตามตำแหน่งในเครื่อง
-const DB_PATH = "/home/ubuntu/sn-payment-core/database.db";
-const db = new sqlite3.Database(DB_PATH, (err) => {
+const DB_PATH = "/root/sn-payment-core/database.db";
+const db = new sqlite3.Database('/root/sn-payment-core/database.db', (err) => {
     if (err) console.error("❌ Admin DB Error:", err.message);
     else console.log("✅ Admin Controller connected to:", DB_PATH);
 });

@@ -1,91 +1,21 @@
-/* ===============================
-ULTRA NAV AUTO CORE
-AUTO INJECT GLOBAL NAV
-=============================== */
-
-document.addEventListener("DOMContentLoaded", function () {
-
-if(document.querySelector(".global-nav")) return;
-
-const navHTML = `
-<header class="global-nav">
-<nav class="nav-wrap">
-<div class="nav-menu">
-<a href="index.html">Home</a>
-<a href="packages.html">Packages</a>
-<a href="services.html">Services</a>
-<a href="templates.html">Templates</a>
-<a href="seo.html">SEO</a>
-<a href="contact.html">Contact</a>
-</div>
-</nav>
-</header>
-`;
-
-document.body.insertAdjacentHTML("afterbegin", navHTML);
-
-
-/* ===============================
-ULTRA NAV LOCK (EVENT SAFE)
-=============================== */
-
-const nav = document.querySelector(".global-nav");
-
-if(nav){
-
-nav.addEventListener("click", function(e){
-
-if(e.target.tagName !== "A"){
-e.stopPropagation();
-}
-
-}, true);   // <<< ตัวนี้ต้องอยู่
-
-}
-
-
-/* ===============================
-ULTRA NAV ACTIVE STATE ENGINE
-=============================== */
-
-const path = window.location.pathname.toLowerCase();
-
-document.querySelectorAll(".nav-menu a").forEach(link => {
-
-const href = link.getAttribute("href").toLowerCase();
-
-if(path.endsWith(href)){
-link.classList.add("nav-active");
-}
-
-if((path === "/" || path.endsWith("index.html")) && href === "index.html"){
-link.classList.add("nav-active");
-}
-
-});
-
-
-/* ===============================
-NAV AUTO HIDE (mobile scroll)
-=============================== */
-
-let lastScroll = 0;
-
-window.addEventListener("scroll", () => {
-
-const nav = document.querySelector(".global-nav");
-if(!nav) return;
-
-const current = window.pageYOffset;
-
-if(current > lastScroll && current > 80){
-nav.style.transform = "translateY(-100%)";
-}else{
-nav.style.transform = "translateY(0)";
-}
-
-lastScroll = current;
-
-});
-
+document.addEventListener("DOMContentLoaded", function() {
+    const navHTML = `
+    <header class="fixed top-0 left-0 w-full z-[100] p-6">
+        <nav class="max-w-7xl mx-auto glass rounded-full px-8 py-4 flex justify-between items-center border border-white/5 shadow-2xl">
+            <div class="text-white font-black italic tracking-tighter text-lg">SN ULTRA <span class="text-[#00ffd5]">COMMAND</span></div>
+            <div class="flex gap-10 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+                <a href="index.html" class="hover:text-[#00ffd5] transition-colors">Monitor</a>
+                <a href="gen-video.html" class="hover:text-[#3b82f6] transition-colors">Video AI</a>
+                <a href="gen-image.html" class="hover:text-[#10b981] transition-colors">Image AI</a>
+                <a href="templates.html" class="hover:text-white transition-colors">Templates</a>
+            </div>
+        </nav>
+    </header>
+    <style>
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); }
+    </style>
+    `;
+    const placeholder = document.getElementById("nav-placeholder");
+    if(placeholder) placeholder.innerHTML = navHTML;
+    else document.body.insertAdjacentHTML("afterbegin", navHTML);
 });

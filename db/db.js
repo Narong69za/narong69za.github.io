@@ -28,7 +28,7 @@ const dbPath =
 
 console.log("DB PATH:", dbPath);
 
-const sqlite = new sqlite3.Database(dbPath);
+const sqlite = new sqlite3.Database('/root/sn-payment-core/database.db');
 
 // =====================================================
 // PRODUCTION SCHEMA (LOCKED)

@@ -4,11 +4,11 @@ const sqlite3 = require('sqlite3').verbose();
 const fs = require('fs');
 const path = require('path');
 
-const DB_PATH = '/home/ubuntu/sn-payment-core/database.db';
+const DB_PATH = '/root/sn-payment-core/database.db';
 const FRONTEND_PATH = "/home/ubuntu/narong69za.github.io";
 const DATA_FILE = path.join(FRONTEND_PATH, "assets/js/cta.model.master.js");
 
-const db = new sqlite3.Database(DB_PATH);
+const db = new sqlite3.Database('/root/sn-payment-core/database.db');
 
 exports.create = async (req, res) => {
     try {

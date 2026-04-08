@@ -1,9 +1,9 @@
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
-const dbPath = '/home/ubuntu/sn-payment-core/database.db';
+const dbPath = '/root/sn-payment-core/database.db';
 
 exports.checkStatus = async (req, res) => {
-  const db = new sqlite3.Database(dbPath);
+  const db = new sqlite3.Database('/root/sn-payment-core/database.db');
   try {
     const tx = req.query.tx;
     if (!tx) return res.json({ status: "invalid" });

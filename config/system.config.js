@@ -22,7 +22,7 @@ module.exports = {
 
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
 
-  DB_PATH: process.env.DB_PATH || "/home/ubuntu/sn-payment-core/database.db",
+  DB_PATH: process.env.DB_PATH || "/root/sn-payment-core/database.db",
 
   PAYMENT_ENV: process.env.PAYMENT_ENV || "production",
 

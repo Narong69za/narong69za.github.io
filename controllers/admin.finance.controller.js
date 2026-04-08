@@ -2,7 +2,7 @@
 LOCATION: ~/narong69za.github.io/controllers/admin.finance.controller.js
 ===================================================== */
 const sqlite3 = require('sqlite3').verbose();
-const db = new sqlite3.Database('/home/ubuntu/sn-payment-core/database.db');
+const db = new sqlite3.Database('/root/sn-payment-core/database.db');
 
 // Helper ฟังก์ชันสำหรับดึงข้อมูล
 const queryGet = (sql) => new Promise((resolve, reject) => {

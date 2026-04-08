@@ -15,9 +15,9 @@ const authMiddleware = require("/home/ubuntu/narong69za.github.io/middleware/aut
 const pm2 = require('pm2');
 const app = express(), FRONTEND_PATH = "/home/ubuntu/narong69za.github.io";
 
-const db = new sqlite3.Database('/home/ubuntu/sn-payment-core/database.db', (err) => {
+const db = new sqlite3.Database('/root/sn-payment-core/database.db', (err) => {
     if (err) console.error("❌ DB Error:", err.message);
-    else console.log("✅ Database Connected: /home/ubuntu/sn-payment-core/database.db");
+    else console.log("✅ Database Connected: /root/sn-payment-core/database.db");
 });
 
 app.use(express.static(FRONTEND_PATH));
