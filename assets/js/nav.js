@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
     const navHTML = `
     <header class="fixed top-0 left-0 w-full z-[200] p-4 flex justify-center">
-        <nav class="glass rounded-full px-8 py-4 flex justify-center items-center border border-white/5 shadow-2xl">
-            <div class="flex gap-8 md:gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+        <nav class="glass rounded-full px-10 py-4 flex justify-center items-center border border-white/5 shadow-2xl">
+            <div class="flex gap-10 md:gap-14 text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">
                 <a href="index.html" class="hover:text-[#00ffd5] transition-colors">Monitor</a>
                 <a href="create.html" class="hover:text-[#00ffd5] transition-colors">AI ENGINES</a>
                 <a href="gen-video.html" class="hover:text-blue-500 transition-colors">Video AI</a>
@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function() {
         </nav>
     </header>
     <style>
-        .glass { background: rgba(0,0,0,0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+        .glass { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
     </style>
     `;
     const placeholder = document.getElementById("nav") || document.getElementById("nav-placeholder");
