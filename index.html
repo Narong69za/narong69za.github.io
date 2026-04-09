@@ -4,21 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Official Website — SN DESIGN STUDIO</title>
-<script src="https://cdn.tailwindcss.com"></script>
+<meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
 <link rel="stylesheet" href="assets/css/master.css">
 <style>
     /* รักษาสมดุลหน้าแรก */
     body { padding-top: 80px; background-color: #000; color: #fff; overflow-x: hidden; }
     .system-row .val { font-weight: bold; color: #00ffd5; margin-left: auto; font-family: monospace; }
-    .scan-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: rgba(0, 255, 213, 0.5); box-shadow: 0 0 10px #00ffd5; animation: scan 3s linear infinite; }
-    @keyframes scan { from { top: 0; } to { top: 100%; } }
 </style>
 </head>
 <body class="index-page">
 
 <div id="nav"></div>
 
-<!-- MARQUEE - คืนค่าลิขสิทธิ์ข้อความดั้งเดิม 100% -->
+<!-- MARQUEE -->
 <section class="marquee-wrap">
 <div class="marquee-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
@@ -27,75 +25,143 @@
 
 <!-- HERO -->
 <section class="hero-master">
-<img src="assets/images/hero.png" alt="Hero Image" loading="eager" class="w-full">
-<div class="hero-content-bottom fade-up p-8 text-center">
-<h1 class="text-3xl font-black italic uppercase">Build Viral AI Content Faster</h1>
-<p class="text-zinc-500 text-sm mt-2">Dark Creator Ecosystem for AI Video.</p>
+<img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
+<div class="hero-content-bottom fade-up">
+<h1>Build Viral AI Content Faster</h1>
+<p>Dark Creator Ecosystem AI Video.</p>
 </div>
 </section>
 
-<!-- AI PREVIEW - คืนค่ารูปภาพและ Monitor ต้นฉบับ -->
-<section class="ultra-gui-preview ultra-dashboard py-10 px-6">
-<div class="gui-container max-w-4xl mx-auto">
-<div class="gui-mode text-[10px] tracking-widest text-zinc-500 mb-2 uppercase">
-AI PREVIEW MODE — SN DESIGN STUDIO
-</div>
-<div class="gui-screen relative border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-<img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png" class="w-full opacity-60">
-<div class="scan-line"></div>
-</div>
+<!-- AI PREVIEW - สำรองต้นฉบับพาร์ทเนอร์ -->
+<section class="ultra-gui-preview ultra-dashboard">
+<div class="gui-container">
+    <div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
+    <div class="gui-screen">
+        <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
+        <div class="scan-line"></div>
+    </div>
+    <div class="ultra-system-panel ultra-enterprise">
+        <div class="system-title">ULTRA ENTERPRISE STATUS</div>
+        <div class="system-row">
+            <div class="system-label">Main Server</div>
+            <div class="system-state online"><span class="dot"></span><span id="server-status">SYNCING</span></div>
+        </div>
+        <div class="system-row">
+            <div class="system-label">Payment Gateway</div>
+            <div class="system-state online"><span class="dot"></span>ACTIVE</div>
+        </div>
+        
+        <!-- SERVICE INSTANCE MONITOR (PREMIUM) -->
+        <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
+            <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 15px; text-align: left;">
+                 SERVICE INSTANCE MONITOR
+            </div>
+            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 10px; font-size: 9px; color: #555; margin-bottom: 8px; padding-bottom: 5px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                <div style="text-align: left;">SERVICE NAME</div>
+                <div>CPU</div>
+                <div>MEM</div>
+                <div>STATUS</div>
+            </div>
+            <div id="pm2-list-display">
+                <div style="text-align: center; font-size: 12px; opacity: 0.5; padding: 20px;">SYNCING ENGINE DATA...</div>
+            </div>
+        </div>
 
-<!-- ULTRA ENTERPRISE STATUS -->
-<div class="ultra-system-panel ultra-enterprise bg-zinc-900/50 p-8 mt-10 rounded-[2rem] border border-white/5">
-<div class="system-title text-[#00ffd5] font-black text-xs mb-8 uppercase tracking-[0.3em] text-center">ULTRA ENTERPRISE STATUS</div>
-<div class="space-y-6">
-<div class="flex justify-between items-center"><span class="text-zinc-500 text-[10px] uppercase font-bold">Server</span><span id="server-status" class="text-white text-[10px] font-black">SYNCING</span></div>
-<div class="flex justify-between items-center"><span class="text-zinc-500 text-[10px] uppercase font-bold">CPU Load</span><span id="cpu-val" class="text-[#00ffd5] text-sm font-black">0%</span></div>
-<div class="flex justify-between items-center"><span class="text-zinc-500 text-[10px] uppercase font-bold">Memory Used</span><span id="ram-val" class="text-[#00ffd5] text-sm font-black">0%</span></div>
-<div class="flex justify-between items-center pt-2"><span class="text-zinc-500 text-[10px] uppercase font-bold">AI Engine Status</span><span id="ai-status" class="text-[#00ffd5] text-[10px] font-bold">CONNECTED</span></div>
-</div>
-</div>
+        <div class="system-row">
+            <div class="system-label">AI Engine</div>
+            <div class="system-state online"><span class="dot"></span><span id="ai-status">CONNECTED</span></div>
+        </div>
+    </div>
 </div>
 </section>
 
-<!-- INTRO - คืนค่าข้อความลิขสิทธิ์ดั้งเดิม -->
-<section class="ultra-intro-zone py-20 px-8">
-<div class="container max-w-4xl mx-auto text-center">
-<h2 class="text-2xl font-black mb-6 uppercase">SN Design Studio — AI Creator Power System</h2>
-<p class="text-zinc-400 text-sm leading-relaxed">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System</p>
-<div class="intro-video mt-10 rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl">
-<iframe src="https://www.youtube.com/embed/NI7WALIXStU" class="w-full aspect-video" frameborder="0" allowfullscreen></iframe>
-</div>
+<!-- INTRO -->
+<section class="ultra-intro-zone">
+<div class="container">
+    <div class="intro-cinematic">
+        <h2 class="intro-title">SN Design Studio — AI Power System</h2>
+        <p class="intro-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System</p>
+    </div>
+    <div class="intro-video">
+        <iframe src="https://www.youtube.com/embed/NI7WALIXStU" title="YouTube Shorts" frameborder="0" allowfullscreen></iframe>
+    </div>
 </div>
 </section>
 
-<!-- FOOTER - คืนค่าขนาดที่มองเห็นชัดเจน -->
-<footer class="text-center py-20 border-t border-white/5 bg-black">
-<p class="text-zinc-500 text-[11px] font-bold uppercase tracking-[0.5em]">
-© SN DESIGN STUDIO 2026.
-</p>
+<footer style="text-align: center; padding: 60px 0; color: #444; font-size: 11px; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.03); letter-spacing: 5px;">
+    © SN DESIGN STUDIO, 2026 · ALL RIGHTS RESERVED.
 </footer>
 
 <script src="assets/js/nav.js"></script>
 
 <script>
-const API_BASE = "http://147.93.159.30:5002";
-async function updateStatus() {
+/** 1. TEMPLATE REDIRECTION */
+document.querySelectorAll("[data-template]").forEach(el => {
+   el.addEventListener("click", () => {
+      const model = el.dataset.template;
+      if (model) window.location.href = "create.html?template=" + model;
+   });
+});
+
+/** 2. ULTRA MASTER MONITOR SYSTEM */
+const API_BASE = "https://api.sn-designstudio.dev";
+
+function formatUptime(ms) {
+    const sec = Math.floor(ms / 1000);
+    const min = Math.floor(sec / 60);
+    const hr = Math.floor(min / 60);
+    if (hr > 0) return hr + "h " + (min % 60) + "m";
+    return min + "m " + (sec % 60) + "s";
+}
+
+async function syncUltraSystem() {
     try {
-        const res = await fetch(API_BASE + "/api/admin/system-status");
-        const data = await res.json();
+        const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
+        const data = await response.json();
         if (data.success) {
-            const m = data.monitor;
-            document.getElementById("server-status").innerText = "ONLINE";
-            document.getElementById("cpu-val").innerText = m.cpu + "%";
-            document.getElementById("ram-val").innerText = m.ramUsed + "%";
+            const listDisplay = document.getElementById("pm2-list-display");
+            const serverStatus = document.getElementById("server-status");
+            const masterProc = data.services.find(s => s.name.includes('api'));
+            if (serverStatus) serverStatus.innerText = masterProc && masterProc.status === 'online' ? "ULTRA ONLINE" : "OFFLINE";
+            if (listDisplay) {
+                listDisplay.innerHTML = data.services.map(proc => {
+                    const isOnline = proc.status === 'online';
+                    const statusColor = isOnline ? '#00ffd5' : '#ff0033';
+                    const cpuPercent = proc.cpu || 0;
+                    const memUsed = proc.memory || 0;
+                    const cpuColor = cpuPercent > 80 ? '#ff0033' : (cpuPercent > 50 ? '#ffaa00' : '#00ffd5');
+                    return `
+                    <div style="background: rgba(255,255,255,0.02); margin-bottom: 12px; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div style="text-align: left;">
+                                <span style="font-family: 'Courier New', monospace; font-size: 13px; font-weight: bold; color: #fff;">${proc.name.toUpperCase()}</span>
+                                <span style="font-size: 9px; color: #555; display: block;">UPTIME: ${formatUptime(proc.uptime)}</span>
+                            </div>
+                            <div style="color: ${statusColor}; font-size: 10px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
+                                <span style="width: 7px; height: 7px; border-radius: 50%; background: ${statusColor}; shadow: 0 0 5px ${statusColor};"></span>
+                                ${proc.status.toUpperCase()}
+                            </div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 8px; color: #666; margin-bottom: 4px;">CPU <span>${cpuPercent}%</span></div>
+                                <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"><div style="width: ${cpuPercent}%; height: 100%; background: ${cpuColor}; transition: 0.5s;"></div></div>
+                            </div>
+                            <div>
+                                <div style="display: flex; justify-content: space-between; font-size: 8px; color: #666; margin-bottom: 4px;">MEM <span>${memUsed}MB</span></div>
+                                <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"><div style="width: ${(memUsed / 1024) * 100}%; height: 100%; background: #00aaff; transition: 0.5s;"></div></div>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+            }
         }
-    } catch (e) {
-        document.getElementById("server-status").innerText = "OFFLINE";
+    } catch (err) {
+        if (document.getElementById("server-status")) document.getElementById("server-status").innerText = "OFFLINE";
     }
 }
-setInterval(updateStatus, 5000);
-updateStatus();
+setInterval(syncUltraSystem, 4000);
+syncUltraSystem();
 </script>
 
 </body>
