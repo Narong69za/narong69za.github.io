@@ -4,111 +4,84 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Official Website — SN DESIGN STUDIO</title>
-    <meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="assets/css/master.css">
     <style>
-        .system-row .val { font-weight: bold; color: #00ffd5; margin-left: auto; font-family: monospace; }
-        .pm2-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(0, 255, 213, 0.1); border: 1px solid rgba(0, 255, 213, 0.3); color: #00ffd5; }
+        body { padding-top: 100px; background-color: #000; color: #fff; }
+        .system-row .val { font-weight: bold; color: #00ffd5; font-family: monospace; }
+        .pm2-tag { font-size: 10px; padding: 2px 8px; border-radius: 4px; background: rgba(0, 255, 213, 0.1); border: 1px solid rgba(0, 255, 213, 0.3); color: #00ffd5; }
     </style>
 </head>
 <body class="index-page">
     <div id="nav"></div>
 
-    <section class="marquee-wrap">
-        <div class="marquee-text">
-            แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
+    <section class="marquee-wrap mt-2">
+        <div class="marquee-text uppercase text-[10px] tracking-widest text-zinc-500">
+            • AI ENGINES READY • CONTABO VPS v9 • DRAGON ENGINE ACTIVE • 2026 PRODUCTION BUILD •
         </div>
     </section>
 
-    <section class="hero-master">
-        <img src="assets/images/hero.png" alt="Hero" loading="eager">
-        <div class="hero-content-bottom fade-up">
-            <h1>Build Viral AI Content Faster</h1>
-            <p>Dark Creator Ecosystem for AI Video.</p>
+    <!-- HERO -->
+    <section class="hero-master relative px-6 mt-6">
+        <div class="max-w-4xl mx-auto rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
+            <img src="assets/images/hero.png" alt="Hero" class="w-full h-auto">
+        </div>
+        <div class="text-center mt-10">
+            <h1 class="text-3xl font-black italic uppercase">Build Viral AI Content</h1>
+            <p class="text-zinc-500 text-sm mt-2">Dark Creator Ecosystem for AI Video.</p>
         </div>
     </section>
 
-    <section class="ultra-gui-preview ultra-dashboard">
-        <div class="gui-container">
-            <div class="gui-mode">SYSTEM MASTER MODE — CONTABO VPS v9</div>
-            <div class="gui-screen">
-                <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
-                <div class="scan-line"></div>
-            </div>
-
-            <div class="ultra-system-panel ultra-enterprise">
-                <div class="system-title">ULTRA MASTER MONITOR</div>
-                <div class="system-row">
-                    <div class="system-label">Server Status</div>
-                    <div class="system-state online"><span class="dot"></span><span id="server-status">SYNCING...</span></div>
+    <!-- MONITOR -->
+    <section class="py-12 px-6">
+        <div class="max-w-md mx-auto bg-zinc-900/40 border border-white/5 rounded-3xl p-8 backdrop-blur-sm">
+            <div class="text-[9px] tracking-[0.4em] text-zinc-600 mb-8 text-center uppercase">System Master Monitor</div>
+            <div class="space-y-6">
+                <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                    <span class="text-zinc-500 text-[10px] uppercase font-bold">Server</span>
+                    <span id="server-status" class="text-white text-[10px] font-black">SYNCING...</span>
                 </div>
-                <div class="system-row">
-                    <div class="system-label">CPU Load</div>
-                    <div class="val" id="cpu-val">0%</div>
+                <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                    <span class="text-zinc-500 text-[10px] uppercase font-bold">CPU Load</span>
+                    <span id="cpu-val" class="text-[#00ffd5] text-xs font-black">0%</span>
                 </div>
-                <div class="system-row">
-                    <div class="system-label">Memory Used</div>
-                    <div class="val" id="ram-val">0%</div>
+                <div class="flex justify-between items-center border-b border-white/5 pb-4">
+                    <span class="text-zinc-500 text-[10px] uppercase font-bold">RAM Usage</span>
+                    <span id="ram-val" class="text-[#00ffd5] text-xs font-black">0%</span>
                 </div>
-                <div class="system-row">
-                    <div class="system-label">Dragon Engine</div>
-                    <div class="pm2-tag" id="pm2-status">OFFLINE</div>
+                <div class="flex justify-between items-center pt-2">
+                    <span class="text-zinc-500 text-[10px] uppercase font-bold">Dragon Engine</span>
+                    <span id="pm2-status" class="pm2-tag">OFFLINE</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <section class="ultra-intro-zone">
-        <div class="container">
-            <div class="intro-cinematic">
-                <h2 class="intro-title">SN Design Studio — AI Creator Power System</h2>
-                <p class="intro-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย สร้างสรรค์ด้วยขุมพลังมหาอุด v9 บน Contabo VPS</p>
-            </div>
-            <div class="intro-video">
-                <iframe src="https://www.youtube.com/embed/NI7WALIXStU" title="YouTube Shorts" frameborder="0" allowfullscreen></iframe>
-            </div>
-        </div>
-    </section>
-
-    <footer>© SN Design Studio, 2026 · All rights reserved.</footer>
+    <footer class="text-center py-20 text-[9px] text-zinc-800 uppercase tracking-[0.5em]">
+        © SN Design Studio 2026
+    </footer>
 
     <script src="assets/js/nav.js"></script>
-
     <script>
-        // บรรทัดที่ 143: เปลี่ยน API_BASE เป็น IP VPS ของมึง
         const API_BASE = "http://147.93.159.30:5002";
-
         async function updateStatus() {
             try {
-                // บรรทัดที่ 147: ยิงไปที่ Route ใหม่ของ Master Engine
                 const res = await fetch(`${API_BASE}/api/admin/system-status`);
                 const data = await res.json();
-
                 if (data.success) {
                     const m = data.monitor;
-                    // บรรทัดที่ 152-156: อัปเดตค่าที่ดึงมาจาก monitor_api.py
                     document.getElementById("server-status").innerText = "ONLINE";
                     document.getElementById("cpu-val").innerText = m.cpu + "%";
                     document.getElementById("ram-val").innerText = m.ramUsed + "%";
                     document.getElementById("pm2-status").innerText = "DRAGON ACTIVE";
-                    document.getElementById("pm2-status").style.color = "#00ffd5";
                 }
             } catch (e) {
                 document.getElementById("server-status").innerText = "OFFLINE";
-                document.getElementById("pm2-status").innerText = "CONNECTION LOST";
-                document.getElementById("pm2-status").style.color = "#ff4444";
+                document.getElementById("pm2-status").innerText = "LOST";
             }
         }
-
         setInterval(updateStatus, 5000);
         updateStatus();
-
-        document.querySelectorAll("[data-template]").forEach(el=>{
-           el.addEventListener("click",()=>{
-              const model = el.dataset.template;
-              if(model) window.location.href = "create.html?template="+model;
-           });
-        });
     </script>
 </body>
 </html>
