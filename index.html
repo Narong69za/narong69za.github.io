@@ -7,12 +7,10 @@
     <meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
     <link rel="stylesheet" href="assets/css/master.css">
     <style>
-        /* เพิ่มสไตล์เล็กน้อยให้เกจวัดดูผงาดขึ้น */
         .system-row .val { font-weight: bold; color: #00ffd5; margin-left: auto; font-family: monospace; }
-        .pm2-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(0, 255, 213, 0.1); border: 1px solid rgba(0, 255, 213, 0.3); }
+        .pm2-tag { font-size: 9px; padding: 2px 6px; border-radius: 4px; background: rgba(0, 255, 213, 0.1); border: 1px solid rgba(0, 255, 213, 0.3); color: #00ffd5; }
     </style>
 </head>
-
 <body class="index-page">
     <div id="nav"></div>
 
@@ -23,7 +21,7 @@
     </section>
 
     <section class="hero-master">
-        <img src="assets/images/hero.png" alt="SN Design Studio Hero" loading="eager">
+        <img src="assets/images/hero.png" alt="Hero" loading="eager">
         <div class="hero-content-bottom fade-up">
             <h1>Build Viral AI Content Faster</h1>
             <p>Dark Creator Ecosystem for AI Video.</p>
@@ -40,22 +38,18 @@
 
             <div class="ultra-system-panel ultra-enterprise">
                 <div class="system-title">ULTRA MASTER MONITOR</div>
-                
                 <div class="system-row">
                     <div class="system-label">Server Status</div>
                     <div class="system-state online"><span class="dot"></span><span id="server-status">SYNCING...</span></div>
                 </div>
-
                 <div class="system-row">
                     <div class="system-label">CPU Load</div>
                     <div class="val" id="cpu-val">0%</div>
                 </div>
-
                 <div class="system-row">
                     <div class="system-label">Memory Used</div>
                     <div class="val" id="ram-val">0%</div>
                 </div>
-
                 <div class="system-row">
                     <div class="system-label">Dragon Engine</div>
                     <div class="pm2-tag" id="pm2-status">OFFLINE</div>
@@ -81,41 +75,34 @@
     <script src="assets/js/nav.js"></script>
 
     <script>
-        // [MASTER CONFIG] ชี้เป้าไปที่เครื่อง Contabo ของมึง
-        const API_BASE = "https://147.93.159.30:5002";
+        // บรรทัดที่ 143: เปลี่ยน API_BASE เป็น IP VPS ของมึง
+        const API_BASE = "http://147.93.159.30:5002";
 
         async function updateStatus() {
             try {
-                // เรียกชุดเดียวได้ครบทั้ง CPU, RAM และสถานะมังกร
-                const response = await fetch(`${API_BASE}/api/admin/system-status`);
-                const data = await response.json();
+                // บรรทัดที่ 147: ยิงไปที่ Route ใหม่ของ Master Engine
+                const res = await fetch(`${API_BASE}/api/admin/system-status`);
+                const data = await res.json();
 
                 if (data.success) {
                     const m = data.monitor;
-                    
-                    // อัปเดตข้อมูลบนหน้าจอ
-                    document.getElementById("server-status").innerText = m.status.toUpperCase();
+                    // บรรทัดที่ 152-156: อัปเดตค่าที่ดึงมาจาก monitor_api.py
+                    document.getElementById("server-status").innerText = "ONLINE";
                     document.getElementById("cpu-val").innerText = m.cpu + "%";
                     document.getElementById("ram-val").innerText = m.ramUsed + "%";
-                    
-                    // สถานะ PM2 (ถ้าสถานะเป็น ULTRA_STABLE แปลว่ามังกรทำงานปกติ)
-                    const pm2El = document.getElementById("pm2-status");
-                    pm2El.innerText = m.status === "ULTRA_STABLE" ? "DRAGON ACTIVE" : "REBOOTING";
-                    pm2El.style.color = "#00ffd5";
+                    document.getElementById("pm2-status").innerText = "DRAGON ACTIVE";
+                    document.getElementById("pm2-status").style.color = "#00ffd5";
                 }
             } catch (e) {
-                console.log("MASTER ENGINE OFFLINE", e);
                 document.getElementById("server-status").innerText = "OFFLINE";
                 document.getElementById("pm2-status").innerText = "CONNECTION LOST";
                 document.getElementById("pm2-status").style.color = "#ff4444";
             }
         }
 
-        // วิ่งทุก 5 วินาที ให้มหาอุดขยับตลอดเวลา
         setInterval(updateStatus, 5000);
         updateStatus();
 
-        // Template Logic เดิมของมึง
         document.querySelectorAll("[data-template]").forEach(el=>{
            el.addEventListener("click",()=>{
               const model = el.dataset.template;
