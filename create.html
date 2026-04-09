@@ -1,80 +1,171 @@
+<!-- =====================================================
+PROJECT: SN DESIGN STUDIO
+MODULE: create.html
+VERSION: v1.2.0
+STATUS: production
+LAST FIX: premium account layout (remove duplicated IDs)
+===================================================== -->
+
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .engine-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .engine-card:hover { transform: translateY(-5px); border-color: rgba(59, 130, 246, 0.5); }
-    </script>
-</head>
-<body class="bg-[#020408] text-white p-4 md:p-8">
-    <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-black text-blue-500 uppercase italic">SN ULTRA ENGINE v10</h1>
-            <div id="user-status" class="text-[10px] bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20 text-blue-400">STATUS: MASTER SYNCED</div>
-        </header>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ULTRA ENGINE CONTROL</title>
 
-        <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            </div>
+<link rel="stylesheet" href="/assets/css/create-premium.css">
+</head>
+<body>
+
+<div class="create-root create-container">
+
+  <h1 class="title">ULTRA ENGINE CONTROL</h1>
+
+  <!-- ================= PREMIUM ACCOUNT SECTION ================= -->
+
+  <div class="account-wrapper">
+
+    <!-- USER SHORT NAME (บนสุด) -->
+    <div class="user-header">
+      <span id="userShort">-</span>
     </div>
 
-    <script>
-        // รายชื่อ Engine และ Alias ที่ตรงกับ Backend ของมึง
-        const engines = [
-            { id: "1", name: "Image to Video", alias: "image_to_video" },
-            { id: "2", name: "Text to Video", alias: "text_to_video" },
-            { id: "3", name: "Video Transform", alias: "video_transform" },
-            { id: "4", name: "Text to Image", alias: "text_to_image" },
-            { id: "5", name: "Fast Image AI", alias: "fast_image" },
-            { id: "6", name: "Redux Re-Image", alias: "redux_image" },
-            { id: "7", name: "Character Motion", alias: "character_motion" },
-            { id: "8", name: "Video Enhance", alias: "video_enhance" },
-            { id: "9", name: "Video AI Master", alias: "video_ai" },
-            { id: "10", name: "Video Fast Render", alias: "video_fast" },
-            { id: "11", name: "Gemini Image 2.5", alias: "gemini_image" },
-            { id: "12", name: "Voice AI Speech", alias: "voice_ai" },
-            { id: "13", name: "Sound FX Gen", alias: "sound_fx" },
-            { id: "14", name: "Voice Transfer", alias: "voice_transfer" }
-        ];
+    <!-- ACCOUNT CARD -->
+    <div class="account-card">
 
-        document.getElementById('engineGrid').innerHTML = engines.map(e => `
-            <div class="engine-box engine-card glass p-5 rounded-[2.5rem] flex flex-col h-full" data-engine="${e.id}" data-alias="${e.alias}">
-                <div class="flex justify-between items-center mb-4">
-                    <span class="text-[9px] font-bold text-blue-500 tracking-tighter uppercase">ID: ${e.id.padStart(2,'0')}</span>
-                    <span class="credit-rate text-[9px] text-slate-500 uppercase">2 credits / sec</span>
-                </div>
-                
-                <h3 class="text-sm font-bold mb-4 h-10 line-clamp-2">${e.name}</h3>
+      <div class="account-title">
+        ACCOUNT STATUS
+      </div>
 
-                <div class="engine-preview w-full aspect-video bg-black/40 rounded-2xl mb-4 flex items-center justify-center overflow-hidden border border-white/5">
-                    <span class="text-[9px] text-slate-700 italic uppercase">Waiting for input...</span>
-                </div>
+      <div class="account-row">
+        <span>EMAIL</span>
+        <span id="userEmail">-</span>
+      </div>
 
-                <textarea class="engine-prompt w-full bg-slate-900/80 rounded-xl p-3 text-xs mb-3 h-20 focus:ring-1 focus:ring-blue-500 outline-none border border-white/5" placeholder="Enter Prompt..."></textarea>
+      <div class="account-row">
+        <span>ROLE</span>
+        <span id="userRole">-</span>
+      </div>
 
-                <div class="flex gap-2 mb-4">
-                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1 outline-none">
-                        <option value="720">720p (2c)</option>
-                        <option value="1080">1080p (4c)</option>
-                    </select>
-                    <label class="flex-1 bg-slate-800 rounded-lg p-2 text-[10px] text-center cursor-pointer hover:bg-slate-700 transition-colors">
-                        UPLOAD
-                        <input type="file" class="engine-fileA hidden">
-                    </label>
-                </div>
+      <div class="account-row">
+        <span>CREDITS</span>
+        <span id="userCredits">0</span>
+      </div>
 
-                <button class="generate-btn mt-auto w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:brightness-110 active:scale-95 transition-all">
-                    Generate ${e.alias.replace('_',' ')}
-                </button>
-            </div>
-        `).join('');
-     </script>
-     <script src="assets/js/config.js"></script>
-    <script type="module" src="assets/js/create.js"></script>
-    <script src="assets/js/create-nav.js" defer></script>
+    </div>
 
-  </body>
- </html>
-        
+  </div>
+
+  <!-- ================= PROMPT ================= -->
+
+  <textarea placeholder="พิมพ์คำสั่งสร้างวิดีโอ AI..."></textarea>
+
+  <!-- ================= TYPE BAR ================= -->
+
+  <div class="type-bar">
+    <button class="type-btn active">สร้างวิดีโอ</button>
+    <button class="type-btn">สร้างภาพ</button>
+    <button class="type-btn">Upscale</button>
+  </div>
+
+  <!-- ================= ENGINE SECTION ================= -->
+
+  <div class="engine-wrap">
+
+    <!-- RED ENGINE -->
+    <div class="engine engine-box red-engine">
+
+      <h2>⭐ สร้างวิดีโอ AI</h2>
+
+      <div class="mode-row">
+        <button class="mode-btn" data-alias="image_to_video">
+          🎬 สร้างคลิปไวรัล AI
+        </button>
+
+        <button class="mode-btn" data-alias="lip_sync">
+          🎤 ลิปซิงค์เสียง-คำพูด
+        </button>
+
+        <button class="mode-btn" data-alias="motion_transfer">
+          🕺 โคลนท่าเต้น AI
+        </button>
+
+        <button class="mode-btn" data-alias="face_swap">
+          🧑 เปลี่ยนหน้า AI
+        </button>
+      </div>
+
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (RW)
+      </button>
+
+    </div>
+
+    <!-- BLUE ENGINE -->
+    <div class="engine engine-box blue-engine">
+
+      <h2>⭐ สร้างวิดีโอ AI</h2>
+
+      <div class="mode-row">
+        <button class="mode-btn">🎬 สร้างคลิปไวรัล AI</button>
+        <button class="mode-btn">🎤 ลิปซิงค์เสียง-คำพูด</button>
+        <button class="mode-btn">🕺 โคลนท่าเต้น AI</button>
+        <button class="mode-btn">🧑 เปลี่ยนหน้า AI</button>
+      </div>
+
+      <button class="generate-btn">
+        สร้างวิดีโอ AI (RC)
+      </button>
+
+    </div>
+
+  </div>
+
+  <!-- ================= UPLOAD SECTION ================= -->
+
+  <div class="upload-core-wrapper">
+    <div class="upload-core">
+
+      <div class="upload-box">
+        <span>Upload Motion / Source</span>
+        <input type="file" id="fileA" />
+      </div>
+
+      <div class="upload-box">
+        <span>Upload Character / Target</span>
+        <input type="file" id="fileB" />
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= PREVIEW ================= -->
+
+  <div class="preview-dual preview-wrapper">
+
+    <div class="preview-box">
+      <video id="preview-red-video" controls></video>
+      <img id="preview-red-image"/>
+    </div>
+
+    <div class="preview-box">
+      <video id="preview-blue-video" controls></video>
+      <img id="preview-blue-image"/>
+    </div>
+
+  </div>
+
+  <!-- STATUS -->
+  <div class="status-bar">
+    <span id="status">STATUS: IDLE</span>
+  </div>
+
+</div>
+
+<!-- IMPORTANT: config.js must load before any file using API_BASE -->
+<script src="/assets/js/config.js?v=6.1.0"></script>
+<script src="/assets/js/create.js?v=6.1.0"></script>
+<script src="/assets/js/create-nav.js?v=6.1.0"></script>
+
+</body>
+</html>

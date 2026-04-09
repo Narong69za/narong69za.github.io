@@ -2,14 +2,14 @@
  * =====================================================
  * PROJECT: SN DESIGN STUDIO
  * MODULE: config/system.config.js
- * VERSION: v
+ * VERSION: v9.0.1
  * STATUS: production-final
  * LAYER: config
  * RESPONSIBILITY:
  * - centralize environment configuration
  * DEPENDS ON:
  * - process.env
- * LAST FIX: 2026-03-08
+ * LAST FIX:
  * - production final lock configuration layer
  * =====================================================
  */
@@ -22,7 +22,7 @@ module.exports = {
 
   JWT_ACCESS_SECRET: process.env.JWT_ACCESS_SECRET,
 
-  DB_PATH: process.env.DB_PATH || "/root/sn-payment-core/database.db",
+  DB_PATH: process.env.DB_PATH || "/var/data/database.sqlite",
 
   PAYMENT_ENV: process.env.PAYMENT_ENV || "production",
 

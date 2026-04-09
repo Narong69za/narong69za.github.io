@@ -1,51 +1,193 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN ULTRA — COMMAND MONITOR</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'JetBrains Mono', monospace; background: #020408; color: #94a3b8; }
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(0, 255, 213, 0.1); }
-        .status-card { transition: 0.4s ease; border: 1px solid rgba(255,255,255,0.02); border-radius: 2.5rem; }
-        .status-card:hover { border-color: #00ffd5; box-shadow: 0 0 30px rgba(0, 255, 213, 0.15); }
-    </style>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Official Website — SN DESIGN STUDIO</title>
+
+<meta name="description"
+content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
+
+<meta name="keywords"
+content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
+
+<meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
+<meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
+<meta property="og:image" content="assets/images/hero.png">
+<meta property="og:type" content="website">
+
+<link rel="preload" as="image" href="assets/images/hero.png">
+<link rel="stylesheet" href="assets/css/master.css">
+
 </head>
-<body class="p-6 pt-28">
-    <div id="nav-placeholder"></div>
-    <main id="pm2-container" class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div class="col-span-full py-20 text-center opacity-30 text-xs italic tracking-widest">CONNECTING TO MASTER ENGINE...</div>
-    </main>
-    <script src="assets/js/nav.js"></script>
-    <script>
-        // ดึงข้อมูลจากพอร์ต 5002 โดยตรง
-        const API_STATUS = "http://147.93.159.30:5002/api/admin/system-status";
-        async function fetchStatus() {
-            try {
-                const res = await fetch(API_STATUS);
-                const data = await res.json();
-                if (data.success && data.monitor.pm2) {
-                    document.getElementById('pm2-container').innerHTML = data.monitor.pm2.map(s => `
-                        <div class="status-card glass p-8 flex flex-col gap-4">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-black text-[#00ffd5] uppercase">${s.name}</span>
-                                <div class="w-2 h-2 rounded-full bg-[#00ffd5] shadow-[0_0_10px_#00ffd5] animate-pulse"></div>
-                            </div>
-                            <div class="text-3xl font-black text-white">${s.cpu}%</div>
-                            <div class="text-[9px] opacity-50 uppercase font-bold tracking-tighter">
-                                MEM: ${s.mem} | ${s.status.toUpperCase()}
-                            </div>
-                        </div>
-                    `).join('');
-                }
-            } catch (e) { 
-                console.error("Monitor Error:", e);
-                document.getElementById('pm2-container').innerHTML = "<div class='col-span-full text-center text-red-500 text-xs uppercase'>❌ Master Engine Offline (Check Port 5002)</div>"; 
-            }
-        }
-        setInterval(fetchStatus, 3000); fetchStatus();
-    </script>
+
+<body class="index-page">
+
+<div id="nav"></div>
+
+<!-- MARQUEE -->
+<section class="marquee-wrap">
+<div class="marquee-text">
+แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
+</div>
+</section>
+
+<!-- HERO -->
+<section class="hero-master">
+
+<img 
+src="assets/images/hero.png" 
+alt="SN Design Studio AI creator ecosystem cinematic power red branding"
+loading="eager"
+>
+
+<div class="hero-content-bottom fade-up">
+<h1>Build Viral AI Content Faster</h1>
+<p>Dark Creator Ecosystem for AI Video.</p>
+</div>
+
+</section>
+
+<!-- AI PREVIEW -->
+<section class="ultra-gui-preview ultra-dashboard">
+
+<div class="gui-container">
+
+<div class="gui-mode">
+AI PREVIEW MODE — SN DESIGN STUDIO
+</div>
+
+<div class="gui-screen">
+<img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
+<div class="scan-line"></div>
+</div>
+
+<!-- ULTRA ENTERPRISE STATUS -->
+<div class="ultra-system-panel ultra-enterprise">
+
+<div class="system-title">
+ULTRA ENTERPRISE STATUS
+</div>
+
+<div class="system-row">
+<div class="system-label">Server</div>
+<div class="system-state online">
+<span class="dot"></span>
+<span id="server-status">ONLINE</span>
+</div>
+</div>
+
+<div class="system-row">
+<div class="system-label">Payment</div>
+<div class="system-state online">
+<span class="dot"></span>
+ONLINE
+</div>
+</div>
+
+<div class="system-row">
+<div class="system-label">Network</div>
+<div class="system-state online">
+<span class="dot"></span>
+ACTIVE
+</div>
+</div>
+
+<div class="system-row">
+<div class="system-label">AI Engine</div>
+<div class="system-state online">
+<span class="dot"></span>
+<span id="ai-status">CONNECTED</span>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- INTRO -->
+<section class="ultra-intro-zone">
+
+<div class="container">
+
+<div class="intro-cinematic">
+
+<h2 class="intro-title">
+SN Design Studio — AI Creator Power System
+</h2>
+
+<p class="intro-text">
+แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
+</p>
+
+</div>
+
+<div class="intro-video">
+
+<iframe 
+src="https://www.youtube.com/embed/NI7WALIXStU"
+title="YouTube Shorts"
+frameborder="0"
+allowfullscreen>
+</iframe>
+
+</div>
+
+</div>
+
+</section>
+
+<footer>
+© SN Design Studio, 2026 · All rights reserved.
+</footer>
+
+<script src="assets/js/nav.js"></script>
+
+<!-- TEMPLATE CLICK -->
+<script>
+document.querySelectorAll("[data-template]").forEach(el=>{
+   el.addEventListener("click",()=>{
+      const model = el.dataset.template;
+      if(model){
+         window.location.href = "create.html?template="+model;
+      }
+   });
+});
+</script>
+
+<!-- STATUS API BIND -->
+<script>
+
+const API_BASE = "https://sn-design-api.onrender.com";
+
+async function updateStatus(){
+
+   try{
+
+      const server = await fetch(API_BASE + "/api/status/server").then(r=>r.json());
+      const ai = await fetch(API_BASE + "/api/status/ai").then(r=>r.json());
+      const net = await fetch(API_BASE + "/api/status/network").then(r=>r.json());
+
+      document.getElementById("server-status").innerText =
+         server.server.toUpperCase();
+
+      document.getElementById("ai-status").innerText =
+         ai.ai ? "CONNECTED":"OFFLINE";
+
+   }catch(e){
+      console.log("STATUS ERROR",e);
+   }
+
+}
+
+setInterval(updateStatus,5000);
+updateStatus();
+
+</script>
+
 </body>
-</html>
+   </html>
