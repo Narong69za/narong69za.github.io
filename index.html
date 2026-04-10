@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Official Website — SN DESIGN STUDIO</title>
 <meta name="description" content="Create viral AI content, CapCut templates and creator growth systems with SN Design Studio.">
+<meta name="keywords" content="AI creator, AI video, AI content creation, CapCut AI, AI marketing system, viral AI video, SN Design Studio">
+<meta property="og:title" content="SN Design Studio | AI Creator Ecosystem">
+<meta property="og:description" content="Build viral AI content faster with cinematic creator systems.">
+<meta property="og:image" content="assets/images/hero.png">
+<meta property="og:type" content="website">
+<link rel="preload" as="image" href="assets/images/hero.png">
 <link rel="stylesheet" href="assets/css/master.css">
 <style>
     /* รักษาสมดุลหน้าแรก */
@@ -32,7 +38,7 @@
 </div>
 </section>
 
-<!-- AI PREVIEW - สำรองต้นฉบับพาร์ทเนอร์ -->
+<!-- AI PREVIEW - ยึดตามลิขสิทธิ์ที่คุณสำรองไว้ -->
 <section class="ultra-gui-preview ultra-dashboard">
 <div class="gui-container">
     <div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
@@ -51,7 +57,7 @@
             <div class="system-state online"><span class="dot"></span>ACTIVE</div>
         </div>
         
-        <!-- SERVICE INSTANCE MONITOR (PREMIUM) -->
+        <!-- SERVICE INSTANCE MONITOR (PREMIUM EDITION) -->
         <div id="pm2-monitor-root" style="margin-top: 15px; border-top: 1px dashed rgba(0, 255, 213, 0.2); padding-top: 15px;">
             <div style="font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 3px; margin-bottom: 15px; text-align: left;">
                  SERVICE INSTANCE MONITOR
@@ -88,8 +94,9 @@
 </div>
 </section>
 
-<footer style="text-align: center; padding: 60px 0; color: #444; font-size: 11px; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.03); letter-spacing: 5px;">
-    © SN DESIGN STUDIO, 2026 · ALL RIGHTS RESERVED.
+<!-- FOOTER - แก้ไขขนาดให้มองเห็นชัดเจน -->
+<footer style="text-align: center; padding: 60px 0; color: #666; font-size: 13px; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.05); letter-spacing: 2px;">
+    © SN DESIGN STUDIO 2026.
 </footer>
 
 <script src="assets/js/nav.js"></script>
@@ -103,7 +110,7 @@ document.querySelectorAll("[data-template]").forEach(el => {
    });
 });
 
-/** 2. ULTRA MASTER MONITOR SYSTEM */
+/** 2. MASTER MONITOR SYSTEM (PREMIUM EDITION) */
 const API_BASE = "https://api.sn-designstudio.dev";
 
 function formatUptime(ms) {
@@ -129,27 +136,26 @@ async function syncUltraSystem() {
                     const statusColor = isOnline ? '#00ffd5' : '#ff0033';
                     const cpuPercent = proc.cpu || 0;
                     const memUsed = proc.memory || 0;
-                    const cpuColor = cpuPercent > 80 ? '#ff0033' : (cpuPercent > 50 ? '#ffaa00' : '#00ffd5');
                     return `
                     <div style="background: rgba(255,255,255,0.02); margin-bottom: 12px; padding: 15px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div style="text-align: left;">
-                                <span style="font-family: 'Courier New', monospace; font-size: 13px; font-weight: bold; color: #fff;">${proc.name.toUpperCase()}</span>
-                                <span style="font-size: 9px; color: #555; display: block;">UPTIME: ${formatUptime(proc.uptime)}</span>
+                                <span style="font-family: 'Courier New', monospace; font-size: 14px; font-weight: bold; color: #fff;">${proc.name.toUpperCase()}</span>
+                                <span style="font-size: 10px; color: #555; display: block;">UPTIME: ${formatUptime(proc.uptime)}</span>
                             </div>
-                            <div style="color: ${statusColor}; font-size: 10px; font-weight: bold; display: flex; align-items: center; gap: 5px;">
-                                <span style="width: 7px; height: 7px; border-radius: 50%; background: ${statusColor}; shadow: 0 0 5px ${statusColor};"></span>
+                            <div style="color: ${statusColor}; font-size: 11px; font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                                <span style="width: 8px; height: 8px; border-radius: 50%; background: ${statusColor}; box-shadow: 0 0 10px ${statusColor};"></span>
                                 ${proc.status.toUpperCase()}
                             </div>
                         </div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                             <div>
-                                <div style="display: flex; justify-content: space-between; font-size: 8px; color: #666; margin-bottom: 4px;">CPU <span>${cpuPercent}%</span></div>
-                                <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"><div style="width: ${cpuPercent}%; height: 100%; background: ${cpuColor}; transition: 0.5s;"></div></div>
+                                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px;">CPU <span>${cpuPercent}%</span></div>
+                                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"><div style="width: ${cpuPercent}%; height: 100%; background: #00ffd5; transition: 0.5s;"></div></div>
                             </div>
                             <div>
-                                <div style="display: flex; justify-content: space-between; font-size: 8px; color: #666; margin-bottom: 4px;">MEM <span>${memUsed}MB</span></div>
-                                <div style="width: 100%; height: 3px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"><div style="width: ${(memUsed / 1024) * 100}%; height: 100%; background: #00aaff; transition: 0.5s;"></div></div>
+                                <div style="display: flex; justify-content: space-between; font-size: 9px; color: #888; margin-bottom: 4px;">MEMORY <span>${memUsed}MB</span></div>
+                                <div style="width: 100%; height: 4px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden;"><div style="width: ${(memUsed / 1024) * 100}%; height: 100%; background: #00aaff; transition: 0.5s;"></div></div>
                             </div>
                         </div>
                     </div>`;
