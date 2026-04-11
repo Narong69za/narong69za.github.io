@@ -9,13 +9,42 @@
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
         .gen-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); transition: all 0.2s; }
         .gen-btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
+        /* สไตล์เพิ่มเติมสำหรับสถานะ */
+        .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
+        .role-admin { background: #ef4444; color: white; }
+        .role-dev { background: #10b981; color: white; }
+        .role-user { background: #3b82f6; color: white; }
     </style>
 </head>
 <body class="p-6">
+
+    <nav class="max-w-7xl mx-auto mb-8 glass rounded-2xl p-4 flex justify-between items-center border border-white/10">
+        <div class="flex items-center gap-4">
+            <div id="userAvatar" class="w-10 h-10 rounded-full bg-slate-800 border border-blue-500 overflow-hidden">
+                <img src="https://ui-avatars.com/api/?name=User&background=0D8ABC&color=fff" alt="Profile" id="profileImg">
+            </div>
+            <div>
+                <p id="userName" class="text-sm font-bold text-white tracking-wide">Loading...</p>
+                <div id="userRole" class="flex gap-2 mt-1">
+                    <span class="status-badge role-user">Checking Auth...</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex items-center gap-6">
+            <div class="text-right hidden md:block">
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest">System Status</p>
+                <p class="text-xs font-mono text-green-400">● Connected to SN-API</p>
+            </div>
+            <button id="logoutBtn" class="text-[10px] bg-white/5 hover:bg-white/10 px-4 py-2 rounded-lg transition uppercase font-bold tracking-widest">Logout</button>
+        </div>
+    </nav>
+
     <div class="max-w-7xl mx-auto">
-        <h1 class="text-4xl font-black text-center mb-12 text-blue-500 uppercase tracking-widest">SN ULTRA ENGINE</h1>
+        <h1 class="text-4xl font-black text-center mb-12 text-blue-500 uppercase tracking-widest italic">SN ULTRA ENGINE</h1>
+        
         <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
     </div>
+
     <script>
         const engines = [
             { id: 1, name: "สร้างวิดีโอจากข้อความ", model: "gen4_turbo" },
@@ -33,25 +62,36 @@
             { id: 13, name: "สร้างเสียงเอฟเฟกต์", model: "eleven_text_to_sound_v2" },
             { id: 14, name: "เปลี่ยนเสียงพูด", model: "eleven_multilingual_sts_v2" }
         ];
+
         document.getElementById('engineGrid').innerHTML = engines.map(e => `
             <div class="engine engine-box glass p-6 rounded-[2rem]" data-engine="${e.id}" data-model="${e.model}">
                 <p class="text-[10px] font-bold text-blue-500 uppercase mb-4 tracking-widest">Engine ${String(e.id).padStart(2, '0')}</p>
                 <h3 class="text-sm font-bold mb-4">${e.name}</h3>
                 <textarea class="engine-prompt w-full bg-slate-900 rounded-2xl p-3 text-xs mb-4 h-24 focus:outline-none focus:border-blue-500 border border-slate-800" placeholder="Enter prompt..."></textarea>
                 <div class="flex gap-2 mb-4">
-                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1">
+                    <select class="engine-resolution bg-slate-800 rounded-lg p-2 text-[10px] flex-1 text-white">
                         <option value="720">720p</option><option value="1080">1080p</option>
                     </select>
-                    <input type="file" class="engine-fileA text-[10px] flex-1">
+                    <input type="file" class="engine-fileA text-[10px] flex-1 text-slate-400">
                 </div>
                 <div class="engine-preview aspect-video bg-black rounded-xl mb-4 flex items-center justify-center text-[10px] italic text-slate-800 border border-slate-900">Preview Area</div>
                 <button class="gen-btn generate-btn w-full py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Run Engine ${String(e.id).padStart(2, '0')}</button>
             </div>
         `).join('');
     </script>
+
     <script src="assets/js/config.js"></script>
-    <script type="module" src="assets/js/create.js"></script>
+    <script type="module">
+        import { checkAuth } from './assets/js/create.js';
+        
+        // ฟังก์ชันเบื้องต้นสำหรับการแสดงผลชื่อและ Role
+        window.addEventListener('DOMContentLoaded', () => {
+            // นี่คือจุดที่เราจะเชื่อมโยงกับ Auth.js และฐานข้อมูล database.db 
+            // เพื่อดึงค่า 'admin', 'dev', 'owner' มาแสดงผล
+            console.log("SN System: Initializing Auth Protection...");
+        });
+    </script>
     <script src="assets/js/create-nav.js" defer></script>
-    
 </body>
 </html>
+
