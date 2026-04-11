@@ -20,7 +20,7 @@
     </section>
 
     <section class="hero-master">
-        <img src="assets/images/hero.png" alt="SN Design Studio AI creator ecosystem cinematic power red branding" loading="eager">
+        <img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
         <div class="hero-content-bottom fade-up">
             <h1>Build Viral AI Content Faster</h1>
             <p>Dark Creator Ecosystem for AI Video.</p>
@@ -42,7 +42,7 @@
                     <div class="system-label">Server</div>
                     <div class="system-state online" id="state-server">
                         <span class="dot"></span>
-                        <span id="server-status">LOADING...</span>
+                        <span id="server-status">WAITING...</span>
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
                     <div class="system-label">Payment</div>
                     <div class="system-state online" id="state-payment">
                         <span class="dot"></span>
-                        <span id="payment-status">LOADING...</span>
+                        <span id="payment-status">WAITING...</span>
                     </div>
                 </div>
 
@@ -58,7 +58,7 @@
                     <div class="system-label">Network</div>
                     <div class="system-state online" id="state-network">
                         <span class="dot"></span>
-                        <span id="network-status">LOADING...</span>
+                        <span id="network-status">WAITING...</span>
                     </div>
                 </div>
 
@@ -66,7 +66,7 @@
                     <div class="system-label">AI Engine</div>
                     <div class="system-state online" id="state-ai">
                         <span class="dot"></span>
-                        <span id="ai-status">LOADING...</span>
+                        <span id="ai-status">WAITING...</span>
                     </div>
                 </div>
             </div>
@@ -76,13 +76,11 @@
     <section class="ultra-intro-zone">
         <div class="container">
             <div class="intro-cinematic">
-                <h2 class="intro-title">SN Design Studio — AI Creator Power System</h2>
-                <p class="intro-text">
-                    แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
-                </p>
+                <h2 class="intro-title">SN Design Studio — AI Power System</h2>
+                <p class="intro-text">สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • Creator Growth System</p>
             </div>
             <div class="intro-video">
-                <iframe src="https://www.youtube.com/embed/NI7WALIXStU" title="YouTube Shorts" frameborder="0" allowfullscreen></iframe>
+                <iframe src="https://www.youtube.com/embed/NI7WALIXStU" frameborder="0" allowfullscreen></iframe>
             </div>
         </div>
     </section>
@@ -96,43 +94,42 @@
 
         async function updateStatus() {
             try {
-                // ดึงข้อมูลสถานะจริงจาก PM2 ผ่าน API Port 5002
+                // ยิงไปที่ Endpoint ที่มึงเขียนไว้เพื่อดึงค่าจาก pm2.list()
                 const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
                 const data = await response.json();
 
                 if (data.success && data.services) {
-                    // 1. Server & Payment (ดึงจาก sn-api ID:0)
+                    // 1. Map Server & Payment (ID:0 sn-api)
                     const snApi = data.services.find(s => s.name === 'sn-api');
                     if (snApi) {
-                        const isOnline = snApi.status === 'online';
-                        document.getElementById("server-status").innerText = isOnline ? "ONLINE" : "OFFLINE";
-                        document.getElementById("state-server").className = `system-state ${isOnline ? 'online' : 'offline'}`;
-                        
-                        document.getElementById("payment-status").innerText = isOnline ? "ONLINE" : "OFFLINE";
-                        document.getElementById("state-payment").className = `system-state ${isOnline ? 'online' : 'offline'}`;
+                        const isUp = snApi.status === 'online';
+                        document.getElementById("server-status").innerText = isUp ? "ONLINE" : "OFFLINE";
+                        document.getElementById("state-server").className = `system-state ${isUp ? 'online' : 'offline'}`;
+                        document.getElementById("payment-status").innerText = isUp ? "ONLINE" : "OFFLINE";
+                        document.getElementById("state-payment").className = `system-state ${isUp ? 'online' : 'offline'}`;
                     }
 
-                    // 2. Network (ดึงจาก sn-deployer ID:2)
-                    const snNet = data.services.find(s => s.name === 'sn-deployer');
-                    if (snNet) {
-                        const isActive = snNet.status === 'online';
-                        document.getElementById("network-status").innerText = isActive ? "ACTIVE" : "INACTIVE";
-                        document.getElementById("state-network").className = `system-state ${isActive ? 'online' : 'offline'}`;
+                    // 2. Map Network (ID:2 sn-deployer)
+                    const snDeploy = data.services.find(s => s.name === 'sn-deployer');
+                    if (snDeploy) {
+                        const isNet = snDeploy.status === 'online';
+                        document.getElementById("network-status").innerText = isNet ? "ACTIVE" : "INACTIVE";
+                        document.getElementById("state-network").className = `system-state ${isNet ? 'online' : 'offline'}`;
                     }
 
-                    // 3. AI Engine (ดึงจาก sn-ai-render ID:1)
+                    // 3. Map AI Engine (ID:1 sn-ai-render)
                     const snAi = data.services.find(s => s.name === 'sn-ai-render');
                     if (snAi) {
-                        const isConnected = snAi.status === 'online';
-                        document.getElementById("ai-status").innerText = isConnected ? "CONNECTED" : "DISCONNECTED";
-                        document.getElementById("state-ai").className = `system-state ${isConnected ? 'online' : 'offline'}`;
+                        const isAi = snAi.status === 'online';
+                        document.getElementById("ai-status").innerText = isAi ? "CONNECTED" : "DISCONNECTED";
+                        document.getElementById("state-ai").className = `system-state ${isAi ? 'online' : 'offline'}`;
                     }
                 }
             } catch (e) {
-                console.error("DASHBOARD ERROR: Backend offline or Syntax Error");
-                const labels = ["server-status", "payment-status", "network-status", "ai-status"];
+                // ถ้า API พัง (อย่างที่เป็นอยู่ตอนนี้) จะขึ้นสถานะแบบนี้
+                const ids = ["server-status", "payment-status", "network-status", "ai-status"];
                 const states = ["state-server", "state-payment", "state-network", "state-ai"];
-                labels.forEach(id => document.getElementById(id).innerText = "OFFLINE");
+                ids.forEach(id => document.getElementById(id).innerText = "ERROR");
                 states.forEach(id => document.getElementById(id).className = "system-state offline");
             }
         }
