@@ -47,15 +47,17 @@ exports.googleCallback = async (req, res) => {
 
     if (!user) {
       const newId = uuidv4();
+
       
       // [FIX 2] ส่งค่าให้ DB มั่นใจว่า id เป็น String (UUID) และมี google_id
       await db.createUser({
-        id: newId,          // ตาราง users.id ต้องเป็น TEXT นะพาร์ทเนอร์!
-        google_id: gId, 
-        email: googleUser.email,
-        role: "user",
-        credits: 0
-      });
+    id: newId,
+    google_id: googleUser.id || googleUser.sub, // [FIX] ดึงค่า ID ให้ชัวร์
+    email: googleUser.email,
+    role: "user",
+    credits: 0
+    });
+
       user = await db.getUserByEmail(googleUser.email);
     }
 
