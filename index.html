@@ -27,14 +27,12 @@ content="AI creator, AI video, AI content creation, CapCut AI, AI marketing syst
 
 <div id="nav"></div>
 
-<!-- MARQUEE -->
 <section class="marquee-wrap">
 <div class="marquee-text">
 แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
 </div>
 </section>
 
-<!-- HERO -->
 <section class="hero-master">
 
 <img 
@@ -50,7 +48,6 @@ loading="eager"
 
 </section>
 
-<!-- AI PREVIEW -->
 <section class="ultra-gui-preview ultra-dashboard">
 
 <div class="gui-container">
@@ -64,7 +61,6 @@ AI PREVIEW MODE — SN DESIGN STUDIO
 <div class="scan-line"></div>
 </div>
 
-<!-- ULTRA ENTERPRISE STATUS -->
 <div class="ultra-system-panel ultra-enterprise">
 
 <div class="system-title">
@@ -109,7 +105,6 @@ ACTIVE
 
 </section>
 
-<!-- INTRO -->
 <section class="ultra-intro-zone">
 
 <div class="container">
@@ -147,7 +142,6 @@ allowfullscreen>
 
 <script src="assets/js/nav.js"></script>
 
-<!-- TEMPLATE CLICK -->
 <script>
 document.querySelectorAll("[data-template]").forEach(el=>{
    el.addEventListener("click",()=>{
@@ -159,36 +153,46 @@ document.querySelectorAll("[data-template]").forEach(el=>{
 });
 </script>
 
-<!-- STATUS API BIND -->
 <script>
-
 const API_BASE = "https://api.sn-designstudio.dev";
 
-async function updateStatus(){
+async function updateStatus() {
+   try {
+      // ดึงข้อมูล Realtime จาก PM2 ผ่าน API พอร์ต 5002
+      const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
+      const data = await response.json();
 
-   try{
+      if (data.success && data.services) {
+         // 1. เช็คสถานะ Server (Service: sn-api)
+         const snApi = data.services.find(s => s.name === 'sn-api');
+         const serverStatusEl = document.getElementById("server-status");
+         if (snApi) {
+            serverStatusEl.innerText = snApi.status.toUpperCase();
+            serverStatusEl.parentElement.className = `system-state ${snApi.status === 'online' ? 'online' : 'offline'}`;
+         }
 
-      const server = await fetch(API_BASE + "/api/status/server").then(r=>r.json());
-      const ai = await fetch(API_BASE + "/api/status/ai").then(r=>r.json());
-      const net = await fetch(API_BASE + "/api/status/network").then(r=>r.json());
-
-      document.getElementById("server-status").innerText =
-         server.server.toUpperCase();
-
-      document.getElementById("ai-status").innerText =
-         ai.ai ? "CONNECTED":"OFFLINE";
-
-   }catch(e){
-      console.log("STATUS ERROR",e);
+         // 2. เช็คสถานะ AI Engine (Service: ที่เกี่ยวข้องกับการเรนเดอร์)
+         const aiEng = data.services.find(s => s.name.toLowerCase().includes('engine') || s.name.toLowerCase().includes('render'));
+         const aiStatusEl = document.getElementById("ai-status");
+         if (aiEng) {
+            aiStatusEl.innerText = aiEng.status === 'online' ? "CONNECTED" : "OFFLINE";
+            aiStatusEl.parentElement.className = `system-state ${aiEng.status === 'online' ? 'online' : 'offline'}`;
+         }
+      }
+   } catch (e) {
+      console.log("STATUS ERROR: Backend Offline", e);
+      document.getElementById("server-status").innerText = "OFFLINE";
+      document.getElementById("server-status").parentElement.className = "system-state offline";
+      document.getElementById("ai-status").innerText = "DISCONNECTED";
+      document.getElementById("ai-status").parentElement.className = "system-state offline";
    }
-
 }
 
-setInterval(updateStatus,5000);
+// ตรวจสอบสถานะทุก 5 วินาที เพื่อความ Realtime
+setInterval(updateStatus, 5000);
 updateStatus();
-
 </script>
 
 </body>
-   </html>
+</html>
 
