@@ -1,111 +1,64 @@
- /**
- * =====================================================
- * PROJECT: SN DESIGN STUDIO
- * MODULE: create-nav.js
- * VERSION: v3.5.0
- * STATUS: production
- * LAST FIX:
- * - Owner-only Payment Control
- * - Lock credit button visibility by role
- * - Admin Dashboard route support
- * =====================================================
+/**
+ * MODULE: create-nav.js (MASTER SECURITY & NAV)
  */
 
-const DEV_MODE = false;
+const API_BASE = "https://api.sn-designstudio.dev"; // มั่นใจว่าตรงกับ Backend
 
-/* ================= NAV BUILD ================= */
-
-(function(){
-
+(function buildNav() {
     if(document.querySelector(".create-top-nav")) return;
 
-    const nav=document.createElement("div");
-    nav.className="create-top-nav";
-
-    nav.innerHTML=`
-
+    const nav = document.createElement("div");
+    nav.className = "create-top-nav";
+    nav.innerHTML = `
+        <div class="create-nav-left">⭐ SN DESIGN ENGINE AI</div>
         <div class="create-nav-right">
-            <button id="btn-credit" class="credit-btn-premium" style="display:none;">
-                � เติมเครดิต
-            </button>
-
-            <button id="btn-admin" class="credit-btn-premium" style="display:none;">
-                ⚙ PAYMENT CONTROL
-            </button>
+            <span id="user-display" style="margin-right:15px; font-size:12px; color:#00ffd5;"></span>
+            <button id="btn-credit" class="credit-btn-premium" style="display:none;">เติมเครดิต</button>
+            <button id="btn-admin" class="credit-btn-premium" style="display:none;">⚙ PAYMENT CONTROL</button>
         </div>
     `;
-
     document.body.prepend(nav);
-
-    requestAnimationFrame(()=>{
-        document.body.style.paddingTop =
-        nav.offsetHeight+"px";
-    });
-
 })();
 
-/* ================= USER STATUS LOAD ================= */
-
-async function loadUserStatus(){
-
+async function loadUserStatus() {
     const creditBtn = document.getElementById("btn-credit");
     const adminBtn  = document.getElementById("btn-admin");
+    const userDisp  = document.getElementById("user-display");
 
-    try{
-
-        const res = await fetch(`${API_BASE}/auth/me`,{
-            credentials:"include",
-            cache:"no-store"
+    try {
+        const res = await fetch(`${API_BASE}/auth/me`, {
+            credentials: "include", // สำคัญมาก: เพื่อส่ง JWT Cookie
+            cache: "no-store"
         });
 
-        if(!res.ok){
-            if(!DEV_MODE && res.status===401){
-                window.location.href="/login.html";
-            }
+        if (!res.ok) {
+            // ถ้า Backend ตอบ 401 หรือ NO_TOKEN ให้เด้งไป Login
+            if (res.status === 401) window.location.href = "/login.html";
             return;
         }
 
         const user = await res.json();
-
-        console.log("USER LOADED:", user);
+        if(userDisp && user.displayName) userDisp.innerText = `USER: ${user.displayName}`;
 
         const role = (user.role || "").toLowerCase();
-
-        /* ================= OWNER CONTROL ================= */
-
-        if(role === "owner"){
-
-            // � Owner เห็นทุกระบบ
-            if(creditBtn) creditBtn.style.display="inline-block";
-            if(adminBtn)  adminBtn.style.display="inline-block";
-
+        
+        // OWNER CONTROL
+        if (role === "owner") {
+            if(creditBtn) creditBtn.style.display = "inline-block";
+            if(adminBtn)  adminBtn.style.display = "inline-block";
         } else {
-
-            // � User ธรรมดา เห็นแค่เติมเครดิต
-            if(creditBtn) creditBtn.style.display="inline-block";
-
-            // ซ่อน admin
-            if(adminBtn) adminBtn.style.display="none";
+            if(creditBtn) creditBtn.style.display = "inline-block";
         }
-
-    }catch(err){
-        console.warn("USER LOAD ERROR:",err);
+    } catch (err) {
+        console.warn("AUTH CHECK FAILED:", err);
     }
 }
 
 document.addEventListener("DOMContentLoaded", loadUserStatus);
 
-/* ================= BUTTON NAVIGATION ================= */
-
-document.addEventListener("click",(e)=>{
-
-    if(e.target.id==="btn-credit"){
-        window.location.href="/payment.html";
-    }
-
-    if(e.target.id==="btn-admin"){
-        window.location.href="/payment-control.html";
-    }
-
+// Navigation Click Handler
+document.addEventListener("click", (e) => {
+    if (e.target.id === "btn-credit") window.location.href = "/payment.html";
+    if (e.target.id === "btn-admin") window.location.href = "/payment-control.html";
 });
 
