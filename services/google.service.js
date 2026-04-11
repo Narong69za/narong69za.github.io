@@ -1,30 +1,40 @@
 /**
  * PROJECT: SN DESIGN STUDIO
  * MODULE: google.service.js
- * VERSION: v
- * STATUS: production
- * LAST FIX: 2026-03-08
+ * VERSION: v11.0.0 (FINAL FIX)
  */
 
 const { google } = require("googleapis");
 
+// ดึงค่าจาก .env แบบรองรับหลายชื่อตัวแปร (กันเหนียว)
+const CALLBACK_URL = process.env.GOOGLE_CALLBACK_URL || process.env.GOOGLE_REDIRECT_URI;
+
 const oauth2Client = new google.auth.OAuth2(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_CALLBACK_URL
+  CALLBACK_URL
 );
 
 exports.generateAuthUrl = (state) => {
   return oauth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: ["openid", "email", "profile"],
+    scope: [
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/userinfo.email",
+      "openid"
+    ],
     include_granted_scopes: true,
     state
   });
 };
 
 exports.getUserFromCode = async (code) => {
-  const { tokens } = await oauth2Client.getToken(code);
+  // มั่นใจว่าตอนแลก Token เราส่ง Redirect URI ที่ถูกต้องไปด้วย
+  const { tokens } = await oauth2Client.getToken({
+    code: code,
+    redirect_uri: CALLBACK_URL 
+  });
+  
   oauth2Client.setCredentials(tokens);
 
   const oauth2 = google.oauth2({
@@ -35,3 +45,4 @@ exports.getUserFromCode = async (code) => {
   const { data } = await oauth2.userinfo.get();
   return data;
 };
+
