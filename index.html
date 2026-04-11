@@ -5,6 +5,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Official Website — SN DESIGN STUDIO</title>
 <link rel="stylesheet" href="assets/css/master.css">
+<style>
+    /* ป้องกันการกระพริบของ UI */
+    .system-state.online .dot { background: #00ff88; box-shadow: 0 0 10px #00ff88; }
+    .system-state.offline .dot { background: #ff4444; box-shadow: 0 0 10px #ff4444; }
+    .system-state.offline { color: #ff4444; }
+</style>
 </head>
 
 <body class="index-page">
@@ -96,39 +102,48 @@ async function updateStatus() {
       const data = await response.json();
 
       if (data.success && data.services) {
-         // 1. Server & Payment (ดึงจาก sn-api)
+         // 1. Server & Payment (ดึงจาก sn-api ID:0)
          const snApi = data.services.find(s => s.name === 'sn-api');
          if (snApi) {
-            const up = snApi.status === 'online';
-            document.getElementById("server-status").innerText = up ? "ONLINE" : "OFFLINE";
-            document.getElementById("state-server").className = `system-state ${up ? 'online' : 'offline'}`;
-            document.getElementById("payment-status").innerText = up ? "ONLINE" : "OFFLINE";
-            document.getElementById("state-payment").className = `system-state ${up ? 'online' : 'offline'}`;
+            const isUp = snApi.status === 'online';
+            updateUI("server-status", "state-server", isUp, "ONLINE");
+            updateUI("payment-status", "state-payment", isUp, "ONLINE");
          }
 
-         // 2. Network (ดึงจาก sn-deployer)
+         // 2. Network (ดึงจาก sn-deployer ID:2)
          const snNet = data.services.find(s => s.name === 'sn-deployer');
          if (snNet) {
-            const active = snNet.status === 'online';
-            document.getElementById("network-status").innerText = active ? "ACTIVE" : "INACTIVE";
-            document.getElementById("state-network").className = `system-state ${active ? 'online' : 'offline'}`;
+            const isNet = snNet.status === 'online';
+            updateUI("network-status", "state-network", isNet, "ACTIVE", "INACTIVE");
          }
 
-         // 3. AI Engine (ดึงจาก sn-ai-render)
+         // 3. AI Engine (ดึงจาก sn-ai-render ID:1)
          const snAi = data.services.find(s => s.name === 'sn-ai-render');
          if (snAi) {
-            const con = snAi.status === 'online';
-            document.getElementById("ai-status").innerText = con ? "CONNECTED" : "DISCONNECTED";
-            document.getElementById("state-ai").className = `system-state ${con ? 'online' : 'offline'}`;
+            const isAi = snAi.status === 'online';
+            updateUI("ai-status", "state-ai", isAi, "CONNECTED", "OFFLINE");
          }
       }
    } catch (e) {
-      // ถ้า API ไม่ตอบสนอง
-      const ids = ["server-status", "payment-status", "network-status", "ai-status"];
-      const states = ["state-server", "state-payment", "state-network", "state-ai"];
-      ids.forEach(id => document.getElementById(id).innerText = "OFFLINE");
-      states.forEach(id => document.getElementById(id).className = "system-state offline");
+      setAllOffline();
    }
+}
+
+// ฟังก์ชันช่วยอัปเดตทั้งข้อความและสีของจุดไฟ
+function updateUI(textId, stateId, isOnline, onlineText, offlineText = "OFFLINE") {
+    const textEl = document.getElementById(textId);
+    const stateEl = document.getElementById(stateId);
+    if (textEl && stateEl) {
+        textEl.innerText = isOnline ? onlineText : offlineText;
+        stateEl.className = `system-state ${isOnline ? 'online' : 'offline'}`;
+    }
+}
+
+function setAllOffline() {
+    const ids = ["server-status", "payment-status", "network-status", "ai-status"];
+    const states = ["state-server", "state-payment", "state-network", "state-ai"];
+    ids.forEach(id => { if(document.getElementById(id)) document.getElementById(id).innerText = "OFFLINE"; });
+    states.forEach(id => { if(document.getElementById(id)) document.getElementById(id).className = "system-state offline"; });
 }
 
 setInterval(updateStatus, 5000);
