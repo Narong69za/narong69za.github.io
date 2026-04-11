@@ -9,7 +9,7 @@
         .glass { background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.05); }
         .gen-btn { background: linear-gradient(135deg, #2563eb, #7c3aed); transition: all 0.2s; }
         .gen-btn:hover { transform: scale(1.02); box-shadow: 0 0 15px rgba(37, 99, 235, 0.4); }
-        /* สไตล์เพิ่มเติมสำหรับสถานะ */
+        /* สไตล์สถานะผู้ใช้งาน */
         .status-badge { padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: bold; text-transform: uppercase; }
         .role-admin { background: #ef4444; color: white; }
         .role-dev { background: #10b981; color: white; }
@@ -81,16 +81,9 @@
     </script>
 
     <script src="assets/js/config.js"></script>
-    <script type="module">
-        import { checkAuth } from './assets/js/create.js';
-        
-        // ฟังก์ชันเบื้องต้นสำหรับการแสดงผลชื่อและ Role
-        window.addEventListener('DOMContentLoaded', () => {
-            // นี่คือจุดที่เราจะเชื่อมโยงกับ Auth.js และฐานข้อมูล database.db 
-            // เพื่อดึงค่า 'admin', 'dev', 'owner' มาแสดงผล
-            console.log("SN System: Initializing Auth Protection...");
-        });
-    </script>
+    
+    <script type="module" src="assets/js/create.js"></script> 
+    
     <script src="assets/js/create-nav.js" defer></script>
 </body>
 </html>
