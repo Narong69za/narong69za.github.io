@@ -69,7 +69,7 @@ ULTRA ENTERPRISE STATUS
 
 <div class="system-row">
 <div class="system-label">Server</div>
-<div class="system-state online">
+<div class="system-state online" id="state-server">
 <span class="dot"></span>
 <span id="server-status">ONLINE</span>
 </div>
@@ -77,23 +77,23 @@ ULTRA ENTERPRISE STATUS
 
 <div class="system-row">
 <div class="system-label">Payment</div>
-<div class="system-state online">
+<div class="system-state online" id="state-payment">
 <span class="dot"></span>
-ONLINE
+<span id="payment-status">ONLINE</span>
 </div>
 </div>
 
 <div class="system-row">
 <div class="system-label">Network</div>
-<div class="system-state online">
+<div class="system-state online" id="state-network">
 <span class="dot"></span>
-ACTIVE
+<span id="network-status">ACTIVE</span>
 </div>
 </div>
 
 <div class="system-row">
 <div class="system-label">AI Engine</div>
-<div class="system-state online">
+<div class="system-state online" id="state-ai">
 <span class="dot"></span>
 <span id="ai-status">CONNECTED</span>
 </div>
@@ -163,32 +163,44 @@ async function updateStatus() {
       const data = await response.json();
 
       if (data.success && data.services) {
-         // 1. เช็คสถานะ Server (Service: sn-api)
+         // 1. Server & Payment (ยึดตาม sn-api ID:0)
          const snApi = data.services.find(s => s.name === 'sn-api');
-         const serverStatusEl = document.getElementById("server-status");
          if (snApi) {
-            serverStatusEl.innerText = snApi.status.toUpperCase();
-            serverStatusEl.parentElement.className = `system-state ${snApi.status === 'online' ? 'online' : 'offline'}`;
+            const isOnline = snApi.status === 'online';
+            document.getElementById("server-status").innerText = isOnline ? "ONLINE" : "OFFLINE";
+            document.getElementById("state-server").className = `system-state ${isOnline ? 'online' : 'offline'}`;
+            
+            document.getElementById("payment-status").innerText = isOnline ? "ONLINE" : "OFFLINE";
+            document.getElementById("state-payment").className = `system-state ${isOnline ? 'online' : 'offline'}`;
          }
 
-         // 2. เช็คสถานะ AI Engine (Service: ที่เกี่ยวข้องกับการเรนเดอร์)
-         const aiEng = data.services.find(s => s.name.toLowerCase().includes('engine') || s.name.toLowerCase().includes('render'));
-         const aiStatusEl = document.getElementById("ai-status");
-         if (aiEng) {
-            aiStatusEl.innerText = aiEng.status === 'online' ? "CONNECTED" : "OFFLINE";
-            aiStatusEl.parentElement.className = `system-state ${aiEng.status === 'online' ? 'online' : 'offline'}`;
+         // 2. Network (ยึดตาม sn-deployer ID:2)
+         const snNet = data.services.find(s => s.name === 'sn-deployer');
+         if (snNet) {
+            const isActive = snNet.status === 'online';
+            document.getElementById("network-status").innerText = isActive ? "ACTIVE" : "INACTIVE";
+            document.getElementById("state-network").className = `system-state ${isActive ? 'online' : 'offline'}`;
+         }
+
+         // 3. AI Engine (ยึดตาม sn-ai-render ID:1)
+         const snAi = data.services.find(s => s.name === 'sn-ai-render');
+         if (snAi) {
+            const isConnected = snAi.status === 'online';
+            document.getElementById("ai-status").innerText = isConnected ? "CONNECTED" : "DISCONNECTED";
+            document.getElementById("state-ai").className = `system-state ${isConnected ? 'online' : 'offline'}`;
          }
       }
    } catch (e) {
-      console.log("STATUS ERROR: Backend Offline", e);
-      document.getElementById("server-status").innerText = "OFFLINE";
-      document.getElementById("server-status").parentElement.className = "system-state offline";
-      document.getElementById("ai-status").innerText = "DISCONNECTED";
-      document.getElementById("ai-status").parentElement.className = "system-state offline";
+      console.log("DASHBOARD ERROR: Backend Connection Lost");
+      const ids = ["server-status", "payment-status", "network-status", "ai-status"];
+      const states = ["state-server", "state-payment", "state-network", "state-ai"];
+      
+      ids.forEach(id => document.getElementById(id).innerText = "OFFLINE");
+      states.forEach(id => document.getElementById(id).className = "system-state offline");
    }
 }
 
-// ตรวจสอบสถานะทุก 5 วินาที เพื่อความ Realtime
+// อัปเดตทุก 5 วินาที เพื่อความ Realtime
 setInterval(updateStatus, 5000);
 updateStatus();
 </script>
