@@ -1,140 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Official Website — SN DESIGN STUDIO</title>
-<link rel="stylesheet" href="assets/css/master.css">
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Website — SN DESIGN STUDIO</title>
+    <link rel="stylesheet" href="assets/css/master.css">
 </head>
-
 <body class="index-page">
-
-<div id="nav"></div>
-
-<section class="marquee-wrap">
-    <div class="marquee-text">
-    แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • CapCut Template • SEO Marketing • Creator Growth System
-    </div>
-</section>
-
-<section class="hero-master">
-    <img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
-    <div class="hero-content-bottom fade-up">
-        <h1>Build Viral AI Content Faster</h1>
-        <p>Dark Creator Ecosystem for AI Video.</p>
-    </div>
-</section>
-
-<section class="ultra-gui-preview ultra-dashboard">
-    <div class="gui-container">
-        <div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
-        <div class="gui-screen">
-            <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
-            <div class="scan-line"></div>
+    <div id="nav"></div>
+    <section class="hero-master">
+        <img src="assets/images/hero.png" alt="SN Design Studio" loading="eager">
+        <div class="hero-content-bottom fade-up">
+            <h1>Build Viral AI Content Faster</h1>
+            <p>Dark Creator Ecosystem for AI Video.</p>
         </div>
+    </section>
 
-        <div class="ultra-system-panel ultra-enterprise">
-            <div class="system-title">ULTRA ENTERPRISE STATUS</div>
-
-            <div class="system-row">
-                <div class="system-label">Server</div>
-                <div class="system-state online" id="state-server">
-                    <span class="dot"></span>
-                    <span id="server-status">WAITING</span>
-                </div>
+    <section class="ultra-gui-preview ultra-dashboard">
+        <div class="gui-container">
+            <div class="gui-mode">AI PREVIEW MODE — SN DESIGN STUDIO</div>
+            <div class="gui-screen">
+                <img src="assets/images/sn-design-studio-ultra-ai-preview-dashboard.png">
+                <div class="scan-line"></div>
             </div>
-
-            <div class="system-row">
-                <div class="system-label">Payment</div>
-                <div class="system-state online" id="state-payment">
-                    <span class="dot"></span>
-                    <span id="payment-status">WAITING</span>
-                </div>
-            </div>
-
-            <div class="system-row">
-                <div class="system-label">Network</div>
-                <div class="system-state online" id="state-network">
-                    <span class="dot"></span>
-                    <span id="network-status">WAITING</span>
-                </div>
-            </div>
-
-            <div class="system-row">
-                <div class="system-label">AI Engine</div>
-                <div class="system-state online" id="state-ai">
-                    <span class="dot"></span>
-                    <span id="ai-status">WAITING</span>
-                </div>
+            <div class="ultra-system-panel ultra-enterprise">
+                <div class="system-title">ULTRA ENTERPRISE STATUS</div>
+                <div class="system-row"><div class="system-label">Server</div><div class="system-state online" id="state-server"><span class="dot"></span><span id="server-status">WAITING</span></div></div>
+                <div class="system-row"><div class="system-label">Payment</div><div class="system-state online" id="state-payment"><span class="dot"></span><span id="payment-status">WAITING</span></div></div>
+                <div class="system-row"><div class="system-label">Network</div><div class="system-state online" id="state-network"><span class="dot"></span><span id="network-status">WAITING</span></div></div>
+                <div class="system-row"><div class="system-label">AI Engine</div><div class="system-state online" id="state-ai"><span class="dot"></span><span id="ai-status">WAITING</span></div></div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<section class="ultra-intro-zone">
-    <div class="container">
-        <div class="intro-cinematic">
-            <h2 class="intro-title">SN Design Studio — AI Creator Power System</h2>
-            <p class="intro-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น</p>
-        </div>
-        <div class="intro-video">
-            <iframe src="https://www.youtube.com/embed/NI7WALIXStU" frameborder="0" allowfullscreen></iframe>
-        </div>
-    </div>
-</section>
-
-<footer>© SN Design Studio, 2026 · All rights reserved.</footer>
-
-<script src="assets/js/nav.js"></script>
-
-<script>
-const API_BASE = "https://api.sn-designstudio.dev";
-
-async function updateStatus() {
-   try {
-      const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
-      const data = await response.json();
-
-      if (data.success && data.services) {
-         // 1. Server & Payment (ดึงจาก sn-api)
-         const snApi = data.services.find(s => s.name === 'sn-api');
-         if (snApi) {
-            const up = snApi.status === 'online';
-            document.getElementById("server-status").innerText = up ? "ONLINE" : "OFFLINE";
-            document.getElementById("state-server").className = `system-state ${up ? 'online' : 'offline'}`;
-            document.getElementById("payment-status").innerText = up ? "ONLINE" : "OFFLINE";
-            document.getElementById("state-payment").className = `system-state ${up ? 'online' : 'offline'}`;
-         }
-
-         // 2. Network (ดึงจาก sn-deployer)
-         const snNet = data.services.find(s => s.name === 'sn-deployer');
-         if (snNet) {
-            const active = snNet.status === 'online';
-            document.getElementById("network-status").innerText = active ? "ACTIVE" : "INACTIVE";
-            document.getElementById("state-network").className = `system-state ${active ? 'online' : 'offline'}`;
-         }
-
-         // 3. AI Engine (ดึงจาก sn-ai-render)
-         const snAi = data.services.find(s => s.name === 'sn-ai-render');
-         if (snAi) {
-            const con = snAi.status === 'online';
-            document.getElementById("ai-status").innerText = con ? "CONNECTED" : "DISCONNECTED";
-            document.getElementById("state-ai").className = `system-state ${con ? 'online' : 'offline'}`;
-         }
-      }
-   } catch (e) {
-      // ถ้า API ไม่ตอบสนอง (จุดแดงจะขึ้นที่นี่)
-      const ids = ["server-status", "payment-status", "network-status", "ai-status"];
-      const states = ["state-server", "state-payment", "state-network", "state-ai"];
-      ids.forEach(id => document.getElementById(id).innerText = "OFFLINE");
-      states.forEach(id => document.getElementById(id).className = "system-state offline");
-   }
-}
-
-setInterval(updateStatus, 5000);
-updateStatus();
-</script>
-
+    <footer>© SN Design Studio, 2026</footer>
+    <script src="assets/js/nav.js"></script>
+    <script>
+        const API_BASE = "https://api.sn-designstudio.dev";
+        async function updateStatus() {
+            try {
+                const response = await fetch(`${API_BASE}/api/admin/realtime-status`);
+                const data = await response.json();
+                if (data.success && data.services) {
+                    const snApi = data.services.find(s => s.name === 'sn-api');
+                    const snNet = data.services.find(s => s.name === 'sn-deployer');
+                    const snAi = data.services.find(s => s.name === 'sn-ai-render');
+                    
+                    if (snApi) {
+                        const up = snApi.status === 'online';
+                        document.getElementById("server-status").innerText = up ? "ONLINE" : "OFFLINE";
+                        document.getElementById("state-server").className = `system-state ${up ? 'online' : 'offline'}`;
+                        document.getElementById("payment-status").innerText = up ? "ONLINE" : "OFFLINE";
+                        document.getElementById("state-payment").className = `system-state ${up ? 'online' : 'offline'}`;
+                    }
+                    if (snNet) {
+                        const net = snNet.status === 'online';
+                        document.getElementById("network-status").innerText = net ? "ACTIVE" : "INACTIVE";
+                        document.getElementById("state-network").className = `system-state ${net ? 'online' : 'offline'}`;
+                    }
+                    if (snAi) {
+                        const ai = snAi.status === 'online';
+                        document.getElementById("ai-status").innerText = ai ? "CONNECTED" : "DISCONNECTED";
+                        document.getElementById("state-ai").className = `system-state ${ai ? 'online' : 'offline'}`;
+                    }
+                }
+            } catch (e) {
+                const ids = ["server-status", "payment-status", "network-status", "ai-status"];
+                ids.forEach(id => document.getElementById(id).innerText = "OFFLINE");
+            }
+        }
+        setInterval(updateStatus, 5000); updateStatus();
+    </script>
 </body>
 </html>
 
