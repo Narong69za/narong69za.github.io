@@ -1,10 +1,3 @@
-<!-- ===================================================== -->
-<!-- SN DESIGN STUDIO -->
-<!-- FILE: login.html -->
-<!-- VERSION: V4.0 OAUTH COOKIE FLOW -->
-<!-- STATUS: PRODUCTION STABLE -->
-<!-- ===================================================== -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -17,81 +10,126 @@ body{
   margin:0;
   background:#000;
   color:#fff;
-  font-family:Arial,Helvetica,sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   display:flex;
   justify-content:center;
   align-items:center;
   height:100vh;
   flex-direction:column;
 }
+.login-box {
+  background: #111;
+  padding: 40px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 h1{
-  letter-spacing:2px;
+  letter-spacing:4px;
   margin-bottom:30px;
+  background: linear-gradient(to right, #fff, #00ffd5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 button{
-  padding:14px 28px;
+  padding:16px 32px;
   font-size:16px;
   border:none;
   cursor:pointer;
   background:#fff;
   color:#000;
-  border-radius:4px;
+  border-radius:8px;
   font-weight:bold;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
 }
 button:hover{
-  opacity:.8;
+  background: #00ffd5;
+  transform: translateY(-2px);
 }
 .status{
-  margin-top:20px;
-  font-size:14px;
-  opacity:.7;
+  margin-top:25px;
+  font-size:13px;
+  color: #00ffd5;
+  font-weight: bold;
+  min-height: 20px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>SN DESIGN LOGIN</h1>
-
-<button onclick="loginWithGoogle()">
-  LOGIN WITH GOOGLE
-</button>
-
-<div class="status" id="status"></div>
+<div class="login-box">
+  <h1>SN DESIGN LOGIN</h1>
+  <button id="login-btn" onclick="loginWithGoogle()">
+    LOGIN WITH GOOGLE
+  </button>
+  <div class="status" id="status">กำลังตรวจสอบสถานะ...</div>
+</div>
 
 <script>
+const API_BASE = "https://api.sn-designstudio.dev";
 
-// =====================================================
-// AUTO CHECK IF ALREADY LOGGED IN
-// =====================================================
+// ================= [1] ระบบล้างอาถรรพ์ (Cookie Cleaner) =================
+// ฟังก์ชันนี้จะล้าง Cookie ขยะ (เช่น connect.sid) ที่ทำให้ระบบหลอน
+function clearOldCookies() {
+    const cookies = document.cookie.split(";");
+    for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i];
+        const eqPos = cookie.indexOf("=");
+        const name = eqPos > -1 ? cookie.substring(0, eqPos).trim() : cookie.trim();
+        // ล้างทุก Domain ที่เป็นไปได้
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.sn-designstudio.dev";
+        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+    }
+}
+
+// ================= [2] AUTO CHECK (หยุดลูปนรก) =================
 async function checkAuth(){
+  const statusElem = document.getElementById("status");
   try{
-    const res = await fetch("https://sn-designstudio.dev/auth/me",{
+    // *** จุดตายที่แก้: ต้องยิงไปที่ API_BASE (api.) เท่านั้น ***
+    const res = await fetch(`${API_BASE}/auth/me`,{
       credentials:"include",
       cache:"no-store"
     });
 
-    if(res.status === 200){
-      window.location.replace("/create.html");
+    if(res.ok){
+      const data = await res.json();
+      // เช็คโครงสร้างข้อมูลใหม่ { ok: true, user: { ... } }
+      if(data.ok && data.user){
+        statusElem.innerText = "เข้าสู่ระบบสำเร็จ กำลังพาไปหน้าจัดการ...";
+        window.location.replace("/create.html");
+      } else {
+        statusElem.innerText = "กรุณาเข้าสู่ระบบ";
+      }
+    } else {
+      statusElem.innerText = "กรุณาเข้าสู่ระบบ";
+      // ถ้าเจอ 401 หรือ NO_TOKEN ไม่ต้องทำอะไร ปล่อยให้อยู่หน้า Login ต่อไป
     }
   }catch(e){
-    console.log("not logged in");
+    console.log("Guest Mode Active");
+    statusElem.innerText = "พร้อมเข้าสู่ระบบ";
   }
 }
 
-checkAuth();
-
-// =====================================================
-// REDIRECT TO BACKEND OAUTH
-// =====================================================
+// ================= [3] LOGIN REDIRECT =================
 function loginWithGoogle(){
-  window.location.href = "https://api.sn-designstudio.dev/auth/google";
+  const statusElem = document.getElementById("status");
+  statusElem.innerText = "กำลังพาคุณไปยัง Google...";
+  
+  // ล้างขยะก่อนไป เพื่อให้ได้บัตรใบใหม่ที่สะอาดที่สุด
+  // clearOldCookies(); 
+
+  window.location.href = `${API_BASE}/auth/google`;
 }
 
-
-
+// เริ่มการตรวจสอบเมื่อโหลดหน้าจอ
+window.onload = checkAuth;
 
 </script>
 
 </body>
 </html>
+
