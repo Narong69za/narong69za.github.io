@@ -1,7 +1,8 @@
 /* =====================================================
 PROJECT: SN DESIGN STUDIO
 MODULE: payment.js
-VERSION: v12.2.0 (Cookie Auth Fix - No localStorage)
+VERSION: v12.1.2 (STABLE COOKIE AUTH)
+STATUS: production-enterprise
 ===================================================== */
 
 const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
@@ -27,26 +28,21 @@ function resetUI() {
     TX_LOCK = false;
 }
 
-/* --- 2. AUTH GUARD (แก้ไข: ใช้ Cookie แทน LocalStorage) --- */
+/* --- 2. AUTH GUARD (แก้ไขเฉพาะจุด) --- */
 async function checkAuth() {
     try {
         const res = await fetch(`${API_BASE}/auth/me`, {
             method: "GET",
-            credentials: "include", // อ่านบัตรจาก Cookie
+            credentials: "include", // ใช้ Cookie แทน localStorage
             headers: { "Content-Type": "application/json" }
         });
-        
-        if (res.status === 401) {
-            window.location.replace(`${FRONTEND_BASE}/login.html`);
-            return false;
-        }
         return res.status === 200;
     } catch (err) {
         return false;
     }
 }
 
-/* --- 3. RENDER UI --- */
+/* --- 3. RENDER UI (โครงสร้างเดิมมึงทั้งหมด) --- */
 function renderMethodUI(method) {
     if (method === "truemoney") {
         paymentBox.innerHTML = `
@@ -105,7 +101,7 @@ async function handleConfirm() {
     if (CURRENT_METHOD === "stripe") return payStripe();
 }
 
-/* --- 5. PAYMENT LOGIC (แก้ไข: ใช้ credentials: "include" ทุกตัว) --- */
+/* --- 5. PAYMENT LOGIC (แก้ไขเฉพาะจุดส่ง Token) --- */
 
 async function payTrueMoney() {
     const res = await fetch(`${API_BASE}/api/omise/create-truewallet`, {
@@ -145,12 +141,12 @@ async function payPromptPay() {
         
         const downloadContainer = document.getElementById("downloadContainer");
         if (downloadContainer) {
-            downloadContainer.innerHTML = '';
+            downloadContainer.innerHTML = ''; 
             const downloadBtn = document.createElement("a");
             downloadBtn.innerText = " ดาวน์โหลด QR Code";
             downloadBtn.classList.add("download-qr-btn");
-            downloadBtn.href = data.qrImage;
-            downloadBtn.download = `SN-PromptPay-${amount.toFixed(2)}THB-${Date.now()}.png`;
+            downloadBtn.href = data.qrImage; 
+            downloadBtn.download = `SN-PromptPay-${amount.toFixed(2)}THB-${Date.now()}.png`; 
             downloadContainer.appendChild(downloadBtn);
         }
 
@@ -191,7 +187,7 @@ async function payStripe() {
     }
 }
 
-/* --- 6. UTILS --- */
+/* --- 6. UTILS (TIMER & POLLING) --- */
 function startTimer(duration) {
     let timer = duration;
     const display = document.getElementById("qrTimer");
@@ -231,7 +227,10 @@ function startPolling(txId) {
 /* --- 7. INITIALIZE --- */
 document.addEventListener("DOMContentLoaded", async () => {
     const ok = await checkAuth();
-    if (!ok) return;
+    if (!ok) {
+        window.location.replace(`${FRONTEND_BASE}/login.html`);
+        return;
+    }
 
     document.querySelectorAll("[data-method]").forEach(el => {
         el.addEventListener("click", () => {
