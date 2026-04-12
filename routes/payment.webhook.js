@@ -1,6 +1,9 @@
 router.post("/stripe", async (req, res) => {
     // 1. รับข้อมูล (Universal Fix)
     const event = (typeof req.body === 'object') ? req.body : JSON.parse(req.body.toString());
+} catch (err) {
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+}
 
     // 2. เช็คเงื่อนไขเฉพาะของ Stripe
     if (event.type === 'checkout.session.completed') {
