@@ -19,9 +19,9 @@ async function checkAuth(){
       credentials: "include",
       headers: { "Content-Type": "application/json" }
     });
-    if(res.status!==200){ window.location.replace(`${FRONTEND_BASE}/login.html`); return false; }
+    if(res.status!==200){ console.log(`${FRONTEND_BASE}/login.html`); return false; }
     return true;
-  }catch(err){ window.location.replace(`${FRONTEND_BASE}/login.html`); return false; }
+  }catch(err){ console.log(`${FRONTEND_BASE}/login.html`); return false; }
 }
 
 function setMethod(method){ CURRENT_METHOD=method; resetUI(); renderMethodUI(method); }
