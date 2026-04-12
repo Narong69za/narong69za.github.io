@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - MULTI BOARD v2.2</title>
+    <title>SN ULTRA COMMAND CENTER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -23,7 +23,6 @@
         }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Premium Card Style */
         .session-box {
             background: var(--card);
             border: 1px solid var(--border);
@@ -31,177 +30,150 @@
             transition: all 0.3s ease;
             position: relative;
         }
-        .session-box:hover {
-            border-color: var(--blue);
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
-        }
         .session-header {
             padding: 12px 16px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255, 255, 255, 0.01);
         }
 
-        /* Responsive Grid */
         .dashboard-container {
             display: grid;
             gap: 16px;
             padding: 16px;
         }
         @media (min-width: 1024px) { .dashboard-container { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 1023px) { .dashboard-container { grid-template-columns: 1fr; } }
         .layout-pair { grid-template-columns: repeat(2, 1fr) !important; }
 
-        /* Game Session Style */
+        /* Clean Marquee */
+        .marquee-wrapper {
+            width: 100%;
+            overflow: hidden;
+            padding: 10px 0;
+            background: rgba(255,255,255,0.02);
+            border-bottom: 1px solid var(--border);
+        }
+        .marquee-text {
+            display: inline-block;
+            white-space: nowrap;
+            padding-left: 100%;
+            animation: marquee 25s linear infinite;
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--red);
+        }
+        @keyframes marquee {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(-100%, 0); }
+        }
+
+        .lang-btn { font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); }
+        .lang-active { background: var(--blue); border-color: var(--blue); color: #000; }
+        
         .game-viewport {
             background: #000;
             border-radius: 12px;
-            height: 180px;
+            height: 160px;
             display: flex;
             align-items: center;
             justify-content: center;
             border: 1px solid rgba(255,255,255,0.05);
-            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-        }
-
-        /* Lang Toggle */
-        .lang-btn { font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); }
-        .lang-active { background: var(--blue); border-color: var(--blue); color: #000; }
-
-        /* Red Marquee Box */
-        .marquee-box {
-            background-color: var(--red);
-            border: 2px solid var(--red);
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            padding: 10px;
-            margin-bottom: 20px;
-            overflow: hidden;
-            white-space: nowrap;
-        }
-        .marquee-content {
-            display: inline-block;
-            padding-left: 100%;
-            animation: marquee 20s linear infinite;
-        }
-        @keyframes marquee {
-            0%   { transform: translate(0, 0); }
-            100% { transform: translate(-100%, 0); }
         }
     </style>
 </head>
-<body class="p-2 md:p-6">
+<body class="pb-20">
 
-    <div class="marquee-box">
-        <span class="marquee-content" data-key="marquee_text">ศูนย์รวม โปรแกรม ช่วยเล่น ออโต้ บอท แหล่งรวม การสร้าง รูปภาพ และ วีดีโอ ครบวงจร เกมส์ออนไลน์ 2ระบบ พีซี และ มือถือ</span>
+    <div class="marquee-wrapper">
+        <span class="marquee-text" data-key="marquee">ศูนย์รวม โปรแกรม ช่วยเล่น ออโต้ บอท แหล่งรวม การสร้าง รูปภาพ และ วีดีโอ ครบวงจร เกมส์ออนไลน์ 2ระบบ พีซี และ มือถือ</span>
     </div>
 
-    <header class="flex justify-between items-center mb-8 px-4">
+    <header class="flex justify-between items-center p-6">
         <div>
-            <h1 class="text-2xl md:text-4xl font-black italic tracking-tighter text-white">SN ULTRA</h1>
-            <div class="flex gap-2 mt-1">
+            <h1 class="text-3xl font-black italic tracking-tighter">SN ULTRA</h1>
+            <div class="flex gap-2 mt-2">
                 <button onclick="changeLang('th')" id="btn-th" class="lang-btn lang-active">TH</button>
                 <button onclick="changeLang('en')" id="btn-en" class="lang-btn">EN</button>
             </div>
         </div>
-        <button onclick="toggleLayout()" class="session-box px-6 py-3 text-[10px] font-black uppercase tracking-widest border-blue-500/30 hover:bg-blue-500/10">
-            Grid Layout
-        </button>
+        <button onclick="toggleLayout()" class="session-box px-6 py-3 text-[10px] font-black uppercase tracking-widest border-blue-500/30">Grid Layout</button>
     </header>
 
     <div id="mainGrid" class="dashboard-container">
         
-        <div class="session-box flex flex-col h-[420px]">
+        <div class="session-box h-[420px] flex flex-col">
             <div class="session-header">
                 <span class="text-[10px] font-bold text-blue-500" data-key="s1_title">SESSION_01: LEGACY GAMING</span>
-                <span class="text-[9px] px-2 bg-blue-500/10 text-blue-500 rounded font-bold">LEGACY_OS</span>
-            </div>
-            <div class="p-4 flex-1 flex flex-col gap-4">
-                <div class="game-viewport flex-col gap-2">
-                    <span class="text-[10px] text-blue-400 opacity-50 font-bold uppercase tracking-[0.3em]">Ready to Launch</span>
-                    <button class="bg-blue-500 text-black px-6 py-2 rounded-full font-black text-[10px] uppercase">สตาร์ท ดาต้าเกมส์</button>
-                </div>
-                <div class="grid grid-cols-2 gap-2 text-[10px]">
-                    <div class="p-3 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-gray-500" data-key="game_status">Status</p>
-                        <p class="font-bold text-blue-400">READY</p>
-                    </div>
-                    <div class="p-3 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-gray-500" data-key="game_latency">Latency</p>
-                        <p class="font-bold text-blue-400">12ms</p>
-                    </div>
-                </div>
-                <p class="text-[9px] text-gray-600 italic" data-key="game_desc">* รองรับระบบสัมผัสและจอยสติ๊กผ่านมือถือสมบูรณ์แบบ</p>
-            </div>
-        </div>
-
-        <div class="session-box h-[420px]">
-            <div class="session-header">
-                <span class="text-[10px] font-bold text-red-500" data-key="s2_title">SESSION_02: FINANCE HUB</span>
-            </div>
-            <div class="p-6">
-                <div class="grid grid-cols-1 gap-6">
-                    <div class="border-l-4 border-blue-500 pl-4">
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest" data-key="sold">TOTAL SOLD</p>
-                        <p class="text-3xl font-black mono">฿148,500</p>
-                    </div>
-                    <div class="border-l-4 border-red-500 pl-4">
-                        <p class="text-[10px] text-gray-500 uppercase tracking-widest" data-key="balance">NET BALANCE</p>
-                        <p class="text-3xl font-black mono">฿42,190</p>
-                    </div>
-                </div>
-                <div class="mt-8 space-y-2">
-                    <div class="flex justify-between text-[10px] p-2 bg-white/5 rounded border border-white/5">
-                        <span class="text-blue-500">PAYMENT_RECEIVED</span>
-                        <span class="mono">฿99.00</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="session-box h-[420px]">
-            <div class="session-header">
-                <span class="text-[10px] font-bold text-blue-500" data-key="s3_title">SESSION_03: HAMSTER OPS</span>
+                <span class="text-[9px] px-2 bg-blue-500/10 text-blue-500 rounded font-bold">GAME_DATA</span>
             </div>
             <div class="p-4 space-y-4">
-                <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
-                    <div class="flex justify-between mb-3">
-                        <span class="text-[10px] font-black text-blue-500">INSTANCE_TERMUX_01</span>
-                        <span class="text-[10px] mono">ONLINE</span>
-                    </div>
-                    <div class="h-1.5 w-full bg-white/5 rounded-full">
-                        <div class="h-full bg-blue-500 w-[85%] rounded-full shadow-[0_0_10px_#007aff]"></div>
-                    </div>
+                <div class="game-viewport flex-col gap-3">
+                    <button class="bg-blue-500 text-black px-8 py-3 rounded-full font-black text-xs uppercase" data-key="btn_start_game">สตาร์ท ดาต้าเกมส์</button>
                 </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-4 session-box text-center">
-                        <p class="text-[8px] text-gray-500 uppercase" data-key="users">Active Users</p>
-                        <p class="text-xl font-black mono">1,402</p>
+                    <div class="p-3 bg-white/5 rounded-xl border border-white/5">
+                        <p class="text-[8px] text-gray-500" data-key="status">Status</p>
+                        <p class="text-xs font-bold text-blue-400">READY</p>
                     </div>
-                    <div class="p-4 session-box text-center">
-                        <p class="text-[8px] text-gray-500 uppercase" data-key="cards">Daily Combo</p>
-                        <p class="text-xl font-black text-blue-500">SYNC</p>
+                    <div class="p-3 bg-white/5 rounded-xl border border-white/5">
+                        <p class="text-[8px] text-gray-500" data-key="latency">Latency</p>
+                        <p class="text-xs font-bold text-blue-400">8ms</p>
                     </div>
                 </div>
-                <button class="w-full py-4 bg-white text-black text-[10px] font-black uppercase rounded-xl hover:bg-blue-500 transition-all" data-key="btn_restart">RESTART BOT</button>
             </div>
         </div>
 
         <div class="session-box h-[420px]">
-            <div class="session-header"><span class="text-[10px] font-bold text-red-500" data-key="s4_title">SESSION_04: CRYPTO FAUCET</span></div>
-            <div class="p-4 flex flex-col h-full">
-                <div class="flex-1 mono text-[9px] p-3 bg-black rounded-xl border border-white/5 text-red-400 space-y-1">
-                    <p class="text-white opacity-50" data-key="system_live_feed">// System Live Feed</p>
-                    <p>> Claim detected: 0x71...5a</p>
-                    <p>> Status: Verification Success</p>
-                    <p>> Sending 0.05 BTC-TEST...</p>
-                    <p class="text-gray-500">> Waiting for next block...</p>
+            <div class="session-header"><span class="text-[10px] font-bold text-red-500" data-key="s2_title">SESSION_02: FINANCE HUB</span></div>
+            <div class="p-5 space-y-4">
+                <div class="bg-blue-500/5 p-4 rounded-2xl border border-blue-500/20">
+                    <p class="text-[9px] text-blue-500 font-bold uppercase mb-1" data-key="master_credit">MASTER BALANCE (RUNWAYML)</p>
+                    <p class="text-3xl font-black mono text-white">฿148,500</p>
                 </div>
-                <div class="mt-4 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
-                    <p class="text-[10px] font-bold text-red-500 uppercase" data-key="faucet_status_text">สถานะการแจกจ่าย: สูง</p>
+                <div class="grid grid-cols-1 gap-2 text-[10px]">
+                    <div class="flex justify-between p-2 border-b border-white/5">
+                        <span class="text-gray-500">Gemini 2.5 Credits</span>
+                        <span class="mono text-blue-400">4,200 pts</span>
+                    </div>
+                    <div class="flex justify-between p-2 border-b border-white/5">
+                        <span class="text-gray-500">Replicate AI Sync</span>
+                        <span class="mono text-blue-400">1,150 pts</span>
+                    </div>
+                    <div class="flex justify-between p-2 border-b border-white/5">
+                        <span class="text-gray-500">ElevenLabs Voice</span>
+                        <span class="mono text-blue-400">85,000 char</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-[420px]">
+            <div class="session-header"><span class="text-[10px] font-bold text-blue-500" data-key="s3_title">SESSION_03: HAMSTER OPS</span></div>
+            <div class="p-4 space-y-4">
+                <div class="p-4 rounded-xl bg-white/5 border border-white/5">
+                    <p class="text-[9px] font-black text-blue-500 mb-2">TERMUX_NODE_STABLE</p>
+                    <div class="h-1 w-full bg-white/5 rounded-full"><div class="h-full bg-blue-500 w-[92%]"></div></div>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-center">
+                    <div class="p-3 bg-white/5 rounded-xl"><p class="text-[8px] text-gray-500 uppercase" data-key="users">Active</p><p class="text-lg font-black">1,402</p></div>
+                    <div class="p-3 bg-white/5 rounded-xl"><p class="text-[8px] text-gray-500 uppercase" data-key="cards">Combo</p><p class="text-lg font-black text-blue-500">SYNC</p></div>
+                </div>
+                <button class="w-full py-4 bg-white text-black font-black text-[10px] rounded-xl" data-key="btn_restart">RESTART BOT</button>
+            </div>
+        </div>
+
+        <div class="session-box h-[420px] flex flex-col">
+            <div class="session-header"><span class="text-[10px] font-bold text-red-500" data-key="s4_title">SESSION_04: CRYPTO FAUCET</span></div>
+            <div class="p-4 flex-1 flex flex-col gap-3">
+                <div class="flex-1 bg-black p-3 rounded-xl border border-white/5 mono text-[9px] text-red-400 overflow-y-auto">
+                    <p class="opacity-40">// Live Blockchain Feed</p>
+                    <p>> Claim Request: 0x71...5a</p>
+                    <p>> Auth Level: PREMIUM</p>
+                    <p>> Dispatching 0.05 BTC-T...</p>
+                    <p class="text-gray-500">> TXID: SN-8829-QX</p>
+                </div>
+                <div class="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+                    <p class="text-[10px] font-bold text-red-500 text-center uppercase" data-key="faucet_high">สถานะการแจกจ่าย: สูง (MAX_YIELD)</p>
                 </div>
             </div>
         </div>
@@ -210,20 +182,19 @@
             <div class="session-header"><span class="text-[10px] font-bold text-blue-500" data-key="s5_title">SESSION_05: ACCESS MASTER</span></div>
             <div class="p-6 space-y-6">
                 <div>
-                    <p class="text-[9px] text-gray-500 mb-4 uppercase font-bold" data-key="license_plan_full">License Plan</p>
+                    <p class="text-[9px] text-gray-500 mb-3 uppercase font-bold" data-key="plan">License Plan</p>
                     <div class="grid grid-cols-3 gap-2">
-                        <button class="p-2 border border-white/10 rounded-lg text-[9px] opacity-40" data-key="free">FREE</button>
-                        <button class="p-2 border border-blue-500 bg-blue-500/10 text-blue-500 rounded-lg text-[9px] font-bold" data-key="premium">PREMIUM</button>
-                        <button class="p-2 border border-white/10 rounded-lg text-[9px] opacity-40" data-key="elite">ELITE</button>
+                        <button class="p-2 border border-white/10 rounded-lg text-[8px] opacity-40">FREE</button>
+                        <button class="p-2 border border-blue-500 bg-blue-500/10 text-blue-500 rounded-lg text-[8px] font-bold">99.-</button>
+                        <button class="p-2 border border-white/10 rounded-lg text-[8px] opacity-40">299.-</button>
                     </div>
                 </div>
-                <div>
-                    <p class="text-[9px] text-gray-500 mb-2 uppercase font-bold" data-key="api_key_full">Master API Key (Proxy Protected)</p>
+                <div class="space-y-2">
+                    <p class="text-[9px] text-gray-500 uppercase font-bold" data-key="api_key">API KEY (PROXY_AUTH)</p>
                     <div class="flex gap-2">
-                        <input type="text" readonly value="SN-ULTRA-559X-2026" class="flex-1 bg-white/5 p-4 rounded-xl text-[10px] mono">
-                        <button class="bg-blue-500 text-black px-4 rounded-xl font-bold text-[10px]" data-key="copy">COPY</button>
+                        <input type="text" readonly value="SN-ULTRA-2026-X8" class="flex-1 bg-white/5 p-3 rounded-xl text-xs mono">
+                        <button class="bg-blue-500 text-black px-4 rounded-xl font-bold text-[9px]">COPY</button>
                     </div>
-                    <p class="text-[8px] mt-2 text-blue-900 font-black italic" data-key="bypassing">การหลบหลีก: ตัวตรวจจับทำงาน</p>
                 </div>
             </div>
         </div>
@@ -231,111 +202,58 @@
         <div class="session-box h-[420px] flex flex-col">
             <div class="session-header">
                 <span class="text-[10px] font-bold text-blue-500" data-key="s6_title">SESSION_06: SYSTEM INTEL</span>
-                <span class="text-[9px] mono opacity-50"><span data-key="uptime_label">Uptime</span>: <span id="uptime">24:00:15</span></span>
             </div>
-            <div class="p-6 flex-1 flex flex-col">
-                <div class="grid grid-cols-2 gap-8 mb-8">
-                    <div>
-                        <p class="text-[9px] text-gray-500 uppercase mb-2" data-key="cpu_load">CPU LOAD</p>
-                        <p class="text-4xl font-black mono text-blue-500" id="cpu-val">12%</p>
-                    </div>
-                    <div>
-                        <p class="text-[9px] text-gray-500 uppercase mb-2" data-key="memory_usage">MEMORY</p>
-                        <p class="text-4xl font-black mono text-red-500" id="mem-val">7.4%</p>
-                    </div>
+            <div class="p-6 flex-1 flex flex-col gap-6">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><p class="text-[8px] text-gray-500 uppercase mb-1" data-key="cpu">CPU LOAD</p><p class="text-3xl font-black mono text-blue-500" id="cpu">12%</p></div>
+                    <div><p class="text-[8px] text-gray-500 uppercase mb-1" data-key="mem">MEMORY</p><p class="text-3xl font-black mono text-red-500" id="mem">7.4%</p></div>
                 </div>
-                <div class="flex-1 border-t border-white/5 pt-4">
-                    <p class="text-[9px] font-bold text-blue-900 uppercase mb-2" data-key="process_stack">Process Stack</p>
-                    <div class="space-y-1 text-[9px] mono text-gray-500">
-                        <div class="flex justify-between"><span class="text-white">sn-api</span><span>online</span></div>
-                        <div class="flex justify-between"><span class="text-white">sn-render</span><span>online</span></div>
-                        <div class="flex justify-between"><span class="text-white">sn-monitor</span><span>online</span></div>
-                    </div>
+                <div class="flex-1 border-t border-white/5 pt-4 text-[9px] mono text-gray-500 space-y-1">
+                    <p class="text-blue-900 font-bold mb-2" data-key="logs">GATEWAY_V9.7_STACK:</p>
+                    <div class="flex justify-between"><span class="text-white">sn-api-proxy</span><span>200 OK</span></div>
+                    <div class="flex justify-between"><span class="text-white">sn-ai-render</span><span>ACTIVE</span></div>
+                    <div class="flex justify-between"><span class="text-white">sn-webhook</span><span>LISTENING</span></div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <footer class="mt-12 mb-20 text-center opacity-30">
-        <p class="text-[9px] tracking-[1em] uppercase font-black italic">SN DESIGN STUDIO © 2026</p>
-    </footer>
+    <footer class="mt-8 text-center opacity-20"><p class="text-[8px] font-black italic">SN DESIGN STUDIO © 2026</p></footer>
 
     <script>
         const translations = {
             th: {
-                // Marquee
-                marquee_text: "ศูนย์รวม โปรแกรม ช่วยเล่น ออโต้ บอท แหล่งรวม การสร้าง รูปภาพ และ วีดีโอ ครบวงจร เกมส์ออนไลน์ 2ระบบ พีซี และ มือถือ",
-                // Session 1
+                marquee: "ศูนย์รวม โปรแกรม ช่วยเล่น ออโต้ บอท แหล่งรวม การสร้าง รูปภาพ และ วีดีโอ ครบวงจร เกมส์ออนไลน์ 2ระบบ พีซี และ มือถือ",
                 s1_title: "SESSION_01: เกมออนไลน์ระดับตำนาน",
-                game_status: "สถานะระบบ",
-                game_latency: "ความหน่วง",
-                game_desc: "* รองรับระบบสัมผัสและจอยสติ๊กผ่านมือถือสมบูรณ์แบบ",
-                // Session 2
+                btn_start_game: "สตาร์ท ดาต้าเกมส์",
+                status: "สถานะ", latency: "ความหน่วง",
                 s2_title: "SESSION_02: ศูนย์รวมการเงิน",
-                sold: "ยอดขายรวม",
-                balance: "กำไรสุทธิ",
-                // Session 3
+                master_credit: "เครดิตส่วนกลาง (RUNWAYML)",
                 s3_title: "SESSION_03: จัดการบอทแฮมสเตอร์",
-                users: "ผู้ใช้ที่ออนไลน์",
-                cards: "คอมโบประจำวัน",
-                btn_restart: "เริ่มการทำงานบอทใหม่",
-                // Session 4
-                s4_title: "SESSION_04: CRYPTO FAUCET", 
-                system_live_feed: "// ข้อมูลระบบเรียลไทม์",
-                faucet_status_text: "สถานะการแจกจ่าย: สูง",
-                // Session 5
+                users: "ผู้ใช้", cards: "คอมโบ", btn_restart: "เริ่มบอทใหม่",
+                s4_title: "SESSION_04: CRYPTO FAUCET",
+                faucet_high: "สถานะการแจกจ่าย: สูง (MAX_YIELD)",
                 s5_title: "SESSION_05: จัดการสิทธิ์เข้าถึง",
-                license_plan_full: "แผนใบอนุญาต",
-                free: "ฟรี",
-                premium: "พรีเมียม",
-                elite: "อีลิท",
-                api_key_full: "รหัส API หลัก (ป้องกันด้วย Proxy)",
-                copy: "คัดลอก",
-                bypassing: "การหลบหลีก: ตัวตรวจจับทำงาน",
-                // Session 6
+                plan: "แผนการใช้งาน", api_key: "รหัส API (PROXY_AUTH)",
                 s6_title: "SESSION_06: ข้อมูลระบบ",
-                uptime_label: "ออนไลน์นาน",
-                cpu_load: "โหลด CPU",
-                memory_usage: "การใช้หน่วยความจำ",
-                process_stack: "สแต็กกระบวนการ"
+                cpu: "โหลด CPU", mem: "หน่วยความจำ", logs: "ล็อกสถานะเกตเวย์:"
             },
             en: {
-                // Marquee
-                marquee_text: "Hub of program helper, auto bot, hub of image and video creation comprehensive, online games 2 systems PC and mobile",
-                // Session 1
+                marquee: "Program helpers, Auto bots, AI Image/Video, Comprehensive online games for PC and Mobile",
                 s1_title: "SESSION_01: LEGACY GAMING",
-                game_status: "Engine Status",
-                game_latency: "Network Latency",
-                game_desc: "* Full touch and joystick support for mobile devices",
-                // Session 2
+                btn_start_game: "START GAME DATA",
+                status: "Status", latency: "Latency",
                 s2_title: "SESSION_02: FINANCE HUB",
-                sold: "TOTAL SOLD",
-                balance: "NET BALANCE",
-                // Session 3
+                master_credit: "MASTER BALANCE (RUNWAYML)",
                 s3_title: "SESSION_03: HAMSTER OPS",
-                users: "ACTIVE USERS",
-                cards: "DAILY COMBO",
-                btn_restart: "RESTART BOT ENGINE",
-                // Session 4
+                users: "Users", cards: "Combo", btn_restart: "RESTART BOT",
                 s4_title: "SESSION_04: CRYPTO FAUCET",
-                system_live_feed: "// System Live Feed",
-                faucet_status_text: "Faucet Status: High",
-                // Session 5
+                faucet_high: "Faucet Status: HIGH (MAX_YIELD)",
                 s5_title: "SESSION_05: ACCESS MASTER",
-                license_plan_full: "LICENSE PLAN",
-                free: "FREE",
-                premium: "PREMIUM",
-                elite: "ELITE",
-                api_key_full: "MASTER API KEY (PROXY PROTECTED)",
-                copy: "COPY",
-                bypassing: "Bypassing: Anti-Detect Logic Active",
-                // Session 6
+                plan: "License Plan", api_key: "API KEY (PROXY_AUTH)",
                 s6_title: "SESSION_06: SYSTEM INTEL",
-                uptime_label: "Uptime",
-                cpu_load: "CPU LOAD",
-                memory_usage: "MEM USAGE",
-                process_stack: "Process Stack"
+                cpu: "CPU LOAD", mem: "MEM USAGE", logs: "GATEWAY_V9.7_STACK:"
             }
         };
 
@@ -348,14 +266,11 @@
             document.getElementById('btn-en').classList.toggle('lang-active', lang === 'en');
         }
 
-        function toggleLayout() {
-            document.getElementById('mainGrid').classList.toggle('layout-pair');
-        }
+        function toggleLayout() { document.getElementById('mainGrid').classList.toggle('layout-pair'); }
 
-        // System Monitor Simulator
         setInterval(() => {
-            document.getElementById('cpu-val').innerText = (Math.random() * 5 + 10).toFixed(0) + '%';
-            document.getElementById('mem-val').innerText = (Math.random() * 0.5 + 7.2).toFixed(1) + '%';
+            document.getElementById('cpu').innerText = (Math.random() * 5 + 10).toFixed(0) + '%';
+            document.getElementById('mem').innerText = (Math.random() * 0.5 + 7.2).toFixed(1) + '%';
         }, 2000);
     </script>
 </body>
