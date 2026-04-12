@@ -25,7 +25,9 @@ function setMethod(method) {
     resetUI();
     renderMethodUI(method);
     // เลื่อนหน้าจอมาที่จุดกรอกเงิน
-    paymentBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (paymentBox) {
+        paymentBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
 }
 
 /* 2. วาดช่องกรอกเงิน (Smart Input) */
@@ -54,7 +56,8 @@ function renderMethodUI(method) {
     `;
 
     // ผูก Event ให้ปุ่มยืนยัน
-    document.getElementById("confirmBtn").addEventListener("click", handleConfirm);
+    const btn = document.getElementById("confirmBtn");
+    if (btn) btn.addEventListener("click", handleConfirm);
 }
 
 /* 3. จัดการการส่งข้อมูล API */
@@ -76,6 +79,7 @@ async function handleConfirm() {
     if (CURRENT_METHOD === "promptpay") return payPromptPay(amount);
     if (CURRENT_METHOD === "truemoney") return payTrueMoney(amount);
     if (CURRENT_METHOD === "stripe") return payStripe(amount);
+    if (CURRENT_METHOD === "crypto") return payCrypto(amount);
 }
 
 /* 4. API: PROMPTPAY */
@@ -127,18 +131,38 @@ async function payStripe(amount) {
         });
         const data = await res.json();
         if (data.url) window.location.href = data.url;
+        else { setStatus("STRIPE FAILED"); TX_LOCK = false; }
     } catch (e) { setStatus("STRIPE ERROR"); TX_LOCK = false; }
 }
 
-/* 7. ระบบนับถอยหลัง & ตรวจสอบสถานะชำระเงิน */
+/* 7. API: CRYPTO */
+async function payCrypto(amount) {
+    try {
+        const res = await fetch(API_BASE + "/api/crypto/create-order", {
+            method: "POST",
+            credentials: "include",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount })
+        });
+        const data = await res.json();
+        if (data.paymentUrl) window.location.href = data.paymentUrl;
+        else { setStatus("CRYPTO FAILED"); TX_LOCK = false; }
+    } catch (e) { setStatus("CRYPTO ERROR"); TX_LOCK = false; }
+}
+
+/* 8. ระบบนับถอยหลัง & ตรวจสอบสถานะชำระเงิน */
 function startTimer(duration) {
     if (TIMER_INTERVAL) clearInterval(TIMER_INTERVAL);
     let timer = duration;
     TIMER_INTERVAL = setInterval(() => {
         let mins = parseInt(timer / 60, 10);
         let secs = parseInt(timer % 60, 10);
-        timeLeft.textContent = `Please pay within ${mins < 10 ? "0"+mins : mins}:${secs < 10 ? "0"+secs : secs} min`;
-        timerFill.style.width = (timer / duration * 100) + "%";
+        if (timeLeft) {
+            timeLeft.textContent = `Please pay within ${mins < 10 ? "0"+mins : mins}:${secs < 10 ? "0"+secs : secs} min`;
+        }
+        if (timerFill) {
+            timerFill.style.width = (timer / duration * 100) + "%";
+        }
         if (--timer < 0) {
             clearInterval(TIMER_INTERVAL);
             closeModal();
@@ -163,16 +187,15 @@ function startPolling(txId) {
 }
 
 function closeModal() {
-    qrModal.style.display = "none";
+    if (qrModal) qrModal.style.display = "none";
     TX_LOCK = false;
     setStatus("IDLE");
     if (POLL_INTERVAL) clearInterval(POLL_INTERVAL);
     if (TIMER_INTERVAL) clearInterval(TIMER_INTERVAL);
 }
 
-/* 8. เริ่มต้นระบบ */
+/* 9. เริ่มต้นระบบ */
 document.addEventListener("DOMContentLoaded", () => {
-    // ผูก Click Event ให้กับการ์ดเลือกช่องทาง
     document.querySelectorAll("[data-method]").forEach(el => {
         el.addEventListener("click", () => {
             setMethod(el.dataset.method);
@@ -182,4 +205,3 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeBtn = document.getElementById("closeQr");
     if (closeBtn) closeBtn.onclick = closeModal;
 });
-
