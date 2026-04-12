@@ -5,44 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>SN DESIGN STUDIO</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Kanit', sans-serif; background: #020406; color: white; overflow-x: hidden; }
-        .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.05); }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Kanit', sans-serif; background: #020406; color: white; }</style>
 </head>
-<body class="p-4 md:p-10">
-    <div class="max-w-7xl mx-auto">
-        <header class="flex justify-between items-center mb-10">
-            <h1 class="text-3xl font-black italic text-[#00d2ff] uppercase">SN DESIGN STUDIO</h1>
-            <div class="glass-card p-4 rounded-xl text-xl font-bold" id="userCredits">1,000,099.00</div>
-        </header>
-        <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-    </div>
+<body class="p-6">
+    <header class="flex justify-between items-center mb-10">
+        <h1 class="text-3xl font-black italic text-[#00d2ff] uppercase">SN DESIGN STUDIO</h1>
+        <div class="bg-slate-900 p-4 rounded-xl text-xl font-bold">1,000,099.00</div>
+    </header>
+    <div id="grid" class="grid grid-cols-1 md:grid-cols-4 gap-6"></div>
     <script>
         const engines = [
             { id: 1, name: "สร้างวิดีโอระดับสูง", cost: 50 }, { id: 2, name: "สร้างรูปภาพ Ultra HD", cost: 15 },
-            { id: 3, name: "อนิเมชั่นจากรูปภาพ", cost: 45 }, { id: 4, name: "โมเดลวีดีโอ Cinematic", cost: 40 },
-            { id: 5, name: "สร้างรูปภาพความเร็วสูง", cost: 10 }, { id: 6, name: "สตูดิโอเสียง AI", cost: 5 },
-            { id: 12, name: "แปลภาษาและพากย์เสียง", cost: 25 }, { id: 14, name: "วิเคราะห์และแต่งบท", cost: 0 }
+            { id: 3, name: "อนิเมชั่นจากรูปภาพ", cost: 45 }, { id: 4, name: "โมเดลวีดีโอ Cinematic", cost: 40 }
         ];
-        const grid = document.getElementById('engineGrid');
-        engines.forEach(eng => {
-            const div = document.createElement('div');
-            div.className = "glass-card p-6 rounded-[2rem] flex flex-col justify-between";
-            div.innerHTML = `
-                <h3 class="text-lg font-bold mb-4">${eng.name}</h3>
-                <textarea class="w-full bg-black/40 border border-white/5 rounded-xl p-3 text-xs h-24 mb-4 outline-none focus:border-[#00d2ff]" placeholder="ป้อนคำสั่ง..."></textarea>
-                <div class="flex items-center justify-between gap-4">
-                    <button onclick="generate(${eng.id})" class="flex-1 bg-white text-black py-3 rounded-xl font-bold text-[10px] uppercase">Generate</button>
-                    <p class="text-xs font-bold text-[#00d2ff]">-${eng.cost}</p>
+        const grid = document.getElementById('grid');
+        engines.forEach(e => {
+            grid.innerHTML += `
+                <div class="bg-slate-900 p-6 rounded-[2rem]">
+                    <h3 class="font-bold mb-4">${e.name}</h3>
+                    <textarea id="p-${e.id}" class="w-full bg-black rounded-xl p-3 text-xs h-20 mb-4 outline-none border border-white/5"></textarea>
+                    <button onclick="send(${e.id})" class="w-full bg-white text-black py-3 rounded-xl font-bold uppercase">Generate</button>
                 </div>`;
-            grid.appendChild(div);
         });
-
-        async function generate(id) {
-            alert("กำลังส่งคำสั่งไปที่ /api/render สำหรับ Engine: " + id);
-            // โค้ดส่ง fetch ไปที่ /api/render จะอยู่ใน assets/js/create.js
+        async function send(id) {
+            const prompt = document.getElementById('p-'+id).value;
+            alert("กำลังส่งคำสั่งไปที่ API Master (Render Engine: " + id + ")");
         }
     </script>
 </body>
