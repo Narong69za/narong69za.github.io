@@ -2,44 +2,40 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN DESIGN STUDIO - PAYMENT</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SN MASTER - PAYMENT GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: sans-serif; background: #020406; color: white; margin: 0; padding: 20px; }
-        .glass { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; }
-        .btn-pay { transition: all 0.2s; }
-        .btn-pay:active { transform: scale(0.95); }
-        #qrDisplay { display: none; margin-top: 20px; text-align: center; background: white; color: black; padding: 20px; border-radius: 20px; }
+        body { font-family: 'Kanit', sans-serif; background: #010204; color: white; overflow: hidden; }
+        .emerald-btn { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 1.5rem; transition: all 0.3s; }
+        .emerald-btn:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); transform: translateY(-2px); }
+        .status-glow { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
     </style>
 </head>
-<body>
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-3xl font-bold mb-8 text-center text-blue-400">SN DESIGN STUDIO</h1>
+<body class="p-6 flex flex-col items-center justify-center min-h-screen">
+    
+    <div class="w-full max-w-md text-center">
+        <h1 class="text-3xl font-black italic text-emerald-500 mb-10 uppercase tracking-tighter">SN DESIGN STUDIO</h1>
         
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            <button data-method="promptpay" class="glass p-4 text-xs font-bold btn-pay">PROMPTPAY</button>
-            <button data-method="truemoney" class="glass p-4 text-xs font-bold btn-pay">TRUE WALLET</button>
-            <button data-method="stripe" class="glass p-4 text-xs font-bold btn-pay">STRIPE</button>
-            <button data-method="crypto" class="glass p-4 text-xs font-bold btn-pay">CRYPTO</button>
+        <div class="mb-8">
+            <p class="text-[10px] text-emerald-900 font-bold uppercase mb-2">ระบุจำนวนเงิน (THB)</p>
+            <input type="number" id="payAmount" value="10" min="10" 
+                class="w-full bg-black border-b-2 border-emerald-500/20 py-4 text-4xl font-black text-center outline-none focus:border-emerald-500 transition-all text-emerald-100">
         </div>
 
-        <div id="paymentBox" class="glass p-6 min-h-[200px] flex flex-col items-center justify-center">
-            <p class="text-slate-500 text-sm">กรุณาเลือกช่องทางชำระเงินด้านบน</p>
+        <div class="grid grid-cols-2 gap-4 mb-10">
+            <button data-method="promptpay" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest">PromptPay</button>
+            <button data-method="truemoney" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest">True Wallet</button>
+            <button data-method="stripe" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest">Stripe</button>
+            <button data-method="crypto" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest text-emerald-900">Crypto</button>
         </div>
 
-        <div id="qrDisplay" class="max-w-xs mx-auto">
-            <h3 class="font-bold">สแกนจ่ายเงิน</h3>
-            <p id="amtText" class="text-purple-700 font-bold text-xl"></p>
-            <div id="qrFrame" class="my-4"></div>
-            <p id="timerText" class="text-xs text-slate-400 font-mono"></p>
-            <button onclick="location.reload()" class="mt-4 text-xs underline">ยกเลิกรายการ</button>
+        <div id="paymentBox" class="min-h-[100px] flex items-center justify-center">
+            <p id="paymentStatus" class="text-[10px] font-bold text-emerald-900 uppercase tracking-widest status-glow">STATUS: IDLE</p>
         </div>
-
-        <p id="paymentStatus" class="text-center mt-8 text-[10px] text-slate-600 tracking-widest uppercase">Status: Idle</p>
     </div>
 
-    <script src="assets/js/config.js"></script>
     <script src="assets/js/payment.js"></script>
 </body>
 </html>
