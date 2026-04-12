@@ -3,292 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN GATEWAY CENTER</title>
+    <title>SN ULTRA - MULTI BOARD</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Kanit:wght@300;400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg: #010101;
-            --blue: #00d4ff;
-            --red: #ff003c;
-            --border: rgba(255, 255, 255, 0.05);
-            --card-bg: rgba(5, 5, 5, 0.9);
+            --bg: #000000;
+            --card: #080808;
+            --blue: #007aff;
+            --red: #ff3b30;
+            --border: rgba(255, 255, 255, 0.08);
         }
         body {
-            font-family: 'JetBrains Mono', 'Kanit', sans-serif;
+            font-family: 'Inter', sans-serif;
             background-color: var(--bg);
-            color: #fff;
+            color: #ffffff;
             overflow-x: hidden;
-            background-image: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #010101 100%);
+            letter-spacing: -0.02em;
         }
-        .glow-blue { text-shadow: 0 0 10px rgba(0, 212, 255, 0.5); }
-        .glow-red { text-shadow: 0 0 10px rgba(255, 0, 60, 0.5); }
+        .mono { font-family: 'JetBrains Mono', monospace; }
         
+        /* Premium Card Style */
         .session-box {
-            background: var(--card-bg);
+            background: var(--card);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(20px);
         }
-        .session-box:hover { border-color: var(--blue); box-shadow: 0 0 30px rgba(0, 212, 255, 0.05); }
+        .session-box:hover {
+            border-color: var(--blue);
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.15);
+        }
         .session-header {
-            background: rgba(255, 255, 255, 0.02);
+            padding: 12px 16px;
             border-bottom: 1px solid var(--border);
-            padding: 8px 16px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: rgba(255, 255, 255, 0.01);
         }
 
-        /* Responsive Matrix */
+        /* Responsive Grid */
         .dashboard-container {
             display: grid;
             gap: 16px;
             padding: 16px;
-            transition: all 0.5s ease;
         }
         @media (min-width: 1024px) { .dashboard-container { grid-template-columns: repeat(3, 1fr); } }
         @media (max-width: 1023px) { .dashboard-container { grid-template-columns: 1fr; } }
-        .dashboard-container.layout-pair { grid-template-columns: repeat(2, 1fr) !important; }
+        .layout-pair { grid-template-columns: repeat(2, 1fr) !important; }
 
-        /* PM2 Metrics Style */
-        .metric-value { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
-        .metric-label { font-size: 0.65rem; text-transform: uppercase; color: #666; letter-spacing: 1px; }
-        
-        input, textarea, select {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
-            color: #fff;
-            outline: none;
-            transition: all 0.2s;
+        /* Game Session Style */
+        .game-viewport {
+            background: #000;
+            border-radius: 12px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255,255,255,0.05);
+            background-image: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
         }
-        input:focus { border-color: var(--blue); background: rgba(0, 212, 255, 0.05); }
 
-        .btn-blue { background: var(--blue); color: #000; font-weight: 900; }
-        .btn-red { background: var(--red); color: #fff; font-weight: 900; }
-        
-        /* Scanline Effect */
-        body::before {
-            content: " ";
-            position: fixed; top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 9999; pointer-events: none; background-size: 100% 2px, 3px 100%;
-        }
+        /* Lang Toggle */
+        .lang-btn { font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 6px; border: 1px solid var(--border); }
+        .lang-active { background: var(--blue); border-color: var(--blue); color: #000; }
     </style>
 </head>
 <body class="p-2 md:p-6">
 
-    <header class="flex justify-between items-center mb-6 px-4">
+    <header class="flex justify-between items-center mb-8 px-4">
         <div>
-            <h1 class="text-xl md:text-3xl font-black glow-blue italic uppercase tracking-tighter">SN ULTRA COMMAND</h1>
-            <p class="text-[10px] text-gray-500 tracking-[0.4em] uppercase">Multi-Session v2.0 Production</p>
-        </div>
-        <div class="flex gap-4">
-            <button onclick="toggleLayout()" class="session-box px-4 py-2 text-[10px] font-bold border-blue-500/20 hover:bg-blue-500/10 transition-all uppercase">
-                Toggle Grid View
-            </button>
-            <div class="hidden md:flex items-center gap-3">
-                <span id="statusPing" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                <span class="text-[10px] font-bold text-gray-400">SERVER: 147.93.159.30</span>
+            <h1 class="text-2xl md:text-4xl font-black italic tracking-tighter text-white">SN ULTRA <span class="text-blue-500">2.1</span></h1>
+            <div class="flex gap-2 mt-1">
+                <button onclick="changeLang('th')" id="btn-th" class="lang-btn lang-active">TH</button>
+                <button onclick="changeLang('en')" id="btn-en" class="lang-btn">EN</button>
             </div>
         </div>
+        <button onclick="toggleLayout()" class="session-box px-6 py-3 text-[10px] font-black uppercase tracking-widest border-blue-500/30 hover:bg-blue-500/10">
+            Grid Layout
+        </button>
     </header>
 
     <div id="mainGrid" class="dashboard-container">
         
-        <div class="session-box flex flex-col h-[400px]">
+        <div class="session-box flex flex-col h-[420px]">
             <div class="session-header">
-                <span class="text-[10px] font-bold text-blue-400">SESSION_01: GEN-CORE AI</span>
-                <span class="text-[9px] px-2 bg-blue-500/10 text-blue-500 rounded">ACTIVE</span>
+                <span class="text-[10px] font-bold text-blue-500" data-key="s1_title">SESSION_01: LEGACY GAMING</span>
+                <span class="text-[9px] px-2 bg-blue-500/10 text-blue-500 rounded font-bold">LEGACY_OS</span>
             </div>
-            <div class="p-4 flex-1 flex flex-col gap-3">
+            <div class="p-4 flex-1 flex flex-col gap-4">
+                <div class="game-viewport flex-col gap-2">
+                    <span class="text-[10px] text-blue-400 opacity-50 font-bold uppercase tracking-[0.3em]">Ready to Launch</span>
+                    <button class="bg-blue-500 text-black px-6 py-2 rounded-full font-black text-[10px] uppercase">Start Engine</button>
+                </div>
+                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                    <div class="p-3 bg-white/5 rounded-xl border border-white/5">
+                        <p class="text-gray-500" data-key="game_status">Status</p>
+                        <p class="font-bold text-blue-400">READY</p>
+                    </div>
+                    <div class="p-3 bg-white/5 rounded-xl border border-white/5">
+                        <p class="text-gray-500" data-key="game_latency">Latency</p>
+                        <p class="font-bold text-blue-400">12ms</p>
+                    </div>
+                </div>
+                <p class="text-[9px] text-gray-600 italic" data-key="game_desc">* รองรับระบบสัมผัสและจอยสติ๊กผ่านมือถือสมบูรณ์แบบ</p>
+            </div>
+        </div>
+
+        <div class="session-box h-[420px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-red-500" data-key="s2_title">SESSION_02: FINANCE HUB</span>
+            </div>
+            <div class="p-6">
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="border-l-4 border-blue-500 pl-4">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest" data-key="sold">TOTAL SOLD</p>
+                        <p class="text-3xl font-black mono">฿148,500</p>
+                    </div>
+                    <div class="border-l-4 border-red-500 pl-4">
+                        <p class="text-[10px] text-gray-500 uppercase tracking-widest" data-key="balance">NET BALANCE</p>
+                        <p class="text-3xl font-black mono">฿42,190</p>
+                    </div>
+                </div>
+                <div class="mt-8 space-y-2">
+                    <div class="flex justify-between text-[10px] p-2 bg-white/5 rounded border border-white/5">
+                        <span class="text-blue-500">PAYMENT_RECEIVED</span>
+                        <span class="mono">฿99.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-[420px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-blue-500" data-key="s3_title">SESSION_03: HAMSTER OPS</span>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="p-4 rounded-2xl bg-white/5 border border-white/5">
+                    <div class="flex justify-between mb-3">
+                        <span class="text-[10px] font-black text-blue-500">INSTANCE_TERMUX_01</span>
+                        <span class="text-[10px] mono">ONLINE</span>
+                    </div>
+                    <div class="h-1.5 w-full bg-white/5 rounded-full">
+                        <div class="h-full bg-blue-500 w-[85%] rounded-full shadow-[0_0_10px_#007aff]"></div>
+                    </div>
+                </div>
                 <div class="grid grid-cols-2 gap-2">
-                    <select id="aiEngine" class="p-2 rounded-lg text-[10px]">
-                        <option value="gemini">GOOGLE GEMINI 2.5</option>
-                        <option value="runway">RUNWAY GEN-4.5</option>
-                        <option value="replicate">FLUX REDUX</option>
-                    </select>
-                    <select id="aiModel" class="p-2 rounded-lg text-[10px]">
-                        <option>ULTRA_FLASH</option>
-                        <option>CINEMATIC_V2</option>
-                    </select>
+                    <div class="p-4 session-box text-center">
+                        <p class="text-[8px] text-gray-500 uppercase" data-key="users">Active Users</p>
+                        <p class="text-xl font-black mono">1,402</p>
+                    </div>
+                    <div class="p-4 session-box text-center">
+                        <p class="text-[8px] text-gray-500 uppercase" data-key="cards">Daily Combo</p>
+                        <p class="text-xl font-black text-blue-500">SYNC</p>
+                    </div>
                 </div>
-                <textarea class="flex-1 rounded-xl p-4 text-xs resize-none" placeholder="ENTER TASK INSTRUCTIONS..."></textarea>
-                <button class="btn-blue w-full py-3 rounded-xl text-[11px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all">Execute Generation</button>
+                <button class="w-full py-4 bg-white text-black text-[10px] font-black uppercase rounded-xl hover:bg-blue-500 transition-all" data-key="btn_restart">RESTART BOT</button>
             </div>
         </div>
 
-        <div class="session-box flex flex-col h-[400px]">
-            <div class="session-header">
-                <span class="text-[10px] font-bold text-red-500">SESSION_02: FINANCE HUB</span>
-                <span class="text-[9px] text-gray-500">REALTIME_FEED</span>
+        <div class="session-box h-[420px]">
+            <div class="session-header"><span class="text-[10px] font-bold text-red-500">SESSION_04: CRYPTO FAUCET</span></div>
+            <div class="p-4 flex flex-col h-full">
+                <div class="flex-1 mono text-[9px] p-3 bg-black rounded-xl border border-white/5 text-red-400 space-y-1">
+                    <p class="text-white opacity-50">// System Live Feed</p>
+                    <p>> Claim detected: 0x71...5a</p>
+                    <p>> Status: Verification Success</p>
+                    <p>> Sending 0.05 BTC-TEST...</p>
+                    <p class="text-gray-500">> Waiting for next block...</p>
+                </div>
+                <div class="mt-4 p-4 rounded-xl border border-red-500/20 bg-red-500/5">
+                    <p class="text-[10px] font-bold text-red-500 uppercase" data-key="faucet_status">Faucet Status: High</p>
+                </div>
             </div>
-            <div class="p-6 grid grid-cols-2 gap-4 border-b border-white/5">
+        </div>
+
+        <div class="session-box h-[420px]">
+            <div class="session-header"><span class="text-[10px] font-bold text-blue-500">SESSION_05: ACCESS MASTER</span></div>
+            <div class="p-6 space-y-6">
                 <div>
-                    <p class="metric-label">Total Sold</p>
-                    <p class="metric-value text-blue-400">฿148,500</p>
+                    <p class="text-[9px] text-gray-500 mb-4 uppercase font-bold" data-key="license_plan">License Plan</p>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button class="p-2 border border-white/10 rounded-lg text-[9px] opacity-40">FREE</button>
+                        <button class="p-2 border border-blue-500 bg-blue-500/10 text-blue-500 rounded-lg text-[9px] font-bold">PREMIUM</button>
+                        <button class="p-2 border border-white/10 rounded-lg text-[9px] opacity-40">ELITE</button>
+                    </div>
                 </div>
                 <div>
-                    <p class="metric-label">Master Balance</p>
-                    <p class="metric-value text-red-500">฿42,190</p>
-                </div>
-            </div>
-            <div class="flex-1 overflow-y-auto p-4 space-y-2 text-[10px]">
-                <div class="flex justify-between items-center p-2 bg-white/5 rounded">
-                    <span class="text-blue-400 font-bold">#TRX-99</span>
-                    <span>PACKAGE: 99.-</span>
-                    <span class="text-gray-500">2m ago</span>
-                </div>
-                <div class="flex justify-between items-center p-2 bg-white/5 rounded">
-                    <span class="text-red-500 font-bold">#TRX-299</span>
-                    <span>ELITE PROXY</span>
-                    <span class="text-gray-500">15m ago</span>
-                </div>
-            </div>
-        </div>
-
-        <div class="session-box h-[400px]">
-            <div class="session-header">
-                <span class="text-[10px] font-bold text-blue-400">SESSION_03: HAMSTER OPS</span>
-            </div>
-            <div class="p-4 space-y-4">
-                <div class="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
-                    <div class="flex justify-between mb-2">
-                        <span class="text-xs font-bold italic">TERMUX_INSTANCE_01</span>
-                        <span class="text-[10px] text-blue-400 font-mono">RUNNING: 14d 02h</span>
-                    </div>
-                    <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
-                        <div class="bg-blue-500 h-full w-[85%]"></div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="text-center p-3 session-box">
-                        <p class="metric-label">Users Online</p>
-                        <p class="text-xl font-black">1,402</p>
-                    </div>
-                    <div class="text-center p-3 session-box">
-                        <p class="metric-label">Daily Cards</p>
-                        <p class="text-xl font-black glow-blue">SYNCED</p>
-                    </div>
-                </div>
-                <button class="w-full py-2 border border-blue-500/30 text-[10px] font-black uppercase hover:bg-blue-500/10">Restart Hamster Bot</button>
-            </div>
-        </div>
-
-        <div class="session-box h-[400px]">
-            <div class="session-header">
-                <span class="text-[10px] font-bold text-red-500">SESSION_04: CRYPTO FAUCET</span>
-            </div>
-            <div class="p-4 space-y-4">
-                <div class="flex items-center gap-4 p-4 session-box bg-red-500/5">
-                    <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center font-black text-black">C</div>
-                    <div>
-                        <p class="text-xs font-bold">FAUCET STATUS: HIGH_LIQUIDITY</p>
-                        <p class="text-[10px] text-gray-500">AUTO-DISTRIBUTION: ON</p>
-                    </div>
-                </div>
-                <div class="space-y-2">
-                    <p class="text-[10px] font-bold text-gray-500 uppercase">Latest Claims</p>
-                    <div class="text-[9px] font-mono space-y-1">
-                        <p class="text-red-400">> 0x71c... claimed 0.05 BTC-TEST</p>
-                        <p class="text-red-400">> 0xa4d... claimed 1.20 ETH-TEST</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="session-box h-[400px]">
-            <div class="session-header">
-                <span class="text-[10px] font-bold text-blue-400">SESSION_05: ACCESS MASTER</span>
-            </div>
-            <div class="p-4 space-y-3">
-                <div class="flex flex-col gap-2">
-                    <label class="text-[9px] font-bold text-gray-500 uppercase">Active License Plan</label>
+                    <p class="text-[9px] text-gray-500 mb-2 uppercase font-bold" data-key="api_key">Master API Key (Proxy Protected)</p>
                     <div class="flex gap-2">
-                        <div class="flex-1 p-2 border border-white/5 rounded-lg text-center opacity-50">
-                            <p class="text-[8px]">FREE</p>
-                        </div>
-                        <div class="flex-1 p-2 border border-blue-500/50 bg-blue-500/10 rounded-lg text-center">
-                            <p class="text-[8px] text-blue-400 font-bold">PREMIUM (฿99)</p>
-                        </div>
-                        <div class="flex-1 p-2 border border-red-500/50 rounded-lg text-center">
-                            <p class="text-[8px] text-red-500">ELITE (฿299)</p>
-                        </div>
+                        <input type="text" readonly value="SN-ULTRA-559X-2026" class="flex-1 bg-white/5 p-4 rounded-xl text-[10px] mono">
+                        <button class="bg-blue-500 text-black px-4 rounded-xl font-bold text-[10px]">COPY</button>
                     </div>
-                </div>
-                <div class="mt-4">
-                    <p class="text-[9px] text-gray-400 mb-2 font-bold uppercase italic">Master API Key (Proxy Protected)</p>
-                    <div class="flex gap-2">
-                        <input type="text" readonly value="SN-ULTRA-XXXX-XXXX" class="flex-1 p-3 rounded-xl text-xs font-mono">
-                        <button class="bg-white text-black px-4 rounded-xl font-bold text-[10px] uppercase">Copy</button>
-                    </div>
-                    <p class="text-[8px] mt-2 text-blue-900 font-black italic">Bypassing: Anti-Detect Logic Active</p>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-[400px] flex flex-col">
+        <div class="session-box h-[420px] flex flex-col">
             <div class="session-header">
-                <span class="text-[10px] font-bold text-blue-400">SESSION_06: SYSTEM INTEL</span>
-                <span id="uptime" class="text-[9px] font-mono">UP: 24:00:15</span>
+                <span class="text-[10px] font-bold text-blue-500">SESSION_06: SYSTEM INTEL</span>
+                <span class="text-[9px] mono opacity-50">UP: 24:00:15</span>
             </div>
-            <div class="flex-1 p-4 overflow-hidden flex flex-col gap-4">
-                <div class="grid grid-cols-2 gap-4">
+            <div class="p-6 flex-1 flex flex-col">
+                <div class="grid grid-cols-2 gap-8 mb-8">
                     <div>
-                        <p class="metric-label">CPU LOAD</p>
-                        <div class="flex items-end gap-2">
-                            <span id="cpuUsage" class="metric-value glow-blue">14%</span>
-                            <div class="flex-1 h-8 flex items-end gap-[1px]">
-                                <div class="bg-blue-500/50 w-full h-[20%]"></div>
-                                <div class="bg-blue-500/50 w-full h-[40%]"></div>
-                                <div class="bg-blue-500/50 w-full h-[30%]"></div>
-                            </div>
-                        </div>
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">CPU LOAD</p>
+                        <p class="text-4xl font-black mono text-blue-500" id="cpu-val">12%</p>
                     </div>
                     <div>
-                        <p class="metric-label">MEM USAGE</p>
-                        <div class="flex items-end gap-2">
-                            <span id="memUsage" class="metric-value glow-red">7.2%</span>
-                            <div class="flex-1 h-8 flex items-end gap-[1px]">
-                                <div class="bg-red-500/50 w-full h-[10%]"></div>
-                                <div class="bg-red-500/50 w-full h-[15%]"></div>
-                                <div class="bg-red-500/50 w-full h-[12%]"></div>
-                            </div>
-                        </div>
+                        <p class="text-[9px] text-gray-500 uppercase mb-2">MEMORY</p>
+                        <p class="text-4xl font-black mono text-red-500" id="mem-val">7.4%</p>
                     </div>
                 </div>
-                <div class="flex-1 bg-black/40 rounded-xl p-3 font-mono text-[9px] text-blue-300/80 overflow-y-auto border border-white/5">
-                    <p class="text-white font-bold mb-2">[PM2 CLUSTER LOGS]</p>
-                    <p>> [sn-api:0] MASTER_GATEWAY_V9.7_LIVE</p>
-                    <p>> [sn-ai-render:1] GEMINI_2.5_READY</p>
-                    <p>> [sn-deployer:2] WEBHOOK_LISTENING_P3000</p>
-                    <p>> [sn-monitor:3] DATA_COLLECTION_SYNC</p>
-                    <p class="text-blue-500">> [sn-api:0] 171.101.103.220 - POST /api/render 200 OK</p>
+                <div class="flex-1 border-t border-white/5 pt-4">
+                    <p class="text-[9px] font-bold text-blue-900 uppercase mb-2">Process Stack</p>
+                    <div class="space-y-1 text-[9px] mono text-gray-500">
+                        <div class="flex justify-between"><span class="text-white">sn-api</span><span>online</span></div>
+                        <div class="flex justify-between"><span class="text-white">sn-render</span><span>online</span></div>
+                        <div class="flex justify-between"><span class="text-white">sn-monitor</span><span>online</span></div>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <footer class="mt-12 mb-20 text-center opacity-30">
-        <p class="text-[9px] tracking-[1em] uppercase font-black italic">SN DESIGN STUDIO © 2026</p>
-    </footer>
-
     <script>
-        function toggleLayout() {
-            const grid = document.getElementById('mainGrid');
-            grid.classList.toggle('layout-pair');
+        const translations = {
+            th: {
+                s1_title: "SESSION_01: เกมออนไลน์ระดับตำนาน",
+                game_status: "สถานะระบบ",
+                game_latency: "ความหน่วง",
+                game_desc: "* รองรับระบบสัมผัสและจอยสติ๊กผ่านมือถือสมบูรณ์แบบ",
+                s2_title: "SESSION_02: ศูนย์รวมการเงิน",
+                sold: "ยอดขายรวม",
+                balance: "กำไรสุทธิ",
+                s3_title: "SESSION_03: จัดการบอทแฮมสเตอร์",
+                users: "ผู้ใช้ที่ออนไลน์",
+                cards: "คอมโบประจำวัน",
+                btn_restart: "เริ่มการทำงานบอทใหม่",
+                faucet_status: "สถานะการแจกจ่าย: สูง",
+                license_plan: "แพ็กเกจสมาชิก",
+                api_key: "รหัส API (ป้องกันด้วย Proxy)"
+            },
+            en: {
+                s1_title: "SESSION_01: LEGACY GAMING",
+                game_status: "Engine Status",
+                game_latency: "Network Latency",
+                game_desc: "* Full touch and joystick support for mobile devices",
+                s2_title: "SESSION_02: FINANCE HUB",
+                sold: "TOTAL SOLD",
+                balance: "NET BALANCE",
+                s3_title: "SESSION_03: HAMSTER OPS",
+                users: "ACTIVE USERS",
+                cards: "DAILY COMBO",
+                btn_restart: "RESTART BOT ENGINE",
+                faucet_status: "Faucet Status: High",
+                license_plan: "LICENSE PLAN",
+                api_key: "MASTER API KEY (PROXY PROTECTED)"
+            }
+        };
+
+        function changeLang(lang) {
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                el.innerText = translations[lang][key];
+            });
+            document.getElementById('btn-th').classList.toggle('lang-active', lang === 'th');
+            document.getElementById('btn-en').classList.toggle('lang-active', lang === 'en');
         }
 
-        // Simulated Real-time Data (Connect to Port 5004 in Production)
+        function toggleLayout() {
+            document.getElementById('mainGrid').classList.toggle('layout-pair');
+        }
+
+        // System Monitor Simulator
         setInterval(() => {
-            const cpu = Math.floor(Math.random() * 5) + 10;
-            const mem = (Math.random() * 0.5 + 7.0).toFixed(1);
-            document.getElementById('cpuUsage').innerText = cpu + '%';
-            document.getElementById('memUsage').innerText = mem + '%';
+            document.getElementById('cpu-val').innerText = (Math.random() * 5 + 10).toFixed(0) + '%';
+            document.getElementById('mem-val').innerText = (Math.random() * 0.5 + 7.2).toFixed(1) + '%';
         }, 2000);
     </script>
 </body>
