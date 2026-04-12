@@ -3,8 +3,6 @@ const tokenUtil = require("../utils/token.util");
 const db = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 
-const SECRET = "SN_ULTRA_ENGINE_2026_SECURE_KEY";
-
 exports.googleRedirect = async (req, res) => {
     try { res.redirect(googleService.generateAuthUrl()); } catch (e) { res.redirect("/login.html"); }
 };
@@ -19,8 +17,7 @@ exports.googleCallback = async (req, res) => {
             user = await db.getUserByEmail(googleUser.email);
         }
         const token = tokenUtil.generateAccessToken({ id: user.id, email: user.email, role: user.role });
-        // ดีดไปหน้า create พร้อมส่งกุญแจไปทาง URL
-        return res.redirect(\`https://sn-designstudio.dev/create.html?token=\${token}\`);
+        return res.redirect("https://sn-designstudio.dev/create.html?token=" + token);
     } catch (err) { res.redirect("/login.html"); }
 };
 
