@@ -9,16 +9,16 @@
     <style>
         body { font-family: 'Kanit', sans-serif; background: #010204; color: white; overflow-x: hidden; }
         .emerald-card { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 2.5rem; }
-        .preview-box { background: #000; border: 1px dashed rgba(16, 185, 129, 0.15); height: 140px; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
+        .preview-box { background: #000; border: 1px dashed rgba(16, 185, 129, 0.15); height: 140px; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; }
         .preview-box img, .preview-box video { width: 100%; height: 100%; object-fit: cover; }
         input[type="file"] { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-10">
     <div class="max-w-[1700px] mx-auto">
-        <header class="flex justify-between items-center mb-16 gap-6">
+        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
             <h1 class="text-4xl md:text-5xl font-black italic text-emerald-500 uppercase tracking-tighter">SN DESIGN STUDIO</h1>
-            <div class="emerald-card px-8 py-4 flex items-center gap-4 border-emerald-500/20">
+            <div class="emerald-card px-8 py-4 flex items-center gap-4">
                 <span id="creditDisplay" class="text-2xl font-black text-emerald-400">1,000,099.00</span>
             </div>
         </header>
@@ -42,25 +42,15 @@
             card.className = "emerald-card p-6 flex flex-col gap-4";
             card.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-[9px] text-emerald-700 font-black uppercase tracking-widest">${m.engine}</p>
-                        <h3 class="font-bold text-sm text-emerald-100 uppercase">${m.alias.replace(/_/g, ' ')}</h3>
-                    </div>
+                    <div><p class="text-[9px] text-emerald-700 font-black uppercase tracking-widest">${m.engine}</p><h3 class="font-bold text-sm text-emerald-100 uppercase">${m.alias.replace(/_/g, ' ')}</h3></div>
                     <span class="text-[8px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md font-bold">${m.cta}</span>
                 </div>
-                ${hasInput ? `
-                <div class="grid ${isDual ? 'grid-cols-2' : 'grid-cols-1'} gap-2">
-                    <div class="preview-box" id="prev-1-${key}" onclick="document.getElementById('file-1-${key}').click()">
-                        <span class="text-[8px] text-emerald-900 font-bold uppercase">Upload Source</span>
-                        <input type="file" id="file-1-${key}" class="file-input">
-                    </div>
-                    ${isDual ? `<div class="preview-box" id="prev-2-${key}" onclick="document.getElementById('file-2-${key}').click()">
-                        <span class="text-[8px] text-emerald-900 font-bold uppercase">Motion/Ref</span>
-                        <input type="file" id="file-2-${key}" class="file-input">
-                    </div>` : ''}
+                ${hasInput ? `<div class="grid ${isDual ? 'grid-cols-2' : 'grid-cols-1'} gap-2">
+                    <div class="preview-box" id="prev-1-${key}" onclick="document.getElementById('file-1-${key}').click()"><span class="text-[8px] text-emerald-900 font-bold uppercase">Source</span><input type="file" id="file-1-${key}" class="file-in"></div>
+                    ${isDual ? `<div class="preview-box" id="prev-2-${key}" onclick="document.getElementById('file-2-${key}').click()"><span class="text-[8px] text-emerald-900 font-bold uppercase">Motion</span><input type="file" id="file-2-${key}" class="file-in"></div>` : ''}
                 </div>` : ''}
-                <textarea id="prompt-${key}" class="w-full bg-black/60 border border-emerald-500/10 rounded-2xl p-4 text-xs h-20 outline-none focus:border-emerald-500 text-emerald-100" placeholder="Prompt for ${m.model}..."></textarea>
-                <button onclick="window.runGenerate('${key}')" class="bg-emerald-500 text-black py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all">Generate</button>
+                <textarea id="prompt-${key}" class="w-full bg-black/60 border border-emerald-500/10 rounded-2xl p-4 text-xs h-20 outline-none focus:border-emerald-500 text-emerald-100" placeholder="Instructions for ${m.model}..."></textarea>
+                <button onclick="window.runGenerate('${key}')" class="bg-emerald-500 text-black py-3 rounded-xl font-black text-[10px] uppercase tracking-widest">Generate</button>
             `;
             grid.appendChild(card);
         });
@@ -68,34 +58,23 @@
         window.runGenerate = async (id) => {
             const m = CTA_MODEL_MASTER[id];
             const prompt = document.getElementById(`prompt-${id}`).value;
-            const btn = event.target;
-            btn.innerText = "PROCESSING...";
-            btn.disabled = true;
-
+            
+            //  �ยิงจริง: รวบรวมข้อมูลส่งไปที่ API
             const formData = new FormData();
-            formData.append('prompt', prompt);
             formData.append('cta', m.cta);
-            formData.append('engine', m.engine);
-            formData.append('model', m.model);
+            formData.append('prompt', prompt);
+            if(document.getElementById(`file-1-${id}`)?.files[0]) formData.append('target_a', document.getElementById(`file-1-${id}`).files[0]);
 
             try {
-                const res = await fetch(`${API_BASE}/api/render`, {
-                    method: 'POST',
-                    body: formData
-                });
+                const res = await fetch(`${API_BASE}/api/render`, { method: "POST", body: formData });
                 const data = await res.json();
-                if(data.success) alert("Generate สำเร็จ! ตรวจสอบผลลัพธ์ใน Gallery");
-            } catch (e) {
-                alert("ยิง API ล้มเหลว ตรวจสอบพอร์ต 5002/5003");
-            } finally {
-                btn.innerText = "GENERATE";
-                btn.disabled = false;
-            }
+                if(data.success) alert(" �ส่งงานไปที่ Engine สำเร็จ! รอการประมวลผล");
+            } catch (e) { alert("❌ API Connection Failed"); }
         };
 
-        // ระบบ Preview สด
+        // Preview Logic
         document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('file-input')) {
+            if (e.target.classList.contains('file-in')) {
                 const file = e.target.files[0];
                 const area = e.target.parentElement;
                 if (file) {
