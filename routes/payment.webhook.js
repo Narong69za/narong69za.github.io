@@ -6,10 +6,11 @@ const dbPath = "/root/sn-payment-core/database.db";
 router.post("/stripe", async (req, res) => {
     let event;
     try {
-        // ✅ รับได้ทั้ง Object และ Raw String (กัน Error Unexpected token o)
+        // ✅ [FIXED]: ป้องกัน Error Unexpected token o โดยการเช็คประเภทข้อมูลก่อน Parse
         event = (typeof req.body === 'object') ? req.body : JSON.parse(req.body.toString());
     } catch (err) {
-        return res.status(400).send("Format Error");
+        console.error("⚠️ Webhook Parse Error:", err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
     }
 
     if (event.type === 'checkout.session.completed') {
@@ -17,19 +18,23 @@ router.post("/stripe", async (req, res) => {
         const userId = session.metadata?.userId || "1";
         const credits = parseInt(session.metadata?.credits) || 0;
         const amount = session.amount_total / 100;
+        const txId = session.id;
 
         const db = new sqlite3.Database(dbPath);
         db.serialize(() => {
-            // บันทึกเงินจริงลงตาราง Payments (มีคอลัมน์ txId รองรับแล้ว)
-            db.run("INSERT OR REPLACE INTO payments (txId, userId, amount, status, method) VALUES (?, ?, ?, 'success', 'stripe')", 
-                   [session.id, userId, amount]);
+            // บันทึกลงตาราง Payments (ตรวจสอบคอลัมน์ txId ให้พร้อม)
+            db.run(`INSERT OR REPLACE INTO payments (txId, userId, amount, status, method, createdAt) 
+                    VALUES (?, ?, ?, 'success', 'stripe', DATETIME('now'))`, 
+                   [txId, userId, amount]);
             
-            // เติมเครดิตเข้า User จริงๆ
+            // เติมเครดิตให้ User จริง
             db.run("UPDATE users SET credits = credits + ? WHERE id = ?", [credits, userId]);
         });
         db.close();
-        console.log(`✅ [PAYMENT] User ${userId} +${credits} Credits`);
+        console.log(`✅ [PAYMENT SUCCESS] User: ${userId} | Amount: ${amount} | Credits: +${credits}`);
     }
+
+    // ตอบกลับ Stripe เสมอเพื่อไม่ให้มันส่งซ้ำ
     res.json({ received: true });
 });
 
