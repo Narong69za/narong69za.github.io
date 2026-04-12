@@ -3,96 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN MASTER - EMERALD PRODUCTION</title>
+    <title>SN PRODUCTION MASTER - EMERALD v9.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Kanit', sans-serif; background: #020406; color: white; overflow-x: hidden; }
-        .emerald-card { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        .emerald-card:hover { border-color: #10b981; box-shadow: 0 0 40px rgba(16, 185, 129, 0.1); transform: translateY(-5px); }
-        .preview-box { background: #080808; border: 1px dashed rgba(16, 185, 129, 0.2); height: 160px; border-radius: 2rem; overflow: hidden; display: flex; align-items: center; justify-content: center; position: relative; }
-        .preview-box video, .preview-box img { width: 100%; height: 100%; object-fit: cover; }
-        .neon-glow { text-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+        body { font-family: 'Kanit', sans-serif; background: #010204; color: white; overflow-x: hidden; }
+        .emerald-card { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 2.5rem; transition: all 0.3s ease; }
+        .emerald-card:hover { border-color: #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); }
+        .preview-box { background: #000; border: 1px dashed rgba(16, 185, 129, 0.15); height: 140px; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
+        .preview-box:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+        .preview-box img, .preview-box video { width: 100%; height: 100%; object-fit: cover; }
+        .neon-text { color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-10">
     <div class="max-w-[1700px] mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-8">
-            <h1 class="text-4xl md:text-6xl font-black italic text-emerald-500 uppercase tracking-tighter neon-glow">SN DESIGN STUDIO</h1>
-            <div class="emerald-card px-10 py-5 rounded-[2.5rem] flex items-center gap-5">
-                <span class="text-emerald-500/50 text-[10px] font-bold uppercase tracking-[0.3em]">Master Credits:</span>
-                <span id="creditDisplay" class="text-3xl font-black text-emerald-400">1,000,099.00</span>
+        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
+            <h1 class="text-4xl md:text-5xl font-black italic neon-text uppercase tracking-tighter">SN DESIGN STUDIO</h1>
+            <div class="emerald-card px-8 py-4 flex items-center gap-4">
+                <span class="text-emerald-900 text-[10px] font-bold uppercase tracking-widest">Master Credits:</span>
+                <span id="creditDisplay" class="text-2xl font-black text-emerald-400">1,000,099.00</span>
             </div>
         </header>
 
-        <div id="masterGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"></div>
+        <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
 
         <footer class="mt-40 pb-20 text-center border-t border-emerald-500/10">
-            <p class="pt-12 text-[11px] text-emerald-900 tracking-[0.8em] font-bold">© SN DESIGN STUDIO 2026. DRIVEN BY SN MASTER ENGINE</p>
+            <p class="pt-10 text-[10px] text-emerald-900 tracking-[0.6em] font-bold uppercase">© SN DESIGN STUDIO 2026. v9.1 PRODUCTION-FINAL</p>
         </footer>
     </div>
 
-    <script>
-        const engines = [
-            { id: 1, name: "Runway Gen-3 Alpha", dual: true, limit: "20s" },
-            { id: 2, name: "Luma Dream Machine", dual: true, limit: "10s" },
-            { id: 3, name: "Kling AI Video", dual: true, limit: "5s" },
-            { id: 4, name: "Pika Art Motion", dual: true, limit: "15s" },
-            { id: 5, name: "Stable Video Master", dual: true, limit: "10s" },
-            { id: 6, name: "Sora Cinematic", dual: false, limit: "60s" },
-            { id: 7, name: "Midjourney v6.1", dual: false, limit: "N/A" },
-            { id: 8, name: "DALL-E 3 Ultra", dual: false, limit: "N/A" },
-            { id: 9, name: "HeyGen Avatar", dual: true, limit: "10m" },
-            { id: 10, name: "ElevenLabs Master", dual: false, limit: "20m" },
-            { id: 11, name: "Udio Music Gen", dual: false, limit: "4m" },
-            { id: 12, name: "AnimateDiff", dual: true, limit: "3s" },
-            { id: 13, name: "Sunoml Audio", dual: false, limit: "2m" },
-            { id: 14, name: "GPT-4 Vision", dual: false, limit: "N/A" }
-        ];
+    <script type="module">
+        import { CTA_MODEL_MASTER } from './assets/js/cta.model.master.js';
 
-        const grid = document.getElementById('masterGrid');
-        engines.forEach(eng => {
+        const grid = document.getElementById('engineGrid');
+
+        Object.keys(CTA_MODEL_MASTER).forEach(key => {
+            const m = CTA_MODEL_MASTER[key];
+            const hasInput = m.alias.includes('image') || m.alias.includes('video') || m.alias.includes('character') || m.alias.includes('sts') || m.alias.includes('redux');
+            const isDual = m.cta === "CTA_01" || m.cta === "CTA_03" || m.cta === "CTA_07" || m.cta === "CTA_08" || m.cta === "CTA_11";
+
             const card = document.createElement('div');
-            card.className = "emerald-card p-7 rounded-[3rem] flex flex-col gap-6";
+            card.className = "emerald-card p-6 flex flex-col gap-4";
             card.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <h3 class="font-black text-lg text-emerald-100 uppercase italic tracking-tight">${eng.name}</h3>
-                    <span class="text-[9px] border border-emerald-500/30 text-emerald-400 px-3 py-1 rounded-full font-black">${eng.limit}</span>
-                </div>
-
-                <div class="grid ${eng.dual ? 'grid-cols-2' : 'grid-cols-1'} gap-4">
-                    <div class="preview-box" id="prev-a-${eng.id}">
-                        <input type="file" class="hidden" id="in-a-${eng.id}" onchange="preview(this, 'prev-a-${eng.id}')">
-                        <button onclick="document.getElementById('in-a-${eng.id}').click()" class="text-[8px] font-black text-emerald-900 uppercase tracking-widest hover:text-emerald-400 transition-all">Target A</button>
+                    <div>
+                        <p class="text-[9px] text-emerald-700 font-black uppercase tracking-widest">${m.engine}</p>
+                        <h3 class="font-bold text-sm text-emerald-100 uppercase">${m.alias.replace(/_/g, ' ')}</h3>
                     </div>
-                    ${eng.dual ? `
-                    <div class="preview-box" id="prev-b-${eng.id}">
-                        <input type="file" class="hidden" id="in-b-${eng.id}" onchange="preview(this, 'prev-b-${eng.id}')">
-                        <button onclick="document.getElementById('in-b-${eng.id}').click()" class="text-[8px] font-black text-emerald-900 uppercase tracking-widest hover:text-emerald-400 transition-all">Target B</button>
-                    </div>` : ''}
+                    <span class="text-[8px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md font-bold">${m.cta}</span>
                 </div>
 
-                <textarea class="w-full bg-black border border-emerald-500/10 rounded-2xl p-5 text-xs h-28 outline-none focus:border-emerald-500 transition-all resize-none text-emerald-100" placeholder="Enter Generation Prompt..."></textarea>
+                ${hasInput ? `
+                <div class="grid ${isDual ? 'grid-cols-2' : 'grid-cols-1'} gap-2">
+                    <div class="preview-box" id="prev-1-${key}" onclick="document.getElementById('file-1-${key}').click()">
+                        <span class="text-[8px] text-emerald-900 font-bold uppercase">Upload Source</span>
+                        <input type="file" id="file-1-${key}" onchange="handleFile(this, 'prev-1-${key}')">
+                    </div>
+                    ${isDual ? `
+                    <div class="preview-box" id="prev-2-${key}" onclick="document.getElementById('file-2-${key}').click()">
+                        <span class="text-[8px] text-emerald-900 font-bold uppercase">Motion/Ref</span>
+                        <input type="file" id="file-2-${key}" onchange="handleFile(this, 'prev-2-${key}')">
+                    </div>` : ''}
+                </div>` : ''}
+
+                <textarea id="prompt-${key}" class="w-full bg-black/60 border border-emerald-500/10 rounded-2xl p-4 text-xs h-20 outline-none focus:border-emerald-500 transition-all resize-none text-emerald-100" placeholder="Enter instructions for ${m.model}..."></textarea>
                 
                 <div class="flex items-center justify-between">
-                    <button class="bg-emerald-500 text-black px-12 py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.3em] hover:bg-white transition-all shadow-lg shadow-emerald-500/10">Generate</button>
+                    <button onclick="runGenerate('${key}')" class="bg-emerald-500 text-black px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all">Generate</button>
                     <div class="text-right">
-                        <p class="text-[9px] text-emerald-900 font-black uppercase">Points</p>
-                        <p class="text-sm font-black text-emerald-400">SYNCING</p>
+                        <p class="text-[8px] text-emerald-900 font-bold">MODEL</p>
+                        <p class="text-[9px] font-black text-emerald-500">${m.model.split('/')[1] || m.model}</p>
                     </div>
                 </div>
             `;
             grid.appendChild(card);
         });
 
-        function preview(input, id) {
-            const box = document.getElementById(id);
+        window.handleFile = (input, prevId) => {
+            const area = document.getElementById(prevId);
             const file = input.files[0];
             if (file) {
                 const url = URL.createObjectURL(file);
-                box.innerHTML = file.type.startsWith('video') ? `<video src="${url}" autoplay muted loop class="w-full h-full object-cover"></video>` : `<img src="${url}" class="w-full h-full object-cover">`;
+                area.innerHTML = file.type.startsWith('video') ? `<video src="${url}" autoplay muted loop></video>` : `<img src="${url}">`;
             }
-        }
+        };
+
+        window.runGenerate = async (id) => {
+            const m = CTA_MODEL_MASTER[id];
+            const prompt = document.getElementById(`prompt-${id}`).value;
+            console.log(` Sending Request: CTA: ${m.cta} | Engine: ${m.engine} | Model: ${m.model}`);
+            alert(`�ยิง API ไปยัง https://api.sn-designstudio.dev/api/render\nTarget: ${m.alias}\nModel: ${m.model}`);
+        };
     </script>
 </body>
 </html>
