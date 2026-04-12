@@ -1,10 +1,12 @@
 const googleService = require("../services/google.service");
-const tokenUtil = require("../utils/token.util");
+const jwt = require("jsonwebtoken");
 const db = require("../db/db");
 const { v4: uuidv4 } = require("uuid");
 
+const SECRET = "SN_ULTRA_ENGINE_2026_SECURE_KEY";
+
 exports.googleRedirect = async (req, res) => {
-    try { res.redirect(googleService.generateAuthUrl()); } catch (e) { res.redirect("/login.html"); }
+    res.redirect(googleService.generateAuthUrl());
 };
 
 exports.googleCallback = async (req, res) => {
@@ -16,9 +18,11 @@ exports.googleCallback = async (req, res) => {
             await db.createUser({ id: uuidv4(), google_id: googleUser.id, email: googleUser.email, role: "user", credits: 0 });
             user = await db.getUserByEmail(googleUser.email);
         }
-        const token = tokenUtil.generateAccessToken({ id: user.id, email: user.email, role: user.role });
+        // ออกบัตร
+        const token = jwt.sign({ id: user.id, email: user.email, role: user.role }, SECRET, { expiresIn: "24h" });
+        // ส่งไปทาง URL
         return res.redirect("https://sn-designstudio.dev/create.html?token=" + token);
-    } catch (err) { res.redirect("/login.html"); }
+    } catch (err) { res.redirect("/login.html?error=callback_failed"); }
 };
 
 exports.getMe = async (req, res) => {
@@ -37,7 +41,7 @@ exports.verifyToken = async (req, res) => {
             await db.createUser({ id: uuidv4(), google_id: googleUser.sub, email: googleUser.email, role: "user", credits: 0 });
             user = await db.getUserByEmail(googleUser.email);
         }
-        const accessToken = tokenUtil.generateAccessToken({ id: user.id, email: user.email, role: user.role });
+        const accessToken = jwt.sign({ id: user.id, email: user.email, role: user.role }, SECRET, { expiresIn: "24h" });
         res.json({ ok: true, token: accessToken });
     } catch (e) { res.status(401).json({ ok: false }); }
 };

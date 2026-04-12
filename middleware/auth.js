@@ -1,10 +1,19 @@
 const jwt = require("jsonwebtoken");
 module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization;
-    const token = (authHeader && authHeader.split(' ')[1]) || req.cookies?.access_token;
-    if (!token) return res.status(401).json({ ok: false });
+    const token = authHeader && authHeader.split(' ')[1];
+
+    if (!token) {
+        console.log("❌ [AUTH]: No Token Provided");
+        return res.status(401).json({ ok: false });
+    }
+
     try {
-        req.user = jwt.verify(token, "SN_ULTRA_ENGINE_2026_SECURE_KEY");
+        const decoded = jwt.verify(token, "SN_ULTRA_ENGINE_2026_SECURE_KEY");
+        req.user = decoded;
         next();
-    } catch (e) { res.status(401).json({ ok: false }); }
+    } catch (err) {
+        console.log("❌ [AUTH]: Token Invalid/Expired");
+        return res.status(401).json({ ok: false });
+    }
 };
