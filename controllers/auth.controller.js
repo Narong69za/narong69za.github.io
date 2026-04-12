@@ -1,31 +1,15 @@
-const crypto = require("crypto");
-const { v4: uuidv4 } = require("uuid");
-const googleService = require("../services/google.service");
-const tokenUtil = require("../utils/token.util");
-const db = require("../db/db");
-
 const COOKIE_OPTIONS = {
   httpOnly: true,
   secure: true,
-  sameSite: "none",
-  domain: ".sn-designstudio.dev",
-  path: "/"
-};
-
-exports.googleRedirect = async (req, res) => {
-  try {
-    const state = crypto.randomBytes(32).toString("hex");
-    res.cookie("oauth_state", state, { ...COOKIE_OPTIONS, maxAge: 10 * 60 * 1000 });
-    return res.redirect(googleService.generateAuthUrl(state));
-  } catch (err) { return res.redirect("https://sn-designstudio.dev/login.html"); }
+  sameSite: "none", // สำคัญมากสำหรับการคุยข้าม Subdomain
+  domain: ".sn-designstudio.dev", // จุดข้างหน้าคือหัวใจ
+  path: "/",
+  partitioned: true // [ADD] เพื่อให้บราวเซอร์รุ่นใหม่ยอมรับคุกกี้
 };
 
 exports.googleCallback = async (req, res) => {
   try {
-    const { code, state } = req.query;
-    const storedState = req.cookies.oauth_state;
-    if (!state || state !== storedState) return res.status(400).send("INVALID_STATE");
-
+    const { code } = req.query;
     const googleUser = await googleService.getUserFromCode(code);
     let user = await db.getUserByEmail(googleUser.email);
 
@@ -35,18 +19,18 @@ exports.googleCallback = async (req, res) => {
     }
 
     const accessToken = tokenUtil.generateAccessToken({ id: user.id, email: user.email, role: user.role });
-    res.cookie("access_token", accessToken, { ...COOKIE_OPTIONS, maxAge: 3600000 });
+    
+    // [FIX] เซตคุกกี้ให้ชัวร์ก่อน Redirect
+    res.cookie("access_token", accessToken, { ...COOKIE_OPTIONS, maxAge: 24 * 60 * 60 * 1000 });
+    
+    // ล้าง State เก่า
     res.clearCookie("oauth_state", COOKIE_OPTIONS);
 
+    // จบงาน: ดีดกลับหน้าจัดการ
     return res.redirect(`https://sn-designstudio.dev/create.html`);
-  } catch (err) { return res.status(500).send("AUTH_FAILED"); }
-};
-
-exports.getMe = async (req, res) => {
-  try {
-    const user = await db.getUserByEmail(req.user.email);
-    if (!user) return res.status(404).json({ ok: false });
-    res.json({ ok: true, user: { email: user.email, role: user.role, credits: user.credits } });
-  } catch (err) { res.status(500).json({ ok: false }); }
+  } catch (err) {
+    console.error("AUTH_ERROR:", err);
+    return res.redirect("https://sn-designstudio.dev/login.html?error=auth_failed");
+  }
 };
 
