@@ -9,15 +9,14 @@
     <style>
         body { font-family: 'Kanit', sans-serif; background: #020406; color: white; overflow-x: hidden; }
         .glass-card { background: rgba(15, 23, 42, 0.9); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .text-azure { color: #00d2ff; }
     </style>
 </head>
 <body class="p-4 md:p-10">
     <div class="max-w-7xl mx-auto">
         <header class="flex flex-col md:flex-row justify-between items-center mb-10 gap-6">
             <div class="text-center md:text-left">
-                <h1 class="text-3xl md:text-5xl font-black italic text-azure uppercase">SN DESIGN STUDIO</h1>
-                <p class="text-[10px] text-slate-500 tracking-widest uppercase mt-1">Professional AI Production</p>
+                <h1 class="text-3xl md:text-5xl font-black italic text-[#00d2ff] uppercase">SN DESIGN STUDIO</h1>
+                <p class="text-[10px] text-slate-500 tracking-widest uppercase mt-1">Professional AI Architecture</p>
             </div>
             <div class="glass-card p-4 rounded-2xl flex items-center gap-4">
                 <p id="userCredits" class="text-xl font-black text-white">0.00</p>
@@ -50,13 +49,13 @@
             div.setAttribute('data-engine', eng.id);
             div.innerHTML = `
                 <div class="mb-4">
-                    <p class="text-azure text-[10px] font-bold mb-1 uppercase">MODEL-${String(eng.id).padStart(2, '0')}</p>
+                    <p class="text-[#00d2ff] text-[10px] font-bold mb-1 uppercase">MODEL-${String(eng.id).padStart(2, '0')}</p>
                     <h3 class="text-lg font-bold">${eng.name}</h3>
                 </div>
-                <textarea class="engine-prompt w-full bg-black/40 border border-white/5 rounded-xl p-3 text-xs h-24 mb-4 outline-none focus:border-blue-500 resize-none" placeholder="ป้อนคำสั่ง..."></textarea>
+                <textarea class="engine-prompt w-full bg-black/40 border border-white/5 rounded-xl p-3 text-xs h-24 mb-4 outline-none focus:border-[#00d2ff] resize-none" placeholder="ป้อนคำสั่ง..."></textarea>
                 <div class="flex items-center justify-between gap-4 mt-auto">
                     <button class="generate-btn flex-1 bg-white text-black py-3 rounded-xl font-black text-[10px] uppercase hover:bg-blue-400">สร้างงาน</button>
-                    <p class="text-xs font-bold text-blue-400">-${eng.cost}</p>
+                    <p class="text-xs font-bold text-[#00d2ff]">-${eng.cost}</p>
                 </div>`;
             grid.appendChild(div);
         });
