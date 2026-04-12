@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SN GATEWAY CENTER</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;700&family=Kanit:wght@300;400;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #010101;
+            --blue: #00d4ff;
+            --red: #ff003c;
+            --border: rgba(255, 255, 255, 0.05);
+            --card-bg: rgba(5, 5, 5, 0.9);
+        }
+        body {
+            font-family: 'JetBrains Mono', 'Kanit', sans-serif;
+            background-color: var(--bg);
+            color: #fff;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #0a0a0a 0%, #010101 100%);
+        }
+        .glow-blue { text-shadow: 0 0 10px rgba(0, 212, 255, 0.5); }
+        .glow-red { text-shadow: 0 0 10px rgba(255, 0, 60, 0.5); }
+        
+        .session-box {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+        .session-box:hover { border-color: var(--blue); box-shadow: 0 0 30px rgba(0, 212, 255, 0.05); }
+        .session-header {
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--border);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* Responsive Matrix */
+        .dashboard-container {
+            display: grid;
+            gap: 16px;
+            padding: 16px;
+            transition: all 0.5s ease;
+        }
+        @media (min-width: 1024px) { .dashboard-container { grid-template-columns: repeat(3, 1fr); } }
+        @media (max-width: 1023px) { .dashboard-container { grid-template-columns: 1fr; } }
+        .dashboard-container.layout-pair { grid-template-columns: repeat(2, 1fr) !important; }
+
+        /* PM2 Metrics Style */
+        .metric-value { font-size: 1.5rem; font-weight: 900; letter-spacing: -1px; }
+        .metric-label { font-size: 0.65rem; text-transform: uppercase; color: #666; letter-spacing: 1px; }
+        
+        input, textarea, select {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border);
+            color: #fff;
+            outline: none;
+            transition: all 0.2s;
+        }
+        input:focus { border-color: var(--blue); background: rgba(0, 212, 255, 0.05); }
+
+        .btn-blue { background: var(--blue); color: #000; font-weight: 900; }
+        .btn-red { background: var(--red); color: #fff; font-weight: 900; }
+        
+        /* Scanline Effect */
+        body::before {
+            content: " ";
+            position: fixed; top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999; pointer-events: none; background-size: 100% 2px, 3px 100%;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-6">
+
+    <header class="flex justify-between items-center mb-6 px-4">
+        <div>
+            <h1 class="text-xl md:text-3xl font-black glow-blue italic uppercase tracking-tighter">SN ULTRA COMMAND</h1>
+            <p class="text-[10px] text-gray-500 tracking-[0.4em] uppercase">Multi-Session v2.0 Production</p>
+        </div>
+        <div class="flex gap-4">
+            <button onclick="toggleLayout()" class="session-box px-4 py-2 text-[10px] font-bold border-blue-500/20 hover:bg-blue-500/10 transition-all uppercase">
+                Toggle Grid View
+            </button>
+            <div class="hidden md:flex items-center gap-3">
+                <span id="statusPing" class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span class="text-[10px] font-bold text-gray-400">SERVER: 147.93.159.30</span>
+            </div>
+        </div>
+    </header>
+
+    <div id="mainGrid" class="dashboard-container">
+        
+        <div class="session-box flex flex-col h-[400px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-blue-400">SESSION_01: GEN-CORE AI</span>
+                <span class="text-[9px] px-2 bg-blue-500/10 text-blue-500 rounded">ACTIVE</span>
+            </div>
+            <div class="p-4 flex-1 flex flex-col gap-3">
+                <div class="grid grid-cols-2 gap-2">
+                    <select id="aiEngine" class="p-2 rounded-lg text-[10px]">
+                        <option value="gemini">GOOGLE GEMINI 2.5</option>
+                        <option value="runway">RUNWAY GEN-4.5</option>
+                        <option value="replicate">FLUX REDUX</option>
+                    </select>
+                    <select id="aiModel" class="p-2 rounded-lg text-[10px]">
+                        <option>ULTRA_FLASH</option>
+                        <option>CINEMATIC_V2</option>
+                    </select>
+                </div>
+                <textarea class="flex-1 rounded-xl p-4 text-xs resize-none" placeholder="ENTER TASK INSTRUCTIONS..."></textarea>
+                <button class="btn-blue w-full py-3 rounded-xl text-[11px] uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all">Execute Generation</button>
+            </div>
+        </div>
+
+        <div class="session-box flex flex-col h-[400px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-red-500">SESSION_02: FINANCE HUB</span>
+                <span class="text-[9px] text-gray-500">REALTIME_FEED</span>
+            </div>
+            <div class="p-6 grid grid-cols-2 gap-4 border-b border-white/5">
+                <div>
+                    <p class="metric-label">Total Sold</p>
+                    <p class="metric-value text-blue-400">฿148,500</p>
+                </div>
+                <div>
+                    <p class="metric-label">Master Balance</p>
+                    <p class="metric-value text-red-500">฿42,190</p>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-2 text-[10px]">
+                <div class="flex justify-between items-center p-2 bg-white/5 rounded">
+                    <span class="text-blue-400 font-bold">#TRX-99</span>
+                    <span>PACKAGE: 99.-</span>
+                    <span class="text-gray-500">2m ago</span>
+                </div>
+                <div class="flex justify-between items-center p-2 bg-white/5 rounded">
+                    <span class="text-red-500 font-bold">#TRX-299</span>
+                    <span>ELITE PROXY</span>
+                    <span class="text-gray-500">15m ago</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-[400px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-blue-400">SESSION_03: HAMSTER OPS</span>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="p-4 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs font-bold italic">TERMUX_INSTANCE_01</span>
+                        <span class="text-[10px] text-blue-400 font-mono">RUNNING: 14d 02h</span>
+                    </div>
+                    <div class="w-full bg-white/5 h-1 rounded-full overflow-hidden">
+                        <div class="bg-blue-500 h-full w-[85%]"></div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="text-center p-3 session-box">
+                        <p class="metric-label">Users Online</p>
+                        <p class="text-xl font-black">1,402</p>
+                    </div>
+                    <div class="text-center p-3 session-box">
+                        <p class="metric-label">Daily Cards</p>
+                        <p class="text-xl font-black glow-blue">SYNCED</p>
+                    </div>
+                </div>
+                <button class="w-full py-2 border border-blue-500/30 text-[10px] font-black uppercase hover:bg-blue-500/10">Restart Hamster Bot</button>
+            </div>
+        </div>
+
+        <div class="session-box h-[400px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-red-500">SESSION_04: CRYPTO FAUCET</span>
+            </div>
+            <div class="p-4 space-y-4">
+                <div class="flex items-center gap-4 p-4 session-box bg-red-500/5">
+                    <div class="w-10 h-10 rounded-full bg-red-500 flex items-center justify-center font-black text-black">C</div>
+                    <div>
+                        <p class="text-xs font-bold">FAUCET STATUS: HIGH_LIQUIDITY</p>
+                        <p class="text-[10px] text-gray-500">AUTO-DISTRIBUTION: ON</p>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Latest Claims</p>
+                    <div class="text-[9px] font-mono space-y-1">
+                        <p class="text-red-400">> 0x71c... claimed 0.05 BTC-TEST</p>
+                        <p class="text-red-400">> 0xa4d... claimed 1.20 ETH-TEST</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-[400px]">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-blue-400">SESSION_05: ACCESS MASTER</span>
+            </div>
+            <div class="p-4 space-y-3">
+                <div class="flex flex-col gap-2">
+                    <label class="text-[9px] font-bold text-gray-500 uppercase">Active License Plan</label>
+                    <div class="flex gap-2">
+                        <div class="flex-1 p-2 border border-white/5 rounded-lg text-center opacity-50">
+                            <p class="text-[8px]">FREE</p>
+                        </div>
+                        <div class="flex-1 p-2 border border-blue-500/50 bg-blue-500/10 rounded-lg text-center">
+                            <p class="text-[8px] text-blue-400 font-bold">PREMIUM (฿99)</p>
+                        </div>
+                        <div class="flex-1 p-2 border border-red-500/50 rounded-lg text-center">
+                            <p class="text-[8px] text-red-500">ELITE (฿299)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <p class="text-[9px] text-gray-400 mb-2 font-bold uppercase italic">Master API Key (Proxy Protected)</p>
+                    <div class="flex gap-2">
+                        <input type="text" readonly value="SN-ULTRA-XXXX-XXXX" class="flex-1 p-3 rounded-xl text-xs font-mono">
+                        <button class="bg-white text-black px-4 rounded-xl font-bold text-[10px] uppercase">Copy</button>
+                    </div>
+                    <p class="text-[8px] mt-2 text-blue-900 font-black italic">Bypassing: Anti-Detect Logic Active</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-[400px] flex flex-col">
+            <div class="session-header">
+                <span class="text-[10px] font-bold text-blue-400">SESSION_06: SYSTEM INTEL</span>
+                <span id="uptime" class="text-[9px] font-mono">UP: 24:00:15</span>
+            </div>
+            <div class="flex-1 p-4 overflow-hidden flex flex-col gap-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="metric-label">CPU LOAD</p>
+                        <div class="flex items-end gap-2">
+                            <span id="cpuUsage" class="metric-value glow-blue">14%</span>
+                            <div class="flex-1 h-8 flex items-end gap-[1px]">
+                                <div class="bg-blue-500/50 w-full h-[20%]"></div>
+                                <div class="bg-blue-500/50 w-full h-[40%]"></div>
+                                <div class="bg-blue-500/50 w-full h-[30%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <p class="metric-label">MEM USAGE</p>
+                        <div class="flex items-end gap-2">
+                            <span id="memUsage" class="metric-value glow-red">7.2%</span>
+                            <div class="flex-1 h-8 flex items-end gap-[1px]">
+                                <div class="bg-red-500/50 w-full h-[10%]"></div>
+                                <div class="bg-red-500/50 w-full h-[15%]"></div>
+                                <div class="bg-red-500/50 w-full h-[12%]"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 bg-black/40 rounded-xl p-3 font-mono text-[9px] text-blue-300/80 overflow-y-auto border border-white/5">
+                    <p class="text-white font-bold mb-2">[PM2 CLUSTER LOGS]</p>
+                    <p>> [sn-api:0] MASTER_GATEWAY_V9.7_LIVE</p>
+                    <p>> [sn-ai-render:1] GEMINI_2.5_READY</p>
+                    <p>> [sn-deployer:2] WEBHOOK_LISTENING_P3000</p>
+                    <p>> [sn-monitor:3] DATA_COLLECTION_SYNC</p>
+                    <p class="text-blue-500">> [sn-api:0] 171.101.103.220 - POST /api/render 200 OK</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <footer class="mt-12 mb-20 text-center opacity-30">
+        <p class="text-[9px] tracking-[1em] uppercase font-black italic">SN DESIGN STUDIO © 2026</p>
+    </footer>
+
+    <script>
+        function toggleLayout() {
+            const grid = document.getElementById('mainGrid');
+            grid.classList.toggle('layout-pair');
+        }
+
+        // Simulated Real-time Data (Connect to Port 5004 in Production)
+        setInterval(() => {
+            const cpu = Math.floor(Math.random() * 5) + 10;
+            const mem = (Math.random() * 0.5 + 7.0).toFixed(1);
+            document.getElementById('cpuUsage').innerText = cpu + '%';
+            document.getElementById('memUsage').innerText = mem + '%';
+        }, 2000);
+    </script>
+</body>
+</html>
