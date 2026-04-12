@@ -1,15 +1,21 @@
 const API_BASE = "https://api.sn-designstudio.dev";
-let CURRENT_METHOD = null, TX_LOCK = false, TIMER = null;
+const paymentBox = document.getElementById("paymentBox");
+const qrModal = document.getElementById("qrModal");
 
+let CURRENT_METHOD = null;
+let TX_LOCK = false;
+
+// เลือกช่องทางแล้วโชว์ช่องกรอกเงินทันที
 function setMethod(method) {
     CURRENT_METHOD = method;
-    document.getElementById("paymentBox").innerHTML = `
-        <div class="w-full max-w-sm text-center">
-            <p class="text-xs font-bold text-blue-400 mb-4">${method.toUpperCase()}</p>
+    paymentBox.innerHTML = `
+        <div class="glass-card p-8 rounded-[2rem] border border-blue-500/20 w-full max-w-sm mx-auto text-center">
+            <p class="text-[10px] font-bold text-blue-400 uppercase mb-4">${method.toUpperCase()}</p>
             <input type="number" id="payAmount" value="10" min="10" 
-                class="w-full bg-black border border-white/10 rounded-xl p-4 text-2xl text-center text-white outline-none mb-4">
-            <button id="confirmBtn" class="w-full bg-blue-500 text-white py-4 rounded-xl font-bold uppercase">ยืนยันการเติมเงิน</button>
-        </div>`;
+                class="w-full bg-black border border-white/10 rounded-xl py-4 text-3xl font-bold text-white text-center outline-none mb-4">
+            <button id="confirmBtn" class="w-full bg-blue-500 text-white py-4 rounded-xl font-bold">ยืนยันการชำระเงิน</button>
+        </div>
+    `;
     document.getElementById("confirmBtn").onclick = handleConfirm;
 }
 
@@ -19,8 +25,6 @@ async function handleConfirm() {
     if (amount < 10) { alert("ขั้นต่ำ 10 บาท"); return; }
     
     TX_LOCK = true;
-    document.getElementById("paymentStatus").innerText = "STATUS: GENERATING...";
-
     try {
         const res = await fetch(API_BASE + "/api/scb/create-qr", {
             method: "POST", credentials: "include", headers: { "Content-Type": "application/json" },
@@ -28,29 +32,20 @@ async function handleConfirm() {
         });
         const data = await res.json();
         if (data.qrImage) {
-            // โชว์ QR แบบเรียบง่าย ไม่เด้งบังหน้าจอ
-            document.getElementById("paymentBox").style.display = "none";
-            document.getElementById("qrDisplay").style.display = "block";
-            document.getElementById("amtText").innerText = amount + " บาท";
-            document.getElementById("qrFrame").innerHTML = `<img src="${data.qrImage}" class="w-full rounded-lg">`;
-            startTimer(300);
-            document.getElementById("paymentStatus").innerText = "STATUS: WAITING PAYMENT";
+            document.getElementById("qrFrame").innerHTML = `<img src="${data.qrImage}" class="w-full rounded-xl">`;
+            document.getElementById("displayAmount").innerText = amount;
+            qrModal.style.display = "flex"; // โชว์ QR
         }
     } catch (e) {
         TX_LOCK = false;
-        alert("เกิดข้อผิดพลาดในการสร้างรายการ");
+        alert("เกิดข้อผิดพลาด");
     }
 }
 
-function startTimer(sec) {
-    if (TIMER) clearInterval(TIMER);
-    TIMER = setInterval(() => {
-        let m = Math.floor(sec / 60), s = sec % 60;
-        document.getElementById("timerText").innerText = `หมดเวลาใน ${m}:${s < 10 ? '0'+s : s}`;
-        if (sec-- <= 0) { clearInterval(TIMER); location.reload(); }
-    }, 1000);
-}
-
-document.querySelectorAll("[data-method]").forEach(btn => {
-    btn.onclick = () => setMethod(btn.dataset.method);
+document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("[data-method]").forEach(el => {
+        el.onclick = () => setMethod(el.dataset.method);
+    });
+    const closeBtn = document.getElementById("closeQr");
+    if(closeBtn) closeBtn.onclick = () => { qrModal.style.display="none"; TX_LOCK=false; };
 });
