@@ -3,40 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN PRODUCTION MASTER - EMERALD v9.1</title>
+    <title>SN PRODUCTION MASTER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Kanit', sans-serif; background: #010204; color: white; overflow-x: hidden; }
-        .emerald-card { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 2.5rem; transition: all 0.3s ease; }
-        .emerald-card:hover { border-color: #10b981; box-shadow: 0 0 30px rgba(16, 185, 129, 0.1); }
+        .emerald-card { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 2.5rem; }
         .preview-box { background: #000; border: 1px dashed rgba(16, 185, 129, 0.15); height: 140px; border-radius: 1.5rem; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative; cursor: pointer; }
-        .preview-box:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
         .preview-box img, .preview-box video { width: 100%; height: 100%; object-fit: cover; }
-        .neon-text { color: #10b981; text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); }
         input[type="file"] { display: none; }
     </style>
 </head>
 <body class="p-4 md:p-10">
     <div class="max-w-[1700px] mx-auto">
-        <header class="flex flex-col md:flex-row justify-between items-center mb-16 gap-6">
-            <h1 class="text-4xl md:text-5xl font-black italic neon-text uppercase tracking-tighter">SN DESIGN STUDIO</h1>
-            <div class="emerald-card px-8 py-4 flex items-center gap-4">
-                <span class="text-emerald-900 text-[10px] font-bold uppercase tracking-widest">Master Credits:</span>
+        <header class="flex justify-between items-center mb-16 gap-6">
+            <h1 class="text-4xl md:text-5xl font-black italic text-emerald-500 uppercase tracking-tighter">SN DESIGN STUDIO</h1>
+            <div class="emerald-card px-8 py-4 flex items-center gap-4 border-emerald-500/20">
                 <span id="creditDisplay" class="text-2xl font-black text-emerald-400">1,000,099.00</span>
             </div>
         </header>
-
         <div id="engineGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"></div>
-
         <footer class="mt-40 pb-20 text-center border-t border-emerald-500/10">
-            <p class="pt-10 text-[10px] text-emerald-900 tracking-[0.6em] font-bold uppercase">© SN DESIGN STUDIO 2026. v9.1 PRODUCTION-FINAL</p>
+            <p class="pt-10 text-[10px] text-emerald-900 tracking-[0.6em] font-bold uppercase">© SN DESIGN STUDIO 2026. v9.1 FINAL</p>
         </footer>
     </div>
 
     <script type="module">
         import { CTA_MODEL_MASTER } from './assets/js/cta.model.master.js';
-
+        const API_BASE = "https://api.sn-designstudio.dev";
         const grid = document.getElementById('engineGrid');
 
         Object.keys(CTA_MODEL_MASTER).forEach(key => {
@@ -54,48 +48,62 @@
                     </div>
                     <span class="text-[8px] bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded-md font-bold">${m.cta}</span>
                 </div>
-
                 ${hasInput ? `
                 <div class="grid ${isDual ? 'grid-cols-2' : 'grid-cols-1'} gap-2">
                     <div class="preview-box" id="prev-1-${key}" onclick="document.getElementById('file-1-${key}').click()">
                         <span class="text-[8px] text-emerald-900 font-bold uppercase">Upload Source</span>
-                        <input type="file" id="file-1-${key}" onchange="handleFile(this, 'prev-1-${key}')">
+                        <input type="file" id="file-1-${key}" class="file-input">
                     </div>
-                    ${isDual ? `
-                    <div class="preview-box" id="prev-2-${key}" onclick="document.getElementById('file-2-${key}').click()">
+                    ${isDual ? `<div class="preview-box" id="prev-2-${key}" onclick="document.getElementById('file-2-${key}').click()">
                         <span class="text-[8px] text-emerald-900 font-bold uppercase">Motion/Ref</span>
-                        <input type="file" id="file-2-${key}" onchange="handleFile(this, 'prev-2-${key}')">
+                        <input type="file" id="file-2-${key}" class="file-input">
                     </div>` : ''}
                 </div>` : ''}
-
-                <textarea id="prompt-${key}" class="w-full bg-black/60 border border-emerald-500/10 rounded-2xl p-4 text-xs h-20 outline-none focus:border-emerald-500 transition-all resize-none text-emerald-100" placeholder="Enter instructions for ${m.model}..."></textarea>
-                
-                <div class="flex items-center justify-between">
-                    <button onclick="runGenerate('${key}')" class="bg-emerald-500 text-black px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all">Generate</button>
-                    <div class="text-right">
-                        <p class="text-[8px] text-emerald-900 font-bold">MODEL</p>
-                        <p class="text-[9px] font-black text-emerald-500">${m.model.split('/')[1] || m.model}</p>
-                    </div>
-                </div>
+                <textarea id="prompt-${key}" class="w-full bg-black/60 border border-emerald-500/10 rounded-2xl p-4 text-xs h-20 outline-none focus:border-emerald-500 text-emerald-100" placeholder="Prompt for ${m.model}..."></textarea>
+                <button onclick="window.runGenerate('${key}')" class="bg-emerald-500 text-black py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-white transition-all">Generate</button>
             `;
             grid.appendChild(card);
         });
 
-        window.handleFile = (input, prevId) => {
-            const area = document.getElementById(prevId);
-            const file = input.files[0];
-            if (file) {
-                const url = URL.createObjectURL(file);
-                area.innerHTML = file.type.startsWith('video') ? `<video src="${url}" autoplay muted loop></video>` : `<img src="${url}">`;
-            }
-        };
-
         window.runGenerate = async (id) => {
             const m = CTA_MODEL_MASTER[id];
             const prompt = document.getElementById(`prompt-${id}`).value;
-            console.log(` Sending Request: CTA: ${m.cta} | Engine: ${m.engine} | Model: ${m.model}`);
-            alert(`�ยิง API ไปยัง https://api.sn-designstudio.dev/api/render\nTarget: ${m.alias}\nModel: ${m.model}`);
+            const btn = event.target;
+            btn.innerText = "PROCESSING...";
+            btn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('prompt', prompt);
+            formData.append('cta', m.cta);
+            formData.append('engine', m.engine);
+            formData.append('model', m.model);
+
+            try {
+                const res = await fetch(`${API_BASE}/api/render`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+                if(data.success) alert("Generate สำเร็จ! ตรวจสอบผลลัพธ์ใน Gallery");
+            } catch (e) {
+                alert("ยิง API ล้มเหลว ตรวจสอบพอร์ต 5002/5003");
+            } finally {
+                btn.innerText = "GENERATE";
+                btn.disabled = false;
+            }
         };
+
+        // ระบบ Preview สด
+        document.addEventListener('change', (e) => {
+            if (e.target.classList.contains('file-input')) {
+                const file = e.target.files[0];
+                const area = e.target.parentElement;
+                if (file) {
+                    const url = URL.createObjectURL(file);
+                    area.innerHTML = file.type.startsWith('video') ? `<video src="${url}" autoplay muted loop></video>` : `<img src="${url}">`;
+                }
+            }
+        });
     </script>
 </body>
 </html>
