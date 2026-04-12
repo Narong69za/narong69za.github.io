@@ -1,189 +1,92 @@
-// =====================================
-// SN DESIGN STUDIO
-// ULTRA REAL OUTPUT PIPELINE
-// FINAL FULL VERSION
-// =====================================
-
-document.addEventListener("DOMContentLoaded",()=>{
-
-   const btn = document.getElementById("createBtn");
-
-   if(!btn){
-      console.log("CREATE BTN NOT FOUND");
-      return;
-   }
-
-   btn.addEventListener("click", async ()=>{
-
-      try{
-
-         // ======================
-         // LOGIN CHECK
-         // ======================
-
-         const user = localStorage.getItem("sn_user");
-
-         if(!user){
-
-            alert("LOGIN REQUIRED");
-            return;
-
-         }
-
-         // ======================
-         // GET TEMPLATE
-         // ======================
-
-         const params = new URLSearchParams(window.location.search);
-         const template = params.get("template");
-
-         // ======================
-         // START RENDER
-         // ======================
-
-         btn.disabled = true;
-         btn.innerText = "STARTING...";
-
-         const start = await fetch("https://api.sn-designstudio.dev/api/render",{
-
-            method:"POST",
-
-            headers:{
-               "Content-Type":"application/json"
-            },
-
-            body:JSON.stringify({
-               template:template,
-               input:{}
-            })
-
-         });
-
-         const startData = await start.json();
-
-         console.log("START DATA:",startData);
-
-         if(!startData.success){
-
-            alert("Render Failed");
-            btn.disabled=false;
-            btn.innerText="CREATE VIDEO";
-            return;
-
-         }
-
-         alert("Render Job Sent");
-
-         const jobId = startData.job_id;
-
-         // ======================
-         // POLLING ENGINE
-         // ======================
-
-         btn.innerText = "PROCESSING...";
-
-         const poll = async ()=>{
-
-            try{
-
-               const res = await fetch(
-                  "https://api.sn-designstudio.dev/api/render-status?job="+jobId
-               );
-
-               const data = await res.json();
-
-               console.log("STATUS:",data);
-
-               // processing
-               if(data.status === "processing"){
-
-                  setTimeout(poll,3000);
-                  return;
-
-               }
-
-               // done
-               if(data.status === "done"){
-
-                  btn.innerText="DONE";
-
-                  if(data.output){
-
-                     const outputArea = document.createElement("div");
-                     outputArea.style.marginTop="20px";
-
-                     if(Array.isArray(data.output)){
-
-                        data.output.forEach(url=>{
-
-                           const img = document.createElement("img");
-                           img.src = url;
-                           img.style.width="100%";
-                           img.style.marginBottom="10px";
-
-                           outputArea.appendChild(img);
-
-                        });
-
-                     }else{
-
-                        const img = document.createElement("img");
-                        img.src = data.output;
-                        img.style.width="100%";
-
-                        outputArea.appendChild(img);
-
-                     }
-
-                     btn.parentElement.appendChild(outputArea);
-
-                  }
-
-                  btn.disabled=false;
-                  btn.innerText="CREATE VIDEO";
-
-                  return;
-
-               }
-
-               // error
-               if(data.status === "error"){
-
-                  alert("Render Failed");
-
-                  btn.disabled=false;
-                  btn.innerText="CREATE VIDEO";
-
-                  return;
-
-               }
-
-            }catch(e){
-
-               console.error(e);
-
-               alert("Render Failed");
-
-               btn.disabled=false;
-               btn.innerText="CREATE VIDEO";
-
-            }
-
-         };
-
-         poll();
-
-      }catch(e){
-
-         console.error(e);
-
-         alert("Render Failed");
-
-         btn.disabled=false;
-         btn.innerText="CREATE VIDEO";
-
-      }
-
-   });
-
-});
+/**
+ * =====================================================
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: render-engine.js (PROGRESS TRACKER)
+ * VERSION: v9.0.0 (CLEAN & UNBLOCKED)
+ * STATUS: production
+ * LAYER: RENDER-PROGRESS
+ * * RESPONSIBILITY:
+ * - Track rendering progress 
+ * - Convert task status → UI progress
+ * - Update progress bar (No Security/Auth Logic)
+ * =====================================================
+ */
+
+// 📊 ตารางสถานะงาน (Mapping Status → Percent)
+const STATUS_PROGRESS = {
+    "PENDING": 10,
+    "STARTING": 20,
+    "RUNNING": 50,
+    "PROCESSING": 75,
+    "SUCCEEDED": 100,
+    "COMPLETED": 100,
+    "DONE": 100,
+    "FAILED": 100
+};
+
+/**
+ * ดึงตัวเลขเปอร์เซ็นต์จากสถานะ
+ */
+export function getProgress(status) {
+    const s = status ? status.toUpperCase() : "PENDING";
+    return STATUS_PROGRESS[s] || 5; 
+}
+
+/**
+ * 🔓 [BYPASS MODE]: อัปเดตแถบ Progress ทันทีโดยไม่เช็ค Security
+ */
+export function updateProgressBar(status) {
+    const bar = document.getElementById("renderProgress");
+    const text = document.getElementById("renderStatus");
+
+    if (!bar) return;
+
+    const progress = getProgress(status);
+
+    // ปรับความกว้างแถบสี
+    bar.style.width = progress + "%";
+
+    // อัปเดตข้อความสถานะ
+    if (text) {
+        text.innerText = `${status} ${progress}%`;
+        
+        // ถ้างานเสร็จ (Succeeded/Completed/Done) ให้เปลี่ยนเป็นสี Cyan ตามธีม
+        if (progress === 100 && status !== "FAILED") {
+            bar.style.background = "#00ffd5"; 
+            text.style.color = "#00ffd5";
+        }
+        
+        // ถ้างานล้มเหลว
+        if (status === "FAILED") {
+            bar.style.background = "#ff4d4d";
+            text.style.color = "#ff4d4d";
+        }
+    }
+}
+
+/**
+ * 🛠️ ฟังก์ชันสร้าง UI Progress Bar (ยัดใส่ในกล่อง Preview ของ Engine)
+ */
+export function createProgressUI(engine) {
+    if (!engine) return;
+
+    // หาจุดที่จะวาง (ถ้าไม่มี .engine-preview ให้วางที่ตัว engine เลย)
+    const box = engine.querySelector(".engine-preview") || engine;
+    
+    // ป้องกันการสร้างซ้ำ
+    if (box.querySelector(".progress-container")) return;
+
+    const container = document.createElement("div");
+    container.className = "progress-container";
+    container.style.marginTop = "15px";
+
+    container.innerHTML = `
+        <div class="progress-bar-bg" style="background: rgba(255,255,255,0.05); height: 8px; border-radius: 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1);">
+            <div id="renderProgress" class="progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #6a1b9a, #9c27b0); transition: width 0.4s ease;"></div>
+        </div>
+        <div id="renderStatus" style="font-size: 11px; color: #888; margin-top: 6px; text-align: center; font-weight: bold; letter-spacing: 1px;">IDLE</div>
+    `;
+
+    box.appendChild(container);
+    console.log("🔓 [RENDER-ENGINE]: UI Progress Injected (Bypass Active)");
+}
