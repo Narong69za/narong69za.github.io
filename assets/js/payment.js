@@ -1,11 +1,10 @@
 const API_BASE = "https://api.sn-designstudio.dev";
 const paymentBox = document.getElementById("paymentBox");
 const qrModal = document.getElementById("qrModal");
+const statusEl = document.getElementById("paymentStatus");
 
-let CURRENT_METHOD = null;
-let TX_LOCK = false;
+let CURRENT_METHOD = null, TX_LOCK = false;
 
-// เลือกช่องทางแล้วโชว์ช่องกรอกเงินทันที
 function setMethod(method) {
     CURRENT_METHOD = method;
     paymentBox.innerHTML = `
@@ -13,9 +12,8 @@ function setMethod(method) {
             <p class="text-[10px] font-bold text-blue-400 uppercase mb-4">${method.toUpperCase()}</p>
             <input type="number" id="payAmount" value="10" min="10" 
                 class="w-full bg-black border border-white/10 rounded-xl py-4 text-3xl font-bold text-white text-center outline-none mb-4">
-            <button id="confirmBtn" class="w-full bg-blue-500 text-white py-4 rounded-xl font-bold">ยืนยันการชำระเงิน</button>
-        </div>
-    `;
+            <button id="confirmBtn" class="w-full bg-blue-500 text-white py-4 rounded-xl font-bold uppercase">Confirm Payment</button>
+        </div>`;
     document.getElementById("confirmBtn").onclick = handleConfirm;
 }
 
@@ -25,6 +23,8 @@ async function handleConfirm() {
     if (amount < 10) { alert("ขั้นต่ำ 10 บาท"); return; }
     
     TX_LOCK = true;
+    if(statusEl) statusEl.innerText = "STATUS: GENERATING...";
+
     try {
         const res = await fetch(API_BASE + "/api/scb/create-qr", {
             method: "POST", credentials: "include", headers: { "Content-Type": "application/json" },
@@ -34,11 +34,12 @@ async function handleConfirm() {
         if (data.qrImage) {
             document.getElementById("qrFrame").innerHTML = `<img src="${data.qrImage}" class="w-full rounded-xl">`;
             document.getElementById("displayAmount").innerText = amount;
-            qrModal.style.display = "flex"; // โชว์ QR
+            qrModal.style.display = "flex";
+            if(statusEl) statusEl.innerText = "STATUS: WAITING PAYMENT";
         }
     } catch (e) {
         TX_LOCK = false;
-        alert("เกิดข้อผิดพลาด");
+        alert("Error Connecting to Server");
     }
 }
 
