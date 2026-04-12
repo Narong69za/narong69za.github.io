@@ -1,63 +1,10 @@
-// =====================================================
-// PROJECT: SN DESIGN STUDIO
-// MODULE: middleware/auth.js
-// VERSION: v
-// STATUS: production-final
-// LAYER: security
-// RESPONSIBILITY:
-// - verify JWT access token
-// - attach req.user
-// - support cookie + bearer
-// DEPENDS ON:
-// - utils/token.util.js
-// LAST FIX: 2026-03-08
-// - removed direct jwt usage
-// - fully centralized verification
-// =====================================================
-
-const tokenUtil = require("../utils/token.util");
-
-function extractToken(req) {
-
-  // 1️⃣ Cookie
-  if (req.cookies?.access_token) {
-    return req.cookies.access_token;
-  }
-
-  // 2️⃣ Bearer
-  if (req.headers.authorization?.startsWith("Bearer ")) {
-    return req.headers.authorization.split("Bearer ")[1];
-  }
-
-  return null;
-}
-
-function authMiddleware(req, res, next) {
-
-  // DEV BYPASS (controlled)
-  if (process.env.DEV_MODE === "true") {
-    req.user = {
-      id: "dev-user",
-      role: "dev"
-    };
-    return next();
-  }
-
-  const token = extractToken(req);
-
-  if (!token) {
-    return res.status(401).json({ error: "NO_TOKEN" });
-  }
-
-  const decoded = tokenUtil.verifyAccessToken(token);
-
-  if (!decoded) {
-    return res.status(401).json({ error: "INVALID_TOKEN" });
-  }
-
-  req.user = decoded;
-
-  next();
-}
-
-module.exports = authMiddleware;
+const jwt = require("jsonwebtoken");
+module.exports = (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = (authHeader && authHeader.split(' ')[1]) || req.cookies?.access_token;
+    if (!token) return res.status(401).json({ ok: false });
+    try {
+        req.user = jwt.verify(token, "SN_ULTRA_ENGINE_2026_SECURE_KEY");
+        next();
+    } catch (e) { res.status(401).json({ ok: false }); }
+};
