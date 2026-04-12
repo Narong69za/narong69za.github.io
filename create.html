@@ -59,8 +59,6 @@
             const m = CTA_MODEL_MASTER[id];
             const prompt = document.getElementById(`prompt-${id}`).value;
             const btn = event.target;
-            const originalText = btn.innerText;
-
             btn.innerText = "UPLOADING...";
             btn.disabled = true;
 
@@ -70,37 +68,31 @@
             formData.append('engine', m.engine);
             formData.append('model', m.model);
 
-            // ดึงไฟล์จาก Input (ถ้ามี)
             const file1 = document.getElementById(`file-1-${id}`)?.files[0];
             const file2 = document.getElementById(`file-2-${id}`)?.files[0];
             if(file1) formData.append('file1', file1);
             if(file2) formData.append('file2', file2);
 
             try {
-                // ✅ [MASTER FETCH]: ไม่ระบุ Content-Type เพื่อให้ Browser จัดการ Multipart เอง
                 const res = await fetch(`${API_BASE}/api/render`, {
                     method: 'POST',
                     body: formData
                 });
                 
-                if (!res.ok) throw new Error("HTTP Status " + res.status);
                 const data = await res.json();
-                
                 if(data.success) {
                     alert("✅ SUCCESS: ส่งงานไปที่ Engine เรียบร้อย!");
                 } else {
                     alert("❌ ERROR: " + (data.message || "Unknown error"));
                 }
             } catch (e) {
-                console.error(e);
                 alert("❌ CONNECTION FAILED: ตรวจสอบ Backend (Port 5002)");
             } finally {
-                btn.innerText = originalText;
+                btn.innerText = "GENERATE";
                 btn.disabled = false;
             }
         };
 
-        // Preview สด
         document.addEventListener('change', (e) => {
             if (e.target.classList.contains('file-in')) {
                 const file = e.target.files[0];

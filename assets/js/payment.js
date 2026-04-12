@@ -35,7 +35,6 @@ async function setMethod(method) {
     }
 }
 
-// ฟังก์ชันเปิด Pop-up (คงเดิมเพราะพี่โอเคแล้ว)
 function openPremiumQR(qrData, amount) {
     const modal = document.createElement('div');
     modal.className = "fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl animate-fadeIn";
@@ -44,7 +43,7 @@ function openPremiumQR(qrData, amount) {
             <div id="pBar" class="absolute top-0 left-0 h-[2px] bg-emerald-500 w-full shadow-[0_0_10px_#10b981]"></div>
             <p class="text-[10px] font-black text-emerald-500 tracking-[0.5em] mb-3 uppercase">SCB MASTER GATEWAY</p>
             <h2 class="text-5xl font-black italic mb-8 text-white">${amount}.00 <span class="text-xs text-emerald-900">THB</span></h2>
-            <div class="bg-white p-6 rounded-[2.5rem] mb-8 relative group">
+            <div class="bg-white p-6 rounded-[2.5rem] mb-8 relative group shadow-[0_0_40px_rgba(255,255,255,0.05)]">
                 <img src="${qrData}" class="w-full h-auto rounded-2xl">
                 <button onclick="downloadQR('${qrData}')" class="absolute inset-0 bg-emerald-500/90 text-black opacity-0 group-hover:opacity-100 transition-all rounded-[2.5rem] font-black flex items-center justify-center uppercase text-[10px]">Download QR</button>
             </div>
