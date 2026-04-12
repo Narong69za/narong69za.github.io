@@ -1,83 +1,198 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SN DESIGN PAYMENT ENGINE</title>
-<link rel="stylesheet" href="/assets/css/payment.css">
-<style>
-body{ margin:0; font-family:'Segoe UI',sans-serif; background:radial-gradient(circle at top,#1a0000,#000 60%); color:white; min-height:100vh; }
-.payment-header{ text-align:center; padding:50px 20px 20px; }
-.payment-grid{ max-width:1100px; margin:40px auto; display:grid; grid-template-columns:repeat(2,1fr); gap:35px; padding:0 20px 60px; }
-.engine-card{ background:linear-gradient(145deg,#0b0b0b,#111); border-radius:20px; padding:40px; text-align:center; border:1px solid rgba(255,255,255,0.08); transition:all .3s ease; cursor:pointer; }
-.engine-card:hover{ transform:translateY(-8px); box-shadow:0 0 40px rgba(255,0,0,.35); }
-.engine-btn{ padding:16px 34px; border-radius:50px; border:none; font-weight:bold; font-size:14px; cursor:pointer; transition:all .25s ease; margin-top:15px; }
-.stripe .engine-btn{ background:gold; color:black; }
-.truemoney .engine-btn{ background:#ff7a00; color:white; }
-.scb .engine-btn{ background:#6a1b9a; color:white; }
-.crypto .engine-btn{ background:#ffd600; color:black; }
-.payment-box{ max-width:800px; margin:20px auto; padding:30px; background:#0b0b0b; border-radius:20px; border:1px solid rgba(255,255,255,0.1); }
-.status{ text-align:center; margin:30px 0 60px; color:#00ffd5; font-weight:bold; letter-spacing:2px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SN DESIGN STUDIO - SECURE PAYMENT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Kanit:wght@200;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --azure: #00d2ff; }
+        body { 
+            font-family: 'Kanit', 'Inter', sans-serif; 
+            background: radial-gradient(circle at top, #0a111a 0%, #020406 70%); 
+            color: white; 
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
 
-/* QR MODAL UI */
-#qrModal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:9999; justify-content:center; align-items:center; flex-direction:column; }
-.qr-container { background:#fff; padding:30px; border-radius:20px; text-align:center; color:#000; max-width:320px; }
-.qr-container img { width:100%; height:auto; margin:15px 0; border:1px solid #eee; }
-.download-qr-btn { display:block; margin-top:10px; background:#6a1b9a; color:#fff; padding:12px; border-radius:10px; text-decoration:none; font-weight:bold; }
-#closeQr { margin-top:20px; color:#aaa; cursor:pointer; text-decoration:underline; }
+        .brand-title { font-size: clamp(1.8rem, 7vw, 4rem); line-height: 1; letter-spacing: -0.05em; }
+        .glass-card { 
+            background: rgba(10, 15, 25, 0.7); 
+            backdrop-filter: blur(20px); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card:hover { 
+            border-color: var(--azure); 
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 210, 255, 0.15);
+        }
 
-@media(max-width:768px){ .payment-grid{ grid-template-columns:1fr; } }
-</style>
+        /* Payment Specific Colors */
+        .btn-stripe { background: linear-gradient(135deg, #635bff 0%, #424770 100%); }
+        .btn-tmn { background: linear-gradient(135deg, #ff8c00 0%, #ed6a02 100%); }
+        .btn-scb { background: linear-gradient(135deg, #6a1b9a 0%, #4a148c 100%); }
+        .btn-crypto { background: linear-gradient(135deg, #f3ba2f 0%, #c99400 100%); }
+
+        /* Modal & QR */
+        #qrModal { 
+            display: none; 
+            position: fixed; 
+            inset: 0; 
+            background: rgba(0,0,0,0.95); 
+            z-index: 9999; 
+            backdrop-filter: blur(15px);
+            justify-content: center; 
+            align-items: center; 
+            padding: 20px;
+        }
+        .qr-window { 
+            background: #fff; 
+            padding: 2rem; 
+            border-radius: 2.5rem; 
+            width: 100%; 
+            max-width: 380px; 
+            color: #000; 
+            text-align: center;
+            box-shadow: 0 0 50px rgba(0, 210, 255, 0.3);
+        }
+
+        .timer-bar { height: 4px; background: #eee; border-radius: 2px; overflow: hidden; margin: 1.5rem 0; }
+        .timer-fill { height: 100%; background: #6a1b9a; width: 100%; transition: width 1s linear; }
+        
+        .azure-glow { color: var(--azure); text-shadow: 0 0 15px rgba(0, 210, 255, 0.4); }
+    </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-center p-4">
 
-<div class="payment-header">
-  <h1>SN DESIGN PAYMENT ENGINE</h1>
-  <p>Enterprise AI Payment Console (Production v10)</p>
-</div>
+    <header class="text-center mb-12">
+        <h1 class="brand-title font-black italic azure-glow uppercase">SN DESIGN STUDIO</h1>
+        <p class="text-slate-500 font-mono text-[10px] tracking-[0.4em] uppercase mt-3">Enterprise Payment Console v10</p>
+    </header>
 
-<div class="payment-grid">
-  <div class="engine-card stripe" data-method="stripe">
-    <h2>� STRIPE GLOBAL CORE</h2>
-    <p>Visa / Master / JCB Secure Gateway</p>
-    <button class="engine-btn">ENTER CARD SYSTEM</button>
-  </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl">
+        
+        <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between items-center text-center" data-method="stripe">
+            <div class="mb-6">
+                <div class="text-azure text-[10px] font-bold tracking-widest mb-2 uppercase">Global Gateway</div>
+                <h2 class="text-2xl font-bold">บัตรเครดิต / เดบิต</h2>
+                <p class="text-slate-500 text-xs mt-2">Visa, Mastercard, JCB (Global Support)</p>
+            </div>
+            <button class="btn-stripe w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all">
+                Enter Card System
+            </button>
+        </div>
 
-  <div class="engine-card truemoney" data-method="truemoney">
-    <h2>� TRUEMONEY WALLET</h2>
-    <p>Direct Wallet Integration</p>
-    <button class="engine-btn">CONNECT WALLET</button>
-  </div>
+        <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between items-center text-center" data-method="truemoney">
+            <div class="mb-6">
+                <div class="text-orange-400 text-[10px] font-bold tracking-widest mb-2 uppercase">Local Wallet</div>
+                <h2 class="text-2xl font-bold">TrueMoney Wallet</h2>
+                <p class="text-slate-500 text-xs mt-2">เติมเงินผ่าน App ทรูมันนี่ (ขั้นต่ำ 10.-)</p>
+            </div>
+            <button class="btn-tmn w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all">
+                Connect Wallet
+            </button>
+        </div>
 
-  <div class="engine-card scb" data-method="promptpay">
-    <h2>� SCB QR ENGINE</h2>
-    <p>Dynamic PromptPay QR</p>
-    <button class="engine-btn">GENERATE QR</button>
-  </div>
+        <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between items-center text-center border-purple-500/20" data-method="promptpay">
+            <div class="mb-6">
+                <div class="text-purple-400 text-[10px] font-bold tracking-widest mb-2 uppercase">Instant Pay</div>
+                <h2 class="text-2xl font-bold">Thai QR Payment</h2>
+                <p class="text-slate-500 text-xs mt-2">สแกนจ่ายผ่านแอปธนาคาร (ขั้นต่ำ 10.-)</p>
+            </div>
+            <button class="btn-scb w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all">
+                Generate QR Code
+            </button>
+        </div>
 
-  <div class="engine-card crypto" data-method="crypto">
-    <h2>� CRYPTO PAYMENT CORE</h2>
-    <p>USDT / BNB / TON Gateway</p>
-    <button class="engine-btn">OPEN CRYPTO GATE</button>
-  </div>
-</div>
+        <div class="glass-card p-8 rounded-[2.5rem] flex flex-col justify-between items-center text-center" data-method="crypto">
+            <div class="mb-6">
+                <div class="text-yellow-400 text-[10px] font-bold tracking-widest mb-2 uppercase">Web3 Core</div>
+                <h2 class="text-2xl font-bold">Crypto Gateway</h2>
+                <p class="text-slate-500 text-xs mt-2">USDT, BNB, TON (Auto Verification)</p>
+            </div>
+            <button class="btn-crypto w-full py-4 rounded-2xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-all text-black">
+                Open Crypto Gate
+            </button>
+        </div>
 
-<div id="paymentBox" class="payment-box"></div>
-<div id="paymentStatus" class="status">STATUS: IDLE</div>
-
-<div id="qrModal">
-    <div class="qr-container">
-        <h3 style="margin:0;">สแกนชำระเงิน</h3>
-        <p style="margin:5px 0; color:#666;">ยอดที่ต้องชำระ: <span id="displayAmount" style="color:#6a1b9a; font-weight:bold;">0</span> บาท</p>
-        <div id="qrFrame"></div>
-        <div id="downloadContainer"></div>
-        <div id="closeQr">ยกเลิกและปิด</div>
     </div>
-</div>
 
-<script src="/assets/js/config.js"></script>
-<script src="/assets/js/payment.js"></script>
+    <div id="paymentStatus" class="mt-12 text-[10px] font-bold text-emerald-400 tracking-[0.3em] uppercase opacity-60">
+        System Status: Secure & Online
+    </div>
 
+    <footer class="mt-16 text-center">
+        <p class="text-[10px] text-slate-600 tracking-[0.5em] uppercase">© SN DESIGN STUDIO 2006.</p>
+    </footer>
+
+    <div id="qrModal">
+        <div class="qr-window">
+            <div class="flex justify-between items-center mb-4">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/d/d0/QR_with_Thai_QR_Payment.svg" class="h-6" alt="Thai QR">
+                <span class="text-[10px] font-black text-purple-700">PROMPTPAY</span>
+            </div>
+            
+            <p class="text-xs text-slate-500 uppercase tracking-widest mb-1">ยอดชำระทั้งสิ้น</p>
+            <h3 class="text-4xl font-black mb-4">฿ <span id="displayAmount">0.00</span></h3>
+
+            <div id="qrFrame" class="bg-white p-2 border-2 border-slate-100 rounded-2xl mb-4">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=SN_DESIGN_STUDIO" class="w-full h-auto">
+            </div>
+
+            <div class="timer-bar"><div id="timerFill" class="timer-fill"></div></div>
+            <p id="timeLeft" class="text-[10px] font-bold text-slate-400">กรุณาชำระเงินภายใน 05:00 นาที</p>
+
+            <div id="downloadContainer" class="mt-6">
+                <button class="w-full bg-purple-700 text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest">บันทึกรูปภาพ QR</button>
+            </div>
+            
+            <button id="closeQr" class="mt-4 text-[10px] font-bold text-slate-400 underline uppercase tracking-widest">ยกเลิกรายการ</button>
+        </div>
+    </div>
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/assets/js/payment.js"></script>
+
+    <script>
+        //  TEST INTERFACE (�พาร์ทเนอร์ใช้งานร่วมกับ payment.js ของจริงได้เลย)
+        const modal = document.getElementById('qrModal');
+        const closeBtn = document.getElementById('closeQr');
+        const scbBtn = document.querySelector('[data-method="promptpay"] button');
+
+        scbBtn.onclick = () => {
+            document.getElementById('displayAmount').innerText = "10.00";
+            modal.style.display = 'flex';
+            startTimer(300); // 5 Minutes
+        };
+
+        closeBtn.onclick = () => {
+            modal.style.display = 'none';
+        };
+
+        function startTimer(duration) {
+            let timer = duration, minutes, seconds;
+            const fill = document.getElementById('timerFill');
+            const text = document.getElementById('timeLeft');
+            
+            const countdown = setInterval(function () {
+                minutes = parseInt(timer / 60, 10);
+                seconds = parseInt(timer % 60, 10);
+
+                minutes = minutes < 10 ? "0" + minutes : minutes;
+                seconds = seconds < 10 ? "0" + seconds : seconds;
+
+                text.textContent = "กรุณาชำระเงินภายใน " + minutes + ":" + seconds + " นาที";
+                fill.style.width = (timer / duration * 100) + "%";
+
+                if (--timer < 0) {
+                    clearInterval(countdown);
+                    modal.style.display = 'none';
+                    alert("หมดเวลาชำระเงิน กรุณาทำรายการใหม่");
+                }
+            }, 1000);
+        }
+    </script>
 </body>
 </html>
-
