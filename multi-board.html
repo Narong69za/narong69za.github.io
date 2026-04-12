@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - THE REMEMBERED</title>
+    <title>SN ULTRA - THE LEGACY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -22,49 +22,69 @@
         }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
+        /* Layout Grid */
+        .dashboard-container {
+            display: grid;
+            gap: 16px;
+            padding: 0 16px 16px 16px;
+        }
+        @media (min-width: 1024px) { .dashboard-container { grid-template-columns: repeat(3, 1fr); } }
+        .layout-pair { grid-template-columns: repeat(2, 1fr) !important; }
+
+        /* Premium Sessions */
         .session-box {
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 16px;
             overflow: hidden;
         }
-        .dashboard-container {
-            display: grid;
-            gap: 16px;
-            padding: 16px;
-        }
-        @media (min-width: 1024px) { .dashboard-container { grid-template-columns: repeat(3, 1fr); } }
-        .layout-pair { grid-template-columns: repeat(2, 1fr) !important; }
 
-        /* Marquee Quote */
-        .quote-box {
-            background: linear-gradient(90deg, transparent, rgba(255,59,48,0.1), transparent);
-            padding: 12px;
-            border-top: 1px solid rgba(255,59,48,0.2);
-            border-bottom: 1px solid rgba(255,59,48,0.2);
-            text-align: center;
-            font-weight: 900;
-            font-style: italic;
+        /* Marquee Positioned (Red Box in Screenshot) */
+        .marquee-container {
+            width: calc(100% - 32px);
+            margin: 0 16px 16px 16px;
+            background: rgba(255, 59, 48, 0.05);
+            border: 1px solid rgba(255, 59, 48, 0.2);
+            border-radius: 8px;
+            padding: 8px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        .marquee-text {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+            font-size: 12px;
+            font-weight: 700;
             color: var(--red);
-            font-size: 14px;
+        }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
         }
 
-        /* YouTube Embed */
-        .video-container {
+        /* YouTube Container (9:16) */
+        .video-wrapper {
             position: relative;
             width: 100%;
-            padding-bottom: 177.77%; /* 9:16 ratio */
+            padding-bottom: 177.7%;
             height: 0;
             background: #000;
             border-radius: 12px;
             overflow: hidden;
         }
-        .video-container iframe {
+        .video-wrapper iframe {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
         }
 
-        /* Premium Status Cards */
+        /* Status Cards Footer */
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            padding: 16px;
+        }
+        @media (min-width: 768px) { .status-grid { grid-template-columns: repeat(4, 1fr); } }
         .status-card {
             background: rgba(255,255,255,0.03);
             border: 1px solid var(--border);
@@ -72,188 +92,188 @@
             padding: 12px;
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+        }
+        .led-blink {
+            width: 8px; height: 8px; border-radius: 50%;
+            animation: blink 1s infinite;
         }
 
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         .lang-active { background: var(--blue); color: #000; }
     </style>
 </head>
-<body class="pb-24">
+<body class="pb-10">
 
-    <div class="quote-box">
-        <span data-key="quote">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ | DEVELOPED BY: HOW GOOD MUST IT BE FOR THE WORLD TO REMEMBER</span>
-    </div>
+    <header class="p-6 pb-2">
+        <div class="flex justify-between items-start mb-4">
+            <h1 class="text-3xl font-black italic tracking-tighter uppercase">SN ULTRA</h1>
+            <button onclick="toggleLayout()" class="px-4 py-2 border border-white/10 rounded-xl text-[10px] font-bold uppercase">Grid Layout</button>
+        </div>
 
-    <header class="flex justify-between items-center p-6 bg-gradient-to-b from-white/5 to-transparent">
-        <div class="flex items-center gap-4">
-            <a href="#" class="w-12 h-12 bg-[#1877F2] rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/20">
-                <svg width="24" height="24" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
-            </a>
-            <div>
-                <h1 class="text-3xl font-black italic tracking-tighter">SN ULTRA</h1>
-                <div class="flex gap-2 mt-1">
-                    <button onclick="changeLang('th')" id="btn-th" class="px-3 py-0.5 rounded text-[10px] font-bold border border-white/10 lang-active">TH</button>
-                    <button onclick="changeLang('en')" id="btn-en" class="px-3 py-0.5 rounded text-[10px] font-bold border border-white/10">EN</button>
-                </div>
+        <div class="flex items-center gap-4 mb-4">
+            <div class="flex gap-1">
+                <button onclick="changeLang('th')" id="btn-th" class="px-4 py-1 rounded-md text-[10px] font-black border border-white/10 lang-active">TH</button>
+                <button onclick="changeLang('en')" id="btn-en" class="px-4 py-1 rounded-md text-[10px] font-black border border-white/10">EN</button>
+            </div>
+            
+            <div class="w-10 h-10 bg-[#1877F2] rounded-lg flex items-center justify-center shadow-lg">
+                <svg width="20" height="20" fill="white" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+
+            <div class="flex-1">
+                <p class="text-[11px] font-black text-white italic tracking-tight">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+                <p class="text-[8px] text-gray-500 uppercase font-bold">SN DESIGN STUDIO PRODUCTION</p>
             </div>
         </div>
-        <button onclick="toggleLayout()" class="session-box px-6 py-3 text-[10px] font-black uppercase border-blue-500/30">Grid Layout</button>
     </header>
+
+    <div class="marquee-container">
+        <span class="marquee-text">ศูนย์รวม โปรแกรม ช่วยเล่น ออโต้ บอท แหล่งรวม การสร้าง รูปภาพ และ วีดีโอ ครบวงจร เกมส์ออนไลน์ 2ระบบ พีซี และ มือถือ</span>
+    </div>
 
     <div id="mainGrid" class="dashboard-container">
         
         <div class="session-box h-[450px]">
-            <div class="p-4 border-b border-white/5 flex justify-between">
-                <span class="text-[10px] font-bold text-blue-500" data-key="d1">ดาต้า_1</span>
-                <span class="text-[9px] opacity-50">GAME_OS</span>
+            <div class="p-4 border-b border-white/5 flex justify-between items-center">
+                <span class="text-[10px] font-black text-blue-500" data-key="d1">ดาต้า_1</span>
+                <span class="text-[8px] px-2 py-0.5 bg-blue-500/10 text-blue-500 rounded font-bold">GAME_DATA</span>
             </div>
-            <div class="p-4 flex flex-col gap-4">
-                <div class="h-40 bg-black rounded-xl border border-white/5 flex items-center justify-center">
-                    <button class="bg-blue-500 text-black px-8 py-3 rounded-full font-black text-xs uppercase" data-key="btn_start">สตาร์ท ดาต้าเกมส์</button>
+            <div class="p-6 flex flex-col gap-6">
+                <div class="h-32 bg-black rounded-2xl border border-white/5 flex items-center justify-center">
+                    <button class="bg-blue-500 text-black px-8 py-3 rounded-full font-black text-[11px] uppercase tracking-tighter">สตาร์ท ดาต้าเกมส์</button>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-center">
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[8px] text-gray-500" data-key="status">Status</p>
-                        <p class="text-xs font-bold text-blue-400">READY</p>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[8px] text-gray-500 uppercase mb-1" data-key="status">Status</p>
+                        <p class="text-xs font-black text-blue-400">READY</p>
                     </div>
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[8px] text-gray-500" data-key="latency">Latency</p>
-                        <p class="text-xs font-bold text-blue-400">8ms</p>
+                    <div class="p-4 bg-white/5 rounded-2xl border border-white/5">
+                        <p class="text-[8px] text-gray-500 uppercase mb-1" data-key="latency">Latency</p>
+                        <p class="text-xs font-black text-blue-400">8ms</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="session-box h-[450px]">
-            <div class="p-4 border-b border-white/5 flex justify-between">
-                <span class="text-[10px] font-bold text-red-500" data-key="d2">ดาต้า_2</span>
-            </div>
+            <div class="p-4 border-b border-white/5"><span class="text-[10px] font-black text-red-500" data-key="d2">ดาต้า_2</span></div>
             <div class="p-6 space-y-6">
-                <div class="border-l-4 border-blue-500 pl-4">
-                    <p class="text-[10px] text-gray-500 uppercase tracking-widest" data-key="sold">TOTAL SOLD</p>
-                    <p class="text-4xl font-black mono">฿148,500</p>
+                <div>
+                    <p class="text-[9px] text-gray-500 uppercase font-black mb-1" data-key="sold">TOTAL SOLD</p>
+                    <p class="text-4xl font-black mono text-white">฿148,500</p>
                 </div>
-                <div class="border-l-4 border-red-500 pl-4">
-                    <p class="text-[10px] text-gray-500 uppercase tracking-widest" data-key="balance">NET BALANCE</p>
+                <div class="pt-6 border-t border-white/5">
+                    <p class="text-[9px] text-gray-500 uppercase font-black mb-1" data-key="balance">MASTER CREDIT</p>
                     <p class="text-4xl font-black mono text-red-500">฿42,190</p>
                 </div>
             </div>
         </div>
 
         <div class="session-box h-[450px]">
-            <div class="p-4 border-b border-white/5 flex justify-between">
-                <span class="text-[10px] font-bold text-blue-500" data-key="d3">ดาต้า_3</span>
-            </div>
-            <div class="p-4 space-y-4">
-                <div class="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                    <p class="text-[10px] font-black text-blue-500 mb-2">TERMUX_NODE_ONLINE</p>
-                    <div class="h-1.5 w-full bg-white/5 rounded-full"><div class="h-full bg-blue-500 w-[92%] shadow-[0_0_10px_#007aff]"></div></div>
+            <div class="p-4 border-b border-white/5"><span class="text-[10px] font-black text-blue-500" data-key="d3">ดาต้า_3</span></div>
+            <div class="p-6 space-y-6">
+                <div class="p-4 bg-blue-500/5 border border-blue-500/10 rounded-2xl">
+                    <p class="text-[9px] font-black text-blue-500 mb-2 italic">TERMUX_NODE_V12</p>
+                    <div class="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 w-[92%] shadow-[0_0_15px_#007aff]"></div>
+                    </div>
                 </div>
-                <div class="grid grid-cols-2 gap-2 text-center">
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[8px] text-gray-500" data-key="users">Active Users</p>
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-2xl text-center">
+                        <p class="text-[8px] text-gray-500" data-key="users">Users</p>
                         <p class="text-xl font-black">1,402</p>
                     </div>
-                    <div class="p-4 bg-white/5 rounded-xl border border-white/5">
-                        <p class="text-[8px] text-gray-500" data-key="cards">Combo</p>
+                    <div class="p-4 bg-white/5 border border-white/5 rounded-2xl text-center">
+                        <p class="text-[8px] text-gray-500" data-key="combo">Combo</p>
                         <p class="text-xl font-black text-blue-500">SYNC</p>
                     </div>
                 </div>
-                <button class="w-full py-4 bg-white text-black font-black text-[10px] rounded-xl tracking-widest uppercase">Restart Bot</button>
+                <button class="w-full py-4 bg-white text-black font-black text-[10px] rounded-xl uppercase tracking-widest" data-key="restart">Restart Bot</button>
             </div>
         </div>
 
         <div class="session-box h-[450px] flex flex-col">
-            <div class="p-4 border-b border-white/5 flex justify-between">
-                <span class="text-[10px] font-bold text-red-500" data-key="d4">ดาต้า_4</span>
-            </div>
+            <div class="p-4 border-b border-white/5"><span class="text-[10px] font-black text-red-500" data-key="d4">ดาต้า_4</span></div>
             <div class="p-4 flex-1 flex flex-col gap-3">
                 <div class="flex-1 bg-black p-4 rounded-xl border border-white/5 mono text-[10px] text-red-400 overflow-y-auto">
-                    <p class="opacity-40">// Blockchain Live Feed</p>
+                    <p class="opacity-30">// Blockchain Feed</p>
                     <p class="text-white">> Claim: 0x71c...5a</p>
                     <p class="text-green-500">> Verify: SUCCESS</p>
-                    <p class="text-red-500">> Send: 0.05 BTC-T</p>
+                    <p class="text-red-500">> Dispatch: 0.05 BTC-T</p>
                 </div>
                 <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-xl text-center">
-                    <span class="text-[10px] font-black text-red-500 uppercase" data-key="faucet">สถานะการแจกจ่าย: สูง (HIGH_YIELD)</span>
+                    <p class="text-[10px] font-black text-red-500 uppercase" data-key="faucet">สถานะการแจกจ่าย: สูง (HIGH_YIELD)</p>
                 </div>
             </div>
         </div>
 
         <div class="session-box h-[450px] flex flex-col">
-            <div class="p-4 border-b border-white/5 flex justify-between">
-                <span class="text-[10px] font-bold text-blue-500" data-key="d5">ดาต้า_5</span>
-                <span class="text-[9px] text-red-500 font-bold" data-key="subscribe">SUBSCRIBE TO UNLOCK</span>
+            <div class="p-4 border-b border-white/5 flex justify-between items-center">
+                <span class="text-[10px] font-black text-blue-500" data-key="d5">ดาต้า_5</span>
+                <span class="text-[8px] text-red-500 font-black animate-pulse">SUBSCRIBE REQ.</span>
             </div>
             <div class="p-4 flex-1 overflow-y-auto">
-                <div class="video-container mb-4">
+                <div class="video-wrapper mb-4">
                     <iframe src="https://www.youtube.com/embed/NI7WALIXStU" frameborder="0" allowfullscreen></iframe>
                 </div>
-                <button class="w-full py-3 bg-red-600 text-white rounded-xl font-black text-[10px] uppercase tracking-tighter" data-key="btn_sub">
-                    Subscribe Now to Use Free Services
+                <button class="w-full py-3 bg-red-600 text-white rounded-xl font-black text-[10px] uppercase" data-key="btn_sub">
+                    Subscribe to Unlock Free Services
                 </button>
             </div>
         </div>
 
-        <div class="session-box h-[450px] flex flex-col">
-            <div class="p-4 border-b border-white/5 flex justify-between">
-                <span class="text-[10px] font-bold text-blue-500" data-key="d6">ดาต้า_6</span>
-            </div>
-            <div class="p-6 flex-1 flex flex-col gap-6">
-                <div class="grid grid-cols-2 gap-4">
-                    <div><p class="text-[8px] text-gray-500 uppercase mb-1">CPU LOAD</p><p class="text-4xl font-black mono text-blue-500" id="cpu">12%</p></div>
-                    <div><p class="text-[8px] text-gray-500 uppercase mb-1">MEM USAGE</p><p class="text-4xl font-black mono text-red-500" id="mem">7.4%</p></div>
+        <div class="session-box h-[450px]">
+            <div class="p-4 border-b border-white/5"><span class="text-[10px] font-black text-blue-500" data-key="d6">ดาต้า_6</span></div>
+            <div class="p-6 space-y-8">
+                <div class="grid grid-cols-2 gap-8">
+                    <div><p class="text-[8px] text-gray-500 mb-1">CPU LOAD</p><p class="text-4xl font-black mono text-blue-500" id="cpu">12%</p></div>
+                    <div><p class="text-[8px] text-gray-500 mb-1">MEM USAGE</p><p class="text-4xl font-black mono text-red-500" id="mem">7.4%</p></div>
                 </div>
-                <div class="flex-1 bg-black/40 rounded-xl p-4 border border-white/5 mono text-[9px] text-blue-300">
-                    <p class="text-white font-black mb-2 uppercase tracking-widest">Process Stack</p>
-                    <div class="flex justify-between border-b border-white/5 py-1"><span>sn-api-gateway</span><span class="text-green-500">ONLINE</span></div>
-                    <div class="flex justify-between border-b border-white/5 py-1"><span>sn-ai-core</span><span class="text-green-500">ONLINE</span></div>
-                    <div class="flex justify-between border-b border-white/5 py-1"><span>sn-bot-manager</span><span class="text-green-500">ONLINE</span></div>
+                <div class="bg-black/40 rounded-2xl p-4 border border-white/5 mono text-[9px] text-blue-300">
+                    <p class="text-white font-black mb-3 border-b border-white/5 pb-2">PROCESS STACK</p>
+                    <div class="flex justify-between py-1"><span>sn-api-proxy</span><span class="text-green-500">200 OK</span></div>
+                    <div class="flex justify-between py-1"><span>sn-ai-render</span><span class="text-green-500">ACTIVE</span></div>
+                    <div class="flex justify-between py-1"><span>sn-bot-core</span><span class="text-green-500">SYNCED</span></div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <div class="px-4 mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="status-grid">
         <div class="status-card">
-            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-            <div><p class="text-[8px] text-gray-500">SERVER</p><p class="text-[10px] font-bold">147.93.159.30</p></div>
+            <div class="led-blink bg-green-500"></div>
+            <div><p class="text-[8px] text-gray-500">API_GATEWAY</p><p class="text-[10px] font-black">HTTPS READY</p></div>
         </div>
         <div class="status-card">
-            <div class="w-3 h-3 bg-blue-500 rounded-full"></div>
-            <div><p class="text-[8px] text-gray-500">DATABASE</p><p class="text-[10px] font-bold">SQLITE CONNECTED</p></div>
+            <div class="led-blink bg-blue-500"></div>
+            <div><p class="text-[8px] text-gray-500">DATABASE</p><p class="text-[10px] font-black">SQLITE_LIVE</p></div>
         </div>
         <div class="status-card">
-            <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-            <div><p class="text-[8px] text-gray-500">SSL</p><p class="text-[10px] font-bold">SECURE_ACTIVE</p></div>
+            <div class="led-blink bg-red-500"></div>
+            <div><p class="text-[8px] text-gray-500">SECURITY</p><p class="text-[10px] font-black">AES_256_ACTIVE</p></div>
         </div>
         <div class="status-card">
-            <div class="w-3 h-3 bg-white rounded-full"></div>
-            <div><p class="text-[8px] text-gray-500">PRODUCTION</p><p class="text-[10px] font-bold">V2.2 MASTER</p></div>
+            <div class="led-blink bg-white"></div>
+            <div><p class="text-[8px] text-gray-500">LICENSE</p><p class="text-[10px] font-black">MASTER ADMIN</p></div>
         </div>
     </div>
 
     <script>
         const trans = {
             th: {
-                quote: "พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ",
                 d1: "ดาต้า_1", d2: "ดาต้า_2", d3: "ดาต้า_3", d4: "ดาต้า_4", d5: "ดาต้า_5", d6: "ดาต้า_6",
-                btn_start: "สตาร์ท ดาต้าเกมส์", status: "สถานะ", latency: "ความหน่วง",
-                sold: "ยอดขายรวม", balance: "กำไรสุทธิ",
-                users: "ผู้ใช้ที่ออนไลน์", cards: "คอมโบ",
-                faucet: "สถานะการแจกจ่าย: สูง (MAX_YIELD)",
-                subscribe: "กดติดตามเพื่อปลดล็อค",
-                btn_sub: "กดติดตามเพื่อใช้งานบริการฟรี"
+                status: "สถานะ", latency: "ความหน่วง", sold: "ยอดขายรวม", balance: "เครดิตมาสเตอร์",
+                users: "ผู้ใช้", combo: "คอมโบ", restart: "เริ่มบอทใหม่",
+                faucet: "สถานะการแจกจ่าย: สูง (HIGH_YIELD)",
+                btn_sub: "กดติดตามเพื่อใช้บริการฟรี"
             },
             en: {
-                quote: "DEVELOPED BY: HOW GOOD MUST IT BE FOR THE WORLD TO REMEMBER",
                 d1: "Data_1", d2: "Data_2", d3: "Data_3", d4: "Data_4", d5: "Data_5", d6: "Data_6",
-                btn_start: "START GAME DATA", status: "STATUS", latency: "LATENCY",
-                sold: "TOTAL SOLD", balance: "NET BALANCE",
-                users: "ACTIVE USERS", cards: "DAILY COMBO",
-                faucet: "FAUCET STATUS: HIGH (MAX_YIELD)",
-                subscribe: "SUBSCRIBE TO UNLOCK",
+                status: "STATUS", latency: "LATENCY", sold: "TOTAL SOLD", balance: "MASTER CREDIT",
+                users: "USERS", combo: "COMBO", restart: "RESTART BOT",
+                faucet: "FAUCET STATUS: HIGH (HIGH_YIELD)",
                 btn_sub: "SUBSCRIBE TO USE FREE SERVICES"
             }
         };
