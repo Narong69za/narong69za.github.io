@@ -6,13 +6,14 @@ async function setMethod(method) {
     const idCard = document.getElementById("payIDCard")?.value;
     const email = localStorage.getItem('user_email');
     
-    // Validate ข้อมูลก่อนยิง
-    if (!phone || !idCard) return alert("3100503536486");
+    if (!phone || !idCard) return alert("กรุณากรอกข้อมูลเบอร์โทรและรหัสบัตรประชาชน");
 
     let endpoint = "";
     if (method === "promptpay") endpoint = "/api/scb/create-qr";
     if (method === "truemoney") endpoint = "/api/truemoney/create-link";
     if (method === "stripe") endpoint = "/api/stripe/create-checkout";
+    
+    if (method === "crypto") return alert("Crypto coming soon with Hamster Project");
 
     try {
         const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -21,15 +22,15 @@ async function setMethod(method) {
             body: JSON.stringify({ 
                 amount: parseInt(amount), 
                 email: email,
-                phone: phone,      // ส่งเบอร์โทร
-                id_card: idCard    // ส่งรหัสบัตรประชาชน
+                phone: phone,
+                id_card: idCard 
             })
         });
         const data = await res.json();
         if (data.success) {
             if (data.qrImage) {
                 openPremiumQR(data.qrImage, amount);
-                startPolling(email);
+                startPolling(email); // ระบบเช็คยอดเงินเพื่อดีดไปหน้า create.html
             }
             else if (data.url) window.location.href = data.url;
         }

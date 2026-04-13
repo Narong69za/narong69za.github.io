@@ -3,36 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PRODUCTION GATEWAY</title>
+    <title>SN ULTRA - PREMIUM GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #000; --red: #ff3b30; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        
+        .compact-header { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
         .red-cash { color: var(--red); text-shadow: 0 0 10px var(--red); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
-        .silver-bronze-title {
+
+        .silver-bronze-text {
             background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            font-size: 18px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
             text-transform: uppercase;
         }
+
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
-        .payment-card { width: 100%; max-width: 420px; }
-        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+        .payment-card { width: 100%; max-width: 400px; }
+
+        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
         .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
         .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
-        .amount-field { color: var(--red) !important; font-size: 24px; text-align: center; font-weight: 900; }
-        .method-card { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.2s; cursor: pointer; }
-        .method-card:hover { border-color: var(--red); transform: translateY(-2px); }
+        
+        .amount-focus { color: var(--red) !important; font-size: 28px; text-align: center; font-weight: 900; }
+        
+        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.2s; cursor: pointer; }
+        .method-btn:hover { border-color: var(--red); transform: translateY(-3px); }
+
         footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .dev-purple { color: #a55eea; font-weight: 900; font-size: 11px; italic: true; }
+        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <header class="compact-nav flex justify-between items-center">
+    <header class="compact-header flex justify-between items-center">
         <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
         <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest italic">AUTHENTICATING...</div>
     </header>
@@ -40,31 +47,31 @@
     <main>
         <div class="payment-card">
             <div class="text-center mb-6">
-                <h2 class="silver-bronze-title italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
+                <h2 class="silver-bronze-text italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
             </div>
 
             <div class="input-group">
-                <span class="input-label text-center">Amount (THB)</span>
-                <input type="number" id="payAmount" value="500" class="input-field amount-field">
+                <span class="input-label text-center">ยอดเติมเครดิต (THB)</span>
+                <input type="number" id="payAmount" value="100" class="input-field amount-focus">
             </div>
 
             <div class="grid grid-cols-2 gap-2 mb-4">
                 <div class="input-group mb-0">
                     <span class="input-label">Phone Number</span>
-                    <input type="text" id="payPhone" placeholder="0925325285" class="input-field">
+                    <input type="text" id="payPhone" placeholder="08xxxxxxxx" class="input-field">
                 </div>
                 <div class="input-group mb-0">
                     <span class="input-label">Citizen ID</span>
-                    <input type="text" id="payIDCard" placeholder="3100503536486" class="input-field">
+                    <input type="text" id="payIDCard" value="3100503536486" class="input-field">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3 w-full">
-                <div data-method="promptpay" class="method-card p-4 flex flex-col items-center gap-2">
+                <div data-method="promptpay" class="method-btn p-5 flex flex-col items-center gap-2">
                     <img src="https://promptpay.io/logo.png" class="w-8">
                     <span class="text-[9px] font-black uppercase">PromptPay</span>
                 </div>
-                <div data-method="truemoney" class="method-card p-4 flex flex-col items-center gap-2">
+                <div data-method="truemoney" class="method-btn p-5 flex flex-col items-center gap-2">
                     <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" class="w-8 rounded-full">
                     <span class="text-[9px] font-black uppercase">TrueWallet</span>
                 </div>
@@ -73,7 +80,7 @@
     </main>
 
     <footer>
-        <p class="dev-purple">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+        <p class="dev-purple italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
     </footer>
 
     <script src="assets/js/payment.js"></script>
