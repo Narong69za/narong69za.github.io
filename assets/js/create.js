@@ -1,33 +1,35 @@
-// =====================================================
-// CREATE PAGE JS (CLEAN BUILD)
-// =====================================================
+const engineManager = {
+    generate: async function(id) {
+        const email = localStorage.getItem('user_email');
+        if(!email) return alert("กรุณาเข้าสู่ระบบก่อนใช้งาน");
 
-document.addEventListener("DOMContentLoaded", () => {
-    if(document.querySelector(".create-top-nav")) return;
+        // ดึงค่า Config พื้นฐานที่ User เลือก
+        const resMult = document.getElementById(`res-${id}`).value;
+        const durMult = document.getElementById(`dur-${id}`).value;
+        const prompt = document.getElementById(`prompt-${id}`)?.value || "";
 
-    const nav = document.createElement("div");
-    nav.className = "create-top-nav";
-    nav.innerHTML = `
-        <div class="create-nav-left">⭐ SN DESIGN ENGINE AI</div>
-        <div class="create-nav-right">
-            <button id="btn-credit" class="create-nav-btn">เติมเครดิต</button>
-        </div>
-    `;
-    document.body.prepend(nav);
-});
+        const formData = new FormData();
+        formData.append('email', email);
+        formData.append('engine_id', id); // ส่งแค่ ID 01-14 ไปหลอกคนแกะโค้ด
+        formData.append('res_mult', resMult);
+        formData.append('dur_mult', durMult);
+        formData.append('prompt', prompt);
 
-document.addEventListener("click", (e) => {
-    if (e.target.id === "btn-credit") {
-        window.location.href = "/payment.html";
+        try {
+            const response = await fetch('http://147.93.159.30:5003/api/use-service', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await response.json();
+            
+            if(data.success) {
+                alert(`[COMPLETE] Engine ${id} รับงานเรียบร้อย! หักเครดิต: ${data.cost}`);
+                location.reload();
+            } else {
+                alert("ระบบขัดข้อง: " + data.message);
+            }
+        } catch (e) {
+            alert("ไม่สามารถติดต่อเซิร์ฟเวอร์เรนเดอร์ได้");
+        }
     }
-});
-
-// UI Interactions
-document.querySelectorAll(".mode-btn, .type-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-        const container = btn.closest(".engine-box") || btn.parentElement;
-        container.querySelectorAll(".mode-btn, .type-btn").forEach(b => b.classList.remove("active-mode", "active-model"));
-        btn.classList.add(btn.classList.contains("mode-btn") ? "active-mode" : "active-model");
-    });
-});
-
+};
