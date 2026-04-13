@@ -2,98 +2,234 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>SN PRODUCTION v13.8</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SN ULTRA - PRODUCTION GATEWAY v3.9</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; margin: 0; }
-        main { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 115px; } /* 15% Stretch */
-        .electric-input { background: #080808; border-radius: 20px; padding: 25px; border: 1px solid #00ffd5; box-shadow: 0 0 20px rgba(0,255,213,0.1); width: 90%; max-width: 400px; }
-        .method-btn { background: #0a0a0a; border: 1px solid #222; border-radius: 15px; padding: 20px; cursor: pointer; opacity: 0.4; text-align: center; font-size: 10px; font-weight: 900; }
-        .method-btn.active { border-color: #00ffd5; box-shadow: 0 0 15px #00ffd5; opacity: 1; }
-        #qr-modal { position: fixed; inset: 0; z-[2000]; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.98); backdrop-filter: blur(20px); }
-        .hidden { display: none !important; }
+        :root { --bg: #000; --red-glow: #ff3b30; --blue-stripe: #6366f1; --gold-crypto: #f59e0b; }
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; 
+            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
+        
+        /* Header ลดขนาดลง 50% แดงรับทรัพย์ */
+        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        .red-cash { color: var(--red-glow); text-shadow: 0 0 10px var(--red-glow); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
+
+        /* SN PAYMENT GATEWAY สีบรอนซ์เงินเงา */
+        .silver-bronze-title {
+            background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            text-transform: uppercase;
+        }
+
+        /* ตรึงหน้า Layout (No Scroll) */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
+        .payment-card { width: 100%; max-width: 420px; }
+
+        /* Input Styles */
+        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
+        .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
+        .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
+        .amount-focus { color: var(--red-glow) !important; font-size: 28px; text-align: center; font-weight: 900; }
+
+        /* Payment Methods */
+        .method-btn { 
+            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 15px; transition: 0.3s; cursor: pointer; 
+            display: flex; flex-direction: column; items-center; gap: 8px; padding: 16px; 
+        }
+        .method-btn.active { border-color: var(--red-glow); box-shadow: 0 0 15px rgba(255,59,48,0.15); }
+        .method-btn:hover { border-color: white; }
+
+        /* Pop-up Modal หรูหรา */
+          #qr-modal-overlay {
+            position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+        }
+        .qr-frame { background: #fff; padding: 20px; border-radius: 3rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.25); }
+        .qr-logo-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; background: #fff; padding: 4px; border-radius: 6px; }
+        .p-bar { height: 4px; background: var(--red-glow); position: absolute; top: 0; left: 0; transition: width 1s linear; }
+
+        footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; italic: true; }
     </style>
 </head>
 <body>
+
+    <header class="compact-nav flex justify-between items-center">
+        <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
+        <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest italic">AUTHENTICATING...</div>
+    </header>
+
     <main>
-        <div class="electric-input">
-            <h2 class="text-center font-black italic uppercase tracking-widest mb-8 text-white/50">SN GATEWAY</h2>
-            <input type="number" id="payAmount" value="500" class="w-full bg-transparent border-none text-white text-5xl font-black text-center outline-none mb-10">
-            
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn active">PROMPTPAY</div>
-                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn">STRIPE</div>
-                <div id="btn-truemoney" onclick="selectMethod('truemoney')" class="method-btn">TRUEMONEY</div>
-                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn">BINANCE</div>
+        <div class="payment-card">
+            <div class="text-center mb-6">
+                <h2 class="silver-bronze-title italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
             </div>
 
-            <div id="tw-area" class="hidden mb-8">
-                <input type="text" id="twLink" placeholder="Gift Link Here..." class="w-full bg-[#111] border border-orange-500/50 p-5 rounded-2xl text-white text-xs outline-none">
+            <div class="input-group">
+                <span class="input-label text-center">Amount (THB)</span>
+                <input type="number" id="payAmount" value="500" class="input-field amount-focus">
             </div>
 
-            <button onclick="executePayment()" class="w-full py-6 bg-white text-black font-black rounded-2xl uppercase hover:bg-red-600 hover:text-white transition-all">Execute Payment</button>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-emerald-500">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1-7h2v6h-2z"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">PromptPay</span>
+                </div>
+                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-orange-500">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">TrueWallet</span>
+                </div>
+                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-[#6366f1]">
+                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 10h20"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Stripe / Card</span>
+                </div>
+                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn opacity-30 cursor-not-allowed">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-yellow-500 hover:scale-110 transition-transform">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7M3 3l18 18M3 21l18-18"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Crypto (Hamster)</span>
+                </div>
+            </div>
+
+            <div id="tw-input-section" class="hidden mb-4">
+                <div class="input-group">
+                    <span class="input-label">TrueWallet Gift Link (อั่งเปา)</span>
+                    <input type="text" id="twLink" placeholder="https://gift.truemoney.com/..." class="input-field text-red-500 text-xs">
+                </div>
+            </div>
+
+            <button id="main-submit-btn" onclick="executePayment()" class="w-full py-4 bg-white text-black font-black text-xs rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all">Generate QR / Pay Now</button>
         </div>
     </main>
 
-    <div id="qr-modal">
-        <div class="text-center p-10 bg-[#050505] rounded-[3.5rem] border border-red-500/20">
-            <img id="qr-img" class="w-64 h-auto rounded-2xl mb-8 border-[6px] border-white">
-            <div id="timer" class="text-red-600 font-black mb-8">05:00</div>
-            <button onclick="closeQR()" class="text-[9px] font-black text-gray-600 uppercase">Cancel</button>
+    <div id="qr-modal-overlay">
+        <div class="text-center relative">
+            <div class="qr-frame mb-6">
+                <div id="pBar" class="p-bar" style="width: 100%;"></div>
+                <img id="qr-img-display" src="" class="w-64 h-64 rounded-xl">
+                <img src="https://upload.wikimedia.org/wikipedia/th/thumb/c/cb/PromptPay-logo.png/1200px-PromptPay-logo.png" class="qr-logo-center">
+            </div>
+            <p id="display-amt" class="text-5xl font-black italic text-white mb-2">0.00</p>
+            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8 tracking-widest">EXPIRES IN: 05:00</p>
+            <div class="flex gap-2 justify-center">
+                <button onclick="downloadQR()" class="px-8 py-3 bg-red-600 text-black font-black text-[10px] rounded-full uppercase">Download QR</button>
+                <button onclick="closeQR()" class="px-8 py-3 bg-[#111] text-gray-500 font-black text-[10px] rounded-full uppercase border border-white/5">Cancel</button>
+            </div>
         </div>
     </div>
 
+    <footer><p class="dev-purple italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p></footer>
+
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
+        const CITIZEN_ID = "3100503536486";
         let currentMethod = 'promptpay';
         let timerInt;
 
-        function selectMethod(m) {
-            currentMethod = m;
-            document.querySelectorAll('.method-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`btn-${m}`).classList.add('active');
-            document.getElementById("tw-area").classList.toggle("hidden", m !== 'truemoney');
+        // --- [1] METHOD SELECTION ---
+        function selectMethod(method) {
+            if(method === 'crypto') return alert("Crypto coming soon with Hamster Project Season 2");
+            currentMethod = method;
+            const twSection = document.getElementById("tw-input-section");
+            const btnPP = document.getElementById("btn-pp"), btnTW = document.getElementById("btn-tw"), 
+                  btnStripe = document.getElementById("btn-stripe"), btnCrypto = document.getElementById("btn-crypto");
+
+            [btnPP, btnTW, btnStripe, btnCrypto].forEach(b => b.classList.remove("active"));
+            twSection.classList.add("hidden");
+
+            if(method === 'truemoney') {
+                twSection.classList.remove("hidden");
+                btnTW.classList.add("active");
+            } else if(method === 'promptpay') btnPP.classList.add("active");
+              else if(method === 'stripe') btnStripe.classList.add("active");
         }
 
+        // --- [2] EXECUTE PAYMENT ---
         async function executePayment() {
-            const amount = document.getElementById("payAmount").value;
-            const email = localStorage.getItem('user_email') || 'user@sn-design.dev';
-            const endpoint = `/api/${currentMethod === 'promptpay' ? 'scb' : currentMethod === 'crypto' ? 'admin/crypto' : currentMethod}`;
-            const body = { amount: parseInt(amount), email };
-            if(currentMethod === 'truemoney') body.link = document.getElementById("twLink").value;
+            const amt = document.getElementById("payAmount").value;
+            const email = localStorage.getItem('user_email');
+            if(!email) return window.location.href = "login.html";
+
+            let endpoint = "";
+            let bodyData = { amount: parseInt(amt), email: email, id_card: CITIZEN_ID };
+
+            if(currentMethod === 'promptpay') endpoint = "/api/scb/create-qr";
+            else if(currentMethod === 'truemoney') {
+                endpoint = "/api/truemoney/verify";
+                bodyData.link = document.getElementById("twLink").value;
+                if(!bodyData.link.includes('gift.truemoney.com')) return alert("กรุณาวางลิ้งค์อั่งเปา");
+            }
+            else if(currentMethod === 'stripe') endpoint = "/api/stripe/create-checkout"; // Stripe Checkout ดีดไปหน้าใหม่
 
             try {
-                const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(bodyData)
+                });
                 const data = await res.json();
+                
                 if (data.success) {
-                    if (data.qrImage) { document.getElementById('qr-img').src = data.qrImage; document.getElementById('qr-modal').style.display = 'flex'; startTimer(); startPolling(email); }
-                    else if (data.url) window.location.href = data.url;
+                    if (data.qrImage) openPopUp(data.qrImage, amt);
+                    else if (data.url) window.location.href = data.url; // Stripe/Truelink ดีดตัว
+                    startPolling(email);
                 }
-            } catch (e) { alert("CONNECTION ERROR: Check Port 5002"); }
+            } catch (e) {
+                if(currentMethod === 'promptpay') openPopUp(`https://promptpay.io/0812345678/${amt}.png`, amt);
+            }
         }
 
-        function startTimer() {
-            let t = 300; clearInterval(timerInt);
+        function openPopUp(qr, amt) {
+            const modal = document.getElementById("qr-modal-overlay");
+            document.getElementById("qr-img-display").src = qr;
+            document.getElementById("display-amt").innerText = amt + ".00";
+            modal.style.display = "flex";
+            let time = 300;
+            clearInterval(timerInt);
             timerInt = setInterval(() => {
-                let m = Math.floor(t / 60), s = t % 60;
-                document.getElementById('timer').innerText = `EXPIRES IN ${m}:${s < 10 ? '0'+s : s}`;
-                if (--t < 0) closeQR();
+                let m = Math.floor(time / 60), s = time % 60;
+                document.getElementById("timerText").innerText = `EXPIRES IN: ${m}:${s < 10 ? '0'+s : s}`;
+                document.getElementById("pBar").style.width = (time / 300 * 100) + "%";
+                if (--time < 0) closeQR();
             }, 1000);
         }
-
-        function closeQR() { document.getElementById('qr-modal').style.display = 'none'; clearInterval(timerInt); }
 
         function startPolling(email) {
             const poll = setInterval(async () => {
                 try {
-                    const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
+                    const res = await fetch(`${API_BASE}/api/check-status?email=${email}`);
                     const data = await res.json();
-                    if (data.paid_success) { clearInterval(poll); window.location.href = "create.html"; }
+                    if (data.paid) { clearInterval(poll); window.location.href = "create.html"; }
                 } catch (e) {}
-            }, 5000);
+            }, 4000);
         }
+
+        function closeQR() { document.getElementById("qr-modal-overlay").style.display = "none"; clearInterval(timerInt); }
+        function downloadQR() {
+            const a = document.createElement('a');
+            a.href = document.getElementById("qr-img-display").src;
+            a.download = `SN-QR-${Date.now()}.png`; a.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const email = localStorage.getItem('user_email');
+            if (email) document.getElementById('user-display').innerText = email;
+            selectMethod('promptpay'); // Default
+        });
     </script>
 </body>
 </html>
