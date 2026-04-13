@@ -3,35 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PRODUCTION GATEWAY v3.8</title>
+    <title>SN ULTRA - PRODUCTION GATEWAY v3.9</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --red-money: #ff3b30; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        :root { --bg: #000; --red-glow: #ff3b30; --blue-stripe: #6366f1; --gold-crypto: #f59e0b; }
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; 
+            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
+        
+        /* Header ลดขนาดลง 50% แดงรับทรัพย์ */
         .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
-        .red-cash { color: var(--red-money); text-shadow: 0 0 10px var(--red-money); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
-        .silver-bronze-title { background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3); text-transform: uppercase; }
+        .red-cash { color: var(--red-glow); text-shadow: 0 0 10px var(--red-glow); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
+
+        /* SN PAYMENT GATEWAY สีบรอนซ์เงินเงา */
+        .silver-bronze-title {
+            background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            text-transform: uppercase;
+        }
+
+        /* ตรึงหน้า Layout (No Scroll) */
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
         .payment-card { width: 100%; max-width: 420px; }
-        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+
+        /* Input Styles */
+        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
         .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
         .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
-        .amount-focus { color: var(--red-money) !important; font-size: 28px; text-align: center; font-weight: 900; }
-        
-        /* กล่องแสดงเครดิตที่จะได้รับ */
-        .credit-display { background: rgba(255,59,48,0.05); border: 1px dashed rgba(255,59,48,0.2); border-radius: 12px; padding: 15px; margin-bottom: 15px; text-align: center; }
-        .credit-value { font-family: 'JetBrains Mono'; font-weight: 900; color: #fff; font-size: 20px; }
-        .bonus-tag { font-size: 10px; color: var(--red-money); font-weight: 900; text-transform: uppercase; margin-left: 5px; }
+        .amount-focus { color: var(--red-glow) !important; font-size: 28px; text-align: center; font-weight: 900; }
 
-        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.3s; cursor: pointer; }
-        .method-btn.active { border-color: var(--red-money); box-shadow: 0 0 15px rgba(255,59,48,0.1); }
-        #qr-modal-overlay { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); }
+        /* Payment Methods */
+        .method-btn { 
+            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 15px; transition: 0.3s; cursor: pointer; 
+            display: flex; flex-direction: column; items-center; gap: 8px; padding: 16px; 
+        }
+        .method-btn.active { border-color: var(--red-glow); box-shadow: 0 0 15px rgba(255,59,48,0.15); }
+        .method-btn:hover { border-color: white; }
+
+        /* Pop-up Modal หรูหรา */
+        #qr-modal-overlay {
+            position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+        }
         .qr-frame { background: #fff; padding: 20px; border-radius: 3rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.25); }
         .qr-logo-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; background: #fff; padding: 4px; border-radius: 6px; }
-        .p-bar { height: 4px; background: var(--red-money); position: absolute; top: 0; left: 0; transition: width 1s linear; }
+        .p-bar { height: 4px; background: var(--red-glow); position: absolute; top: 0; left: 0; transition: width 1s linear; }
+
         footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .dev-purple { color: #a55eea; font-weight: 900; font-size: 11px; italic: true; }
+        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; italic: true; }
     </style>
 </head>
 <body>
@@ -43,43 +67,47 @@
 
     <main>
         <div class="payment-card">
-            <div class="text-center mb-4">
+            <div class="text-center mb-6">
                 <h2 class="silver-bronze-title italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
             </div>
 
             <div class="input-group">
                 <span class="input-label text-center">Amount (THB)</span>
-                <input type="number" id="payAmount" value="500" oninput="calculateCredit()" class="input-field amount-focus">
+                <input type="number" id="payAmount" value="500" class="input-field amount-focus">
             </div>
 
-            <div class="credit-display">
-                <p class="text-[9px] text-gray-500 font-black uppercase mb-1">You will receive</p>
-                <div class="credit-value"><span id="totalCredit">50,000</span> <span class="text-[10px] text-gray-600">Credits</span></div>
-                <div id="bonusSection" class="mt-1"><span class="bonus-tag" id="bonusText">+ 5,000 BONUS INCLUDED</span></div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn p-4 flex flex-col items-center gap-2">
-                    <img src="https://promptpay.io/logo.png" class="w-7">
-                    <span class="text-[9px] font-black uppercase tracking-tighter">PromptPay</span>
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-emerald-500">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1-7h2v6h-2z"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">PromptPay</span>
                 </div>
-                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn p-4 flex flex-col items-center gap-2">
-                    <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" class="w-7 rounded-full">
-                    <span class="text-[9px] font-black uppercase tracking-tighter">TrueWallet</span>
+                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-orange-500">
+                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">TrueWallet</span>
                 </div>
-                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn p-4 flex flex-col items-center gap-2">
-                    <svg width="20" height="20" fill="none" stroke="#6366f1" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Stripe (Card)</span>
+                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-[#6366f1]">
+                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 10h20"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Stripe / Card</span>
                 </div>
-                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn p-4 flex flex-col items-center gap-2 border-dashed">
-                    <svg width="20" height="20" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7"/></svg>
-                    <span class="text-[9px] font-black uppercase tracking-tighter">Crypto (Hamster)</span>
+                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn opacity-30 cursor-not-allowed">
+                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-yellow-500 hover:scale-110 transition-transform">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7M3 3l18 18M3 21l18-18"/>
+                    </svg>
+                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Crypto (Hamster)</span>
                 </div>
             </div>
 
             <div id="tw-input-section" class="hidden mb-4">
                 <div class="input-group">
-                    <span class="input-label">Gift Link (อั่งเปา)</span>
+                    <span class="input-label">TrueWallet Gift Link (อั่งเปา)</span>
                     <input type="text" id="twLink" placeholder="https://gift.truemoney.com/..." class="input-field text-red-500 text-xs">
                 </div>
             </div>
@@ -96,15 +124,15 @@
                 <img src="https://upload.wikimedia.org/wikipedia/th/thumb/c/cb/PromptPay-logo.png/1200px-PromptPay-logo.png" class="qr-logo-center">
             </div>
             <p id="display-amt" class="text-5xl font-black italic text-white mb-2">0.00</p>
-            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8">EXPIRES IN: 05:00</p>
+            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8 tracking-widest">EXPIRES IN: 05:00</p>
             <div class="flex gap-2 justify-center">
-                <button onclick="downloadQR()" class="px-8 py-3 bg-red-600 text-black font-black text-[10px] rounded-full uppercase">Download</button>
+                <button onclick="downloadQR()" class="px-8 py-3 bg-red-600 text-black font-black text-[10px] rounded-full uppercase">Download QR</button>
                 <button onclick="closeQR()" class="px-8 py-3 bg-[#111] text-gray-500 font-black text-[10px] rounded-full uppercase border border-white/5">Cancel</button>
             </div>
         </div>
     </div>
 
-    <footer><p class="dev-purple">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p></footer>
+    <footer><p class="dev-purple italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p></footer>
 
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
@@ -112,32 +140,9 @@
         let currentMethod = 'promptpay';
         let timerInt;
 
-        // --- [1] CREDIT POLICY CALCULATION ---
-        function calculateCredit() {
-            const amount = parseFloat(document.getElementById("payAmount").value) || 0;
-            const baseRate = 100; // 1 THB = 100 Credit
-            let baseCredit = amount * baseRate;
-            let bonusPercent = 0;
-
-            if (amount >= 1000) bonusPercent = 0.20;
-            else if (amount >= 500) bonusPercent = 0.10;
-            else if (amount >= 100) bonusPercent = 0.05;
-
-            let bonusCredit = baseCredit * bonusPercent;
-            let total = baseCredit + bonusCredit;
-
-            document.getElementById("totalCredit").innerText = total.toLocaleString();
-            const bonusDisplay = document.getElementById("bonusSection");
-            if(bonusCredit > 0) {
-                bonusDisplay.classList.remove('hidden');
-                document.getElementById("bonusText").innerText = `+ ${bonusCredit.toLocaleString()} BONUS INCLUDED (${bonusPercent*100}%)`;
-            } else {
-                bonusDisplay.classList.add('hidden');
-            }
-        }
-
-        // --- [2] METHOD SELECTION ---
+        // --- [1] METHOD SELECTION ---
         function selectMethod(method) {
+            if(method === 'crypto') return alert("Crypto coming soon with Hamster Project Season 2");
             currentMethod = method;
             const twSection = document.getElementById("tw-input-section");
             const btnPP = document.getElementById("btn-pp"), btnTW = document.getElementById("btn-tw"), 
@@ -151,16 +156,13 @@
                 btnTW.classList.add("active");
             } else if(method === 'promptpay') btnPP.classList.add("active");
               else if(method === 'stripe') btnStripe.classList.add("active");
-              else if(method === 'crypto') btnCrypto.classList.add("active");
         }
 
-        // --- [3] EXECUTE PAYMENT ---
+        // --- [2] EXECUTE PAYMENT ---
         async function executePayment() {
             const amt = document.getElementById("payAmount").value;
             const email = localStorage.getItem('user_email');
             if(!email) return window.location.href = "login.html";
-
-            if(currentMethod === 'crypto') return alert("Crypto coming soon with Hamster Project Season 2");
 
             let endpoint = "";
             let bodyData = { amount: parseInt(amt), email: email, id_card: CITIZEN_ID };
@@ -171,7 +173,7 @@
                 bodyData.link = document.getElementById("twLink").value;
                 if(!bodyData.link.includes('gift.truemoney.com')) return alert("กรุณาวางลิ้งค์อั่งเปา");
             }
-            else if(currentMethod === 'stripe') endpoint = "/api/stripe/create-checkout"; // Stripe Webhook จะคอยดักหลังจ่ายจบ
+            else if(currentMethod === 'stripe') endpoint = "/api/stripe/create-checkout"; // Stripe Checkout ดีดไปหน้าใหม่
 
             try {
                 const res = await fetch(`${API_BASE}${endpoint}`, {
@@ -183,7 +185,7 @@
                 
                 if (data.success) {
                     if (data.qrImage) openPopUp(data.qrImage, amt);
-                    else if (data.url) window.location.href = data.url; // สำหรับ Stripe Checkout
+                    else if (data.url) window.location.href = data.url; // Stripe/Truelink ดีดตัว
                     startPolling(email);
                 }
             } catch (e) {
@@ -226,7 +228,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             const email = localStorage.getItem('user_email');
             if (email) document.getElementById('user-display').innerText = email;
-            calculateCredit(); selectMethod('promptpay');
+            selectMethod('promptpay'); // Default
         });
     </script>
 </body>
