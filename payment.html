@@ -3,39 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN MASTER - PAYMENT GATEWAY</title>
+    <title>SN ULTRA - PREMIUM PAYMENT GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Kanit', sans-serif; background: #010204; color: white; overflow: hidden; }
-        .emerald-btn { background: #050505; border: 1px solid rgba(16, 185, 129, 0.1); border-radius: 1.5rem; transition: all 0.3s; }
-        .emerald-btn:hover { border-color: #10b981; background: rgba(16, 185, 129, 0.05); transform: translateY(-2px); }
-        .status-glow { text-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        :root { --bg: #000; --card: #0a0a0a; --red-money: #ff3b30; --blue-purple: #a55eea; --border: rgba(255,255,255,0.05); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; margin: 0; overflow-x: hidden; }
+        
+        /* แดงรับทรัพย์ Glow */
+        .red-glow { text-shadow: 0 0 15px var(--red-money); color: var(--red-money); }
+        
+        /* กล่องชำระเงิน Pattern ใหม่ */
+        .payment-box { 
+            background: var(--card); 
+            border: 1px solid var(--border); 
+            border-radius: 16px; 
+            transition: all 0.3s ease; 
+            cursor: pointer; 
+            position: relative; 
+            overflow: hidden; 
+        }
+        .payment-box:hover { 
+            border-color: rgba(255, 59, 48, 0.3); 
+            transform: translateY(-5px) scale(1.02); 
+            box-shadow: 0 10px 30px rgba(255, 59, 48, 0.1); 
+        }
+        .payment-box::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle, rgba(255,59,48,0.03) 0%, rgba(0,0,0,0) 70%);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .payment-box:hover::after { opacity: 1; }
+
+        /* Input Amount สไตล์หรู */
+        input[type="number"] {
+            background: #111 !important;
+            border: 1px solid #222 !important;
+            color: var(--red-money) !important;
+            font-size: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: center;
+        }
+        input[type="number"]:focus { border-color: var(--red-money) !important; outline: none; }
+
+        /* Footer Glow up น้ำเงินม่วง */
+        .dev-glow { text-shadow: 0 0 10px var(--blue-purple); color: var(--blue-purple); }
     </style>
 </head>
-<body class="p-6 flex flex-col items-center justify-center min-h-screen">
-    
-    <div class="w-full max-w-md text-center">
-        <h1 class="text-3xl font-black italic text-emerald-500 mb-10 uppercase tracking-tighter">SN DESIGN STUDIO</h1>
-        
-        <div class="mb-8">
-            <p class="text-[10px] text-emerald-900 font-bold uppercase mb-2">ระบุจำนวนเงิน (THB)</p>
-            <input type="number" id="payAmount" value="10" min="10" 
-                class="w-full bg-black border-b-2 border-emerald-500/20 py-4 text-4xl font-black text-center outline-none focus:border-emerald-500 transition-all text-emerald-100">
+<body>
+
+    <header class="p-10 text-center border-b border-white/5 bg-black/80 backdrop-blur-md sticky top-0 z-50">
+        <h1 class="text-4xl font-black italic tracking-tighter uppercase red-glow mb-1">SN DESIGN STUDIO</h1>
+        <p class="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em]">AI Creator Power System</p>
+    </header>
+
+    <main class="max-w-[800px] mx-auto p-6 mt-10">
+        <div class="mb-12 text-center">
+            <h2 class="text-2xl font-black uppercase italic text-white tracking-tight">SN <span class="text-gray-600">PAYMENT GATEWAY</span></h2>
+            <p class="text-xs text-gray-500 font-bold mt-1">SECURE TRANSACTION PORTAL / Base Base THB</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-4 mb-10">
-            <button data-method="promptpay" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest">PromptPay</button>
-            <button data-method="truemoney" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest">True Wallet</button>
-            <button data-method="stripe" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest">Stripe</button>
-            <button data-method="crypto" class="emerald-btn p-6 text-[10px] font-black uppercase tracking-widest text-emerald-900">Crypto</button>
+        <div class="mb-10 p-6 bg-[#080808] rounded-2xl border border-white/5 text-center">
+            <p class="text-[10px] text-gray-500 font-bold uppercase mb-3 tracking-widest">ระบุจำนวนเงิน (THB)</p>
+            <input type="number" id="amount" placeholder="0.00" class="w-full max-w-sm p-4 rounded-xl border border-white/5 shadow-inner">
         </div>
 
-        <div id="paymentBox" class="min-h-[100px] flex items-center justify-center">
-            <p id="paymentStatus" class="text-[10px] font-bold text-emerald-900 uppercase tracking-widest status-glow">STATUS: IDLE</p>
-        </div>
-    </div>
+        <div class="grid gap-6 grid-cols-2">
+            <div class="payment-box p-6 flex flex-col items-center gap-4 text-center" onclick="processPayment('promptpay')">
+                <div class="w-12 h-12 rounded-full bg-[#1e272e] border border-white/5 flex items-center justify-center">
+                    <img src="https://promptpay.io/logo.png" alt="PP" class="w-8 h-8 opacity-70">
+                </div>
+                <div>
+                    <p class="text-xs font-black text-white uppercase tracking-wider">PROMPTPAY</p>
+                    <p class="text-[9px] text-gray-500 mt-1">เจนเนอเรต QR Code พร้อมเพย์</p>
+                </div>
+                <div class="absolute inset-x-0 bottom-0 h-1 bg-red-600 opacity-50"></div>
+            </div>
 
-    <script src="assets/js/payment.js"></script>
+            <div class="payment-box p-6 flex flex-col items-center gap-4 text-center opacity-50 cursor-not-allowed">
+                <div class="w-12 h-12 rounded-full bg-[#1e272e] border border-white/5 flex items-center justify-center">
+                    <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" alt="TM" class="w-8 h-8 opacity-70 rounded-full">
+                </div>
+                <div>
+                    <p class="text-xs font-black text-white uppercase tracking-wider">TRUE WALLET</p>
+                    <p class="text-[9px] text-gray-500 mt-1">ปิดปรับปรุงชั่วคราว</p>
+                </div>
+            </div>
+            
+            </div>
+
+        <div id="qr-area" class="mt-12 text-center hidden p-8 bg-white rounded-3xl border border-white/10 shadow-lg shadow-red-500/10">
+            <p class="text-black text-[10px] font-black uppercase mb-4 tracking-widest">Scan with Banking App</p>
+            <img src="" id="qr-img" class="w-full max-w-xs mx-auto border-4 border-black p-2 rounded-2xl">
+            <p id="timer" class="text-red-600 text-[10px] font-black mt-4">หมดอายุใน: 10:00 นาที</p>
+        </div>
+
+    </main>
+
+    <footer class="mt-24 p-12 border-t border-white/5 text-center">
+        <p class="text-[10px] font-bold text-gray-700 uppercase tracking-[0.5em] mb-3">© SN DESIGN STUDIO 2026. GLOBAL SETTLEMENT.</p>
+        <p class="text-[11px] font-black italic tracking-tight dev-glow">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+    </footer>
+
+    <script>
+        const API_PORT_3000 = "http://147.93.159.30:3000"; // SCB PromptPay Gateway
+
+        async function processPayment(method) {
+            const amount = document.getElementById('amount').value;
+            const email = localStorage.getItem('user_email');
+            
+            if(!amount || amount < 10) return alert("ระบุจำนวนเงินขั้นต่ำ 10 บาท");
+            if(!email) return alert("กรุณา Login ก่อนเติมเงิน");
+
+            if(method === 'promptpay') {
+                const res = await fetch(`${API_PORT_3000}/api/generate-qr`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ email: email, amount: parseFloat(amount) })
+                });
+                const data = await res.json();
+                
+                if(data.success) {
+                    document.getElementById('qr-img').src = data.qr_url;
+                    document.getElementById('qr-area').classList.remove('hidden');
+                    alert("QR Code พร้อมแล้ว! สแกนเพื่อชำระเงิน ระบบจะเติมเครดิตให้อัตโนมัติหลังจ่ายสำเร็จ");
+                }
+            }
+        }
+    </script>
 </body>
 </html>

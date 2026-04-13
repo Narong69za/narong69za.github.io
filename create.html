@@ -3,163 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - AI CREATION ENGINE</title>
+    <title>SN ULTRA - AI PRODUCTION</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --card: #0a0a0a; --neon: #00ff41; --border: rgba(0, 255, 65, 0.2); }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; margin: 0; }
+        :root { --bg: #000; --card: #0a0a0a; --neon: #00ff41; --border: rgba(0, 255, 65, 0.15); }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; margin: 0; overflow-x: hidden; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        .engine-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; transition: 0.3s; }
-        .engine-card:hover { border-color: var(--neon); box-shadow: 0 0 25px rgba(0, 255, 65, 0.15); }
-        textarea, select { background: #111 !important; border: 1px solid #222 !important; color: var(--neon) !important; font-size: 13px; }
-        textarea:focus, select:focus { border-color: var(--neon) !important; outline: none; }
-        .btn-generate { background: var(--neon); color: #000; font-weight: 900; width: 140px; height: 44px; transition: 0.2s; text-transform: uppercase; }
-        .btn-generate:hover { background: #fff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,255,65,0.3); }
-        .info-label { font-size: 10px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 1px; }
-        .spec-value { font-size: 11px; color: var(--neon); font-weight: 600; }
+        
+        /* Navbar เรียงแนวนอน ไม่ซ้อน */
+        .top-nav { border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.9); backdrop-filter: blur(10px); display: flex; justify-content: space-between; align-items: center; padding: 10px 24px; position: sticky; top: 0; z-index: 100; }
+        
+        .engine-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; height: 100%; transition: 0.3s; }
+        .engine-card:hover { border-color: var(--neon); box-shadow: 0 0 15px rgba(0, 255, 65, 0.1); }
+        
+        /* ปรับ Font ให้พอดีเฟรม ไม่ล้น */
+        textarea, select { 
+            background: #111 !important; 
+            border: 1px solid #222 !important; 
+            color: var(--neon) !important; 
+            font-size: 11px !important; 
+            width: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .btn-generate { background: var(--neon); color: #000; font-weight: 900; width: 120px; height: 38px; font-size: 11px; transition: 0.2s; }
+        .info-label { font-size: 9px; font-weight: 700; color: #555; text-transform: uppercase; }
+        .spec-value { font-size: 10px; color: var(--neon); font-weight: 600; }
         .neon-text { text-shadow: 0 0 10px var(--neon); }
     </style>
 </head>
 <body>
 
-    <div id="nav-container"></div>
-
-    <header class="px-6 py-8 max-w-[1400px] mx-auto flex justify-between items-end">
-        <div class="border-l-4 border-[#00ff41] pl-6">
-            <h1 class="text-4xl font-black italic tracking-tighter uppercase neon-text">AI PRODUCTION</h1>
-            <p class="text-xs font-bold text-gray-500 mt-1 uppercase tracking-[0.3em]">Advanced Neural Render System</p>
-        </div>
-        <div class="text-right bg-[#00ff41]/5 p-4 rounded-2xl border border-[#00ff41]/10">
-            <p class="info-label">Wallet Balance</p>
-            <p class="text-2xl font-black mono text-[#00ff41]" id="top-credits">1,480,500</p>
+    <header class="top-nav">
+        <div class="flex items-center gap-4">
+            <h2 class="text-xl font-black italic tracking-tighter neon-text uppercase">AI PRODUCTION</h2>
+            <div id="nav-container" class="hidden md:block"></div> </div>
+        
+        <div class="flex items-center gap-4">
+            <div class="text-right border-l border-white/10 pl-4">
+                <p class="info-label">Wallet Balance</p>
+                <p class="text-lg font-black mono text-[#00ff41]" id="top-credits">1,480,500</p>
+            </div>
+            <a href="payment.html" class="px-3 py-1.5 bg-[#00ff41] text-black font-black text-[9px] rounded-lg uppercase">Topup</a>
         </div>
     </header>
 
-    <main class="max-w-[1400px] mx-auto p-6">
-        <div class="grid gap-6 md:grid-cols-2" id="engine-grid">
+    <main class="max-w-[1400px] mx-auto p-4 mt-4">
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-2" id="engine-grid">
             </div>
     </main>
 
-    <footer class="mt-20 p-20 border-t border-white/5 text-center">
-        <p class="text-[11px] font-black text-gray-700 tracking-[0.8em] uppercase">© SN DESIGN STUDIO 2026. SECURE SYSTEM</p>
-    </footer>
-
     <script src="assets/js/nav.js"></script>
-
     <script>
         const ENGINE_BASE_COSTS = { "image": 50, "upscale": 80, "video": 200, "deep_motion": 300 };
-
         const engines = [
-            { id: "01", mode: "TEXT TO VIDEO", type: "video", maxFile: "50 MB", maxLen: "10 Sec" },
-            { id: "02", mode: "IMAGE TO VIDEO", type: "video", maxFile: "100 MB", maxLen: "4 Sec" },
-            { id: "03", mode: "VIDEO TO VIDEO", type: "deep_motion", maxFile: "200 MB", maxLen: "15 Sec" },
+            { id: "01", mode: "TEXT TO VIDEO", type: "video", maxFile: "50MB", maxLen: "10S" },
+            { id: "02", mode: "IMAGE TO VIDEO", type: "video", maxFile: "100MB", maxLen: "4S" },
+            { id: "03", mode: "VIDEO TO VIDEO", type: "deep_motion", maxFile: "200MB", maxLen: "15S" },
             { id: "04", mode: "TEXT TO IMAGE", type: "image", maxFile: "N/A", maxLen: "N/A" },
-            { id: "05", mode: "FACE SWAP", type: "image", maxFile: "20 MB", maxLen: "N/A" },
-            { id: "06", mode: "UPSCALE 4K", type: "upscale", maxFile: "500 MB", maxLen: "N/A" },
-            { id: "07", mode: "MOTION BRUSH", type: "deep_motion", maxFile: "50 MB", maxLen: "5 Sec" },
-            { id: "08", mode: "AUDIO TO VIDEO", type: "video", maxFile: "30 MB", maxLen: "60 Sec" },
-            { id: "09", mode: "VIRTUAL TRY-ON", type: "image", maxFile: "40 MB", maxLen: "N/A" },
-            { id: "10", mode: "3D GENERATION", type: "deep_motion", maxFile: "100 MB", maxLen: "N/A" },
-            { id: "11", mode: "STYLE TRANSFER", type: "video", maxFile: "80 MB", maxLen: "10 Sec" },
-            { id: "12", mode: "LIP SYNC AI", type: "video", maxFile: "50 MB", maxLen: "30 Sec" },
-            { id: "13", mode: "REMOVE BG VIDEO", type: "upscale", maxFile: "300 MB", maxLen: "20 Sec" },
-            { id: "14", mode: "FRAME INTERPOLATION", type: "deep_motion", maxFile: "150 MB", maxLen: "5 Sec" }
+            { id: "05", mode: "FACE SWAP", type: "image", maxFile: "20MB", maxLen: "N/A" },
+            { id: "06", mode: "UPSCALE 4K", type: "upscale", maxFile: "500MB", maxLen: "N/A" },
+            { id: "07", mode: "MOTION BRUSH", type: "deep_motion", maxFile: "50MB", maxLen: "5S" },
+            { id: "08", mode: "AUDIO TO VIDEO", type: "video", maxFile: "30MB", maxLen: "60S" },
+            { id: "09", mode: "VIRTUAL TRY-ON", type: "image", maxFile: "40MB", maxLen: "N/A" },
+            { id: "10", mode: "3D GENERATION", type: "deep_motion", maxFile: "100MB", maxLen: "N/A" },
+            { id: "11", mode: "STYLE TRANSFER", type: "video", maxFile: "80MB", maxLen: "10S" },
+            { id: "12", mode: "LIP SYNC AI", type: "video", maxFile: "50MB", maxLen: "30S" },
+            { id: "13", mode: "REMOVE BG VIDEO", type: "upscale", maxFile: "300MB", maxLen: "20S" },
+            { id: "14", mode: "FRAME INTERPOLATION", type: "deep_motion", maxFile: "150MB", maxLen: "5S" }
         ];
 
-        function renderEngines() {
-            const grid = document.getElementById('engine-grid');
-            grid.innerHTML = engines.map(engine => `
-                <div class="engine-card p-6 flex flex-col md:flex-row gap-6">
-                    <div class="flex-1 space-y-4">
-                        <div class="flex justify-between items-start">
+        function render() {
+            document.getElementById('engine-grid').innerHTML = engines.map(e => `
+                <div class="engine-card p-4 flex flex-col md:flex-row gap-4">
+                    <div class="flex-1 min-w-0"> <div class="flex justify-between items-start mb-3">
                             <div>
-                                <span class="text-[9px] font-black px-2 py-0.5 bg-[#00ff41]/10 text-[#00ff41] rounded border border-[#00ff41]/20 uppercase">Model ${engine.id}</span>
-                                <h3 class="text-lg font-black mt-1 text-white italic">${engine.mode}</h3>
+                                <span class="text-[8px] font-black px-1.5 py-0.5 bg-[#00ff41]/10 text-[#00ff41] border border-[#00ff41]/20 rounded uppercase">Model ${e.id}</span>
+                                <h3 class="text-sm font-black text-white italic truncate">${e.mode}</h3>
                             </div>
-                            <div class="flex gap-4">
-                                <div class="text-right"><p class="info-label">Limit</p><p class="spec-value">${engine.maxFile}</p></div>
-                                <div class="text-right"><p class="info-label">Length</p><p class="spec-value">${engine.maxLen}</p></div>
+                            <div class="flex gap-2 text-[9px]">
+                                <span class="text-gray-500">LIM: <span class="text-[#00ff41]">${e.maxFile}</span></span>
+                                <span class="text-gray-500">LEN: <span class="text-[#00ff41]">${e.maxLen}</span></span>
                             </div>
                         </div>
                         
-                        <div class="space-y-3">
-                            ${engine.mode.includes('IMAGE') || engine.mode.includes('VIDEO') && !engine.mode.includes('TEXT') ? 
-                                `<div class="w-full border border-dashed border-[#00ff41]/20 rounded-xl py-6 text-center cursor-pointer hover:bg-[#00ff41]/5">
-                                    <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest">Drop Resource File Here</p>
-                                </div>` : 
-                                `<textarea id="prompt-${engine.id}" class="w-full h-20 p-4 rounded-xl resize-none" placeholder="Enter AI Prompt Commands..."></textarea>`
-                            }
-                            
-                            <div class="grid grid-cols-2 gap-3">
-                                <div class="space-y-1">
-                                    <p class="info-label">Quality Output</p>
-                                    <select id="res-${engine.id}" class="w-full p-2.5 rounded-lg font-bold text-[11px]" onchange="calcCost('${engine.id}', '${engine.type}')">
-                                        <option value="1">780P (Standard)</option>
-                                        <option value="2.5">1080P (Premium x2.5)</option>
-                                    </select>
-                                </div>
-                                <div class="space-y-1">
-                                    <p class="info-label">Timeframe</p>
-                                    <select id="dur-${engine.id}" class="w-full p-2.5 rounded-lg font-bold text-[11px]" onchange="calcCost('${engine.id}', '${engine.type}')">
-                                        <option value="1">Base Frame</option>
-                                        <option value="2">Extended Frame (x2.0)</option>
-                                    </select>
-                                </div>
-                            </div>
+                        ${e.mode.includes('IMAGE') || e.mode.includes('VIDEO') && !e.mode.includes('TEXT') ? 
+                            `<div class="border border-dashed border-white/10 rounded-lg py-4 text-center text-[9px] text-gray-500 uppercase">Drop File</div>` : 
+                            `<textarea class="h-16 p-2 rounded-lg resize-none" placeholder="Prompt..."></textarea>`
+                        }
+                        
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <select id="res-${e.id}" class="p-1.5 rounded text-[10px]" onchange="calc('${e.id}','${e.type}')">
+                                <option value="1">780P (STD)</option>
+                                <option value="2.5">1080P (PRE)</option>
+                            </select>
+                            <select id="dur-${e.id}" class="p-1.5 rounded text-[10px]" onchange="calc('${e.id}','${e.type}')">
+                                <option value="1">BASE</option>
+                                <option value="2">LONG</option>
+                            </select>
                         </div>
                     </div>
-
-                    <div class="md:w-36 flex flex-col justify-between items-center py-2 border-l border-white/5 pl-4">
+                    <div class="md:w-28 flex flex-col justify-between items-center border-l border-white/5 pl-2">
                         <div class="text-center">
-                            <p class="info-label">Total Cost</p>
-                            <p id="cost-${engine.id}" class="text-2xl font-black mono text-[#00ff41]">${ENGINE_BASE_COSTS[engine.type]}</p>
+                            <p class="info-label">CREDIT</p>
+                            <p id="cost-${e.id}" class="text-lg font-black mono text-[#00ff41]">${ENGINE_BASE_COSTS[e.type]}</p>
                         </div>
-                        <button onclick="handleGenerate('${engine.id}', '${engine.type}')" class="btn-generate rounded-full shadow-lg shadow-[#00ff41]/10">Generate</button>
+                        <button class="btn-generate rounded-lg">GENERATE</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function calcCost(id, type) {
-            const base = ENGINE_BASE_COSTS[type];
-            const resMult = parseFloat(document.getElementById(`res-${id}`).value);
-            const durMult = parseFloat(document.getElementById(`dur-${id}`).value);
-            const final = Math.floor(base * resMult * durMult);
+        function calc(id, type) {
+            const final = Math.floor(ENGINE_BASE_COSTS[type] * document.getElementById(`res-${id}`).value * document.getElementById(`dur-${id}`).value);
             document.getElementById(`cost-${id}`).innerText = final.toLocaleString();
         }
 
-        async function handleGenerate(id, type) {
-            const resMult = document.getElementById(`res-${id}`).value;
-            const durMult = document.getElementById(`dur-${id}`).value;
-            const email = localStorage.getItem('user_email') || 'narongsack.69@gmail.com';
-            const hwid = btoa(navigator.userAgent).substring(0, 16);
-            
-            const formData = new FormData();
-            formData.append('email', email);
-            formData.append('engine_id', id);
-            formData.append('res_mult', resMult);
-            formData.append('dur_mult', durMult);
-            formData.append('hwid', hwid);
-
-            try {
-                const response = await fetch('http://147.93.159.30:5003/api/use-service', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-                if(data.success) {
-                    alert(`Engine ${id} : Render Started! Credits Deducted: ${data.cost_deducted}`);
-                    location.reload();
-                } else {
-                    alert("System Error: " + data.message);
-                }
-            } catch (e) {
-                alert("Critical: API Connection Failed");
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', renderEngines);
+        document.addEventListener('DOMContentLoaded', render);
     </script>
 </body>
 </html>
