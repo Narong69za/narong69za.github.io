@@ -3,41 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>SN ULTRA - PRODUCTION GATEWAY v11.0</title>
+    <title>SN ULTRA - PRODUCTION GATEWAY v12.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #000; --red: #ff3b30; --neon: #00ffd5; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        
-        /* [FIX 1] Header กันล้นขอบบน */
         .compact-nav { height: 60px; padding-top: env(safe-area-inset-top); border-bottom: 1px solid rgba(255,255,255,0.05); padding-left: 20px; padding-right: 20px; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; width: 100%; z-index: 1000; }
         .red-cash { color: var(--red); text-shadow: 0 0 10px var(--red); font-size: 14px; font-weight: 900; letter-spacing: 2px; }
-
-        /* [FIX 2] Main Layout กันทับ Nav */
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 80px; padding-bottom: 20px; }
         .payment-card { width: 90%; max-width: 400px; }
-
-        .silver-bronze { background: linear-gradient(135deg, #8e9eab, #eef2f3, #8e9eab); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.2rem; letter-spacing: 0.1em; }
-
-        /* Electric Border Animation */
         .electric-input { position: relative; background: #080808; border-radius: 15px; padding: 15px; border: 1px solid var(--neon); box-shadow: 0 0 15px rgba(0, 255, 213, 0.1); }
         .electric-input::after { content: ''; position: absolute; inset: -2px; border-radius: 17px; background: linear-gradient(90deg, transparent, var(--neon), transparent); z-index: -1; animation: move-light 3s linear infinite; }
         @keyframes move-light { 0%, 100% { filter: blur(3px); opacity: 0.3; } 50% { opacity: 1; } }
-
-        .credit-display { background: rgba(0,255,213,0.03); border: 1px dashed rgba(255,255,213,0.2); border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; }
         .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; items-center; gap: 8px; padding: 18px; opacity: 0.4; }
         .method-btn.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); opacity: 1; }
-
-        /* QR Modal */
-        #qr-modal { position: fixed; inset: 0; z-index: 2000; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.98); backdrop-filter: blur(20px); }
-        .qr-window { background: #fff; border-radius: 2.5rem; overflow: hidden; width: 320px; border: 4px solid #111; position: relative; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
-        .qr-header { background: #4e2e7f; padding: 15px; text-align: center; color: #fff; }
-        .qr-body { padding: 30px; position: relative; background: #fff; display: flex; justify-content: center; align-items: center; }
-        .qr-logo-overlay { position: absolute; width: 55px; height: 55px; background: #000; border-radius: 50%; border: 2px solid #ffd700; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        .qr-logo-overlay img { width: 100%; height: 100%; object-fit: cover; }
-        
-        footer { padding: 20px; text-align: center; font-size: 10px; font-weight: 900; color: #a55eea; letter-spacing: 2px; }
         .hidden { display: none !important; }
     </style>
 </head>
@@ -45,173 +25,119 @@
 
     <header class="compact-nav">
         <h1 class="red-cash uppercase italic">SN DESIGN STUDIO</h1>
-        <div id="status-tag" class="text-[8px] font-black text-emerald-500 uppercase tracking-tighter">AUTH ACTIVE (5s SYNC)</div>
+        <div id="status-tag" class="text-[8px] font-black text-emerald-500 uppercase tracking-tighter italic">GATEWAY ACTIVE v12.0</div>
     </header>
 
     <main>
         <div class="payment-card">
-            <div class="text-center mb-6"><h2 class="silver-bronze uppercase italic">SN PAYMENT GATEWAY</h2></div>
+            <div class="text-center mb-6"><h2 class="text-white font-black italic uppercase tracking-[0.2em]">SN PRODUCTION SETTLEMENT</h2></div>
 
             <div class="electric-input mb-4">
-                <span class="text-[8px] font-black text-[#00ffd5] uppercase block mb-1 text-center tracking-widest">Amount (THB)</span>
-                <input type="number" id="payAmount" value="500" oninput="calcCredit()" class="w-full bg-transparent border-none text-white text-4xl font-black text-center outline-none font-mono">
+                <span class="text-[8px] font-black text-[#00ffd5] uppercase block mb-1 text-center">Amount (THB)</span>
+                <input type="number" id="payAmount" value="500" class="w-full bg-transparent border-none text-white text-4xl font-black text-center outline-none font-mono">
             </div>
 
-            <div class="credit-display">
-                <div class="text-2xl font-black italic"><span id="total-cr">55,000</span> <span class="text-[10px] text-[#00ffd5]">CR</span></div>
-                <div id="bonus-box" class="text-[9px] font-black text-[#00ffd5] mt-1 uppercase tracking-widest">+ 5,000 BONUS (10% POLICY)</div>
+            <div class="space-y-3 mb-6">
+                <input type="text" id="payPhone" placeholder="เบอร์โทรศัพท์" class="w-full bg-[#111] border border-white/5 p-4 rounded-xl text-white text-xs outline-none">
+                <input type="text" id="payIDCard" placeholder="รหัสบัตรประชาชน (13 หลัก)" class="w-full bg-[#111] border border-white/5 p-4 rounded-xl text-white text-xs outline-none">
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-6">
-                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00ffd5" stroke-width="2"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
-                    <span class="text-[10px] font-black uppercase text-white">PromptPay</span>
-                </div>
-                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff8c00" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8M8 8l8 8"/></svg>
-                    <span class="text-[10px] font-black uppercase text-white">TrueWallet</span>
-                </div>
-                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn">
-                    <svg width="24" height="24" fill="none" stroke="#6366f1" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
-                    <span class="text-[10px] font-black uppercase text-white">Stripe Card</span>
-                </div>
-                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn">
-                    <svg width="24" height="24" fill="none" stroke="#f3ba2f" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7"/></svg>
-                    <span class="text-[10px] font-black uppercase text-white">Binance Pay</span>
-                </div>
+                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn active"><span class="text-[10px] font-black uppercase text-white">PromptPay</span></div>
+                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">Credit Card</span></div>
+                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">TrueWallet</span></div>
+                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">Binance Crypto</span></div>
             </div>
 
-            <div id="tw-area" class="hidden mb-4">
-                <input type="text" id="twLink" placeholder="วางลิ้งค์อั่งเปา (Gift Link)..." class="w-full bg-[#111] border border-orange-500 p-4 rounded-xl text-white text-xs outline-none font-mono">
-            </div>
-            <div id="crypto-area" class="hidden mb-4">
-                <select id="coinType" class="w-full bg-[#111] border border-yellow-500 p-4 rounded-xl text-white text-xs outline-none font-black uppercase">
-                    <option value="USDT">USDT (TRC20)</option>
-                    <option value="BNB">BNB (BEP20)</option>
-                    <option value="TON">TON (Network)</option>
-                </select>
-            </div>
-
-            <button onclick="executePayment()" class="w-full py-5 bg-white text-black font-black text-sm rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all shadow-xl">Execute Settlement</button>
+            <button onclick="executePayment()" class="w-full py-5 bg-white text-black font-black text-sm rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all">Execute Payment</button>
         </div>
     </main>
 
-    <div id="qr-modal">
-        <div class="text-center">
-            <div class="qr-window mb-6">
-                <div class="qr-header"><p class="text-[11px] font-black tracking-widest uppercase">SN PAYMENT CORE</p></div>
-                <div class="qr-body">
-                    <img id="qr-img" src="" class="w-64 h-64 rounded-lg">
-                    <div class="qr-logo-overlay"><img src="assets/images/payment.png" onerror="this.src='https://promptpay.io/logo.png'"></div>
-                </div>
-                <div class="qr-footer"><p>DEVELOPED BY: ต้องดีแค่ไหน โลกถึงจะจำ</p></div>
-            </div>
-            <p id="timer" class="text-3xl font-black text-red-600 mb-8 font-mono">05:00</p>
-            <div class="flex gap-3 justify-center">
-                <button onclick="downloadQR()" class="px-10 py-3 bg-[#00ffd5] text-black font-black text-[11px] rounded-full uppercase">Download</button>
-                <button onclick="closeModal()" class="px-10 py-3 bg-[#111] text-gray-500 font-black text-[11px] rounded-full uppercase border border-white/5">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <footer><p>PRODUCTION READY | © 2026</p></footer>
-
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
-        const CITIZEN_ID = "3100503536486";
         let currentMethod = 'promptpay';
-        let timerInt;
-
-        function calcCredit() {
-            const amt = parseFloat(document.getElementById('payAmount').value) || 0;
-            const base = amt * 100;
-            let bonus = (amt >= 1000) ? 0.20 : (amt >= 300) ? 0.10 : (amt >= 100) ? 0.05 : 0;
-            document.getElementById('total-cr').innerText = (base + (base * bonus)).toLocaleString();
-            document.getElementById('bonus-box').innerText = bonus > 0 ? `+ ${(base*bonus).toLocaleString()} BONUS (${bonus*100}% POLICY)` : "NO BONUS APPLIED";
-        }
 
         function selectMethod(method) {
             currentMethod = method;
-            ['btn-pp', 'btn-tw', 'btn-stripe', 'btn-crypto'].forEach(id => document.getElementById(id).classList.remove('active'));
-            document.getElementById(`btn-${method}`).classList.add('active');
-            
-            document.getElementById("tw-area").classList.add("hidden");
-            document.getElementById("crypto-area").classList.add("hidden");
-            const root = document.querySelector(':root');
-
-            if(method === 'promptpay') root.style.setProperty('--neon', '#00ffd5');
-            else if(method === 'truemoney') { root.style.setProperty('--neon', '#ff8c00'); document.getElementById("tw-area").classList.remove("hidden"); }
-            else if(method === 'stripe') root.style.setProperty('--neon', '#6366f1');
-            else if(method === 'crypto') { root.style.setProperty('--neon', '#f3ba2f'); document.getElementById("crypto-area").classList.remove("hidden"); }
+            document.querySelectorAll('.method-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`btn-${method === 'promptpay' ? 'pp' : method}`).classList.add('active');
         }
 
         async function executePayment() {
-            const amt = document.getElementById('payAmount').value;
+            const amount = document.getElementById("payAmount").value;
+            const phone = document.getElementById("payPhone").value;
+            const idCard = document.getElementById("payIDCard").value;
             const email = localStorage.getItem('user_email') || 'test@gmail.com';
+            
+            if (!phone || !idCard) return alert("กรุณากรอกข้อมูลเบอร์โทรและรหัสบัตรประชาชน");
+
             let endpoint = "";
-            let bodyData = { amount: parseInt(amt), email: email };
-
-            if(currentMethod === 'promptpay') endpoint = "/api/scb";
-            else if(currentMethod === 'stripe') endpoint = "/api/stripe";
-            else if(currentMethod === 'truemoney') { 
-                bodyData.link = document.getElementById("twLink").value; 
-                if(!bodyData.link) return alert("กรุณาวางลิงก์ซองของขวัญ");
-                endpoint = "/api/truemoney"; 
-            }
-            else if(currentMethod === 'crypto') { 
-                bodyData.coin = document.getElementById("coinType").value; 
-                endpoint = "/api/admin/crypto"; 
-            }
+            if (currentMethod === "promptpay") endpoint = "/api/scb";
+            if (currentMethod === "truemoney") endpoint = "/api/truemoney";
+            if (currentMethod === "stripe") endpoint = "/api/stripe";
+            if (currentMethod === "crypto") return alert("Crypto coming soon with Hamster Project");
 
             try {
-                const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(bodyData) });
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: parseInt(amount), email, phone, id_card: idCard })
+                });
                 const data = await res.json();
-                if(data.success) {
-                    if(data.qrImage) { document.getElementById('qr-img').src = data.qrImage; document.getElementById('qr-modal').style.display = 'flex'; startTimer(); }
-                    else if(data.url) window.location.href = data.url;
+                if (data.success) {
+                    if (data.qrImage) { openPremiumQR(data.qrImage, amount); startPolling(email); }
+                    else if (data.url) window.location.href = data.url;
                 }
-            } catch(e) { alert("CONNECTION_ERROR: พอร์ต 5002 ไม่ตอบสนอง"); }
+            } catch (e) { alert("API Connection Failed"); }
         }
 
-        // [FIX 4] ระบบดาวน์โหลด QR มาตรฐานสูง
-        async function downloadQR() {
-            try {
-                const img = document.getElementById('qr-img');
-                const response = await fetch(img.src);
-                const blob = await response.blob();
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = `SN-QR-${Date.now()}.png`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-            } catch (e) { 
-                // Fallback for direct data URL
-                const link = document.createElement('a');
-                link.href = document.getElementById('qr-img').src;
-                link.download = `SN-QR-${Date.now()}.png`;
-                link.click();
-            }
-        }
-
-        function startTimer() {
-            let t = 300; clearInterval(timerInt);
-            timerInt = setInterval(() => {
-                let m = Math.floor(t / 60), s = t % 60;
-                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                if (--t < 0) closeModal();
+        function openPremiumQR(qrData, amount) {
+            const modal = document.createElement('div');
+            modal.id = "premium-qr-modal";
+            modal.className = "fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-xl";
+            modal.innerHTML = `
+                <div class="bg-[#050505] w-full max-w-sm rounded-[3.5rem] p-10 text-center border border-red-500/20 shadow-[0_0_80px_rgba(239,68,68,0.15)] relative overflow-hidden">
+                    <div id="pBar" class="absolute top-0 left-0 h-[3px] bg-red-600 w-full transition-all duration-1000"></div>
+                    <p class="text-[9px] font-black text-red-500 tracking-[0.5em] mb-4 uppercase">SCB MASTER GATEWAY</p>
+                    <h2 class="text-5xl font-black italic mb-8 text-white">${amount}.00 <span class="text-xs text-red-900 italic">THB</span></h2>
+                    <div class="bg-white p-5 rounded-[2.5rem] mb-8 relative group border-[6px] border-[#111]">
+                        <img id="qr-img-dl" src="${qrData}" class="w-full h-auto rounded-2xl">
+                        <button onclick="downloadQR()" class="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition-all rounded-[2rem] font-black flex items-center justify-center uppercase text-xs tracking-widest">Download QR</button>
+                    </div>
+                    <p id="timerText" class="text-xs font-black text-red-900 uppercase">EXPIRES IN: 05:00</p>
+                    <button onclick="document.getElementById('premium-qr-modal').remove()" class="mt-8 text-[9px] font-black text-gray-600 uppercase hover:text-white">Cancel Payment</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            let timer = 300;
+            const interval = setInterval(() => {
+                let min = Math.floor(timer / 60), s = timer % 60;
+                const text = modal.querySelector('#timerText'), bar = modal.querySelector('#pBar');
+                if(text) text.innerText = `EXPIRES IN: ${min < 10 ? '0'+min : min}:${s < 10 ? '0'+s : s}`;
+                if(bar) bar.style.width = (timer / 300 * 100) + "%";
+                if (--timer < 0 || !document.getElementById('premium-qr-modal')) { clearInterval(interval); if(timer < 0) modal.remove(); }
             }, 1000);
         }
 
-        function closeModal() { document.getElementById('qr-modal').style.display = 'none'; clearInterval(timerInt); }
+        async function downloadQR() {
+            const img = document.getElementById('qr-img-dl');
+            const response = await fetch(img.src);
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url; a.download = `SN-QR-${Date.now()}.png`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
 
-        // Polling status every 5 seconds (Tags System)
-        setInterval(() => { console.log(`[SYNCING] Core Active | Method: ${currentMethod}`); }, 5000);
-
-        window.onload = () => { selectMethod('promptpay'); calcCredit(); };
+        function startPolling(email) {
+            const poll = setInterval(async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
+                    const data = await res.json();
+                    if (data.paid_success) { clearInterval(poll); window.location.href = "create.html"; }
+                } catch (e) {}
+            }, 5000);
+        }
     </script>
 </body>
 </html>
