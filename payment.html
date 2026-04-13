@@ -3,126 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PAYMENT GATEWAY</title>
+    <title>SN PAYMENT GATEWAY v3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --red-money: #ff3b30; --silver: #e2e2e2; }
+        :root { --bg: #000; --red-glow: #ff3b30; }
         body { 
-            font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; 
             margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
         }
         
-        /* Header ลดขนาดลง 50% */
-        .compact-nav { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 12px 24px; }
-        .red-glow { text-shadow: 0 0 10px var(--red-money); color: var(--red-money); font-size: 1.25rem; }
-        
-        /* SN PAYMENT GATEWAY สีบรอนซ์เงินเงา */
-        .silver-bronze {
-            background: linear-gradient(135deg, #cfd9df 0%, #e2ebf0 100%);
+        /* 1. Header รีดลง 50% แดงรับทรัพย์ */
+        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        .red-cash { color: var(--red-glow); text-shadow: 0 0 10px var(--red-glow); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
+
+        /* 2. SN PAYMENT GATEWAY บรอนซ์เงินเงา */
+        .silver-bronze-title {
+            background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(226, 235, 240, 0.4);
-            font-size: 1.1rem;
+            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            text-transform: uppercase;
         }
 
-        /* กล่องเลือกชำระเงินสไตล์ Compact */
-        .pay-card {
-            background: #080808; border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 12px; transition: 0.3s; cursor: pointer;
-        }
-        .pay-card:hover { border-color: var(--red-money); transform: translateY(-2px); }
-        
-        input[type="number"] {
-            background: #111 !important; border: 1px solid #222 !important;
-            color: var(--red-money) !important; font-family: 'JetBrains Mono';
-            text-align: center; font-size: 1.5rem;
-        }
+        /* 3. ตรึงหน้า Layout (No Scroll) */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
+        .payment-card { width: 100%; max-width: 400px; }
 
-        /* ป้องกันการเลื่อน */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px; }
-        
-        .icon-box { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: #111; }
+        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
+        .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
+        .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
+        .amount-focus { color: var(--red-glow) !important; font-size: 28px; text-align: center; font-weight: 900; }
+
+        /* 4. ช่องทางชำระเงิน */
+        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.2s; cursor: pointer; }
+        .method-btn:hover { border-color: var(--red-glow); transform: translateY(-3px); }
+
+        /* 5. Pop-up Modal หรูหรา */
+        #qr-modal-overlay {
+            position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+        }
+        .qr-frame { background: #fff; padding: 20px; border-radius: 2.5rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.25); }
+        .qr-logo-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; background: #fff; padding: 4px; border-radius: 6px; }
+        .p-bar { height: 4px; background: var(--red-glow); position: absolute; top: 0; left: 0; transition: width 1s linear; }
+
+        footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; }
     </style>
 </head>
 <body>
 
     <header class="compact-nav flex justify-between items-center">
-        <h1 class="font-black italic uppercase red-glow">SN DESIGN STUDIO</h1>
-        <div class="text-right">
-            <p class="text-[8px] font-bold text-gray-500 uppercase tracking-widest">Your Account</p>
-            <p id="user-mail" class="text-[10px] font-black text-white">Guest@user</p>
-        </div>
+        <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
+        <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest italic">AUTHENTICATING...</div>
     </header>
 
-    <main class="max-w-[500px] mx-auto w-full">
-        <div class="text-center mb-8">
-            <h2 class="font-black uppercase italic silver-bronze tracking-tight">SN PAYMENT GATEWAY</h2>
-            <p class="text-[9px] text-gray-500 font-bold mt-1 uppercase">Secure Settlement Portal</p>
-        </div>
+    <main>
+        <div class="payment-card">
+            <div class="text-center mb-6">
+                <h2 class="silver-bronze-title italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
+                <p class="text-[8px] text-gray-600 font-bold uppercase mt-1">High-End Security Settlement</p>
+            </div>
 
-        <div class="mb-6">
-            <p class="text-[9px] text-gray-500 font-black text-center mb-2 uppercase tracking-widest">ระบุจำนวนเงิน (THB)</p>
-            <input type="number" id="amount" placeholder="0" class="w-full p-3 rounded-xl">
-        </div>
+            <div class="input-group">
+                <span class="input-label text-center">ยอดเงินที่ต้องการเติม (THB)</span>
+                <input type="number" id="payAmount" value="100" class="input-field amount-focus">
+            </div>
 
-        <div class="grid grid-cols-2 gap-4">
-            <div class="pay-card p-4 flex flex-col items-center gap-3" onclick="pay('pp')">
-                <div class="icon-box">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#00b894" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
+            <div class="grid grid-cols-2 gap-2 mb-6">
+                <div class="input-group mb-0">
+                    <span class="input-label">Phone Number</span>
+                    <input type="text" id="payPhone" placeholder="08xxxxxxxx" class="input-field">
                 </div>
-                <p class="text-[10px] font-black uppercase">PromptPay</p>
-            </div>
-
-            <div class="pay-card p-4 flex flex-col items-center gap-3 opacity-30 cursor-not-allowed">
-                <div class="icon-box">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#e17055" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M16 8l-8 8M8 8l8 8"/></svg>
+                <div class="input-group mb-0">
+                    <span class="input-label">Citizen ID</span>
+                    <input type="text" id="payIDCard" value="3100503536486" class="input-field">
                 </div>
-                <p class="text-[10px] font-black uppercase text-gray-500">True Wallet</p>
             </div>
-        </div>
 
-        <div id="qr-box" class="mt-6 hidden animate-pulse border-t border-white/5 pt-6 text-center">
-            <div class="bg-white p-2 rounded-xl inline-block">
-                <img id="qr-img" src="" class="w-40 h-40">
+            <div class="grid grid-cols-2 gap-3 w-full">
+                <div onclick="setMethod('promptpay')" class="method-btn p-5 flex flex-col items-center gap-2">
+                    <img src="https://promptpay.io/logo.png" class="w-8">
+                    <span class="text-[9px] font-black uppercase">PromptPay</span>
+                </div>
+                <div onclick="setMethod('truemoney')" class="method-btn p-5 flex flex-col items-center gap-2">
+                    <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" class="w-8 rounded-full">
+                    <span class="text-[9px] font-black uppercase">TrueWallet</span>
+                </div>
+                <div onclick="setMethod('stripe')" class="method-btn p-5 flex flex-col items-center gap-2">
+                    <svg width="24" height="24" fill="none" stroke="#6366f1" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    <span class="text-[9px] font-black uppercase">Stripe / Card</span>
+                </div>
+                <div onclick="setMethod('crypto')" class="method-btn p-5 flex flex-col items-center gap-2 opacity-30">
+                    <svg width="24" height="24" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7"/></svg>
+                    <span class="text-[9px] font-black uppercase">Crypto</span>
+                </div>
             </div>
-            <p class="text-[9px] font-black text-red-600 mt-3 uppercase">สแกนเพื่อจ่าย ระบบเติมเครดิตทันที</p>
         </div>
     </main>
 
-    <footer class="p-6 text-center border-t border-white/5">
-        <p class="text-[9px] font-bold text-gray-700 uppercase tracking-widest mb-1">© SN STUDIO 2026</p>
-        <p class="text-[10px] font-black italic text-[#a55eea] shadow-purple-500">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+    <div id="qr-modal-overlay">
+        <div class="text-center relative">
+            <div class="qr-frame mb-6">
+                <div id="pBar" class="p-bar" style="width: 100%;"></div>
+                <img id="qr-img-display" src="" class="w-64 h-64 rounded-xl">
+                <img src="https://upload.wikimedia.org/wikipedia/th/thumb/c/cb/PromptPay-logo.png/1200px-PromptPay-logo.png" class="qr-logo-center">
+            </div>
+            <p id="display-amt" class="text-5xl font-black italic text-white mb-2">0.00</p>
+            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8">EXPIRES IN: 05:00</p>
+            <div class="flex gap-2 justify-center">
+                <button onclick="downloadQR()" class="px-8 py-3 bg-red-600 text-black font-black text-[10px] rounded-full uppercase">Download QR</button>
+                <button onclick="closeQR()" class="px-8 py-3 bg-[#111] text-gray-500 font-black text-[10px] rounded-full uppercase border border-white/5">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="dev-purple italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
     </footer>
 
     <script>
-        // ระบบเช็ค Login จากหน้า create.html
-        function checkAuth() {
+        const API_BASE = "https://api.sn-designstudio.dev";
+        let timerInt;
+
+        async function setMethod(method) {
+            const amount = document.getElementById("payAmount")?.value || 10;
+            const phone = document.getElementById("payPhone")?.value;
+            const idCard = document.getElementById("payIDCard")?.value;
             const email = localStorage.getItem('user_email');
-            if (email) {
-                document.getElementById('user-mail').innerText = email;
-            } else {
-                // ถ้าไม่มีข้อมูลอีเมล ให้เด้งกลับไปหน้าล็อคอิน
-                alert("เซสชั่นหมดอายุ กรุณาล็อคอินใหม่");
-                window.location.href = "login.html";
-            }
+
+            if (!phone || !idCard) return alert("กรุณากรอกเบอร์โทรและรหัสบัตรประชาชนให้ครบถ้วน");
+
+            let endpoint = "";
+            if (method === "promptpay") endpoint = "/api/scb/create-qr";
+            if (method === "truemoney") endpoint = "/api/truemoney/create-link";
+            if (method === "stripe") endpoint = "/api/stripe/create-checkout";
+            if (method === "crypto") return alert("Crypto coming soon with Hamster Project");
+
+            try {
+                const res = await fetch(`${API_BASE}${endpoint}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: parseInt(amount), email, phone, id_card: idCard })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    if (data.qrImage) {
+                        openPopUp(data.qrImage, amount);
+                        startPolling(email);
+                    } else if (data.url) window.location.href = data.url;
+                }
+            } catch (e) { alert("API Connection Failed"); }
         }
 
-        async function pay(method) {
-            const amt = document.getElementById('amount').value;
-            if(!amt || amt < 10) return alert("ขั้นต่ำ 10 บาท");
-            
-            if(method === 'pp') {
-                const qrBox = document.getElementById('qr-box');
-                const qrImg = document.getElementById('qr-img');
-                
-                // จำลองการเรียก API (พอร์ต 3000)
-                qrImg.src = `https://promptpay.io/0812345678/${amt}.png`; // ตัวอย่าง
-                qrBox.classList.remove('hidden');
-            }
+        function openPopUp(qrData, amt) {
+            const modal = document.getElementById("qr-modal-overlay");
+            document.getElementById("qr-img-display").src = qrData;
+            document.getElementById("display-amt").innerText = amt + ".00";
+            modal.style.display = "flex";
+
+            let time = 300;
+            clearInterval(timerInt);
+            timerInt = setInterval(() => {
+                let m = Math.floor(time / 60), s = time % 60;
+                document.getElementById("timerText").innerText = `EXPIRES IN: ${m}:${s < 10 ? '0'+s : s}`;
+                document.getElementById("pBar").style.width = (time / 300 * 100) + "%";
+                if (--time < 0) closeQR();
+            }, 1000);
         }
 
-        window.onload = checkAuth;
+        function startPolling(email) {
+            const poll = setInterval(async () => {
+                try {
+                    const res = await fetch(`${API_BASE}/api/check-status?email=${email}`);
+                    const data = await res.json();
+                    if (data.paid) {
+                        clearInterval(poll);
+                        alert("ชำระเงินสำเร็จ!");
+                        window.location.href = "create.html";
+                    }
+                } catch (e) {}
+            }, 4000);
+        }
+
+        function closeQR() {
+            document.getElementById("qr-modal-overlay").style.display = "none";
+            clearInterval(timerInt);
+        }
+
+        function downloadQR() {
+            const a = document.createElement('a');
+            a.href = document.getElementById("qr-img-display").src;
+            a.download = `SN-QR-${Date.now()}.png`; a.click();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const email = localStorage.getItem('user_email');
+            if (email) document.getElementById('user-display').innerText = email;
+            else window.location.href = "login.html";
+        });
     </script>
 </body>
 </html>
