@@ -14,19 +14,24 @@
         .silver-bronze-title { background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 16px; font-weight: 900; text-transform: uppercase; }
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
         .payment-card { width: 100%; max-width: 420px; }
-        .electric-input { position: relative; background: #080808; border-radius: 15px; padding: 12px; box-shadow: 0 0 15px rgba(0, 255, 213, 0.1); border: 1px solid var(--neon); transition: border-color 0.5s ease; }
+        
+        /* Electric Frame */
+        .electric-input { position: relative; background: #080808; border-radius: 15px; padding: 12px; border: 1px solid var(--neon); transition: border-color 0.5s ease; }
         .electric-input::after { content: ''; position: absolute; inset: -2px; border-radius: 17px; background: linear-gradient(90deg, transparent, var(--neon), transparent); z-index: -1; animation: move-light 3s linear infinite; }
         @keyframes move-light { 0%, 100% { filter: blur(3px); opacity: 0.3; } 50% { opacity: 1; } }
+
         .credit-display { background: rgba(255,255,255,0.02); border: 1px dashed rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; margin: 10px 0; text-align: center; }
-        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.3s; cursor: pointer; display: flex; flex-direction: column; items-center; gap: 6px; padding: 14px; }
-        .method-btn.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); }
+        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.3s; cursor: pointer; display: flex; flex-direction: column; items-center; gap: 8px; padding: 14px; opacity: 0.5; }
+        .method-btn.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); opacity: 1; }
+
         #qr-modal-overlay { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
-        .qr-window { background: #fff; border-radius: 2.5rem; overflow: hidden; width: 340px; border: 4px solid #111; }
-        .qr-header { background: #4e2e7f; padding: 12px; text-align: center; color: #fff; }
-        .qr-body { padding: 25px; position: relative; background: #fff; display: flex; justify-content: center; align-items: center; }
-        .qr-logo-overlay { position: absolute; width: 50px; height: 50px; background: #000; padding: 4px; border-radius: 50%; border: 2px solid #ffd700; overflow: hidden; }
+        .qr-window { background: #fff; border-radius: 2.5rem; overflow: hidden; width: 340px; border: 4px solid #111; position: relative; }
+        .qr-header { background: #4e2e7f; padding: 14px; text-align: center; color: #fff; }
+        .qr-body { padding: 30px; position: relative; background: #fff; display: flex; justify-content: center; align-items: center; }
+        .qr-logo-overlay { position: absolute; width: 55px; height: 55px; background: #000; padding: 4px; border-radius: 50%; border: 2px solid #ffd700; overflow: hidden; }
         .qr-logo-overlay img { width: 100%; height: 100%; object-fit: cover; }
         .qr-footer { background: #f8f9fa; padding: 10px; text-align: center; color: #444; font-size: 8px; font-weight: 900; border-top: 1px solid #eee; }
+
         footer { padding: 10px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
     </style>
 </head>
@@ -34,7 +39,7 @@
 
     <header class="compact-nav flex justify-between items-center">
         <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
-        <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase italic">AUTHENTICATING...</div>
+        <div id="user-display" class="text-[9px] font-black text-gray-400 uppercase tracking-widest italic">AUTHENTICATING...</div>
     </header>
 
     <main>
@@ -50,7 +55,7 @@
 
             <div class="credit-display">
                 <div class="font-black text-xl"><span id="total-cr-val">55,000</span> <span class="text-[10px] text-gray-600">CR</span></div>
-                <div id="bonus-tag" class="text-[9px] font-black text-[#00ffd5] uppercase">+ 5,000 BONUS (10% POLICY)</div>
+                <div id="bonus-tag" class="text-[9px] font-black text-[#00ffd5] uppercase tracking-wider">+ 5,000 BONUS (10% POLICY)</div>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -72,15 +77,15 @@
                 </div>
             </div>
 
-            <div id="tw-section" class="hidden mb-4 animate-pulse">
-                <div class="bg-[#080808] border border-[#ff8c00] p-3 rounded-xl">
+            <div id="tw-section" class="hidden mb-4">
+                <div class="bg-[#080808] border border-orange-500/50 p-3 rounded-xl">
                     <span class="text-[8px] font-black text-orange-500 uppercase mb-1 block">Gift Link (ซองอั่งเปา)</span>
                     <input type="text" id="twLink" placeholder="https://gift.truemoney.com/..." class="w-full bg-transparent text-white text-xs outline-none">
                 </div>
             </div>
 
             <div id="crypto-section" class="hidden mb-4">
-                <select id="coinType" class="w-full bg-[#080808] border border-yellow-500 p-3 rounded-xl text-white text-xs outline-none">
+                <select id="coinType" class="w-full bg-[#080808] border border-yellow-500/50 p-3 rounded-xl text-white text-xs outline-none">
                     <option value="USDT">USDT (TRC20)</option>
                     <option value="BNB">BNB (BEP20)</option>
                     <option value="TON">TON Network</option>
@@ -98,19 +103,19 @@
                 <div class="qr-header"><p class="text-[10px] font-black tracking-widest uppercase">SN PAYMENT CORE</p></div>
                 <div class="qr-body">
                     <img id="qr-img-display" src="" class="w-64 h-64 rounded-xl">
-                    <div class="qr-logo-overlay"><img src="assets/images/payment.png" onerror="this.src='https://promptpay.io/logo.png'"></div>
+                    <div class="qr-logo-overlay"><img src="assets/images/payment.png"></div>
                 </div>
                 <div class="qr-footer"><p>DEVELOPED BY: ต้องดีแค่ไหน โลกถึงจะจำ</p></div>
             </div>
             <p id="timer" class="text-3xl font-black text-red-600 mb-6 font-mono tracking-widest">05:00</p>
             <div class="flex gap-2 justify-center">
-                <button id="btn-download" class="px-10 py-3 bg-white text-black font-black text-[10px] rounded-full uppercase">Download</button>
+                <button id="download-btn" class="px-10 py-3 bg-[#00ffd5] text-black font-black text-[10px] rounded-full uppercase">Download</button>
                 <button onclick="closeModal()" class="px-10 py-3 bg-[#111] text-gray-500 font-black text-[10px] rounded-full uppercase">Cancel</button>
             </div>
         </div>
     </div>
 
-    <footer><p class="text-[9px] font-black italic text-[#a55eea] uppercase tracking-widest">© SN STUDIO 2026</p></footer>
+    <footer><p class="text-[9px] font-black italic text-[#a55eea] uppercase tracking-widest">PRODUCTION READY v5.0 | © 2026</p></footer>
 
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
@@ -157,7 +162,7 @@
             if(currentMethod === 'promptpay') endpoint = "/api/scb/create-qr";
             else if(currentMethod === 'truemoney') {
                 bodyData.link = document.getElementById("twLink").value;
-                if(!bodyData.link.includes('gift.truemoney.com')) return alert("ลิ้งค์ซองอั่งเปาไม่ถูกต้อง");
+                if(!bodyData.link || !bodyData.link.includes('gift.truemoney.com')) return alert("ลิ้งค์ซองอั่งเปาไม่ถูกต้อง");
                 endpoint = "/api/truemoney/verify";
             }
             else if(currentMethod === 'stripe') endpoint = "/api/stripe/create-checkout";
@@ -176,7 +181,7 @@
                 const data = await res.json();
                 if (data.success) {
                     if (data.qrImage) openModal(data.qrImage, amt);
-                    else if (data.url) window.location.href = data.url;
+                    else if (data.url) window.location.href = data.url; // แก้ไข Redirect จากคลิป
                     startPolling(email);
                 }
             } catch (e) {
@@ -188,10 +193,17 @@
         function openModal(qr, amt) {
             document.getElementById('qr-img-display').src = qr;
             document.getElementById('qr-modal-overlay').style.display = 'flex';
-            document.getElementById('btn-download').onclick = () => {
-                const a = document.createElement('a');
-                a.href = qr; a.download = `SN-QR-${Date.now()}.png`; a.click();
+            
+            // Fix ดาวน์โหลดจากคลิป
+            document.getElementById('download-btn').onclick = () => {
+                const link = document.createElement('a');
+                link.href = qr;
+                link.download = `SN-QR-${Date.now()}.png`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
             };
+
             let t = 300;
             clearInterval(timerInt);
             timerInt = setInterval(() => {
