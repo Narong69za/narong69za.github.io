@@ -3,95 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PREMIUM GATEWAY</title>
+    <title>SN ULTRA - PRODUCTION GATEWAY v3.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #000; --red-money: #ff3b30; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; 
+            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
         
-        /* Header ลดขนาดลง 50% */
-        .compact-nav { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 24px; }
-        .red-glow { text-shadow: 0 0 10px var(--red-money); color: var(--red-money); font-size: 1.1rem; font-weight: 900; italic: true; }
-        
-        /* SN PAYMENT GATEWAY สีบรอนซ์เงินเงา */
-        .silver-bronze {
-            background: linear-gradient(135deg, #cfd9df 0%, #e2ebf0 50%, #cfd9df 100%);
+        /* Header รีดลง 50% แดงรับทรัพย์ */
+        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        .red-cash { color: var(--red-money); text-shadow: 0 0 10px var(--red-money); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
+
+        /* SN PAYMENT GATEWAY บรอนซ์เงินเงา */
+        .silver-bronze-title {
+            background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 15px rgba(226, 235, 240, 0.4);
-            font-size: 1rem; font-weight: 900;
+            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            text-transform: uppercase;
         }
 
-        /* ตรึงหน้าจอ (Fixed) */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 20px; align-items: center; }
-        .payment-container { width: 100%; max-width: 450px; }
+        /* ตรึงหน้า Layout (No Scroll) */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
+        .payment-card { width: 100%; max-width: 400px; }
 
-        input[type="number"] {
-            background: #080808 !important; border: 1px solid #222 !important;
-            color: var(--red-money) !important; font-family: 'JetBrains Mono';
-            text-align: center; font-size: 2rem; border-radius: 12px; width: 100%; padding: 10px;
-        }
+        /* Input Styles */
+        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+        .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
+        .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
+        .amount-focus { color: var(--red-money) !important; font-size: 28px; text-align: center; font-weight: 900; }
 
-        .pay-card { background: #080808; border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; transition: 0.3s; cursor: pointer; }
-        .pay-card:hover { border-color: var(--red-money); transform: translateY(-3px); }
-        
+        /* Payment Methods */
+        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; transition: 0.3s; cursor: pointer; }
+        .method-btn.active { border-color: var(--red-money); box-shadow: 0 0 15px rgba(255,59,48,0.1); }
+
         /* Pop-up Modal หรูหรา */
         #qr-modal-overlay {
             position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(15px);
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
         }
-        .qr-premium-frame { background: #fff; padding: 20px; border-radius: 3rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.3); }
+        .qr-frame { background: #fff; padding: 20px; border-radius: 3rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.25); }
         .qr-logo-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; background: #fff; padding: 4px; border-radius: 6px; }
         .p-bar { height: 4px; background: var(--red-money); position: absolute; top: 0; left: 0; transition: width 1s linear; }
 
-        footer { padding: 15px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); }
+        footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; }
     </style>
 </head>
 <body>
 
     <header class="compact-nav flex justify-between items-center">
-        <h1 class="font-black italic uppercase red-glow">SN DESIGN STUDIO</h1>
-        <div class="text-right">
-            <p id="user-mail" class="text-[9px] font-black text-gray-500 uppercase">AUTHENTICATING...</p>
-        </div>
+        <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
+        <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest italic">AUTHENTICATING...</div>
     </header>
 
     <main>
-        <div class="payment-container">
+        <div class="payment-card">
             <div class="text-center mb-6">
-                <h2 class="font-black uppercase italic silver-bronze tracking-tight">SN PAYMENT GATEWAY</h2>
-                <p class="text-[8px] text-gray-600 font-bold uppercase mt-1">High-End Production Settlement</p>
+                <h2 class="silver-bronze-title italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
             </div>
 
-            <div class="mb-6">
-                <p class="text-[9px] text-gray-500 font-black text-center mb-2 uppercase tracking-widest">ยอดเติมเงิน (THB)</p>
-                <input type="number" id="amount" value="500">
+            <div class="input-group">
+                <span class="input-label text-center">Amount (THB)</span>
+                <input type="number" id="payAmount" value="100" class="input-field amount-focus">
             </div>
 
-            <div class="grid grid-cols-2 gap-4">
-                <div class="pay-card p-5 flex flex-col items-center gap-3" onclick="pay('pp')">
+            <div class="grid grid-cols-2 gap-3 mb-6">
+                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn p-4 flex flex-col items-center gap-2">
                     <img src="https://promptpay.io/logo.png" class="w-8">
-                    <p class="text-[10px] font-black uppercase italic">PromptPay</p>
+                    <span class="text-[9px] font-black uppercase">PromptPay</span>
                 </div>
-
-                <div class="pay-card p-5 flex flex-col items-center gap-3" onclick="pay('tw')">
+                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn p-4 flex flex-col items-center gap-2">
                     <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" class="w-8 rounded-full">
-                    <p class="text-[10px] font-black uppercase italic">True Wallet</p>
+                    <span class="text-[9px] font-black uppercase">TrueWallet</span>
                 </div>
             </div>
+
+            <div id="tw-input-section" class="hidden">
+                <div class="input-group">
+                    <span class="input-label">TrueWallet Gift Link (อั่งเปา)</span>
+                    <input type="text" id="twLink" placeholder="https://gift.truemoney.com/..." class="input-field text-red-500">
+                </div>
+                <button onclick="submitTrueMoney()" class="w-full py-4 bg-red-600 text-black font-black text-xs rounded-xl uppercase hover:bg-white transition-all">Confirm Payment</button>
+            </div>
+
+            <button id="pp-submit-btn" onclick="submitPromptPay()" class="w-full py-4 bg-white text-black font-black text-xs rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all">Generate QR Code</button>
+
         </div>
     </main>
 
     <div id="qr-modal-overlay">
         <div class="text-center relative">
-            <div class="qr-premium-frame mb-6">
+            <div class="qr-frame mb-6">
                 <div id="pBar" class="p-bar" style="width: 100%;"></div>
                 <img id="qr-img-display" src="" class="w-64 h-64 rounded-xl">
                 <img src="https://upload.wikimedia.org/wikipedia/th/thumb/c/cb/PromptPay-logo.png/1200px-PromptPay-logo.png" class="qr-logo-center">
             </div>
             <p id="display-amt" class="text-5xl font-black italic text-white mb-2">0.00</p>
-            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8 tracking-widest">EXPIRES IN: 05:00</p>
+            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8">EXPIRES IN: 05:00</p>
             <div class="flex gap-2 justify-center">
                 <button onclick="downloadQR()" class="px-8 py-3 bg-red-600 text-black font-black text-[10px] rounded-full uppercase">Download QR</button>
                 <button onclick="closeQR()" class="px-8 py-3 bg-[#111] text-gray-500 font-black text-[10px] rounded-full uppercase border border-white/5">Cancel</button>
@@ -99,41 +111,81 @@
         </div>
     </div>
 
-    <footer class="p-6">
-        <p class="text-[10px] font-black italic text-[#a55eea]">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+    <footer>
+        <p class="dev-purple italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
     </footer>
 
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
-        const CITIZEN_ID = "3100503536486"; // ใส่ไว้ใน Logic ตามสั่ง
+        const CITIZEN_ID = "3100503536486";
         let timerInt;
 
-        async function pay(method) {
-            const amt = document.getElementById('amount').value;
+        // ฟังก์ชันสลับ UI
+        function selectMethod(method) {
+            const twSection = document.getElementById("tw-input-section");
+            const ppBtn = document.getElementById("pp-submit-btn");
+            const btnPP = document.getElementById("btn-pp");
+            const btnTW = document.getElementById("btn-tw");
+
+            // ลบสถานะ Active ทั้งหมด
+            btnPP.classList.remove("active");
+            btnTW.classList.remove("active");
+
+            if(method === 'truemoney') {
+                twSection.classList.remove("hidden");
+                ppBtn.classList.add("hidden");
+                btnTW.classList.add("active");
+            } else {
+                twSection.classList.add("hidden");
+                ppBtn.classList.remove("hidden");
+                btnPP.classList.add("active");
+            }
+        }
+
+        // จ่ายผ่าน PromptPay (เด้ง Pop-up)
+        async function submitPromptPay() {
+            const amt = document.getElementById("payAmount").value;
             const email = localStorage.getItem('user_email');
             
-            if(!amt || amt < 10) return alert("ระบุจำนวนเงินขั้นต่ำ 10 บาท");
-            if(!email) return window.location.href = "login.html";
-
-            // ยิง API เต็มระบบตามโครงสร้างดั้งเดิม
             try {
-                let endpoint = method === 'pp' ? '/api/scb/create-qr' : '/api/truemoney/create-link';
-                const res = await fetch(`${API_BASE}${endpoint}`, {
+                const res = await fetch(`${API_BASE}/api/scb/create-qr`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ amount: parseInt(amt), email: email, id_card: CITIZEN_ID })
                 });
                 const data = await res.json();
-                
                 if (data.success) {
-                    if (data.qrImage) openPopUp(data.qrImage, amt);
-                    else if (data.url) window.location.href = data.url;
-                    startPolling(email); // เริ่มเช็คยอดเพื่อดีดกลับ
+                    openPopUp(data.qrImage, amt);
+                    startPolling(email);
                 }
-            } catch (e) { 
-                // จำลองการแสดงผลหน้าบ้านถ้า API ยังไม่พร้อม
-                openPopUp(`https://promptpay.io/0812345678/${amt}.png`, amt); 
+            } catch (e) {
+                // Mockup สำหรับเทสหน้าบ้าน
+                openPopUp(`https://promptpay.io/0812345678/${amt}.png`, amt);
             }
+        }
+
+        // จ่ายผ่าน TrueMoney (ส่งลิงก์อั่งเปา)
+        async function submitTrueMoney() {
+            const amt = document.getElementById("payAmount").value;
+            const link = document.getElementById("twLink").value;
+            const email = localStorage.getItem('user_email');
+
+            if(!link.includes('gift.truemoney.com')) return alert("กรุณาวางลิ้งค์ซองอั่งเปาที่ถูกต้อง");
+
+            try {
+                const res = await fetch(`${API_BASE}/api/truemoney/verify`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: parseInt(amt), email: email, link: link, id_card: CITIZEN_ID })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert("ตรวจสอบสำเร็จ! เครดิตจะเข้าในไม่ช้า");
+                    window.location.href = "create.html";
+                } else {
+                    alert("ล้มเหลว: " + data.message);
+                }
+            } catch (e) { alert("API Connection Failed"); }
         }
 
         function openPopUp(qr, amt) {
@@ -159,7 +211,7 @@
                     const data = await res.json();
                     if (data.paid) {
                         clearInterval(poll);
-                        window.location.href = "create.html"; // ดีดกลับทันที
+                        window.location.href = "create.html";
                     }
                 } catch (e) {}
             }, 4000);
@@ -172,11 +224,12 @@
             a.download = `SN-QR-${Date.now()}.png`; a.click();
         }
 
-        window.onload = () => {
+        document.addEventListener('DOMContentLoaded', () => {
             const email = localStorage.getItem('user_email');
-            if (email) document.getElementById('user-mail').innerText = email;
+            if (email) document.getElementById('user-display').innerText = email;
             else window.location.href = "login.html";
-        };
+            selectMethod('promptpay'); // Default
+        });
     </script>
 </body>
 </html>
