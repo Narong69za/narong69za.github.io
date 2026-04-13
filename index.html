@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Official Website — SN DESIGN STUDIO</title>
-<link rel="stylesheet" href="assets/css/master.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Official Website — SN DESIGN STUDIO</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/master.css">
 </head>
 <body class="index-page">
-<div id="nav"></div>
+
+<div id="nav-container"></div>
 
 <section class="marquee-wrap">
     <div class="marquee-text">แพลตฟอร์ม AI สำหรับครีเอเตอร์ไทย • สร้างภาพ AI • Copy ใบหน้า • Copy ท่าเต้น • Creator Growth System</div>
@@ -48,7 +51,9 @@
 </section>
 
 <footer>© SN Design Studio, 2026 · All rights reserved.</footer>
+
 <script src="assets/js/nav.js"></script>
+
 <script>
 const API_BASE = "https://api.sn-designstudio.dev";
 async function updateStatus() {
