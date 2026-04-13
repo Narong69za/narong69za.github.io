@@ -3,55 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PRODUCTION GATEWAY v7.5</title>
+    <title>SN ULTRA - PRODUCTION GATEWAY v10.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
         :root { --bg: #000; --red: #ff3b30; --neon: #00ffd5; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
-        
-        /* Fixed Header - ปรับให้บางลงเพื่อไม่ให้ทับเนื้อหา */
-        .compact-nav { height: 45px; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 20px; background: rgba(0,0,0,0.9); z-index: 50; display: flex; align-items: center; justify-content: space-between; }
+        .compact-nav { height: 45px; border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 20px; background: rgba(0,0,0,0.9); display: flex; align-items: center; justify-content: space-between; z-index: 100; }
         .red-cash { color: var(--red); text-shadow: 0 0 10px var(--red); font-size: 12px; font-weight: 900; letter-spacing: 2px; }
-
-        /* Main Content - เพิ่ม Padding Top เพื่อกันตัวหนังสือล้นไปทับ Header */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 60px 20px 20px 20px; }
-        .payment-card { width: 100%; max-width: 400px; }
-
         .silver-bronze { background: linear-gradient(135deg, #8e9eab, #eef2f3, #8e9eab); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; font-size: 1.1rem; letter-spacing: 0.1em; }
-
-        /* Electric Frame */
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        .payment-card { width: 100%; max-width: 400px; }
         .electric-input { position: relative; background: #080808; border-radius: 15px; padding: 12px; border: 1px solid var(--neon); box-shadow: 0 0 15px rgba(0, 255, 213, 0.1); }
         .electric-input::after { content: ''; position: absolute; inset: -2px; border-radius: 17px; background: linear-gradient(90deg, transparent, var(--neon), transparent); z-index: -1; animation: move-light 3s linear infinite; }
         @keyframes move-light { 0%, 100% { filter: blur(3px); opacity: 0.3; } 50% { opacity: 1; } }
-
-        .credit-display { background: rgba(0,255,213,0.03); border: 1px dashed rgba(0,255,213,0.2); border-radius: 12px; padding: 15px; margin: 10px 0; text-align: center; }
-        
-        /* Status Tag */
-        .status-tag { font-size: 7px; font-weight: 900; padding: 2px 8px; border-radius: 4px; background: #111; border: 1px solid #222; margin-top: 5px; display: inline-block; }
-        .status-online { color: var(--neon); text-shadow: 0 0 5px var(--neon); }
-
-        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; items-center; gap: 6px; padding: 15px; opacity: 0.5; }
+        .credit-display { background: rgba(0,255,213,0.03); border: 1px dashed rgba(0,255,213,0.2); border-radius: 12px; padding: 12px; margin: 10px 0; text-align: center; }
+        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; items-center; gap: 6px; padding: 14px; opacity: 0.4; }
         .method-btn.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); opacity: 1; }
-
-        /* QR Modal */
         #qr-modal { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
         .qr-window { background: #fff; border-radius: 2.5rem; overflow: hidden; width: 320px; border: 4px solid #111; position: relative; }
         .qr-header { background: #4e2e7f; padding: 12px; text-align: center; color: #fff; }
         .qr-body { padding: 25px; position: relative; background: #fff; display: flex; justify-content: center; align-items: center; }
-        .qr-logo-overlay { position: absolute; width: 50px; height: 50px; background: #000; border-radius: 50%; border: 2px solid #ffd700; display: flex; justify-content: center; align-items: center; }
-        .qr-logo-overlay img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-        .qr-footer { background: #f8f9fa; padding: 8px; text-align: center; color: #444; font-size: 8px; font-weight: 900; border-top: 1px solid #eee; }
+        .qr-logo-overlay { position: absolute; width: 50px; height: 50px; background: #000; border-radius: 50%; border: 2px solid #ffd700; display: flex; justify-content: center; align-items: center; overflow: hidden; }
+        .qr-logo-overlay img { width: 100%; height: 100%; object-fit: cover; }
+        footer { padding: 10px; text-align: center; border-top: 1px solid rgba(255,255,255,0.05); font-size: 9px; font-weight: 900; color: #a55eea; italic: true; }
     </style>
 </head>
 <body>
 
     <header class="compact-nav">
         <h1 class="red-cash uppercase italic">SN DESIGN STUDIO</h1>
-        <div class="flex flex-col items-end">
-            <div id="user-display" class="text-[8px] font-black text-gray-500 uppercase tracking-tighter">AUTH ACTIVE</div>
-            <div id="system-status" class="status-tag status-online uppercase">CORE SYNCING...</div>
-        </div>
+        <div id="user-display" class="text-[8px] font-black text-gray-500">AUTH ACTIVE</div>
     </header>
 
     <main>
@@ -59,13 +41,13 @@
             <div class="text-center mb-4"><h2 class="silver-bronze uppercase italic">SN PAYMENT GATEWAY</h2></div>
 
             <div class="electric-input mb-3">
-                <span class="text-[8px] font-black text-[#00ffd5] uppercase block mb-1 text-center">Amount (THB)</span>
+                <span class="text-[8px] font-black text-[#00ffd5] uppercase block mb-1 text-center tracking-widest">Amount (THB)</span>
                 <input type="number" id="payAmount" value="500" oninput="calcCredit()" class="w-full bg-transparent border-none text-white text-3xl font-black text-center outline-none font-mono">
             </div>
 
             <div class="credit-display">
                 <div class="text-xl font-black italic"><span id="total-cr">55,000</span> <span class="text-[10px] text-[#00ffd5]">CR</span></div>
-                <div id="bonus-box" class="text-[9px] font-black text-[#00ffd5] mt-1 uppercase tracking-wider">+ 5,000 BONUS (10% POLICY)</div>
+                <div id="bonus-box" class="text-[9px] font-black text-[#00ffd5] mt-1 uppercase">+ 5,000 BONUS (10% POLICY)</div>
             </div>
 
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -75,10 +57,10 @@
                 <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn"><svg width="20" height="20" fill="none" stroke="#f3ba2f" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7"/></svg><span class="text-[9px] font-black uppercase text-white">Binance Pay</span></div>
             </div>
 
-            <div id="tw-area" class="hidden mb-3"><input type="text" id="twLink" placeholder="วางลิ้งค์ซองอั่งเปาที่นี่..." class="w-full bg-[#111] border border-orange-500 p-3 rounded-xl text-white text-xs outline-none"></div>
+            <div id="tw-area" class="hidden mb-3"><input type="text" id="twLink" placeholder="วางลิ้งค์ซองอั่งเปา..." class="w-full bg-[#111] border border-orange-500 p-3 rounded-xl text-white text-xs outline-none"></div>
             <div id="crypto-area" class="hidden mb-3"><select id="coinType" class="w-full bg-[#111] border border-yellow-500 p-3 rounded-xl text-white text-xs outline-none"><option value="USDT">USDT (TRC20)</option><option value="BNB">BNB (BEP20)</option><option value="TON">TON</option></select></div>
 
-            <button onclick="executePayment()" class="w-full py-4 bg-white text-black font-black text-xs rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all">Execute Settlement</button>
+            <button onclick="executePayment()" class="w-full py-4 bg-white text-black font-black text-xs rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all">EXECUTE SETTLEMENT</button>
         </div>
     </main>
 
@@ -100,8 +82,10 @@
         </div>
     </div>
 
+    <footer><p class="uppercase tracking-widest">PRODUCTION COMPLETED | © 2026</p></footer>
+
     <script>
-        const API_BASE = "https://api.sn-designstudio.dev";
+        const API_BASE = "https://api.sn-designstudio.dev"; // Nginx Proxied to 5002
         const CITIZEN_ID = "3100503536486";
         let currentMethod = 'promptpay';
         let timerInt;
@@ -129,29 +113,50 @@
 
         async function executePayment() {
             const amt = document.getElementById('payAmount').value;
-            const email = localStorage.getItem('user_email');
+            const email = localStorage.getItem('user_email') || 'test@gmail.com';
             let endpoint = "";
-            let bodyData = { amount: parseInt(amt), email: email, id_card: CITIZEN_ID };
+            let bodyData = { amount: parseInt(amt), email: email };
 
-            if(currentMethod === 'promptpay') endpoint = "/api/scb/create-qr";
-            else if(currentMethod === 'stripe') endpoint = "/api/stripe/create-checkout";
-            else if(currentMethod === 'truemoney') { bodyData.link = document.getElementById("twLink").value; endpoint = "/api/truemoney/verify"; }
-            else if(currentMethod === 'crypto') { bodyData.coin = document.getElementById("coinType").value; endpoint = "/api/binance/create-order"; }
+            // [SYNCED ENDPOINTS WITH MASTER GATEWAY 5002]
+            if(currentMethod === 'promptpay') endpoint = "/api/scb";
+            else if(currentMethod === 'stripe') endpoint = "/api/stripe";
+            else if(currentMethod === 'truemoney') { 
+                bodyData.link = document.getElementById("twLink").value; 
+                if(!bodyData.link) return alert("กรุณาวางลิงก์ซองของขวัญ");
+                endpoint = "/api/truemoney"; 
+            }
+            else if(currentMethod === 'crypto') { 
+                bodyData.coin = document.getElementById("coinType").value; 
+                endpoint = "/api/admin/crypto"; 
+            }
 
             try {
-                const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(bodyData) });
+                const res = await fetch(`${API_BASE}${endpoint}`, { 
+                    method: "POST", 
+                    headers: { "Content-Type": "application/json" }, 
+                    body: JSON.stringify(bodyData) 
+                });
                 const data = await res.json();
                 if(data.success) {
-                    if(data.qrImage) { document.getElementById('qr-img').src = data.qrImage; document.getElementById('qr-modal').style.display = 'flex'; startTimer(); }
-                    else if(data.url) window.location.href = data.url;
+                    if(data.qrImage) { 
+                        document.getElementById('qr-img').src = data.qrImage; 
+                        document.getElementById('qr-modal').style.display = 'flex'; 
+                        startTimer(); 
+                    } else if(data.url) {
+                        window.location.href = data.url;
+                    } else if(data.txId) {
+                        alert(data.message || "ได้รับคำสั่งชำระเงินแล้ว");
+                    }
                 }
-            } catch(e) { if(currentMethod === 'promptpay') { document.getElementById('qr-img').src = `https://promptpay.io/${CITIZEN_ID}/${amt}.png`; document.getElementById('qr-modal').style.display = 'flex'; startTimer(); } }
+            } catch(e) { 
+                alert("GATEWAY_OFFLINE: ตรวจสอบพอร์ต 5002");
+            }
         }
 
         function downloadQR() {
-            const img = document.getElementById('qr-img');
             const a = document.createElement('a');
-            a.href = img.src; a.download = `SN-QR-${Date.now()}.png`;
+            a.href = document.getElementById('qr-img').src; 
+            a.download = `SN-QR-${Date.now()}.png`;
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
 
@@ -165,14 +170,6 @@
         }
 
         function closeModal() { document.getElementById('qr-modal').style.display = 'none'; clearInterval(timerInt); }
-
-        // --- TAGS SYSTEM: READ EVERY 5 SECONDS ---
-        setInterval(() => {
-            const status = document.getElementById('system-status');
-            status.innerText = "READY: " + currentMethod.toUpperCase();
-            console.log("System Check [5s]: Core Status OK | Method: " + currentMethod);
-        }, 5000);
-
         window.onload = () => { selectMethod('promptpay'); calcCredit(); };
     </script>
 </body>
