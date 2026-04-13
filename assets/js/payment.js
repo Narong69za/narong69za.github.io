@@ -2,26 +2,34 @@ const API_BASE = "https://api.sn-designstudio.dev";
 
 async function setMethod(method) {
     const amount = document.getElementById("payAmount")?.value || 10;
+    const phone = document.getElementById("payPhone")?.value;
+    const idCard = document.getElementById("payIDCard")?.value;
     const email = localStorage.getItem('user_email');
     
+    // Validate ข้อมูลก่อนยิง
+    if (!phone || !idCard) return alert("กรุณากรอกเบอร์โทรและรหัสบัตรประชาชนให้ครบถ้วน");
+
     let endpoint = "";
     if (method === "promptpay") endpoint = "/api/scb/create-qr";
     if (method === "truemoney") endpoint = "/api/truemoney/create-link";
     if (method === "stripe") endpoint = "/api/stripe/create-checkout";
-    
-    if (method === "crypto") return alert("Crypto coming soon with Hamster Project");
 
     try {
         const res = await fetch(`${API_BASE}${endpoint}`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ amount: parseInt(amount), email: email })
+            body: JSON.stringify({ 
+                amount: parseInt(amount), 
+                email: email,
+                phone: phone,      // ส่งเบอร์โทร
+                id_card: idCard    // ส่งรหัสบัตรประชาชน
+            })
         });
         const data = await res.json();
         if (data.success) {
             if (data.qrImage) {
                 openPremiumQR(data.qrImage, amount);
-                startPolling(email); // เริ่มเช็คยอดเงินเพื่อ Redirect
+                startPolling(email);
             }
             else if (data.url) window.location.href = data.url;
         }
@@ -36,7 +44,7 @@ function openPremiumQR(qrData, amount) {
         <div class="bg-[#050505] w-full max-w-sm rounded-[3.5rem] p-10 text-center border border-red-500/20 shadow-[0_0_80px_rgba(239,68,68,0.15)] relative overflow-hidden">
             <div id="pBar" class="absolute top-0 left-0 h-[3px] bg-red-600 w-full transition-all duration-1000"></div>
             <p class="text-[9px] font-black text-red-500 tracking-[0.5em] mb-4 uppercase">SCB MASTER GATEWAY</p>
-            <h2 class="text-5xl font-black italic mb-8 text-white">${amount}.00 <span class="text-xs text-red-900">THB</span></h2>
+            <h2 class="text-5xl font-black italic mb-8 text-white">${amount}.00 <span class="text-xs text-red-900 italic">THB</span></h2>
             
             <div class="bg-white p-5 rounded-[2.5rem] mb-8 relative group border-[6px] border-[#111]">
                 <img src="${qrData}" class="w-full h-auto rounded-2xl">
@@ -63,18 +71,17 @@ function openPremiumQR(qrData, amount) {
     }, 1000);
 }
 
-// ระบบ Polling เพื่อ Redirect หลังจ่ายสำเร็จ
 function startPolling(email) {
     const poll = setInterval(async () => {
         try {
-            const res = await fetch(`${API_BASE}/api/check-status?email=${email}`);
+            const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
             const data = await res.json();
-            if (data.paid) {
+            if (data.paid_success) {
                 clearInterval(poll);
                 alert("ชำระเงินสำเร็จ! กำลังพากลับไปหน้า AI Engine");
                 window.location.href = "create.html";
             }
-        } catch (e) { console.log("Waiting for payment..."); }
+        } catch (e) {}
     }, 4000);
 }
 
