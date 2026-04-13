@@ -7,7 +7,7 @@ async function setMethod(method) {
     const email = localStorage.getItem('user_email');
     
     // Validate ข้อมูลก่อนยิง
-    if (!phone || !idCard) return alert("กรุณากรอกเบอร์โทรและรหัสบัตรประชาชนให้ครบถ้วน");
+    if (!phone || !idCard) return alert("3100503536486");
 
     let endpoint = "";
     if (method === "promptpay") endpoint = "/api/scb/create-qr";
