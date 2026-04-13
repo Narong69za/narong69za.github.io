@@ -3,77 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PRODUCTION GATEWAY</title>
+    <title>SN ULTRA - PRODUCTION PAYMENT GATEWAY</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --red: #ff3b30; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
+        :root { --bg: #000; --red-brand: #ff3b30; }
+        body { 
+            font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; 
+            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
         
-        /* Header รีดน้ำหนักลง 50% */
-        .header-mini { border-bottom: 1px solid rgba(255,59,48,0.15); padding: 10px 20px; display: flex; justify-content: space-between; align-items: center; }
-        .red-brand { color: var(--red); text-shadow: 0 0 10px var(--red); font-size: 1rem; font-weight: 900; italic: true; letter-spacing: 2px; }
+        /* 1. Header รีดลง 50% ตามสั่ง */
+        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.2); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        .brand-red { color: var(--red-brand); text-shadow: 0 0 10px var(--red-brand); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
 
-        /* SN PAYMENT GATEWAY สีบรอนซ์เงินเงา */
-        .silver-bronze {
+        /* 2. SN PAYMENT GATEWAY บรอนซ์เงินเงา */
+        .silver-bronze-text {
             background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            font-size: 0.95rem; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.2);
+            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            text-transform: uppercase;
         }
 
-        .input-pay { 
-            background: #080808 !important; border: 1px solid #222 !important; 
-            color: var(--red) !important; font-family: 'JetBrains Mono'; 
-            text-align: center; font-size: 1.8rem; border-radius: 12px;
-        }
-
-        .method-card { background: #080808; border: 1px solid rgba(255,255,255,0.03); border-radius: 15px; transition: 0.2s; cursor: pointer; }
-        .method-card:hover { border-color: var(--red); transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255,59,48,0.05); }
-
+        /* 3. ตรึงหน้า Layout สมดุล (Fixed) */
         main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
-        footer { padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .payment-container { width: 100%; max-width: 420px; }
+
+        input[type="number"] {
+            background: #080808 !important; border: 1px solid #222 !important;
+            color: var(--red-brand) !important; font-family: 'JetBrains Mono';
+            text-align: center; font-size: 28px; border-radius: 15px; width: 100%;
+        }
+
+        .method-card { 
+            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 15px; transition: 0.3s; cursor: pointer;
+        }
+        .method-card:hover { border-color: var(--red-brand); transform: translateY(-3px); box-shadow: 0 5px 15px rgba(255,59,48,0.1); }
+
+        footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .dev-credit { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.5); font-weight: 900; font-size: 11px; }
     </style>
 </head>
 <body>
 
-    <header class="header-mini">
-        <h1 class="red-brand uppercase">SN DESIGN STUDIO</h1>
-        <div class="text-right"><p id="user-display" class="text-[9px] font-black text-gray-600 uppercase">AUTHENTICATING...</p></div>
+    <header class="compact-nav flex justify-between items-center">
+        <h1 class="brand-red uppercase">SN DESIGN STUDIO</h1>
+        <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest">AUTHENTICATING...</div>
     </header>
 
-    <main class="w-full max-w-md">
-        <div class="text-center mb-8">
-            <h2 class="silver-bronze uppercase italic tracking-widest">SN PAYMENT GATEWAY</h2>
-            <p class="text-[8px] text-gray-500 font-bold uppercase tracking-[0.4em] mt-1">Production High-End Settlement</p>
-        </div>
+    <main>
+        <div class="payment-container">
+            <div class="text-center mb-6">
+                <h2 class="silver-bronze-text italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
+                <p class="text-[8px] text-gray-600 font-bold uppercase tracking-[0.4em] mt-1">High-End Security Settlement</p>
+            </div>
 
-        <div class="w-full mb-8">
-            <p class="text-[9px] text-gray-600 font-black text-center mb-2 uppercase">ระบุจำนวนเงิน (THB)</p>
-            <input type="number" id="payAmount" value="10" class="w-full p-4 input-pay">
-        </div>
+            <div class="mb-6">
+                <p class="text-[9px] text-gray-500 font-black text-center mb-2 uppercase tracking-widest">จำนวนเงินที่ต้องการเติม (THB)</p>
+                <input type="number" id="payAmount" value="100">
+            </div>
 
-        <div class="grid grid-cols-2 gap-3 w-full">
-            <div data-method="promptpay" class="method-card p-5 flex flex-col items-center gap-3">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-emerald-500"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M12 8v8M8 12h8"/></svg>
-                <span class="text-[9px] font-black uppercase tracking-widest">PromptPay</span>
-            </div>
-            <div data-method="truemoney" class="method-card p-5 flex flex-col items-center gap-3">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-orange-500"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
-                <span class="text-[9px] font-black uppercase tracking-widest">TrueWallet</span>
-            </div>
-            <div data-method="stripe" class="method-card p-5 flex flex-col items-center gap-3">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-blue-500"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-                <span class="text-[9px] font-black uppercase tracking-widest">Credit Card</span>
-            </div>
-            <div data-method="crypto" class="method-card p-5 flex flex-col items-center gap-3 opacity-30">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-yellow-500"><path d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7"/></svg>
-                <span class="text-[9px] font-black uppercase tracking-widest">Crypto</span>
+            <div class="grid grid-cols-2 gap-3">
+                <div data-method="promptpay" class="method-card p-4 flex flex-col items-center gap-2">
+                    <img src="https://promptpay.io/logo.png" class="w-8">
+                    <span class="text-[9px] font-black uppercase tracking-widest">PromptPay</span>
+                </div>
+                <div data-method="truemoney" class="method-card p-4 flex flex-col items-center gap-2">
+                    <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" class="w-8 rounded-full">
+                    <span class="text-[9px] font-black uppercase tracking-widest">TrueWallet</span>
+                </div>
+                <div data-method="stripe" class="method-card p-4 flex flex-col items-center gap-2">
+                    <svg width="24" height="24" fill="none" stroke="#6366f1" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Credit Card</span>
+                </div>
+                <div data-method="crypto" class="method-card p-4 flex flex-col items-center gap-2 opacity-30">
+                    <svg width="24" height="24" fill="none" stroke="#f59e0b" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7"/></svg>
+                    <span class="text-[9px] font-black uppercase tracking-widest">Crypto</span>
+                </div>
             </div>
         </div>
     </main>
 
     <footer>
-        <p class="text-[10px] font-black italic text-[#a55eea] shadow-sm">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+        <p class="dev-credit italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p>
     </footer>
 
     <script src="assets/js/payment-core.js"></script>
