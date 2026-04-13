@@ -3,68 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>SN ULTRA - PRODUCTION GATEWAY v13.5</title>
+    <title>SN PRODUCTION v13.8</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --red: #ff3b30; --neon: #00ffd5; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; min-height: 100vh; display: flex; flex-direction: column; }
-        .compact-nav { height: 60px; padding-top: env(safe-area-inset-top); border-bottom: 1px solid rgba(255,255,255,0.05); padding-left: 20px; padding-right: 20px; background: rgba(0,0,0,0.95); display: flex; align-items: center; justify-content: space-between; position: fixed; top: 0; width: 100%; z-index: 1000; }
-        
-        /* [FIXED] ยืดด้านล่างลงมา 15% (115px) ตามสั่ง */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-top: 80px; padding-bottom: 115px; }
-        
-        .payment-card { width: 90%; max-width: 400px; }
-        .electric-input { position: relative; background: #080808; border-radius: 15px; padding: 20px; border: 1px solid var(--neon); box-shadow: 0 0 15px rgba(0, 255, 213, 0.1); margin-bottom: 25px; }
-        .electric-input::after { content: ''; position: absolute; inset: -2px; border-radius: 17px; background: linear-gradient(90deg, transparent, var(--neon), transparent); z-index: -1; animation: move-light 3s linear infinite; }
-        @keyframes move-light { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
-        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; cursor: pointer; padding: 18px; opacity: 0.4; text-align: center; }
-        .method-btn.active { border-color: var(--neon); box-shadow: 0 0 15px var(--neon); opacity: 1; }
+        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; margin: 0; }
+        main { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 115px; } /* 15% Stretch */
+        .electric-input { background: #080808; border-radius: 20px; padding: 25px; border: 1px solid #00ffd5; box-shadow: 0 0 20px rgba(0,255,213,0.1); width: 90%; max-width: 400px; }
+        .method-btn { background: #0a0a0a; border: 1px solid #222; border-radius: 15px; padding: 20px; cursor: pointer; opacity: 0.4; text-align: center; font-size: 10px; font-weight: 900; }
+        .method-btn.active { border-color: #00ffd5; box-shadow: 0 0 15px #00ffd5; opacity: 1; }
         #qr-modal { position: fixed; inset: 0; z-[2000]; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.98); backdrop-filter: blur(20px); }
-        .modal-content { background: #050505; width: 100%; max-width: 380px; border-radius: 3.5rem; padding: 40px; text-align: center; border: 1px solid rgba(239,68,68,0.2); }
         .hidden { display: none !important; }
     </style>
 </head>
 <body>
-    <header class="compact-nav">
-        <h1 class="text-[#ff3b30] font-black italic text-sm tracking-widest">SN DESIGN STUDIO</h1>
-        <div class="text-[8px] font-black text-emerald-500 uppercase italic">FINAL LOCK ACTIVE</div>
-    </header>
-
     <main>
-        <div class="payment-card">
-            <h2 class="text-center font-black italic uppercase tracking-[0.2em] mb-8 text-white/50 text-sm">SN PRODUCTION GATEWAY</h2>
-            <div class="electric-input">
-                <span class="text-[9px] font-black text-[#00ffd5] uppercase block mb-1 text-center tracking-widest">Amount (THB)</span>
-                <input type="number" id="payAmount" value="500" class="w-full bg-transparent border-none text-white text-5xl font-black text-center outline-none font-mono">
+        <div class="electric-input">
+            <h2 class="text-center font-black italic uppercase tracking-widest mb-8 text-white/50">SN GATEWAY</h2>
+            <input type="number" id="payAmount" value="500" class="w-full bg-transparent border-none text-white text-5xl font-black text-center outline-none mb-10">
+            
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn active">PROMPTPAY</div>
+                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn">STRIPE</div>
+                <div id="btn-truemoney" onclick="selectMethod('truemoney')" class="method-btn">TRUEMONEY</div>
+                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn">BINANCE</div>
             </div>
 
-            <div class="grid grid-cols-2 gap-4 mb-6">
-                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn active"><span class="text-[10px] font-black uppercase text-white">PromptPay</span></div>
-                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">Stripe</span></div>
-                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">TrueWallet</span></div>
-                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">Binance</span></div>
+            <div id="tw-area" class="hidden mb-8">
+                <input type="text" id="twLink" placeholder="Gift Link Here..." class="w-full bg-[#111] border border-orange-500/50 p-5 rounded-2xl text-white text-xs outline-none">
             </div>
 
-            <div id="tw-area" class="hidden mb-6">
-                <input type="text" id="twLink" placeholder="วางลิ้งค์ซองของขวัญ..." class="w-full bg-[#111] border border-orange-500/50 p-5 rounded-2xl text-white text-xs outline-none font-mono">
-            </div>
-
-            <button onclick="executePayment()" class="w-full py-6 bg-white text-black font-black text-sm rounded-2xl uppercase hover:bg-red-600 hover:text-white transition-all shadow-xl">Execute Payment</button>
+            <button onclick="executePayment()" class="w-full py-6 bg-white text-black font-black rounded-2xl uppercase hover:bg-red-600 hover:text-white transition-all">Execute Payment</button>
         </div>
     </main>
 
     <div id="qr-modal">
-        <div class="modal-content relative overflow-hidden">
-            <div id="pBar" class="absolute top-0 left-0 h-[3px] bg-red-600 w-full transition-all"></div>
-            <p class="text-[9px] font-black text-red-500 tracking-[0.5em] mb-4 uppercase">SCB MASTER GATEWAY</p>
-            <h2 id="modal-amt" class="text-5xl font-black italic mb-8 text-white">0.00 <span class="text-xs text-red-900">THB</span></h2>
-            <div class="bg-white p-5 rounded-[2.5rem] mb-8 relative group border-[6px] border-[#111]">
-                <img id="qr-img-display" src="" class="w-full h-auto rounded-2xl">
-                <button onclick="downloadQR()" class="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition-all rounded-[2.2rem] font-black flex items-center justify-center uppercase text-xs">Download QR</button>
-            </div>
-            <p id="timerText" class="text-xs font-black text-red-900 uppercase tracking-widest">EXPIRES IN: 05:00</p>
-            <button onclick="closeQR()" class="mt-8 text-[9px] font-black text-gray-600 uppercase hover:text-white">Cancel Payment</button>
+        <div class="text-center p-10 bg-[#050505] rounded-[3.5rem] border border-red-500/20">
+            <img id="qr-img" class="w-64 h-auto rounded-2xl mb-8 border-[6px] border-white">
+            <div id="timer" class="text-red-600 font-black mb-8">05:00</div>
+            <button onclick="closeQR()" class="text-[9px] font-black text-gray-600 uppercase">Cancel</button>
         </div>
     </div>
 
@@ -73,54 +50,37 @@
         let currentMethod = 'promptpay';
         let timerInt;
 
-        function selectMethod(method) {
-            currentMethod = method;
+        function selectMethod(m) {
+            currentMethod = m;
             document.querySelectorAll('.method-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`btn-${method === 'promptpay' ? 'pp' : method}`).classList.add('active');
-            document.getElementById("tw-area").classList.toggle("hidden", method !== 'truemoney');
+            document.getElementById(`btn-${m}`).classList.add('active');
+            document.getElementById("tw-area").classList.toggle("hidden", m !== 'truemoney');
         }
 
         async function executePayment() {
             const amount = document.getElementById("payAmount").value;
-            const email = localStorage.getItem('user_email') || 'test@sn-design.dev';
-            let endpoint = `/api/${currentMethod === 'promptpay' ? 'scb' : currentMethod === 'crypto' ? 'admin/crypto' : currentMethod}`;
-            let bodyData = { amount: parseInt(amount), email };
-            if (currentMethod === "truemoney") {
-                bodyData.link = document.getElementById("twLink").value;
-                if(!bodyData.link) return alert("กรุณาวางลิงก์ซองของขวัญ!");
-            }
-            if (currentMethod === "crypto") bodyData.coin = "USDT";
+            const email = localStorage.getItem('user_email') || 'user@sn-design.dev';
+            const endpoint = `/api/${currentMethod === 'promptpay' ? 'scb' : currentMethod === 'crypto' ? 'admin/crypto' : currentMethod}`;
+            const body = { amount: parseInt(amount), email };
+            if(currentMethod === 'truemoney') body.link = document.getElementById("twLink").value;
 
             try {
-                const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(bodyData) });
+                const res = await fetch(`${API_BASE}${endpoint}`, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
                 const data = await res.json();
                 if (data.success) {
-                    if (data.qrImage) { showQR(data.qrImage, amount); startPolling(email); }
+                    if (data.qrImage) { document.getElementById('qr-img').src = data.qrImage; document.getElementById('qr-modal').style.display = 'flex'; startTimer(); startPolling(email); }
                     else if (data.url) window.location.href = data.url;
                 }
             } catch (e) { alert("CONNECTION ERROR: Check Port 5002"); }
         }
 
-        function showQR(src, amt) {
-            document.getElementById('qr-img-display').src = src;
-            document.getElementById('modal-amt').innerHTML = `${amt}.00 <span class="text-xs text-red-900 italic">THB</span>`;
-            document.getElementById('qr-modal').style.display = 'flex';
+        function startTimer() {
             let t = 300; clearInterval(timerInt);
             timerInt = setInterval(() => {
                 let m = Math.floor(t / 60), s = t % 60;
-                document.getElementById('timerText').innerText = `EXPIRES IN: ${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-                document.getElementById('pBar').style.width = (t / 300 * 100) + "%";
+                document.getElementById('timer').innerText = `EXPIRES IN ${m}:${s < 10 ? '0'+s : s}`;
                 if (--t < 0) closeQR();
             }, 1000);
-        }
-
-        async function downloadQR() {
-            const img = document.getElementById('qr-img-display');
-            const res = await fetch(img.src);
-            const blob = await res.blob();
-            const a = document.createElement('a');
-            a.href = window.URL.createObjectURL(blob); a.download = `SN-QR-${Date.now()}.png`;
-            a.click();
         }
 
         function closeQR() { document.getElementById('qr-modal').style.display = 'none'; clearInterval(timerInt); }
