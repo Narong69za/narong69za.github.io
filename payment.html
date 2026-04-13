@@ -3,233 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PRODUCTION GATEWAY v3.9</title>
+    <title>SN PAYMENT GATEWAY v4.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #000; --red-glow: #ff3b30; --blue-stripe: #6366f1; --gold-crypto: #f59e0b; }
-        body { 
-            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; 
-            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
-        }
+        :root { --bg: #000; --red: #ff3b30; --scb: #4e2e7f; --neon: #00ffd5; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; }
         
-        /* Header ลดขนาดลง 50% แดงรับทรัพย์ */
-        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
-        .red-cash { color: var(--red-glow); text-shadow: 0 0 10px var(--red-glow); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
+        /* Header รีดลง 50% แดงรับทรัพย์ */
+        .compact-nav { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        .red-cash { color: var(--red); text-shadow: 0 0 10px var(--red); font-size: 14px; font-weight: 900; italic: true; letter-spacing: 2px; }
 
-        /* SN PAYMENT GATEWAY สีบรอนซ์เงินเงา */
-        .silver-bronze-title {
-            background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
-            text-transform: uppercase;
+        /* SN PAYMENT GATEWAY บรอนซ์เงินเงา */
+        .silver-bronze { 
+            background: linear-gradient(135deg, #8e9eab, #eef2f3, #8e9eab); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            font-weight: 900; font-size: 1.1rem;
         }
 
-        /* ตรึงหน้า Layout (No Scroll) */
-        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         .payment-card { width: 100%; max-width: 420px; }
 
-        /* Input Styles */
-        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
-        .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
-        .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
-        .amount-focus { color: var(--red-glow) !important; font-size: 28px; text-align: center; font-weight: 900; }
-
-        /* Payment Methods */
-        .method-btn { 
-            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); 
-            border-radius: 15px; transition: 0.3s; cursor: pointer; 
-            display: flex; flex-direction: column; items-center; gap: 8px; padding: 16px; 
+        /* กรอบไฟฟ้า CSS (Electric Frame) วาดสดไม่ต้องใช้รูป */
+        .electric-input {
+            position: relative; background: #080808; border-radius: 15px; padding: 12px;
+            box-shadow: 0 0 15px rgba(0, 255, 213, 0.1); border: 1px solid rgba(0, 255, 213, 0.2);
         }
-        .method-btn.active { border-color: var(--red-glow); box-shadow: 0 0 15px rgba(255,59,48,0.15); }
-        .method-btn:hover { border-color: white; }
-
-        /* Pop-up Modal หรูหรา */
-        #qr-modal-overlay {
-            position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
+        .electric-input::after {
+            content: ''; position: absolute; inset: -2px; border-radius: 17px;
+            background: linear-gradient(90deg, transparent, var(--neon), transparent);
+            z-index: -1; animation: move-light 3s linear infinite;
         }
-        .qr-frame { background: #fff; padding: 20px; border-radius: 3rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.25); }
-        .qr-logo-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; background: #fff; padding: 4px; border-radius: 6px; }
-        .p-bar { height: 4px; background: var(--red-glow); position: absolute; top: 0; left: 0; transition: width 1s linear; }
+        @keyframes move-light { 0% { filter: blur(3px); opacity: 0.3; } 50% { opacity: 1; } 100% { filter: blur(3px); opacity: 0.3; } }
 
-        footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
-        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; italic: true; }
+        .credit-info { background: rgba(0,255,213,0.03); border: 1px dashed rgba(0,255,213,0.2); border-radius: 12px; padding: 15px; margin: 15px 0; text-align: center; }
+        
+        /* QR Modal แถบสีม่วง SCB & กรอบไฟฟ้า */
+        #qr-modal { position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center; background: rgba(0,0,0,0.95); backdrop-filter: blur(15px); }
+        .qr-window { background: #fff; border-radius: 2.5rem; overflow: hidden; width: 340px; border: 4px solid #111; box-shadow: 0 0 50px rgba(78, 46, 127, 0.4); position: relative; }
+        
+        /* เอฟเฟกต์ไฟฟ้าขอบ QR */
+        .qr-window::before {
+            content: ''; position: absolute; inset: 0; border: 2px solid var(--neon); border-radius: 2.5rem; 
+            opacity: 0.2; animation: pulse-neon 2s infinite; pointer-events: none;
+        }
+        @keyframes pulse-neon { 0% { opacity: 0.1; } 50% { opacity: 0.4; } 100% { opacity: 0.1; } }
+
+        .qr-header { background: var(--scb); padding: 14px; text-align: center; color: #fff; }
+        .qr-footer { background: #f8f9fa; padding: 10px; text-align: center; color: #444; font-size: 9px; font-weight: 900; border-top: 1px solid #eee; }
+        
+        .qr-body { padding: 30px; position: relative; background: #fff; display: flex; justify-content: center; align-items: center; }
+        
+        /* โลโก้ payment.png ตรงกลาง QR */
+        .qr-logo-overlay { 
+            position: absolute; width: 55px; height: 55px; 
+            background: #000; padding: 4px; border-radius: 50%; 
+            border: 2px solid #ffd700; box-shadow: 0 0 10px rgba(255,215,0,0.3);
+            display: flex; justify-content: center; align-items: center; overflow: hidden;
+        }
+        .qr-logo-overlay img { width: 100%; height: 100%; object-fit: cover; }
+
+        .method-btn { background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); border-radius: 15px; cursor: pointer; transition: 0.3s; }
+        .method-btn:hover { border-color: var(--neon); transform: translateY(-3px); }
     </style>
 </head>
 <body>
 
     <header class="compact-nav flex justify-between items-center">
         <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
-        <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest italic">AUTHENTICATING...</div>
+        <div id="user-display" class="text-[9px] font-black text-gray-400 uppercase tracking-widest italic">AUTHENTICATING...</div>
     </header>
 
     <main>
         <div class="payment-card">
             <div class="text-center mb-6">
-                <h2 class="silver-bronze-title italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
+                <h2 class="silver-bronze uppercase italic tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
             </div>
 
-            <div class="input-group">
-                <span class="input-label text-center">Amount (THB)</span>
-                <input type="number" id="payAmount" value="500" class="input-field amount-focus">
+            <div class="electric-input mb-4">
+                <span class="text-[8px] font-black text-[#00ffd5] uppercase block mb-1 text-center tracking-widest">Amount (THB)</span>
+                <input type="number" id="payAmount" value="300" oninput="calcCredit()" class="w-full bg-transparent border-none text-white text-3xl font-black text-center outline-none font-mono">
             </div>
 
-            <div class="grid grid-cols-2 gap-3 mb-6">
-                <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-emerald-500">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-3.31 0-6 2.69-6 6s2.69 6 6 6 6-2.69 6-6-2.69-6-6-6zm0 10c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4zm-1-7h2v6h-2z"/>
-                    </svg>
-                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">PromptPay</span>
-                </div>
-                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-orange-500">
-                        <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.5 8.5L8.5 15.5M8.5 8.5l7 7"/>
-                    </svg>
-                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">TrueWallet</span>
-                </div>
-                <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-[#6366f1]">
-                        <rect x="2" y="5" width="20" height="14" rx="2" stroke="currentColor" stroke-width="2"/>
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2 10h20"/>
-                    </svg>
-                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Stripe / Card</span>
-                </div>
-                <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn opacity-30 cursor-not-allowed">
-                    <svg width="24" height="24" fill="none" viewBox="0 0 24 24" class="text-yellow-500 hover:scale-110 transition-transform">
-                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 2v20M17 5H9.5a4.5 4.5 0 000 9h5a4.5 4.5 0 010 9H7M3 3l18 18M3 21l18-18"/>
-                    </svg>
-                    <span class="text-[9px] font-black uppercase tracking-tighter text-white">Crypto (Hamster)</span>
-                </div>
+            <div class="credit-info">
+                <p class="text-[9px] text-gray-500 font-bold uppercase mb-1">Total Credits Earned</p>
+                <div class="text-xl font-black italic"><span id="total-cr">33,000</span> <span class="text-[10px] text-[#00ffd5]">CR</span></div>
+                <div id="bonus-box" class="text-[9px] font-black text-[#00ffd5] mt-1 tracking-wider">+ 3,000 BONUS (10% POLICY)</div>
             </div>
 
-            <div id="tw-input-section" class="hidden mb-4">
-                <div class="input-group">
-                    <span class="input-label">TrueWallet Gift Link (อั่งเปา)</span>
-                    <input type="text" id="twLink" placeholder="https://gift.truemoney.com/..." class="input-field text-red-500 text-xs">
+            <div class="grid grid-cols-2 gap-3">
+                <div onclick="pay('pp')" class="method-btn p-5 flex flex-col items-center gap-2">
+                    <img src="https://promptpay.io/logo.png" class="w-8">
+                    <span class="text-[10px] font-black uppercase text-white">PromptPay</span>
+                </div>
+                <div onclick="pay('tw')" class="method-btn p-5 flex flex-col items-center gap-2">
+                    <img src="https://www.truemoney.com/wp-content/uploads/2021/01/logo-truemoney-wallet-300x300.png" class="w-8 rounded-full">
+                    <span class="text-[10px] font-black uppercase text-white">TrueWallet</span>
                 </div>
             </div>
-
-            <button id="main-submit-btn" onclick="executePayment()" class="w-full py-4 bg-white text-black font-black text-xs rounded-xl uppercase hover:bg-red-600 hover:text-white transition-all">Generate QR / Pay Now</button>
         </div>
     </main>
 
-    <div id="qr-modal-overlay">
-        <div class="text-center relative">
-            <div class="qr-frame mb-6">
-                <div id="pBar" class="p-bar" style="width: 100%;"></div>
-                <img id="qr-img-display" src="" class="w-64 h-64 rounded-xl">
-                <img src="https://upload.wikimedia.org/wikipedia/th/thumb/c/cb/PromptPay-logo.png/1200px-PromptPay-logo.png" class="qr-logo-center">
+    <div id="qr-modal">
+        <div class="text-center">
+            <div class="qr-window mb-6">
+                <div class="qr-header">
+                    <p class="text-[11px] font-black tracking-[0.25em] uppercase">SN PAYMENT CORE</p>
+                    <p class="text-[7px] font-bold opacity-60 uppercase">Licensed by SN DESIGN STUDIO</p>
+                </div>
+                <div class="qr-body">
+                    <img id="qr-img" src="" class="w-64 h-64 rounded-lg">
+                    <div class="qr-logo-overlay">
+                        <img src="assets/images/payment.png" alt="SN">
+                    </div>
+                </div>
+                <div class="qr-footer">
+                    <p class="tracking-widest">DEVELOPED BY: ต้องดีแค่ไหน โลกถึงจะจำ</p>
+                </div>
             </div>
-            <p id="display-amt" class="text-5xl font-black italic text-white mb-2">0.00</p>
-            <p id="timerText" class="text-xs font-black text-red-600 uppercase mb-8 tracking-widest">EXPIRES IN: 05:00</p>
+            
+            <p id="timer" class="text-2xl font-black text-red-600 mb-6 font-mono tracking-widest">05:00</p>
             <div class="flex gap-2 justify-center">
-                <button onclick="downloadQR()" class="px-8 py-3 bg-red-600 text-black font-black text-[10px] rounded-full uppercase">Download QR</button>
-                <button onclick="closeQR()" class="px-8 py-3 bg-[#111] text-gray-500 font-black text-[10px] rounded-full uppercase border border-white/5">Cancel</button>
+                <button onclick="downloadQR()" class="px-10 py-3 bg-[#00ffd5] text-black font-black text-[11px] rounded-full uppercase shadow-[0_0_20px_rgba(0,255,213,0.3)]">Download QR</button>
+                <button onclick="closeModal()" class="px-10 py-3 bg-[#111] text-gray-500 font-black text-[11px] rounded-full uppercase border border-white/5">Cancel</button>
             </div>
         </div>
     </div>
 
-    <footer><p class="dev-purple italic">พัฒนาโดย: ต้องดีแค่ไหน โลกถึงจะจำ</p></footer>
+    <footer class="p-6 text-center border-t border-white/5">
+        <p class="text-[10px] font-black italic text-[#a55eea] tracking-widest">SYSTEM ONLINE | 2026 PRODUCTION</p>
+    </footer>
 
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
         const CITIZEN_ID = "3100503536486";
-        let currentMethod = 'promptpay';
         let timerInt;
 
-        // --- [1] METHOD SELECTION ---
-        function selectMethod(method) {
-            if(method === 'crypto') return alert("Crypto coming soon with Hamster Project Season 2");
-            currentMethod = method;
-            const twSection = document.getElementById("tw-input-section");
-            const btnPP = document.getElementById("btn-pp"), btnTW = document.getElementById("btn-tw"), 
-                  btnStripe = document.getElementById("btn-stripe"), btnCrypto = document.getElementById("btn-crypto");
+        // คำนวณเครดิตตาม Credit Policy (300+ ได้โบนัส)
+        function calcCredit() {
+            const amt = parseFloat(document.getElementById('payAmount').value) || 0;
+            const base = amt * 100;
+            let bonusRate = 0;
+            if (amt >= 1000) bonusRate = 0.20;
+            else if (amt >= 300) bonusRate = 0.10; // โบนัส 10% เมื่อเติม 300+
+            else if (amt >= 100) bonusRate = 0.05;
 
-            [btnPP, btnTW, btnStripe, btnCrypto].forEach(b => b.classList.remove("active"));
-            twSection.classList.add("hidden");
-
-            if(method === 'truemoney') {
-                twSection.classList.remove("hidden");
-                btnTW.classList.add("active");
-            } else if(method === 'promptpay') btnPP.classList.add("active");
-              else if(method === 'stripe') btnStripe.classList.add("active");
+            const bonus = base * bonusRate;
+            document.getElementById('total-cr').innerText = (base + bonus).toLocaleString();
+            document.getElementById('bonus-box').innerText = bonus > 0 ? `+ ${bonus.toLocaleString()} BONUS (${bonusRate*100}% POLICY)` : "NO BONUS APPLIED";
         }
 
-        // --- [2] EXECUTE PAYMENT ---
-        async function executePayment() {
-            const amt = document.getElementById("payAmount").value;
+        async function pay(method) {
+            const amt = document.getElementById('payAmount').value;
             const email = localStorage.getItem('user_email');
             if(!email) return window.location.href = "login.html";
 
-            let endpoint = "";
-            let bodyData = { amount: parseInt(amt), email: email, id_card: CITIZEN_ID };
-
-            if(currentMethod === 'promptpay') endpoint = "/api/scb/create-qr";
-            else if(currentMethod === 'truemoney') {
-                endpoint = "/api/truemoney/verify";
-                bodyData.link = document.getElementById("twLink").value;
-                if(!bodyData.link.includes('gift.truemoney.com')) return alert("กรุณาวางลิ้งค์อั่งเปา");
-            }
-            else if(currentMethod === 'stripe') endpoint = "/api/stripe/create-checkout"; // Stripe Checkout ดีดไปหน้าใหม่
-
-            try {
-                const res = await fetch(`${API_BASE}${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(bodyData)
-                });
-                const data = await res.json();
-                
-                if (data.success) {
-                    if (data.qrImage) openPopUp(data.qrImage, amt);
-                    else if (data.url) window.location.href = data.url; // Stripe/Truelink ดีดตัว
-                    startPolling(email);
-                }
-            } catch (e) {
-                if(currentMethod === 'promptpay') openPopUp(`https://promptpay.io/0812345678/${amt}.png`, amt);
-            }
+            // Mockup QR (ใน Production จริง พี่เปลี่ยนไปเรียก API ของพี่ได้เลย)
+            const qrUrl = `https://promptpay.io/0812345678/${amt}.png`;
+            document.getElementById('qr-img').src = qrUrl;
+            
+            document.getElementById('qr-modal').style.display = 'flex';
+            startTimer(300);
+            startPolling(email);
         }
 
-        function openPopUp(qr, amt) {
-            const modal = document.getElementById("qr-modal-overlay");
-            document.getElementById("qr-img-display").src = qr;
-            document.getElementById("display-amt").innerText = amt + ".00";
-            modal.style.display = "flex";
-            let time = 300;
+        function startTimer(t) {
             clearInterval(timerInt);
             timerInt = setInterval(() => {
-                let m = Math.floor(time / 60), s = time % 60;
-                document.getElementById("timerText").innerText = `EXPIRES IN: ${m}:${s < 10 ? '0'+s : s}`;
-                document.getElementById("pBar").style.width = (time / 300 * 100) + "%";
-                if (--time < 0) closeQR();
+                let m = Math.floor(t / 60), s = t % 60;
+                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
+                if (--t < 0) closeModal();
             }, 1000);
         }
 
+        function closeModal() { document.getElementById('qr-modal').style.display = 'none'; clearInterval(timerInt); }
+
+        // ระบบดาวน์โหลด QR
+        function downloadQR() {
+            const qrImg = document.getElementById('qr-img');
+            const link = document.createElement('a');
+            link.href = qrImg.src;
+            link.download = `SN-PAYMENT-${Date.now()}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
         function startPolling(email) {
-            const poll = setInterval(async () => {
+            setInterval(async () => {
                 try {
                     const res = await fetch(`${API_BASE}/api/check-status?email=${email}`);
                     const data = await res.json();
-                    if (data.paid) { clearInterval(poll); window.location.href = "create.html"; }
-                } catch (e) {}
-            }, 4000);
+                    if(data.paid) window.location.href = "create.html";
+                } catch(e) {}
+            }, 5000);
         }
 
-        function closeQR() { document.getElementById("qr-modal-overlay").style.display = "none"; clearInterval(timerInt); }
-        function downloadQR() {
-            const a = document.createElement('a');
-            a.href = document.getElementById("qr-img-display").src;
-            a.download = `SN-QR-${Date.now()}.png`; a.click();
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
+        window.onload = () => {
             const email = localStorage.getItem('user_email');
             if (email) document.getElementById('user-display').innerText = email;
-            selectMethod('promptpay'); // Default
-        });
+            calcCredit();
+        };
     </script>
 </body>
 </html>
