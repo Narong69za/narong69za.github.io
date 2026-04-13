@@ -1,39 +1,37 @@
-const express = require("express");
+/**
+ * PROJECT: SN DESIGN STUDIO
+ * MODULE: Stripe Checkout Logic (Frontend-based)
+ * PATH: /root/narong69za.github.io/routes/stripe.route.js
+ * CREATED: 2026-04-13 | VERSION: v1.0.1
+ * DESCRIPTION: สร้าง Stripe Checkout Session และส่ง URL กลับไป Redirect
+ */
+
+const express = require('express');
 const router = express.Router();
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
-const authMiddleware = require("../middleware/auth");
-const CREDIT_POLICY = require("../config/credit.policy");
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
-router.post("/create-checkout", authMiddleware, async (req, res) => {
-  try {
-    const userId = req.user.id;
-    const amountTHB = req.body.amount || req.body.amountTHB;
-
-    if (!amountTHB) return res.status(400).json({ error: "NO_AMOUNT" });
-
-    const creditResult = CREDIT_POLICY.calculateCreditFromTHB(amountTHB);
-    const amountSatang = Math.round(amountTHB * 100);
-
-    const session = await stripe.checkout.sessions.create({
-      payment_method_types: ["card"],
-      line_items: [{
-        price_data: {
-          currency: "thb",
-          product_data: { name: "SN Design Credit Topup" },
-          unit_amount: amountSatang,
-        },
-        quantity: 1,
-      }],
-      mode: "payment",
-      success_url: "https://sn-designstudio.dev/payment.html?status=success",
-      cancel_url: "https://sn-designstudio.dev/payment.html?status=cancel",
-      metadata: { userId: userId.toString(), credits: creditResult.totalCredit }
-    });
-
-    return res.json({ success: true, url: session.url });
-  } catch (err) {
-    res.status(500).json({ success: false, error: err.message });
-  }
+router.post('/', async (req, res) => {
+    const { amount, email } = req.body;
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'thb',
+                    product_data: { name: 'SN TOPUP' },
+                    unit_amount: amount * 100,
+                },
+                quantity: 1,
+            }],
+            mode: 'payment',
+            success_url: "https://sn-designstudio.dev/success.html",
+            cancel_url: "https://sn-designstudio.dev/cancel.html",
+            metadata: { email }
+        });
+        res.json({ success: true, url: session.url });
+    } catch (e) {
+        res.status(500).json({ success: false, error: e.message });
+    }
 });
 
 module.exports = router;
