@@ -2,78 +2,160 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN ULTRA - PRODUCTION GATEWAY v4.0</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>SN ULTRA - PRODUCTION GATEWAY v13.1</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #000; color: #fff; }
-        .method-btn { background:#0a0a0a;border:1px solid #222;border-radius:12px;padding:12px;cursor:pointer;text-align:center; }
-        .method-btn.active { border-color:#ff3b30; box-shadow:0 0 10px rgba(255,59,48,0.4); }
-        .input { width:100%;padding:10px;background:#111;border:none;color:#fff;border-radius:8px; }
-        #qr-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.95); align-items:center; justify-content:center; }
+        /* [FIX] ยืดล่าง 15% ตามสั่ง (ประมาณ 115px) */
+        main { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding-bottom: 115px; }
+        
+        .method-btn { background:#0a0a0a; border:1px solid #222; border-radius:15px; padding:20px; cursor:pointer; text-align:center; transition: 0.3s; opacity: 0.5; }
+        .method-btn.active { border-color:#00ffd5; box-shadow:0 0 15px rgba(0,255,213,0.3); opacity: 1; }
+        .input-sn { width:100%; padding:15px; background:#080808; border:1px solid #222; color:#fff; border-radius:12px; outline:none; }
+        .input-sn:focus { border-color:#00ffd5; }
+        
+        /* [FIX] ซ่อน Modal เริ่มต้น */
+        #qr-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.98); z-index:2000; align-items:center; justify-content:center; backdrop-filter: blur(15px); }
     </style>
 </head>
 
 <body>
 
-<div class="max-w-md mx-auto mt-10 p-4">
+<main>
+    <div class="w-full max-w-md px-6">
+        <h1 class="text-center font-black text-red-600 mb-2 italic tracking-tighter text-2xl">SN PAYMENT GATEWAY</h1>
+        <p class="text-center text-[10px] text-gray-500 mb-8 uppercase tracking-widest">Global Master Proxy 5002</p>
 
-    <h1 class="text-center font-black text-red-500 mb-6">SN PAYMENT GATEWAY</h1>
+        <div class="bg-[#050505] border border-white/5 p-8 rounded-[2.5rem]">
+            <span class="text-[9px] font-black text-[#00ffd5] uppercase block mb-2 text-center tracking-widest">Target Amount (THB)</span>
+            <input id="amount" type="number" value="500" class="w-full bg-transparent text-white text-5xl font-black text-center outline-none font-mono mb-8">
 
-    <input id="amount" type="number" value="500" class="input mb-4 text-center text-xl">
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="method-btn active" onclick="selectMethod('promptpay')" id="m-promptpay">PromptPay</div>
+                <div class="method-btn" onclick="selectMethod('stripe')" id="m-stripe">Stripe Card</div>
+                <div class="method-btn" onclick="selectMethod('truemoney')" id="m-truemoney">TrueWallet</div>
+                <div class="method-btn" onclick="selectMethod('crypto')" id="m-crypto">Binance</div>
+            </div>
 
-    <div class="grid grid-cols-2 gap-3 mb-4">
-        <div class="method-btn active" onclick="selectMethod('promptpay')" id="m-pp">PromptPay</div>
-        <div class="method-btn" onclick="selectMethod('truemoney')" id="m-tw">TrueMoney</div>
-        <div class="method-btn" onclick="selectMethod('stripe')" id="m-st">Stripe</div>
-        <div class="method-btn" onclick="selectMethod('crypto')" id="m-cr">Crypto</div>
+            <div id="tw-area" class="hidden mb-6">
+                <input id="twlink" placeholder="วางลิงก์ซองของขวัญที่นี่..." class="input-sn font-mono text-xs">
+            </div>
+
+            <button onclick="pay()" class="w-full bg-white text-black font-black py-5 rounded-2xl hover:bg-red-600 hover:text-white transition-all uppercase text-sm shadow-xl">Execute Payment</button>
+        </div>
     </div>
+</main>
 
-    <input id="twlink" placeholder="TrueMoney Gift Link" class="input mb-3 hidden">
-
-    <button onclick="pay()" class="w-full bg-white text-black font-black py-3 rounded-lg">PAY NOW</button>
-
-</div>
-
-<!-- QR MODAL -->
-<div id="qr-modal" class="flex">
-    <div class="text-center">
-        <img id="qr-img" class="w-64 h-64 mb-4 bg-white p-2 rounded">
-        <div id="qr-amt" class="text-3xl font-black"></div>
-        <div id="timer" class="text-red-500 mt-2"></div>
-        <button onclick="closeQR()" class="mt-4 bg-red-600 px-6 py-2 rounded">CLOSE</button>
+<div id="qr-modal">
+    <div class="text-center max-w-sm w-full p-6">
+        <div class="bg-white p-6 rounded-[3rem] mb-6 relative group">
+            <img id="qr-img" class="w-full h-auto rounded-2xl">
+            <button onclick="downloadQR()" class="absolute inset-0 bg-red-600/90 text-white opacity-0 group-hover:opacity-100 transition-all rounded-[2.5rem] font-black flex items-center justify-center uppercase text-xs">Download QR</button>
+        </div>
+        <div id="qr-amt" class="text-4xl font-black italic text-white mb-2"></div>
+        <div id="timer" class="text-red-600 font-mono font-bold tracking-widest"></div>
+        <button onclick="closeQR()" class="mt-8 text-gray-500 text-[10px] font-black uppercase tracking-widest hover:text-white">Cancel Payment</button>
     </div>
 </div>
 
 <script>
-
 const API_BASE = "https://api.sn-designstudio.dev";
-const CITIZEN_ID = "3100503536486";
-
 let method = "promptpay";
-let polling = null;
+let pollingInterval = null;
+let timerInterval = null;
 
-// SELECT METHOD
+// [FIX 1] แก้ไข Selector ให้แม่นยำ 100%
 function selectMethod(m){
     method = m;
     document.querySelectorAll('.method-btn').forEach(e=>e.classList.remove('active'));
-    document.getElementById("m-"+m.slice(0,2)).classList.add('active');
+    document.getElementById("m-"+m).classList.add('active'); // แก้ตรงนี้ ไม่ต้อง slice แล้ว
 
-    document.getElementById("twlink").classList.toggle("hidden", m !== "truemoney");
+    document.getElementById("tw-area").classList.toggle("hidden", m !== "truemoney");
 }
 
-// PAY
 async function pay(){
-
     const amount = parseInt(document.getElementById("amount").value);
-    const email = localStorage.getItem("user_email");
+    const email = localStorage.getItem("user_email") || "test@sn-design.dev";
 
-    if(!email){
-        alert("กรุณา login");
-        return;
-    }
-
+    // [FIX 2] ปรับ Endpoint ให้ตรงกับ Master Gateway 5002
     let endpoint = "";
+    let body = { amount, email };
+
+    if(method === "promptpay") endpoint = "/api/scb";
+    if(method === "truemoney"){
+        endpoint = "/api/truemoney";
+        body.link = document.getElementById("twlink").value;
+        if(!body.link) return alert("กรุณาวางลิงก์ซองของขวัญ");
+    }
+    if(method === "stripe") endpoint = "/api/stripe";
+    if(method === "crypto") endpoint = "/api/admin/crypto";
+
+    try{
+        const res = await fetch(API_BASE + endpoint, {
+            method:"POST",
+            headers:{ "Content-Type":"application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        if(!data.success) return alert("Gateway Rejected Request");
+
+        if(data.qrImage) openQR(data.qrImage, amount);
+        if(data.url) window.location.replace(data.url);
+        
+        // เริ่ม Polling เช็คสถานะหลังจ่ายเงิน
+        startPolling(email);
+
+    }catch(e){ alert("CONNECTION ERROR: Check Port 5002"); }
+}
+
+function openQR(src, amt){
+    document.getElementById("qr-img").src = src;
+    document.getElementById("qr-amt").innerText = amt + ".00 THB";
+    document.getElementById("qr-modal").style.display = "flex";
+
+    let t = 300;
+    clearInterval(timerInterval);
+    timerInterval = setInterval(()=>{
+        let m = Math.floor(t/60), s = t%60;
+        document.getElementById("timer").innerText = `EXPIRES IN ${m}:${s<10?'0'+s:s}`;
+        if(--t < 0) closeQR();
+    },1000);
+}
+
+function closeQR(){
+    document.getElementById("qr-modal").style.display = "none";
+    clearInterval(timerInterval);
+}
+
+// [FIX 3] ระบบ Download แบบ Blob สำหรับมือถือ
+async function downloadQR() {
+    const img = document.getElementById('qr-img');
+    const response = await fetch(img.src);
+    const blob = await response.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `SN-QR-${Date.now()}.png`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+}
+
+function startPolling(email){
+    clearInterval(pollingInterval);
+    pollingInterval = setInterval(async()=>{
+        try{
+            const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
+            const data = await res.json();
+            if(data.paid_success){
+                clearInterval(pollingInterval);
+                window.location.href = "create.html";
+            }
+        }catch(e){}
+    },5000);
+}
+</script>
+
+</body>
+</html>
+
