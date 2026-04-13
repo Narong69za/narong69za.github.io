@@ -3,9 +3,9 @@ const API_BASE = "https://api.sn-designstudio.dev";
 async function setMethod(method) {
     const amount = document.getElementById("payAmount")?.value || 10;
     let endpoint = "";
-    if (method === "promptpay") endpoint = "/api/scb/create-qr";
-    else if (method === "truemoney") endpoint = "/api/truemoney/create-link";
-    else if (method === "stripe") endpoint = "/api/stripe/create-checkout";
+     if (method === "promptpay") endpoint = "/api/scb/create-qr";
+     if (method === "truemoney") endpoint = "/api/truemoney/create-link";
+     if (method === "stripe") endpoint = "/api/stripe/create-checkout";
     
     if (method === "crypto") return alert("Crypto coming soon with Hamster Project");
 
