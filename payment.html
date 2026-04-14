@@ -3,163 +3,99 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN PAYMENT GATEWAY | LUXURY EDITION</title>
-
+    <title>SN PAYMENT GATEWAY | STABLE LUXURY</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
-        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background: #000; color: #fff; font-family: 'Inter', sans-serif; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-
-        /* � Silver Bronze Glossy Effect */
         .silver-premium {
             background: linear-gradient(to bottom, #cfcfcf 0%, #ffffff 50%, #707070 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 2px rgba(255,255,255,0.3));
         }
-
-        /* Method Button Effects */
-        .method-btn { 
-            background: rgba(255,255,255,0.03); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative; overflow: hidden;
-        }
-        .method-btn:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); }
-        
-        /* Active States with Glocal Glow */
-        .btn-pp.active { border-color: #4e2e7f; box-shadow: 0 0 20px rgba(78, 46, 127, 0.4); background: rgba(78, 46, 127, 0.1); }
-        .btn-tw.active { border-color: #ff8c00; box-shadow: 0 0 20px rgba(255, 140, 0, 0.4); background: rgba(255, 140, 0, 0.1); }
-        .btn-stripe.active { border-color: #0070ba; box-shadow: 0 0 20px rgba(0, 112, 186, 0.4); background: rgba(0, 112, 186, 0.1); }
-
-        /* Pop-up Overlay */
-        #qr-modal-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.95); 
-            display: none; align-items: center; justify-content: center; z-index: 999;
-            backdrop-filter: blur(20px);
-        }
-
-        .modal-card {
-            background: #050505;
-            width: 100%;
-            max-width: 380px;
-            border-radius: 32px;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.05);
-            box-shadow: 0 25px 50px -12px rgba(0,0,0,1);
-        }
-
-        .qr-frame { 
-            background: #fff; padding: 15px; border-radius: 24px; position: relative; 
-            margin: 20px; box-shadow: 0 0 30px rgba(255,255,255,0.1);
-        }
-
-        .p-bar { height: 4px; border-radius: 2px; transition: width 1s linear; }
-
-        /* Input Styling */
-        input#payAmount {
-            background: transparent;
-            border-bottom: 2px solid rgba(255,255,255,0.1);
-            transition: border-color 0.3s;
-        }
-        input#payAmount:focus { border-color: #ff0000; outline: none; }
+        .method-btn { background: rgba(255,255,255,0.03); border: 1px solid #222; transition: 0.3s; }
+        .method-btn.active { border-color: red; background: rgba(255,0,0,0.1); } /* ตาม Logic พี่ */
+        #qr-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); display: none; align-items: center; justify-content: center; z-index: 999; backdrop-filter: blur(20px); }
+        .qr-frame { background: #fff; padding: 20px; border-radius: 24px; position: relative; }
+        .p-bar { height: 4px; background: red; position: absolute; top: 0; left: 0; border-radius: 2px; }
+        input#payAmount { border-bottom: 2px solid #222; }
     </style>
 </head>
-
 <body>
 
-<main class="p-6 max-w-lg mx-auto min-h-screen flex flex-col justify-center">
-
-    <div class="text-center mb-12">
-        <h1 class="text-3xl md:text-4xl font-black silver-premium italic tracking-tighter uppercase mb-2">SN PAYMENT GATEWAY</h1>
-        <div class="flex items-center justify-center gap-2">
-            <span class="h-[1px] w-8 bg-white/20"></span>
-            <p class="text-[10px] font-black tracking-[0.3em] text-white/40 uppercase">Global Proxy 5002</p>
-            <span class="h-[1px] w-8 bg-white/20"></span>
-        </div>
+<main class="p-6 max-w-md mx-auto min-h-screen flex flex-col justify-center">
+    
+    <div class="text-center mb-10">
+        <h1 class="text-3xl font-black silver-premium italic tracking-tighter uppercase mb-1">SN PAYMENT GATEWAY</h1>
+        <p class="silver-premium text-[11px] font-black tracking-widest uppercase">ผู้พัฒนา ต้องดีแค่ไหน โลกถึงจะจำ</p>
     </div>
 
-    <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 backdrop-blur-md relative mb-6">
-        <p class="text-center text-[9px] font-black text-white/30 uppercase tracking-[0.2em] mb-4">Amount to Refill (THB)</p>
-        <input id="payAmount" type="number" value="500" class="w-full text-center text-5xl font-black text-white mb-8 mono">
+    <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8 backdrop-blur-md">
+        <p class="text-center text-[9px] font-black text-white/30 uppercase mb-4 tracking-widest">Amount (THB)</p>
+        <input id="payAmount" type="number" value="500" class="w-full bg-transparent text-center text-5xl font-black text-white mb-8 mono outline-none">
 
-        <div class="grid grid-cols-3 gap-3 mb-8">
-            <div id="btn-pp" class="method-btn btn-pp p-4 rounded-2xl flex flex-col items-center gap-2" onclick="selectMethod('promptpay')">
-                <span class="text-[8px] font-black uppercase opacity-60">SCB</span>
-            </div>
-            <div id="btn-tw" class="method-btn btn-tw p-4 rounded-2xl flex flex-col items-center gap-2" onclick="selectMethod('truemoney')">
-                <span class="text-[8px] font-black uppercase opacity-60">TRUE</span>
-            </div>
-            <div id="btn-stripe" class="method-btn btn-stripe p-4 rounded-2xl flex flex-col items-center gap-2" onclick="selectMethod('stripe')">
-                <span class="text-[8px] font-black uppercase opacity-60">CARD</span>
-            </div>
+        <div class="grid grid-cols-3 gap-2 mb-6">
+            <div id="btn-pp" class="method-btn p-3 rounded-xl text-[10px] font-black cursor-pointer text-center" onclick="selectMethod('promptpay')">SCB</div>
+            <div id="btn-tw" class="method-btn p-3 rounded-xl text-[10px] font-black cursor-pointer text-center" onclick="selectMethod('truemoney')">TRUE</div>
+            <div id="btn-stripe" class="method-btn p-3 rounded-xl text-[10px] font-black cursor-pointer text-center" onclick="selectMethod('stripe')">CARD</div>
         </div>
 
         <div id="tw-input-section" class="hidden mb-6">
-            <div class="relative">
-                <input id="twLink" placeholder="Paste Gift Link Here..." class="w-full bg-black/40 border border-orange-500/30 p-4 rounded-xl text-white text-[10px] mono outline-none focus:border-orange-500">
-            </div>
+            <input id="twLink" placeholder="https://gift.truemoney.com/..." class="w-full bg-black/40 border border-orange-500/30 p-3 rounded-xl text-white text-[10px] mono outline-none focus:border-orange-500">
         </div>
 
-        <button onclick="executePayment()" class="w-full bg-red-600 hover:bg-red-500 text-white py-5 rounded-2xl font-black tracking-widest text-sm transition-all shadow-xl shadow-red-900/20 active:scale-[0.98]">
-            EXECUTE SETTLEMENT
+        <button onclick="executePayment()" class="w-full bg-red-600 hover:bg-red-500 text-white py-5 rounded-2xl font-black tracking-widest text-sm transition-all shadow-xl active:scale-95">
+            EXECUTE PAYMENT
         </button>
     </div>
 
-    <div class="text-center mt-6">
-        <p class="silver-premium text-[11px] font-black tracking-widest">ผู้พัฒนา ต้องดีแค่ไหน โลกถึงจะจำ</p>
-        <p class="silver-premium text-[8px] font-black mt-1 opacity-60 italic tracking-[0.4em]">POWERED BY SN DESIGN STUDIO</p>
+    <div class="mt-8 text-center">
+        <p class="silver-premium text-[9px] font-black opacity-60 italic tracking-[0.4em]">POWERED BY SN DESIGN STUDIO</p>
     </div>
-
 </main>
 
 <div id="qr-modal-overlay">
-    <div class="modal-card">
+    <div class="modal-card bg-[#050505] rounded-[40px] border border-white/5 w-full max-w-[360px] overflow-hidden">
         
-        <div id="modal-header" class="p-4 px-6 flex justify-between items-center bg-red-600">
+        <div id="modal-header" class="p-4 px-6 flex justify-between items-center bg-red-600 transition-colors">
             <div class="flex flex-col">
-                <span class="text-[10px] text-white/80 font-black tracking-widest uppercase">ลิขสิทธิ์ พัฒนาโดย</span>
+                <span class="text-[10px] text-white/70 font-black uppercase">ลิขสิทธิ์ พัฒนาโดย</span>
                 <span class="text-xs text-white font-black italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
             </div>
-            
-            <div class="bg-black p-2 rounded-lg flex items-center justify-center shadow-lg">
-                <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24">
-                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-                </svg>
+            <div class="bg-black p-2 rounded-lg shadow-lg">
+                <svg class="w-4 h-4 text-white fill-current" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
             </div>
         </div>
 
-        <div class="text-center p-6 pb-2">
+        <div class="p-6 text-center">
             <div class="qr-frame">
-                <div id="pBar" class="p-bar w-full bg-red-600 mb-4" style="position: absolute; top:0; left:0;"></div>
+                <div id="pBar" class="p-bar" style="width:100%"></div>
                 <img id="qr-img-display" class="w-full h-auto rounded-lg">
-                <img id="center-logo" src="assets/images/payment.png" 
-                     class="absolute w-14 h-14 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden rounded-full border-4 border-white bg-black shadow-xl">
+                <img id="center-logo" src="assets/images/payment.png" class="absolute w-14 h-14 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden rounded-full border-4 border-white bg-black shadow-2xl">
             </div>
 
-            <p id="display-amt" class="text-xl font-black mono text-white mt-4"></p>
-            <p id="timerText" class="text-red-500 text-[10px] font-black tracking-widest mt-2 mono"></p>
+            <p id="display-amt" class="text-2xl font-black mono mt-4 text-white"></p>
+            <p id="timerText" class="text-red-500 font-bold text-xs mt-2 mono uppercase tracking-widest"></p>
 
-            <p class="silver-premium text-[8px] font-black mt-6 tracking-[0.5em] uppercase italic">Powered By SN DESIGN STUDIO</p>
-        </div>
-
-        <div class="p-6 pt-2 flex gap-3">
-            <button onclick="downloadQR()" class="flex-1 bg-white/10 hover:bg-white/20 py-4 rounded-xl text-[10px] font-black tracking-widest transition-all">DOWNLOAD QR</button>
-            <button onclick="closeQR()" class="flex-1 bg-red-600/20 hover:bg-red-600/40 text-red-500 py-4 rounded-xl text-[10px] font-black tracking-widest transition-all">CANCEL</button>
+            <div class="mt-8 flex gap-3">
+                <button onclick="downloadQR()" class="flex-1 bg-white/10 hover:bg-white/20 py-4 rounded-xl text-[10px] font-black tracking-widest transition-all">DOWNLOAD</button>
+                <button onclick="closeQR()" class="flex-1 bg-red-600/20 hover:bg-red-600/40 text-red-500 py-4 rounded-xl text-[10px] font-black tracking-widest transition-all uppercase">Cancel</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
+// � [LOGIC v17.0 - ORIGINAL & STABLE]
 const API_BASE = "https://api.sn-designstudio.dev";
 const CITIZEN_ID = "3100503536486";
 
 let currentMethod = 'promptpay';
 let timerInt, pollInt;
 
-// CREDIT POLICY (LOCKED)
+// CREDIT CALC (ห้ามเปลี่ยน)
 const BASE_RATE = 100;
 const BONUS_TIERS = [
   { min: 1000, bonus: 0.30 },
@@ -175,7 +111,7 @@ function calculateCredit(amount){
     return { total: base + bonus };
 }
 
-// METHOD SELECTION UI
+// UI LOGIC (ห้ามเปลี่ยน ID)
 function selectMethod(method){
     currentMethod = method;
     document.querySelectorAll('.method-btn').forEach(b=>b.classList.remove('active'));
@@ -191,10 +127,12 @@ function selectMethod(method){
     }
 }
 
-// EXECUTE
+// EXECUTE (ห้ามเปลี่ยน Logic การเชื่อมต่อ)
 async function executePayment(){
-    const amount = parseInt(document.getElementById("payAmount").value);
+    const amountInput = document.getElementById("payAmount").value;
+    const amount = parseInt(amountInput);
     const email = localStorage.getItem("user_email") || "test@sn.com";
+
     if(!amount || amount < 10) return alert("ขั้นต่ำ 10 บาท");
 
     let endpoint = "";
@@ -220,12 +158,76 @@ async function executePayment(){
         else if(data.url) location.href = data.url;
         startPolling(email);
     }catch(e){
+        // Fallback (ตามที่พี่เขียนไว้)
         openPopup(`https://promptpay.io/${CITIZEN_ID}/${amount}.png`, amount);
     }
 }
 
-// POPUP UI (DYNAMIC THEMING)
+// POPUP UI (LOCKED IDs + DYNAMIC COLORS)
 function openPopup(qr, amount){
     const modal = document.getElementById("qr-modal-overlay");
-    const header = document.getElementById("modal-header
+    const header = document.getElementById("modal-header");
+    const pBar = document.getElementById("pBar");
+    const credit = calculateCredit(amount);
+
+    document.getElementById("qr-img-display").src = qr;
+
+    // SCB logo & Dynamic Theme
+    const logo = document.getElementById("center-logo");
+    if(currentMethod === "promptpay"){
+        header.style.backgroundColor = "#4e2e7f"; // SCB Purple
+        pBar.style.backgroundColor = "#4e2e7f";
+        logo.style.display = "block";
+    } else if(currentMethod === "truemoney") {
+        header.style.backgroundColor = "#ff8c00"; // TW Orange
+        pBar.style.backgroundColor = "#ff8c00";
+        logo.style.display = "none";
+    } else {
+        header.style.backgroundColor = "#0070ba"; // Stripe Blue
+        pBar.style.backgroundColor = "#0070ba";
+        logo.style.display = "none";
+    }
+
+    document.getElementById("display-amt").innerText = amount.toLocaleString() + " THB | +" + credit.total.toLocaleString() + " CR";
+    modal.style.display = "flex";
+
+    let t = 300;
+    clearInterval(timerInt);
+    timerInt = setInterval(()=>{
+        let m = Math.floor(t/60); let s = t%60;
+        document.getElementById("timerText").innerText = "EXPIRES IN " + m + ":" + (s<10?'0'+s:s);
+        document.getElementById("pBar").style.width = (t/300*100)+"%";
+        if(--t < 0) closeQR();
+    },1000);
+}
+
+// POLLING (ห้ามเปลี่ยน)
+function startPolling(email){
+    clearInterval(pollInt);
+    pollInt = setInterval(async ()=>{
+        try{
+            const res = await fetch(API_BASE + "/api/check-status?email=" + email);
+            const data = await res.json();
+            if(data.paid){ clearInterval(pollInt); location.href = "create.html"; }
+        }catch(e){}
+    },3000);
+}
+
+function closeQR(){
+    document.getElementById("qr-modal-overlay").style.display = "none";
+    clearInterval(timerInt);
+    clearInterval(pollInt);
+}
+
+function downloadQR(){
+    const a = document.createElement("a");
+    a.href = document.getElementById("qr-img-display").src;
+    a.download = "SN-QR-PAYMENT.png";
+    a.click();
+}
+
+document.addEventListener("DOMContentLoaded",()=> selectMethod("promptpay") );
+</script>
+</body>
+</html>
 
