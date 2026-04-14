@@ -3,52 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>SN PAYMENT GATEWAY v15.0</title>
+    <title>SN PAYMENT GATEWAY v16.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; background: #000; color: #fff; margin: 0; overflow-x: hidden; }
-        main { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; text-align: center; } 
+        main { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
         
-        /*  Silver Bronze Glossy (�ปรับสมดุล ไม่ให้ล้น) */
+        /*  Silver Bronze Glossy (Centered & Responsive) */
         .silver-premium {
             background: linear-gradient(to bottom, #cfcfcf 0%, #ffffff 50%, #707070 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 2px rgba(255,255,255,0.2));
-            display: inline-block;
-            width: 100%;
+            text-align: center;
+            display: block;
+            margin: 0 auto;
         }
 
         .electric-card { 
             background: #080808; border-radius: 30px; padding: 30px; 
-            border: 1px solid #1a1a1a; box-shadow: 0 20px 50px rgba(0,0,0,0.5); 
-            width: 100%; max-width: 400px; position: relative;
+            border: 1px solid #1a1a1a; box-shadow: 0 20px 50px rgba(0,0,0,0.8); 
+            width: 100%; max-width: 400px;
         }
 
-        /* 2-Method Buttons */
         .method-btn { 
             background: #0a0a0a; border: 2px solid #222; border-radius: 20px; 
             padding: 15px; cursor: pointer; transition: 0.3s; opacity: 0.3;
         }
+        /* � SCB Style | � TrueWallet Style */
         .btn-scb.active { border-color: #4e2e7f; box-shadow: 0 0 20px rgba(78, 46, 127, 0.4); opacity: 1; }
         .btn-tw.active { border-color: #ff8c00; box-shadow: 0 0 20px rgba(255, 140, 0, 0.4); opacity: 1; }
 
-        /* Modal Overlay */
+        /* Modal Center */
         #payment-modal { 
             position: fixed; inset: 0; z-[2000]; display: none; align-items: center; justify-content: center; 
-            background: rgba(0,0,0,0.98); backdrop-filter: blur(20px); padding: 20px;
+            background: rgba(0,0,0,0.98); backdrop-filter: blur(25px); padding: 20px;
         }
         .modal-box { 
             background: #050505; border-radius: 40px; padding: 25px; width: 100%; max-width: 360px; 
-            text-align: center; border: 2px solid transparent; 
+            text-align: center; border-width: 2px; border-style: solid;
         }
 
-        /* QR & Logo */
-        .qr-frame { background: white; padding: 10px; border-radius: 20px; position: relative; margin-bottom: 15px; }
-        .qr-inner-logo { 
+        /* QR Frame & Sn-Logo Overlay */
+        .qr-frame { background: white; padding: 12px; border-radius: 20px; position: relative; margin-bottom: 20px; }
+        .qr-logo-overlay { 
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 45px; height: 45px; border-radius: 50%; border: 3px solid white; background: #000;
+            width: 48px; height: 48px; border-radius: 50%; border: 3px solid white; background: #000;
         }
 
         .mono { font-family: 'JetBrains Mono', monospace; }
@@ -57,23 +58,23 @@
 </head>
 <body>
     <main>
-        <div class="mb-10 w-full px-4">
-            <h1 class="text-2xl md:text-3xl font-black italic silver-premium tracking-tighter">SN PAYMENT GATEWAY</h1>
+        <div class="mb-10 w-full text-center">
+            <h1 class="text-2xl md:text-3xl font-black italic silver-premium tracking-tighter uppercase">SN PAYMENT GATEWAY</h1>
         </div>
 
         <div class="electric-card">
-            <div class="grid grid-cols-2 gap-2 mb-8 border-b border-white/5 pb-6">
+            <div class="grid grid-cols-2 gap-4 mb-8 border-b border-white/5 pb-6">
                 <div class="text-left">
-                    <p class="text-[9px] font-black text-gray-500 uppercase">Current Wallet</p>
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Current Wallet</p>
                     <p id="user-credits" class="text-xl font-black text-[#00ff41] mono">0.00</p>
                 </div>
                 <div class="text-right border-l border-white/10 pl-4">
-                    <p class="text-[9px] font-black text-gray-500 uppercase">Bonus Point</p>
+                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Bonus Point</p>
                     <p id="user-bonus" class="text-xl font-black text-yellow-500 mono">0</p>
                 </div>
             </div>
 
-            <p class="text-[10px] font-black text-gray-500 uppercase mb-2">Refill Amount (THB)</p>
+            <p class="text-[10px] font-black text-gray-400 uppercase mb-2">Amount to Refill (THB)</p>
             <input type="number" id="payAmount" value="500" class="w-full bg-transparent border-none text-white text-5xl font-black text-center outline-none mb-8 mono">
             
             <div class="grid grid-cols-2 gap-4 mb-8">
@@ -85,58 +86,59 @@
                 </div>
             </div>
 
-            <button onclick="executePayment()" class="w-full py-5 bg-white text-black font-black rounded-2xl uppercase hover:bg-gray-200 transition-all text-sm shadow-xl">Confirm & Topup</button>
+            <button onclick="executePayment()" class="w-full py-5 bg-white text-black font-black rounded-2xl uppercase hover:bg-gray-200 transition-all text-sm tracking-widest shadow-2xl">Confirm & Topup</button>
         </div>
 
-        <div class="mt-12 px-6">
-            <p class="silver-premium text-[10px] md:text-xs font-black tracking-widest leading-relaxed">
-                ลิขสิทธิ์ พัฒนาโดย ต้องดีแค่ไหน โลกถึงจะจำ
+        <div class="mt-12 w-full text-center px-6">
+            <p class="silver-premium text-[11px] md:text-xs font-black tracking-[0.05em] leading-relaxed mb-2">
+                �ลิขสิทธิ์ พัฒนาโดย ต้องดีแค่ไหน โลกถึงจะจำ
             </p>
-            <p class="silver-premium text-[8px] font-black mt-2 opacity-70 italic tracking-[0.3em]">
+            <p class="silver-premium text-[9px] font-black opacity-80 italic tracking-[0.4em]">
                 POWERED BY SN DESIGN STUDIO
             </p>
         </div>
     </main>
 
     <div id="payment-modal">
-        <div id="modal-content" class="modal-box">
+        <div id="modal-box" class="modal-box">
             <h3 class="text-sm font-black silver-premium italic mb-4">SN GATEWAY PROCESSING</h3>
 
-            <div id="scb-area">
+            <div id="scb-view">
                 <div class="qr-frame">
                     <img id="qr-img" src="" class="w-full h-auto rounded-lg">
-                    <img src="assets/images/payment.png" class="qr-inner-logo" onerror="this.src='https://api.sn-designstudio.dev/logo.png'">
+                    <img src="assets/images/payment.png" class="qr-logo-overlay" onerror="this.src='https://api.sn-designstudio.dev/logo.png'">
                 </div>
                 <div class="flex justify-center gap-4 mb-4">
                     <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/Siam_Commercial_Bank_Logo.svg" class="h-4">
                     <img src="https://x-cash.co/wp-content/uploads/2021/08/PromptPay-Logo.png" class="h-4">
                 </div>
+                <p class="text-[10px] font-bold text-white/40 uppercase mb-6">Scan QR to Finish Payment</p>
             </div>
 
-            <div id="tw-area" class="hidden">
+            <div id="tw-view" class="hidden">
                 <div class="bg-[#111] p-6 rounded-3xl border border-orange-500/20 mb-6">
                     <img src="https://www.truemoney.com/wp-content/uploads/2022/03/truemoneywallet-logo.png" class="h-8 mx-auto mb-4">
-                    <input type="text" id="twLink" placeholder="Gift Link: https://gift.truemoney.com/..." class="w-full bg-black border border-white/10 p-4 rounded-xl text-white text-[10px] text-center outline-none">
+                    <input type="text" id="twLink" placeholder="Gift Link: https://gift.truemoney.com/..." class="w-full bg-black border border-white/10 p-4 rounded-xl text-white text-[10px] text-center outline-none focus:border-orange-500">
                 </div>
-                <button onclick="verifyTW()" class="w-full py-4 bg-orange-600 text-white font-black rounded-xl uppercase text-[10px] mb-4">Verify Link</button>
+                <button onclick="submitTrueMoney()" class="w-full py-4 bg-orange-600 text-white font-black rounded-xl uppercase text-[10px] mb-4 shadow-lg shadow-orange-600/20">Verify Settlement</button>
             </div>
 
-            <div class="bg-white/5 rounded-2xl p-4 mb-6">
+            <div class="bg-white/5 rounded-2xl p-4 mb-6 border border-white/5">
                 <p class="text-[9px] font-black text-white/30 uppercase mb-1">Time Remaining</p>
                 <div class="text-red-500 font-black text-2xl mono" id="timer">05:00</div>
             </div>
 
-            <button onclick="closeModal()" class="text-[9px] font-black text-gray-600 uppercase tracking-widest hover:text-white">Cancel Request</button>
+            <button onclick="closeModal()" class="text-[9px] font-black text-gray-600 uppercase tracking-widest hover:text-white transition-all">Cancel Request</button>
         </div>
     </div>
 
     <script>
-        //  CONFIG API: �เชื่อมต่อ 5002 (Gateway) และเตรียม 3000 (Webhook)
-        const API_BASE = "https://api.sn-designstudio.dev"; // Port 5002 via Nginx
+        //  CONFIG: �ท่อเชื่อมต่อเดียวที่ Port 5002
+        const API_BASE = "https://api.sn-designstudio.dev";
         let currentMethod = 'scb';
         let timerInt;
 
-        // [1] ดึงข้อมูลยอดเงินและแต้มโบนัสทันทีที่โหลดหน้า
+        // [1] ดึงเครดิตและโบนัสจาก API Policy
         async function loadUserData() {
             const email = localStorage.getItem('user_email');
             if (!email) return window.location.href = "login.html";
@@ -148,7 +150,7 @@
                     document.getElementById('user-credits').innerText = (data.credits || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
                     document.getElementById('user-bonus').innerText = (data.bonus || 0).toLocaleString();
                 }
-            } catch (e) { console.error("5002_OFFLINE"); }
+            } catch (e) { alert("CONNECTION ERROR: Check Port 5002"); }
         }
 
         function selectMethod(m) {
@@ -161,12 +163,12 @@
             const amount = document.getElementById("payAmount").value;
             const email = localStorage.getItem('user_email');
             const modal = document.getElementById('payment-modal');
-            const content = document.getElementById('modal-content');
+            const box = document.getElementById('modal-box');
 
             if (currentMethod === 'scb') {
-                content.style.borderColor = "#4e2e7f";
-                document.getElementById('scb-area').classList.remove('hidden');
-                document.getElementById('tw-area').classList.add('hidden');
+                box.style.borderColor = "#4e2e7f";
+                document.getElementById('scb-view').classList.remove('hidden');
+                document.getElementById('tw-view').classList.add('hidden');
                 
                 try {
                     const res = await fetch(`${API_BASE}/api/scb`, {
@@ -182,27 +184,28 @@
                     }
                 } catch (e) { alert("API Connection Error (Check Port 5002)"); }
             } else {
-                content.style.borderColor = "#ff8c00";
-                document.getElementById('scb-area').classList.add('hidden');
-                document.getElementById('tw-area').classList.remove('hidden');
+                box.style.borderColor = "#ff8c00";
+                document.getElementById('scb-view').classList.add('hidden');
+                document.getElementById('tw-view').classList.remove('hidden');
                 modal.style.display = 'flex';
                 startTimer();
             }
         }
 
-        async function verifyTW() {
+        async function submitTrueMoney() {
             const link = document.getElementById('twLink').value;
             const email = localStorage.getItem('user_email');
+            const amount = document.getElementById("payAmount").value;
             if(!link) return alert("กรุณาใส่ลิ้งค์ซองของขวัญ");
 
             try {
                 const res = await fetch(`${API_BASE}/api/truemoney`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ link, email, amount: parseInt(document.getElementById("payAmount").value) })
+                    body: JSON.stringify({ link, email, amount: parseInt(amount) })
                 });
                 const data = await res.json();
-                if(data.success) alert("ส่งข้อมูลให้ระบบตรวจสอบแล้ว (Port 3000 Webhook Waiting)");
+                if(data.success) alert("ข้อมูลถูกส่งไปที่ระบบตรวจสอบ (Port 3000 Webhook) แล้ว");
             } catch (e) { alert("TrueMoney API Error"); }
         }
 
