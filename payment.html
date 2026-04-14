@@ -2,250 +2,193 @@
 <html lang="th">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>SN PAYMENT GATEWAY v17.0 [STABLE]</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SN ULTRA - PRODUCTION GATEWAY v4.0 [STABLE]</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@900&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; background: #000; color: #fff; margin: 0; overflow-x: hidden; }
-        main { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
-        
-        .silver-premium {
-            background: linear-gradient(to bottom, #cfcfcf 0%, #ffffff 50%, #707070 100%);
+        :root { --bg: #000; --red-glow: #ff3b30; --blue-stripe: #6366f1; --gold-crypto: #f59e0b; }
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; 
+            margin: 0; overflow: hidden; height: 100vh; display: flex; flex-direction: column; 
+        }
+        .compact-nav { border-bottom: 1px solid rgba(255,59,48,0.3); padding: 8px 20px; background: rgba(0,0,0,0.8); }
+        .red-cash { color: var(--red-glow); text-shadow: 0 0 10px var(--red-glow); font-size: 14px; font-weight: 900; letter-spacing: 2px; }
+
+        .silver-bronze-title {
+            background: linear-gradient(135deg, #8e9eab 0%, #eef2f3 50%, #8e9eab 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 2px rgba(255,255,255,0.2));
-            text-align: center; display: block; margin: 0 auto;
+            font-size: 16px; font-weight: 900; text-shadow: 0 0 15px rgba(238, 242, 243, 0.3);
+            text-transform: uppercase;
         }
 
-        .electric-card { 
-            background: #080808; border-radius: 30px; padding: 30px; 
-            border: 1px solid #1a1a1a; box-shadow: 0 20px 50px rgba(0,0,0,0.9); 
-            width: 100%; max-width: 420px;
-        }
+        main { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 0 20px; }
+        .payment-card { width: 100%; max-width: 420px; }
+
+        .input-group { background: #080808; border: 1px solid #222; border-radius: 12px; padding: 10px; margin-bottom: 8px; }
+        .input-label { font-size: 8px; font-weight: 900; color: #555; text-transform: uppercase; margin-bottom: 4px; display: block; letter-spacing: 1px; }
+        .input-field { background: transparent; border: none; color: #fff; width: 100%; font-size: 13px; outline: none; font-family: 'JetBrains Mono'; }
+        .amount-focus { color: var(--red-glow) !important; font-size: 28px; text-align: center; font-weight: 900; }
 
         .method-btn { 
-            background: #0a0a0a; border: 2px solid #222; border-radius: 20px; 
-            padding: 15px; cursor: pointer; transition: 0.3s; opacity: 0.3;
+            background: #0a0a0a; border: 1px solid rgba(255,255,255,0.05); 
+            border-radius: 15px; transition: 0.3s; cursor: pointer; 
+            display: flex; flex-direction: column; items-center; gap: 8px; padding: 16px; 
         }
-        .btn-scb.active { border-color: #4e2e7f; box-shadow: 0 0 25px rgba(78, 46, 127, 0.5); opacity: 1; }
-        .btn-tw.active { border-color: #ff8c00; box-shadow: 0 0 25px rgba(255, 140, 0, 0.5); opacity: 1; }
+        .method-btn.active { border-color: var(--red-glow); box-shadow: 0 0 15px rgba(255,59,48,0.15); }
+        .method-btn:hover { border-color: white; }
 
-        /* ระบบ Logging Console (แสดงผลจริงเพื่อการตรวจสอบ) */
-        #system-log { 
-            font-size: 8px; color: #555; font-family: 'JetBrains Mono'; 
-            margin-top: 15px; text-align: left; width: 100%; max-height: 40px; overflow: hidden;
+        #qr-modal-overlay {
+            position: fixed; inset: 0; z-index: 999; display: none; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
         }
+        .qr-frame { background: #fff; padding: 20px; border-radius: 3rem; position: relative; border: 8px solid #111; box-shadow: 0 0 60px rgba(255,59,48,0.25); }
+        .qr-logo-center { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 40px; background: #fff; padding: 4px; border-radius: 6px; }
+        .p-bar { height: 4px; background: var(--red-glow); position: absolute; top: 0; left: 0; transition: width 1s linear; }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .hidden { display: none !important; }
+        footer { padding: 10px; border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }
+        .dev-purple { color: #a55eea; text-shadow: 0 0 8px rgba(165, 94, 234, 0.4); font-weight: 900; font-size: 11px; }
     </style>
 </head>
 <body>
-    <main>
-        <div class="mb-10 w-full text-center">
-            <h1 class="text-2xl md:text-3xl font-black italic silver-premium tracking-tighter uppercase">SN PAYMENT GATEWAY</h1>
+
+<header class="compact-nav flex justify-between items-center">
+    <h1 class="red-cash uppercase">SN DESIGN STUDIO</h1>
+    <div id="user-display" class="text-[9px] font-black text-gray-500 uppercase tracking-widest">AUTHENTICATING...</div>
+</header>
+
+<main>
+    <div class="payment-card">
+        <div class="text-center mb-6">
+            <h2 class="silver-bronze-title tracking-[0.2em]">SN PAYMENT GATEWAY</h2>
         </div>
 
-        <div class="electric-card">
-            <div class="grid grid-cols-2 gap-4 mb-8 border-b border-white/5 pb-6">
-                <div class="text-left">
-                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Current Wallet</p>
-                    <p id="user-credits" class="text-xl font-black text-[#00ff41] mono">0.00</p>
-                </div>
-                <div class="text-right border-l border-white/10 pl-4">
-                    <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Bonus Point</p>
-                    <p id="user-bonus" class="text-xl font-black text-yellow-500 mono">0</p>
-                </div>
-            </div>
-
-            <p class="text-[10px] font-black text-gray-400 uppercase mb-2">Refill Amount (THB)</p>
-            <input type="number" id="payAmount" value="500" oninput="calculatePolicy()" class="w-full bg-transparent border-none text-white text-5xl font-black text-center outline-none mb-2 mono">
-            
-            <div class="text-center mb-8">
-                <p id="policy-preview" class="text-[10px] font-bold text-[#00ff41] opacity-50 uppercase tracking-tighter">Receive: 500 Credits + 0 Bonus</p>
-            </div>
-            
-            <div class="grid grid-cols-2 gap-4 mb-8">
-                <div id="btn-scb" onclick="selectMethod('scb')" class="method-btn btn-scb active">
-                    <span class="text-[9px] font-black block">PROMPTPAY SCB</span>
-                </div>
-                <div id="btn-tw" onclick="selectMethod('tw')" class="method-btn btn-tw">
-                    <span class="text-[9px] font-black block">TRUEWALLET</span>
-                </div>
-            </div>
-
-            <button onclick="executePayment()" class="w-full py-5 bg-white text-black font-black rounded-2xl uppercase hover:bg-gray-200 transition-all text-sm tracking-widest shadow-2xl">Execute Settlement</button>
-            
-            <div id="system-log">Ready for connection... Port 5002 Active</div>
+        <div class="input-group">
+            <span class="input-label text-center">Amount (THB)</span>
+            <input type="number" id="payAmount" value="500" class="input-field amount-focus">
         </div>
 
-        <div class="mt-12 w-full text-center px-6">
-            <p class="silver-premium text-[11px] md:text-xs font-black tracking-[0.05em] leading-relaxed mb-2">
-                ลิขสิทธิ์ พัฒนาโดย ต้องดีแค่ไหน โลกถึงจะจำ
-            </p>
-            <p class="silver-premium text-[9px] font-black opacity-80 italic tracking-[0.4em]">
-                POWERED BY SN DESIGN STUDIO
-            </p>
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn"><span class="text-[9px] font-black text-white">PromptPay</span></div>
+            <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn"><span class="text-[9px] font-black text-white">TrueWallet</span></div>
+            <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn"><span class="text-[9px] font-black text-white">Stripe</span></div>
+            <div id="btn-crypto" class="method-btn opacity-30"><span class="text-[9px] font-black text-white">Crypto</span></div>
         </div>
-    </main>
 
-    <div id="payment-modal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-black/95 backdrop-blur-2xl p-4">
-        <div id="modal-box" class="bg-[#050505] rounded-[40px] p-8 w-full max-w-[360px] text-center border-2 border-transparent">
-            <h3 class="text-sm font-black silver-premium italic mb-6">SN GATEWAY SECURE</h3>
-
-            <div id="scb-view">
-                <div class="bg-white p-4 rounded-3xl relative mb-4">
-                    <img id="qr-img" class="w-full h-auto rounded-lg">
-                    <img src="assets/images/payment.png" class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-12 h-12 rounded-full border-4 border-white bg-black">
-                </div>
-                <div class="flex justify-center gap-4 mb-6">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/c/c5/Siam_Commercial_Bank_Logo.svg" class="h-4">
-                    <img src="https://x-cash.co/wp-content/uploads/2021/08/PromptPay-Logo.png" class="h-4">
-                </div>
+        <div id="tw-input-section" class="hidden mb-4">
+            <div class="input-group">
+                <span class="input-label">TrueWallet Gift Link</span>
+                <input type="text" id="twLink" class="input-field text-red-500 text-xs">
             </div>
-
-            <div id="tw-view" class="hidden">
-                <div class="bg-[#111] p-6 rounded-3xl border border-orange-500/20 mb-6">
-                    <img src="https://www.truemoney.com/wp-content/uploads/2022/03/truemoneywallet-logo.png" class="h-8 mx-auto mb-4">
-                    <input type="text" id="twLink" placeholder="Gift Link: https://gift.truemoney.com/..." class="w-full bg-black border border-white/10 p-4 rounded-xl text-white text-[10px] text-center outline-none">
-                </div>
-                <button onclick="submitTW()" class="w-full py-4 bg-orange-600 text-white font-black rounded-xl uppercase text-[10px] mb-4">Confirm Gift Link</button>
-            </div>
-
-            <div class="bg-white/5 rounded-2xl p-4 mb-6">
-                <p class="text-[9px] font-black text-white/30 uppercase mb-1">Timeframe Remaining</p>
-                <div class="text-red-500 font-black text-2xl mono" id="timer">05:00</div>
-            </div>
-
-            <button onclick="closeModal()" class="text-[9px] font-black text-gray-600 uppercase tracking-widest hover:text-white">Cancel</button>
         </div>
+
+        <button id="main-submit-btn" onclick="executePayment()" class="w-full py-4 bg-white text-black font-black text-xs rounded-xl">Generate QR / Pay Now</button>
     </div>
+</main>
 
-    <script>
-        const API_BASE = "https://api.sn-designstudio.dev"; // Port 5002
-        let currentMethod = 'scb';
-        let timerInt;
+<div id="qr-modal-overlay">
+    <div class="text-center relative">
+        <div class="qr-frame mb-6">
+            <div id="pBar" class="p-bar"></div>
+            <img id="qr-img-display" src="" class="w-64 h-64 rounded-xl">
+        </div>
+        <p id="display-amt" class="text-5xl font-black text-white mb-2">0.00</p>
+        <p id="timerText" class="text-xs font-black text-red-600 mb-8">EXPIRES IN: 05:00</p>
+        <button onclick="closeQR()">Close</button>
+    </div>
+</div>
 
-        //  System Logging Function (�บันทึกข้อผิดพลาดจริง)
-        function log(msg, error = false) {
-            const el = document.getElementById('system-log');
-            el.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
-            if(error) { el.style.color = '#ff4444'; console.error(msg); }
-            else { el.style.color = '#555'; }
-        }
+<footer><p class="dev-purple">SN DESIGN STUDIO</p></footer>
 
-        //  Credit Policy Calculation (�ยึดตามหลักการที่พี่ต้องการ)
-        function calculatePolicy() {
-            const amount = parseFloat(document.getElementById('payAmount').value) || 0;
-            let credits = amount;
-            let bonus = 0;
+<script>
+const API_BASE = "https://api.sn-designstudio.dev";
+let currentMethod = 'promptpay';
+let timerInt = null;
+let pollInt = null;
 
-            // ตัวอย่าง Policy: ถ้าเติม 1000 ได้โบนัส 100
-            if (amount >= 1000) bonus = Math.floor(amount * 0.1);
-            if (amount >= 5000) bonus = Math.floor(amount * 0.2);
+// METHOD
+function selectMethod(method){
+    currentMethod = method;
+    document.querySelectorAll('.method-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById('btn-'+(method==='promptpay'?'pp':method==='truemoney'?'tw':method)).classList.add('active');
+    document.getElementById('tw-input-section').classList.toggle('hidden', method!=='truemoney');
+}
 
-            document.getElementById('policy-preview').innerText = `Receive: ${credits.toLocaleString()} Credits + ${bonus.toLocaleString()} Bonus`;
-        }
+// EXECUTE
+async function executePayment(){
+    const amount = parseInt(document.getElementById("payAmount").value);
+    const email = localStorage.getItem("user_email");
+    if(!email) return location.href="login.html";
 
-        async function loadUserData() {
-            const email = localStorage.getItem('user_email');
-            if (!email) return window.location.href = "login.html";
+    let endpoint = "";
+    let payload = { amount, email };
 
-            try {
-                const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
-                if (!res.ok) throw new Error(`HTTP_${res.status}`);
-                const data = await res.json();
-                if (data.success) {
-                    document.getElementById('user-credits').innerText = (data.credits || 0).toLocaleString(undefined, {minimumFractionDigits: 2});
-                    document.getElementById('user-bonus').innerText = (data.bonus || 0).toLocaleString();
-                    log("User data synced successfully");
-                }
-            } catch (e) { log(`FAILED_TO_LOAD_DATA: ${e.message}`, true); }
-        }
+    if(currentMethod==='promptpay') endpoint="/api/scb/create-qr";
+    if(currentMethod==='truemoney'){
+        endpoint="/api/truemoney/verify";
+        payload.link=document.getElementById("twLink").value;
+    }
+    if(currentMethod==='stripe') endpoint="/api/stripe/create-checkout";
 
-        function selectMethod(m) {
-            currentMethod = m;
-            document.getElementById('btn-scb').classList.toggle('active', m === 'scb');
-            document.getElementById('btn-tw').classList.toggle('active', m === 'tw');
-            log(`Method changed to: ${m.toUpperCase()}`);
-        }
+    try{
+        const res = await fetch(API_BASE+endpoint,{
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(payload)
+        });
+        const data = await res.json();
 
-        async function executePayment() {
-            const amount = document.getElementById("payAmount").value;
-            const email = localStorage.getItem('user_email');
-            const modal = document.getElementById('payment-modal');
-            const box = document.getElementById('modal-box');
+        if(data.qrImage) openQR(data.qrImage,amount);
+        if(data.url) location.href=data.url;
 
-            log(`Executing payment request: ${amount} THB via ${currentMethod.toUpperCase()}`);
+        startPolling(email);
 
-            if (currentMethod === 'scb') {
-                box.style.borderColor = "#4e2e7f";
-                document.getElementById('scb-view').classList.remove('hidden');
-                document.getElementById('tw-view').classList.add('hidden');
-                
-                try {
-                    const res = await fetch(`${API_BASE}/api/scb`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ amount: parseInt(amount), email })
-                    });
-                    const data = await res.json();
-                    if (data.success) {
-                        document.getElementById('qr-img').src = data.qrImage;
-                        modal.style.display = 'flex';
-                        startTimer(); startPolling(email);
-                    } else throw new Error(data.message);
-                } catch (e) { log(`SCB_API_ERROR: ${e.message}`, true); }
-            } else {
-                box.style.borderColor = "#ff8c00";
-                document.getElementById('scb-view').classList.add('hidden');
-                document.getElementById('tw-view').classList.remove('hidden');
-                modal.style.display = 'flex';
-                startTimer();
+    }catch(e){
+        openQR(`https://promptpay.io/${amount}.png`,amount);
+    }
+}
+
+// QR
+function openQR(src,amt){
+    document.getElementById("qr-img-display").src=src;
+    document.getElementById("display-amt").innerText=amt;
+    document.getElementById("qr-modal-overlay").style.display="flex";
+    let t=300;
+    clearInterval(timerInt);
+    timerInt=setInterval(()=>{
+        t--;
+        if(t<=0) closeQR();
+    },1000);
+}
+
+// POLL
+function startPolling(email){
+    clearInterval(pollInt);
+    pollInt=setInterval(async()=>{
+        try{
+            const r=await fetch(API_BASE+"/api/check-status?email="+email);
+            const d=await r.json();
+            if(d.paid){
+                clearInterval(pollInt);
+                location.href="create.html";
             }
-        }
+        }catch(e){}
+    },3000);
+}
 
-        async function submitTW() {
-            const link = document.getElementById('twLink').value;
-            const email = localStorage.getItem('user_email');
-            const amount = document.getElementById("payAmount").value;
-            if(!link) return log("GIFT_LINK_MISSING", true);
+function closeQR(){
+    document.getElementById("qr-modal-overlay").style.display="none";
+    clearInterval(timerInt);
+    clearInterval(pollInt);
+}
 
-            try {
-                const res = await fetch(`${API_BASE}/api/truemoney`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ link, email, amount: parseInt(amount) })
-                });
-                const data = await res.json();
-                if(data.success) log("TrueMoney Link submitted to Port 3000 Webhook");
-                else throw new Error(data.message);
-            } catch (e) { log(`TW_API_ERROR: ${e.message}`, true); }
-        }
+document.addEventListener("DOMContentLoaded",()=>{
+    const email=localStorage.getItem("user_email");
+    if(email) document.getElementById("user-display").innerText=email;
+    selectMethod("promptpay");
+});
+</script>
 
-        function startTimer() {
-            let t = 300; clearInterval(timerInt);
-            timerInt = setInterval(() => {
-                let m = Math.floor(t / 60), s = t % 60;
-                document.getElementById('timer').innerText = `${m}:${s < 10 ? '0'+s : s}`;
-                if (--t < 0) closeModal();
-            }, 1000);
-        }
-
-        function closeModal() { document.getElementById('payment-modal').style.display = 'none'; clearInterval(timerInt); }
-
-        function startPolling(email) {
-            const poll = setInterval(async () => {
-                try {
-                    const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
-                    const data = await res.json();
-                    if (data.paid_success) { clearInterval(poll); window.location.href = "create.html"; }
-                } catch (e) {}
-            }, 5000);
-        }
-
-        document.addEventListener('DOMContentLoaded', () => { loadUserData(); calculatePolicy(); });
-    </script>
 </body>
 </html>
