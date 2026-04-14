@@ -53,7 +53,7 @@
             <div class="grid grid-cols-2 gap-4 mb-8">
                 <div id="btn-pp" onclick="selectMethod('promptpay')" class="method-btn active"><span class="text-[10px] font-black uppercase text-white">PromptPay</span></div>
                 <div id="btn-stripe" onclick="selectMethod('stripe')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">Stripe / Card</span></div>
-                <div id="btn-tw" onclick="selectMethod('truemoney')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">TrueWallet Link</span></div>
+                <div id="btn-tw" onclicawaitlectMethod('truemoney')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">TrueWallet Link</span></div>
                 <div id="btn-crypto" onclick="selectMethod('crypto')" class="method-btn"><span class="text-[10px] font-black uppercase text-white">Binance Crypto</span></div>
             </div>
 
@@ -84,96 +84,218 @@
     <footer><p>SN DESIGN PRODUCTION | GATEWAY 5002</p></footer>
 
     <script>
-        const API_BASE = "https://api.sn-designstudio.dev";
-        let currentMethod = 'promptpay';
-        let timerInt;
+const API_BASE = "https://api.sn-designstudio.dev";
+const CITIZEN_ID = "3100503536486";
 
-        function selectMethod(method) {
-            currentMethod = method;
-            document.querySelectorAll('.method-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`btn-${method === 'promptpay' ? 'pp' : method}`).classList.add('active');
-            
-            // Toggle Slot Link
-            document.getElementById("tw-area").classList.toggle("hidden", method !== 'truemoney');
+let currentMethod = 'promptpay';
+let timerInt, pollInt;
+
+// ===============================
+// CREDIT POLICY (SYNC BACKEND)
+// ===============================
+const BASE_RATE = 100;
+
+const BONUS_TIERS = [
+  { min: 1000, bonus: 0.30 },
+  { min: 300,  bonus: 0.20 },
+  { min: 100,  bonus: 0.10 },
+];
+
+function calculateCredit(amount){
+    let base = amount * BASE_RATE;
+    let bonusPercent = 0;
+
+    for(const t of BONUS_TIERS){
+        if(amount >= t.min){
+            bonusPercent = t.bonus;
+            break;
+        }
+    }
+
+    let bonus = Math.floor(base * bonusPercent);
+
+    return {
+        base,
+        bonus,
+        total: base + bonus,
+        percent: bonusPercent
+    };
+}
+
+// ===============================
+// METHOD
+// ===============================
+function selectMethod(method){
+    currentMethod = method;
+
+    document.querySelectorAll('.method-btn').forEach(b=>b.classList.remove('active'));
+    document.getElementById("tw-input-section").classList.add("hidden");
+
+    if(method === 'truemoney'){
+        document.getElementById("btn-tw").classList.add("active");
+        document.getElementById("tw-input-section").classList.remove("hidden");
+    }else if(method === 'promptpay'){
+        document.getElementById("btn-pp").classList.add("active");
+    }else if(method === 'stripe'){
+        document.getElementById("btn-stripe").classList.add("active");
+    }
+}
+
+// ===============================
+// EXECUTE
+// ===============================
+async function executePayment(){
+
+    const amount = parseInt(document.getElementById("payAmount").value);
+    const email = localStorage.getItem("user_email");
+
+    if(!email) return location.href="login.html";
+    if(!amount || amount < 10) return alert("ขั้นต่ำ 10 บาท");
+
+    let endpoint = "";
+    let payload = { amount, email, id_card: CITIZEN_ID };
+
+    if(currentMethod === 'promptpay'){
+        endpoint = "/api/scb/create-qr";
+    }
+
+    if(currentMethod === 'truemoney'){
+        const link = document.getElementById("twLink").value;
+
+        if(!link || !link.includes("gift.truemoney.com")){
+            return alert("ต้องใส่ลิ้งค์ TrueMoney ก่อน");
         }
 
-        async function executePayment() {
-            const amount = document.getElementById("payAmount").value;
-            const email = localStorage.getItem('user_email') || 'user@sn-design.dev';
-            
-            let endpoint = "";
-            let bodyData = { amount: parseInt(amount), email };
+        payload.link = link;
+        endpoint = "/api/truemoney/verify";
+    }
 
-            if (currentMethod === "promptpay") endpoint = "/api/scb";
-            if (currentMethod === "stripe") endpoint = "/api/stripe";
-            if (currentMethod === "truemoney") {
-                const link = document.getElementById("twLink").value;
-                if(!link) return alert("กรุณาวางลิงก์ซองของขวัญ!");
-                bodyData.link = link;
-                endpoint = "/api/truemoney";
+    if(currentMethod === 'stripe'){
+        endpoint = "/api/stripe/create-checkout";
+    }
+
+    try{
+        const res = await fetch(API_BASE + endpoint,{
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if(data.qrImage){
+            openPopup(data.qrImage, amount);
+        }
+        else if(data.url){
+            location.href = data.url;
+        }
+
+        startPolling(email);
+
+    }catch(e){
+        // fallback QR (แก้ปัญหา SCB ขาว)
+        openPopup(`https://promptpay.io/${CITIZEN_ID}/${amount}.png`, amount);
+    }
+}
+
+// ===============================
+// POPUP (STANDARD ทุกระบบ)
+// ===============================
+function openPopup(qr, amount){
+
+    const modal = document.getElementById("qr-modal-overlay");
+
+    const credit = calculateCredit(amount);
+
+    // inject QR
+    document.getElementById("qr-img-display").src = qr;
+
+    // เพิ่ม LOGO เฉพาะ SCB
+    if(currentMethod === "promptpay"){
+        document.getElementById("qr-img-display").style.position = "relative";
+
+        if(!document.getElementById("center-logo")){
+            const logo = document.createElement("img");
+            logo.src = "assets/images/payment.png";
+            logo.id = "center-logo";
+            logo.style.position = "absolute";
+            logo.style.width = "60px";
+            logo.style.top = "50%";
+            logo.style.left = "50%";
+            logo.style.transform = "translate(-50%, -50%)";
+            document.querySelector(".qr-frame").appendChild(logo);
+        }
+    }
+
+    // แสดงข้อมูลเงินจริง
+    document.getElementById("display-amt").innerText =
+        `${amount} บาท | +${credit.total.toLocaleString()} CREDIT`;
+
+    modal.style.display = "flex";
+
+    // TIMER
+    let t = 300;
+    clearInterval(timerInt);
+
+    timerInt = setInterval(()=>{
+        let m = Math.floor(t/60);
+        let s = t%60;
+
+        document.getElementById("timerText").innerText =
+            `EXPIRES IN: ${m}:${s<10?'0'+s:s}`;
+
+        document.getElementById("pBar").style.width =
+            (t/300*100)+"%";
+
+        if(--t < 0) closeQR();
+    },1000);
+}
+
+// ===============================
+// POLLING
+// ===============================
+function startPolling(email){
+
+    clearInterval(pollInt);
+
+    pollInt = setInterval(async ()=>{
+        try{
+            const res = await fetch(API_BASE + "/api/check-status?email=" + email);
+            const data = await res.json();
+
+            if(data.paid){
+                clearInterval(pollInt);
+                location.href = "create.html";
             }
-            if (currentMethod === "crypto") {
-                bodyData.coin = "USDT";
-                endpoint = "/api/admin/crypto";
-            }
 
-            try {
-                const res = await fetch(`${API_BASE}${endpoint}`, {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(bodyData)
-                });
-                const data = await res.json();
-                if (data.success) {
-                    if (data.qrImage) {
-                        showQR(data.qrImage, amount);
-                        startPolling(email);
-                    } else if (data.url) {
-                        window.location.href = data.url;
-                    }
-                }
-            } catch (e) { alert("API Connection Failed - Port 5002 Offline"); }
-        }
+        }catch(e){}
+    },3000);
+}
 
-        function showQR(src, amt) {
-            document.getElementById('qr-img-display').src = src;
-            document.getElementById('modal-amt').innerHTML = `${amt}.00 <span class="text-xs text-red-900 italic">THB</span>`;
-            document.getElementById('premium-qr-modal').style.display = 'flex';
-            
-            let timer = 300;
-            clearInterval(timerInt);
-            timerInt = setInterval(() => {
-                let m = Math.floor(timer / 60), s = timer % 60;
-                document.getElementById('timerText').innerText = `EXPIRES IN: ${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-                document.getElementById('pBar').style.width = (timer / 300 * 100) + "%";
-                if (--timer < 0) closeQR();
-            }, 1000);
-        }
+// ===============================
+function closeQR(){
+    document.getElementById("qr-modal-overlay").style.display = "none";
+    clearInterval(timerInt);
+    clearInterval(pollInt);
+}
 
-        async function downloadQR() {
-            const img = document.getElementById('qr-img-display');
-            const response = await fetch(img.src);
-            const blob = await response.blob();
-            const url = window.URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url; a.download = `SN-QR-${Date.now()}.png`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a);
-        }
+// ===============================
+// DOWNLOAD QR (เปลี่ยนปุ่มแดง)
+// ===============================
+function downloadQR(){
+    const a = document.createElement("a");
+    a.href = document.getElementById("qr-img-display").src;
+    a.download = "SN-PAYMENT-QR.png";
+    a.click();
+}
 
-        function closeQR() {
-            document.getElementById('premium-qr-modal').style.display = 'none';
-            clearInterval(timerInt);
-        }
+// ===============================
+document.addEventListener("DOMContentLoaded",()=>{
+    const email = localStorage.getItem("user_email");
+    if(email) document.getElementById("user-display").innerText = email;
 
-        function startPolling(email) {
-            const poll = setInterval(async () => {
-                try {
-                    const res = await fetch(`${API_BASE}/api/auth/me?email=${email}`);
-                    const data = await res.json();
-                    if (data.paid_success) { clearInterval(poll); window.location.href = "create.html"; }
-                } catch (e) {}
-            }, 5000);
-        }
-    </script>
+    selectMethod("promptpay");
+});
+</script>
 </body>
 </html>
