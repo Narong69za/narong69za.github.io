@@ -30,9 +30,6 @@ router.post("/", async (req, res) => {
     return res.status(400).send("Webhook Error");
   }
 
-  // ===============================
-  // CHECK EVENT TYPE
-  // ===============================
   if (event.type === "checkout.session.completed") {
 
     const session = event.data.object;
@@ -40,7 +37,6 @@ router.post("/", async (req, res) => {
     const email = session.metadata?.email;
     const amountTHB = parseInt(session.metadata?.amount);
 
-    // � กันข้อมูลหาย
     if (!email || !amountTHB) {
       console.error("❌ INVALID METADATA");
       return res.json({ received: true });
@@ -49,7 +45,6 @@ router.post("/", async (req, res) => {
     try {
       const credit = calculateCreditFromTHB(amountTHB);
 
-      // � กัน webhook ซ้ำ (สำคัญมาก)
       db.get(`
         SELECT id FROM transactions
         WHERE email = ?
@@ -65,4 +60,29 @@ router.post("/", async (req, res) => {
 
         db.serialize(() => {
 
-          // ✅ เพิ่มเครดิต
+          db.run(`
+            UPDATE users
+            SET credits = credits + ?
+            WHERE email = ?
+          `, [credit.totalCredit, email]);
+
+          db.run(`
+            INSERT INTO transactions (email, amount_thb, credit_received)
+            VALUES (?, ?, ?)
+          `, [email, amountTHB, credit.totalCredit]);
+
+        });
+
+        console.log("✅ PAYMENT SUCCESS:", email, credit.totalCredit);
+
+      });
+
+    } catch (err) {
+      console.error("❌ CREDIT ERROR:", err.message);
+    }
+  }
+
+  res.json({ received: true });
+});
+
+module.exports = router;

@@ -223,10 +223,22 @@ payload.link=link;
 endpoint="/api/truemoney/verify";
 }
 
-if(currentMethod==='stripe'){
-openPopup(null,amount,true);
-startPolling(email);
-return;
+if(currentMethod === 'stripe') {
+  const res = await fetch(API_BASE + "/api/stripe/create-checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ amount, email })
+  });
+
+  const data = await res.json();
+
+  if (data.url) {
+    window.location.href = data.url; // ðŸ” THIS is Stripe redirect
+  } else {
+    alert("Stripe error");
+  }
+
+  return;
 }
 
 try{
@@ -341,3 +353,4 @@ selectMethod("promptpay");
 
 </body>
 </html>
+
