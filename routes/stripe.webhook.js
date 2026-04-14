@@ -1,20 +1,20 @@
 const express = require("express");
 const router = express.Router();
 const Stripe = require("stripe");
-const sqlite3 = require("sqlite3").verbose();
-const { v4: uuidv4 } = require("uuid");
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
+
+// CREDIT POLICY
+const { calculateCreditFromTHB } = require("../config/credit.policy");
+
+// DB
+const sqlite3 = require("sqlite3").verbose();
 const db = new sqlite3.Database("/root/sn-payment-core/database.db");
 
-const {
-  calculateCreditFromTHB
-} = require("../config/credit.policy");
-
 // ===============================
-// WEBHOOK
+// STRIPE WEBHOOK
 // ===============================
-router.post("/stripe", express.raw({ type: "application/json" }), async (req, res) => {
+router.post("/", async (req, res) => {
 
   const sig = req.headers["stripe-signature"];
   let event;
@@ -26,97 +26,43 @@ router.post("/stripe", express.raw({ type: "application/json" }), async (req, re
       process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.error("❌ SIGNATURE FAIL:", err.message);
+    console.error("❌ Stripe Verify Fail:", err.message);
     return res.status(400).send("Webhook Error");
   }
 
+  // ===============================
+  // CHECK EVENT TYPE
+  // ===============================
   if (event.type === "checkout.session.completed") {
 
     const session = event.data.object;
 
-    const email = session.metadata.email;
-    const amountTHB = parseInt(session.metadata.amount);
-    const stripeEventId = event.id;
+    const email = session.metadata?.email;
+    const amountTHB = parseInt(session.metadata?.amount);
 
-    //  �ป้องกัน webhook ซ้ำ
-    db.get("SELECT event_id FROM omise_events WHERE event_id = ?", [stripeEventId], (err, row) => {
-      if (row) {
-        console.log("⚠️ DUPLICATE EVENT SKIPPED");
-        return;
-      }
+    // � กันข้อมูลหาย
+    if (!email || !amountTHB) {
+      console.error("❌ INVALID METADATA");
+      return res.json({ received: true });
+    }
 
-      // บันทึก event กันซ้ำ
-      db.run("INSERT INTO omise_events (event_id) VALUES (?)", [stripeEventId]);
+    try {
+      const credit = calculateCreditFromTHB(amountTHB);
 
-      db.get("SELECT id, credits FROM users WHERE email = ?", [email], (err, user) => {
+      // � กัน webhook ซ้ำ (สำคัญมาก)
+      db.get(`
+        SELECT id FROM transactions
+        WHERE email = ?
+        AND amount_thb = ?
+        ORDER BY timestamp DESC
+        LIMIT 1
+      `, [email, amountTHB], (err, row) => {
 
-        if (!user) {
-          console.error("❌ USER NOT FOUND:", email);
+        if (row) {
+          console.log("⚠️ DUPLICATE PAYMENT SKIPPED:", email);
           return;
         }
 
-        const credit = calculateCreditFromTHB(amountTHB);
+        db.serialize(() => {
 
-        // ===============================
-        // 1. UPDATE CREDIT
-        // ===============================
-        db.run(
-          "UPDATE users SET credits = credits + ? WHERE id = ?",
-          [credit.totalCredit, user.id]
-        );
-
-        // ===============================
-        // 2. CREDIT TRANSACTION (LEDGER)
-        // ===============================
-        db.run(
-          `INSERT INTO credit_transactions (id, user_id, amount, type, description)
-           VALUES (?, ?, ?, ?, ?)`,
-          [
-            uuidv4(),
-            user.id,
-            credit.totalCredit,
-            "topup",
-            `Stripe Topup ${amountTHB} THB`
-          ]
-        );
-
-        // ===============================
-        // 3. PAYMENT LOG
-        // ===============================
-        db.run(
-          `INSERT INTO transactions (email, amount_thb, credit_received)
-           VALUES (?, ?, ?)`,
-          [email, amountTHB, credit.totalCredit]
-        );
-
-        console.log("✅ PAYMENT SUCCESS:", email, credit.totalCredit);
-
-        // polling
-        global.paymentStatus = global.paymentStatus || {};
-        global.paymentStatus[email] = true;
-
-      });
-    });
-  }
-
-  res.json({ received: true });
-});
-
-// ===============================
-// POLLING
-// ===============================
-router.get("/check-status", (req, res) => {
-
-  const { email } = req.query;
-
-  if (!email) return res.json({ paid: false });
-
-  if (global.paymentStatus && global.paymentStatus[email]) {
-    global.paymentStatus[email] = false;
-    return res.json({ paid: true });
-  }
-
-  return res.json({ paid: false });
-});
-
-module.exports = router;
+          // ✅ เพิ่มเครดิต
