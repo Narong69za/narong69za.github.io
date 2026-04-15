@@ -82,4 +82,125 @@ document.getElementById('engine-grid').innerHTML = engines.map(e=>`
 <textarea class="mt-2 h-16 p-2 rounded-lg"></textarea>
 
 <div class="grid grid-cols-2 gap-2 mt-2">
-<select id="res-${e.id}" onchange="calc('${e.id}','
+<select id="res-${e.id}" onchange="calc('${e.id}','${e.type}')">
+<option value="1">780P</option>
+<option value="2.5">1080P</option>
+</select>
+
+<select id="dur-${e.id}" onchange="calc('${e.id}','${e.type}')">
+<option value="1">BASE</option>
+<option value="2">LONG</option>
+</select>
+</div>
+
+</div>
+
+<div class="md:w-28 flex flex-col justify-between items-center">
+<p class="mono" id="cost-${e.id}">${ENGINE_BASE_COSTS[e.type]}</p>
+
+<button class="btn-generate" data-id="${e.id}">GENERATE</button>
+</div>
+</div>
+`).join("");
+
+// ðŸ” bind AFTER render
+document.querySelectorAll(".btn-generate").forEach(btn=>{
+btn.addEventListener("click", ()=> runEngine(btn.dataset.id));
+});
+
+}
+
+function calc(id,type){
+const final =
+Math.floor(ENGINE_BASE_COSTS[type] *
+document.getElementById(`res-${id}`).value *
+document.getElementById(`dur-${id}`).value);
+
+document.getElementById(`cost-${id}`).innerText = final;
+}
+
+document.addEventListener("DOMContentLoaded", render);
+</script>
+
+<!-- ===================== ADD-ONLY ENGINE CORE (FIX LIVE SYSTEM) ===================== -->
+
+<script>
+
+const API_BASE = "https://api.sn-designstudio.dev";
+const EMAIL = localStorage.getItem("user_email") || "test@sn.com";
+
+async function runEngine(id){
+
+const engine = engines.find(e=>e.id===id);
+if(!engine) return alert("Engine not found");
+
+const textarea = document.querySelectorAll("textarea")[parseInt(id)-1];
+const prompt = textarea ? textarea.value : "";
+
+const res = document.getElementById(`res-${id}`).value;
+const dur = document.getElementById(`dur-${id}`).value;
+
+const cost = Math.floor(ENGINE_BASE_COSTS[engine.type] * res * dur);
+
+let endpoint = "";
+
+if(engine.type==="image") endpoint="/api/generate/image";
+if(engine.type==="video") endpoint="/api/generate/video";
+if(engine.type==="deep_motion") endpoint="/api/generate/motion";
+if(engine.type==="upscale") endpoint="/api/generate/upscale";
+
+try{
+
+const response = await fetch(API_BASE + endpoint,{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({
+email:EMAIL,
+engine_id:id,
+prompt,
+resolution:res,
+duration:dur,
+cost
+})
+});
+
+const data = await response.json();
+
+if(data.job_id){
+pollJob(data.job_id);
+return;
+}
+
+if(data.image_url) window.open(data.image_url);
+if(data.video_url) window.open(data.video_url);
+
+}catch(e){
+alert("API ERROR / CONNECTION FAILED");
+}
+
+}
+
+function pollJob(jobId){
+
+const t = setInterval(async ()=>{
+
+try{
+
+const res = await fetch(`${API_BASE}/api/job-status?id=${jobId}`);
+const data = await res.json();
+
+if(data.status==="done"){
+clearInterval(t);
+if(data.result_url) window.open(data.result_url);
+}
+
+}catch(e){}
+
+},3000);
+
+}
+
+</script>
+
+</body>
+</html>
