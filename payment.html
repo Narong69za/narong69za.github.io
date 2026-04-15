@@ -105,9 +105,10 @@ async function executePayment(){
     if(!amount||amount<10) return alert("ขั้นต่ำ 10 บาท");
 
 
+// STRIPE HANDLER
 if (currentMethod === 'stripe') {
     try {
-        const res = await fetch(`${API_BASE}/api/stripe`, { 
+        const res = await fetch(`${API_BASE}/api/stripe`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ amount, email })
@@ -118,11 +119,11 @@ if (currentMethod === 'stripe') {
         if (data.success && data.url) {
             window.location.href = data.url;
         } else {
-            alert("Stripe Error: " + (data.message || "Unknown Error"));
+            alert("Stripe Error");
         }
 
     } catch (e) {
-        alert("Cannot Connect to API 5002");
+        alert("Cannot Connect to Stripe API");
     }
 
     return;
@@ -171,5 +172,6 @@ document.addEventListener("DOMContentLoaded",()=> selectMethod("promptpay") );
 </script>
 </body>
 </html>
+
 
 
