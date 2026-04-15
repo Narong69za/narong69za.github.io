@@ -29,7 +29,7 @@ input#payAmount{ border-bottom:2px solid #222; }
 <main class="p-6 max-w-md mx-auto min-h-screen flex flex-col justify-center text-center">
     <div class="mb-10">
         <h1 class="text-3xl font-black silver-premium italic uppercase">SN PAYMENT GATEWAY</h1>
-        <p class="silver-premium text-[11px] font-black uppercase">ผู้พัฒนา ต้องดีแค่ไหน โลกถึงจะจำ</p>
+        <p class="silver-premium text-[11px] font-black uppercase">喔溹腹喙夃笧喔编笒喔權覆 喔曕箟喔竾喔斷傅喙佮竸喙堗箘喔笝 喙傕弗喔佮笘喔多竾喔堗赴喔堗赋</p>
     </div>
 
     <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8">
@@ -53,8 +53,8 @@ input#payAmount{ border-bottom:2px solid #222; }
 <div id="qr-modal-overlay">
     <div class="bg-[#050505] rounded-[40px] border border-white/5 w-full max-w-[360px] overflow-hidden">
         <div id="modal-header" class="p-4 flex flex-col items-center justify-center text-center bg-red-600">
-            <span class="text-[10px] text-white/70 font-black uppercase">ลิขสิทธิ์ พัฒนาโดย</span>
-            <span class="text-xs font-black italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
+            <span class="text-[10px] text-white/70 font-black uppercase">喔ム复喔傕釜喔脆笚喔樴复喙� 喔炧副喔掄笝喔侧箓喔斷涪</span>
+            <span class="text-xs font-black italic">喔曕箟喔竾喔斷傅喙佮竸喙堗箘喔笝 喙傕弗喔佮笘喔多竾喔堗赴喔堗赋</span>
         </div>
         <div class="p-6 text-center">
             <div class="qr-frame">
@@ -102,12 +102,11 @@ function selectMethod(method){
 async function executePayment(){
     const amount=parseInt(document.getElementById("payAmount").value);
     const email=localStorage.getItem("user_email")||"test@sn.com";
-    if(!amount||amount<10) return alert("ขั้นต่ำ 10 บาท");
+    if(!amount||amount<10) return alert("喔傕副喙夃笝喔曕箞喔� 10 喔氞覆喔�");
 
-
-if (currentMethod === 'stripe') {
+    if (currentMethod === 'stripe') {
     try {
-        const res = await fetch(`${API_BASE}/api/stripe`, { 
+        const res = await fetch(`${API_BASE}/api/stripe`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ amount, email })
@@ -115,17 +114,41 @@ if (currentMethod === 'stripe') {
 
         const data = await res.json();
 
-        if (data.success && data.url) {
-            window.location.href = data.url;
+        if (data.url) { 
+            window.location.href = data.url; 
         } else {
-            alert("Stripe Error: " + (data.message || "Unknown Error"));
+            alert("Stripe System Error");
         }
 
-    } catch (e) {
-        alert("Cannot Connect to API 5002");
+    } catch(e) {
+        alert("Cannot Connect to Stripe API");
     }
 
     return;
+}
+
+    // SCB & TRUEMONEY HANDLER
+    let endpoint = currentMethod==='promptpay' ? "/api/scb/create-qr" : "/api/truemoney/verify";
+    let endpoint = {amount, email, id_card: CITIZEN_ID};
+
+    if(currentMethod==='truemoney'){
+        const link=document.getElementById("twLink").value;
+        if(!link||!link.includes("gift.truemoney.com")) return alert("喔曕箟喔竾喙冟釜喙堗弗喔脆箟喔囙竸喙� TrueMoney");
+        payload.link = link;
+    }
+
+    try{
+        const res=await fetch(API_BASE+endpoint,{
+            method:"POST",
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify(payload)
+        });
+        const data=await res.json();
+        if(data.qrImage) openPopup(data.qrImage,amount);
+        startPolling(email);
+    }catch(e){
+        openPopup(`https://promptpay.io/${CITIZEN_ID}/${amount}.png`,amount);
+    }
 }
 
 function openPopup(qr,amount){
