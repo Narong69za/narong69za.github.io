@@ -67,27 +67,25 @@ border-bottom:2px solid #222;
 
 <div class="text-center mb-10">
 <h1 class="text-3xl font-black silver-premium italic uppercase">SN PAYMENT GATEWAY</h1>
-<p class="silver-premium text-[11px] font-black uppercase">
-ผู้พัฒนา ต้องดีแค่ไหน โลกถึงจะจำ
-</p>
+<p class="silver-premium text-[11px] font-black uppercase">ผู้พัฒนา ต้องดีแค่ไหน โลกถึงจะจำ</p>
 </div>
 
 <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8">
 
-<p class="text-center text-[9px] text-white/30 uppercase mb-4">Amount (THB)</p>
+<p class="text-center text-[9px] text-white/30 mb-4">Amount (THB)</p>
 
 <input id="payAmount" type="number" value="500"
 class="w-full bg-transparent text-center text-5xl font-black text-white mb-8 mono outline-none">
 
 <div class="grid grid-cols-3 gap-2 mb-6">
 
-<div id="btn-pp" class="method-btn p-3 rounded-xl text-center cursor-pointer"
+<div id="btn-pp" class="method-btn p-3 rounded-xl cursor-pointer"
 onclick="selectMethod('promptpay')">SCB</div>
 
-<div id="btn-tw" class="method-btn p-3 rounded-xl text-center cursor-pointer"
+<div id="btn-tw" class="method-btn p-3 rounded-xl cursor-pointer"
 onclick="selectMethod('truemoney')">TRUE</div>
 
-<div id="btn-stripe" class="method-btn p-3 rounded-xl text-center cursor-pointer"
+<div id="btn-stripe" class="method-btn p-3 rounded-xl cursor-pointer"
 onclick="selectMethod('stripe')">CARD</div>
 
 </div>
@@ -106,17 +104,16 @@ EXECUTE PAYMENT
 
 </main>
 
-<!-- ================= POPUP ================= -->
-
+<!-- POPUP -->
 <div id="qr-modal-overlay">
 
 <div class="bg-[#050505] rounded-[40px] border border-white/5 w-full max-w-[360px] overflow-hidden">
 
 <div id="modal-header"
-class="p-4 flex flex-col items-center justify-center text-center bg-red-600">
+class="p-4 text-center bg-red-600">
 
-<span class="text-[10px] text-white/70 font-black">พัฒนาโดย</span>
-<span class="text-xs font-black italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
+<span class="text-[10px] text-white/70">พัฒนาโดย</span>
+<div class="text-xs font-black italic">SN PAYMENT SYSTEM</div>
 
 </div>
 
@@ -129,7 +126,7 @@ class="p-4 flex flex-col items-center justify-center text-center bg-red-600">
 
 <img id="center-logo"
 src="assets/images/payment.png"
-class="absolute w-16 h-16 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden rounded-full border-4 border-white object-cover scale-110">
+class="absolute w-16 h-16 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden rounded-full border-4 border-white object-cover">
 
 </div>
 
@@ -148,16 +145,13 @@ class="absolute w-16 h-16 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hid
 
 <script>
 
-// ================= CONFIG =================
 const API_BASE = "https://api.sn-designstudio.dev";
 const CITIZEN_ID = "3100503536486";
 
 let currentMethod='promptpay';
 let timerInt,pollInt;
 
-// ================= CREDIT =================
 const BASE_RATE=100;
-
 const BONUS_TIERS=[
 {min:1000,bonus:0.30},
 {min:300,bonus:0.20},
@@ -172,16 +166,15 @@ for(const t of BONUS_TIERS){
 if(amount>=t.min){percent=t.bonus;break;}
 }
 
-let bonus=Math.floor(base*percent);
-
-return{total:base+bonus};
+return { total: base + Math.floor(base*percent) };
 }
 
-// ================= METHOD =================
 function selectMethod(method){
 currentMethod=method;
 
-document.querySelectorAll('.method-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.method-btn')
+.forEach(b=>b.classList.remove('active'));
+
 document.getElementById("tw-input-section").classList.add("hidden");
 
 if(method==='truemoney'){
@@ -196,7 +189,6 @@ document.getElementById("btn-stripe").classList.add("active");
 }
 }
 
-// ================= EXECUTE =================
 async function executePayment(){
 
 const amount=parseInt(document.getElementById("payAmount").value);
@@ -204,6 +196,32 @@ const email=localStorage.getItem("user_email")||"test@sn.com";
 
 if(!amount||amount<10) return alert("ขั้นต่ำ 10 บาท");
 
+// ================= STRIPE =================
+if(currentMethod === 'stripe'){
+
+try{
+const res = await fetch(API_BASE + "/api/stripe", {
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({amount,email})
+});
+
+const data = await res.json();
+
+if(data.success && data.url){
+window.location.href = data.url;
+}else{
+alert("Stripe Error");
+}
+
+}catch(e){
+alert("Cannot Connect Stripe");
+}
+
+return;
+}
+
+// ================= QR FLOW =================
 let endpoint="";
 let payload={amount,email,id_card:CITIZEN_ID};
 
@@ -213,32 +231,11 @@ endpoint="/api/scb/create-qr";
 
 if(currentMethod==='truemoney'){
 const link=document.getElementById("twLink").value;
-
 if(!link||!link.includes("gift.truemoney.com")){
-alert("ต้องใส่ลิ้งค์ TrueMoney");
-return;
+return alert("ต้องใส่ลิ้งค์ TrueMoney");
 }
-
 payload.link=link;
 endpoint="/api/truemoney/verify";
-}
-
-if(currentMethod === 'stripe') {
-  const res = await fetch(API_BASE + "/api/stripe/create-checkout", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ amount, email })
-  });
-
-  const data = await res.json();
-
-  if (data.url) {
-    window.location.href = data.url; // � THIS is Stripe redirect
-  } else {
-    alert("Stripe error");
-  }
-
-  return;
 }
 
 try{
@@ -253,6 +250,7 @@ const data=await res.json();
 if(data.qrImage){
 openPopup(data.qrImage,amount);
 }
+
 startPolling(email);
 
 }catch(e){
@@ -261,7 +259,7 @@ openPopup(`https://promptpay.io/${CITIZEN_ID}/${amount}.png`,amount);
 }
 
 // ================= POPUP =================
-function openPopup(qr,amount,isStripe=false){
+function openPopup(qr,amount){
 
 const modal=document.getElementById("qr-modal-overlay");
 const header=document.getElementById("modal-header");
@@ -269,32 +267,14 @@ const pBar=document.getElementById("pBar");
 
 const credit=calculateCredit(amount);
 
-const qrImg=document.getElementById("qr-img-display");
-const logo=document.getElementById("center-logo");
+document.getElementById("qr-img-display").src=qr;
 
-if(isStripe){
-qrImg.style.display="none";
-logo.style.display="none";
-header.style.background="#0070ba";
-pBar.style.background="#0070ba";
-}
-else{
-qrImg.style.display="block";
-qrImg.src=qr;
+header.style.background =
+currentMethod==="promptpay" ? "#4e2e7f" : "#ff8c00";
 
-if(currentMethod==="promptpay"){
-header.style.background="#4e2e7f";
-pBar.style.background="#4e2e7f";
-logo.style.display="block";
-}
-else if(currentMethod==="truemoney"){
-header.style.background="#ff8c00";
-pBar.style.background="#ff8c00";
-logo.style.display="none";
-}
-}
+pBar.style.background = header.style.background;
 
-document.getElementById("display-amt").innerText=
+document.getElementById("display-amt").innerText =
 amount+" THB | +"+credit.total.toLocaleString()+" CR";
 
 modal.style.display="flex";
@@ -353,4 +333,3 @@ selectMethod("promptpay");
 
 </body>
 </html>
-
