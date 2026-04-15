@@ -15,15 +15,13 @@ const engineManager = {
 
         try {
 
-            const response = await fetch("http://147.93.159.30:5002/api/generate", {
+            const r = await fetch("https://api.sn-designstudio.dev/api/generate/" + detectType(id), {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
 
-            const data = await response.json();
+            const data = await r.json();
 
             if(!data) return alert("NO RESPONSE");
 
@@ -45,41 +43,27 @@ const engineManager = {
     }
 };
 
-// FINAL POLLING (BACKOFF + STOP SAFE)
-async function pollJob(jobId){
+function detectType(id){
+    if(["01","02","08","11","12"].includes(id)) return "video";
+    if(["04","05","09"].includes(id)) return "image";
+    if(["03","07","10","14"].includes(id)) return "motion";
+    return "upscale";
+}
 
-    let delay = 2000;
-    let attempts = 0;
-    const maxAttempts = 30;
+async function pollJob(jobId){
 
     const t = setInterval(async ()=>{
 
-        attempts++;
-
         try {
-            const res = await fetch(`http://147.93.159.30:5002/api/job-status?id=${jobId}`);
-            const data = await res.json();
+            const r = await fetch(`https://api.sn-designstudio.dev/api/job-status?id=${jobId}`);
+            const d = await r.json();
 
-            if(data.status === "done"){
+            if(d.status === "done"){
                 clearInterval(t);
-                if(data.result_url) window.open(data.result_url);
-                return;
+                if(d.result_url) window.open(d.result_url);
             }
 
-            if(data.status === "failed"){
-                clearInterval(t);
-                alert("JOB FAILED");
-                return;
-            }
+        } catch(e){}
 
-        } catch (e) {}
-
-        if(attempts >= maxAttempts){
-            clearInterval(t);
-            alert("JOB TIMEOUT");
-        }
-
-        delay = Math.min(delay + 1000, 8000);
-
-    }, delay);
+    }, 3000);
 }
