@@ -104,45 +104,28 @@ async function executePayment(){
     const email=localStorage.getItem("user_email")||"test@sn.com";
     if(!amount||amount<10) return alert("ขั้นต่ำ 10 บาท");
 
-    // � STRIPE HANDLER (MATCHED WITH CURL)
-    if (currentMethod === 'stripe') {
-        try {
-            const res = await fetch(`${API_BASE}/api/stripe`, { // เปลี่ยนเป็น /api/stripe ตาม curl
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount, email })
-            });
-            const data = await res.json();
-            if (data.url) { 
-                window.location.href = data.url; 
-                startPolling(email); // Start polling before redirect
-            } else { alert("Stripe System Error"); }
-        } catch(e) { alert("Cannot Connect to Stripe API"); }
-        return;
-    }
 
-    // SCB & TRUEMONEY HANDLER
-    let endpoint = currentMethod==='promptpay' ? "/api/scb/create-qr" : "/api/truemoney/verify";
-    let payload = {amount, email, id_card: CITIZEN_ID};
-
-    if(currentMethod==='truemoney'){
-        const link=document.getElementById("twLink").value;
-        if(!link||!link.includes("gift.truemoney.com")) return alert("ต้องใส่ลิ้งค์ TrueMoney");
-        payload.link = link;
-    }
-
-    try{
-        const res=await fetch(API_BASE+endpoint,{
-            method:"POST",
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify(payload)
+if (currentMethod === 'stripe') {
+    try {
+        const res = await fetch(`${API_BASE}/api/stripe`, { 
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ amount, email })
         });
-        const data=await res.json();
-        if(data.qrImage) openPopup(data.qrImage,amount);
-        startPolling(email);
-    }catch(e){
-        openPopup(`https://promptpay.io/${CITIZEN_ID}/${amount}.png`,amount);
+
+        const data = await res.json();
+
+        if (data.success && data.url) {
+            window.location.href = data.url;
+        } else {
+            alert("Stripe Error: " + (data.message || "Unknown Error"));
+        }
+
+    } catch (e) {
+        alert("Cannot Connect to API 5002");
     }
+
+    return;
 }
 
 function openPopup(qr,amount){
@@ -188,4 +171,5 @@ document.addEventListener("DOMContentLoaded",()=> selectMethod("promptpay") );
 </script>
 </body>
 </html>
+
 
