@@ -11,286 +11,165 @@
 <style>
 body { background:#000; color:#fff; font-family:'Inter',sans-serif; }
 .mono { font-family:'JetBrains Mono', monospace; }
-
-.method-btn{
-    background:rgba(255,255,255,0.03);
-    border:1px solid #222;
-    transition:.3s;
-    cursor:pointer;
+.silver-premium{
+    background:linear-gradient(to bottom,#cfcfcf,#fff,#707070);
+    -webkit-background-clip:text;
+    -webkit-text-fill-color:transparent;
 }
-.method-btn.active{
-    border-color:red;
-    background:rgba(255,0,0,0.1);
-}
-
-#qr-modal-overlay{
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.95);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index:999;
-}
+.method-btn{ background:rgba(255,255,255,0.03); border:1px solid #222; transition:.3s; }
+.method-btn.active{ border-color:red; background:rgba(255,0,0,0.1); }
+#qr-modal-overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.95); display:none; align-items:center; justify-content:center; z-index:999; backdrop-filter:blur(20px); }
+.qr-frame{ background:#fff; padding:20px; border-radius:24px; position:relative; }
+.p-bar{ height:4px; background:red; position:absolute; top:0; left:0; border-radius:2px; }
+input#payAmount{ border-bottom:2px solid #222; }
 </style>
 </head>
 
 <body>
-
 <main class="p-6 max-w-md mx-auto min-h-screen flex flex-col justify-center text-center">
+    <div class="mb-10">
+        <h1 class="text-3xl font-black silver-premium italic uppercase">SN PAYMENT GATEWAY</h1>
+        <p class="silver-premium text-[11px] font-black uppercase">ผู้พัฒนา ต้องดีแค่ไหน โลกถึงจะจำ</p>
+    </div>
 
-<h1 class="text-3xl font-black">SN PAYMENT GATEWAY</h1>
+    <div class="bg-white/5 border border-white/10 rounded-[2.5rem] p-8">
+        <p class="text-center text-[9px] text-white/30 uppercase mb-4 tracking-widest">Amount (THB)</p>
+        <input id="payAmount" type="number" value="500" class="w-full bg-transparent text-center text-5xl font-black text-white mb-8 mono outline-none">
 
-<input id="payAmount" type="number" value="500"
-class="w-full mt-8 text-center text-5xl bg-transparent border-b border-white/20">
+        <div class="grid grid-cols-3 gap-2 mb-6">
+            <div id="btn-pp" class="method-btn p-3 rounded-xl cursor-pointer text-[10px] font-black" onclick="selectMethod('promptpay')">SCB</div>
+            <div id="btn-tw" class="method-btn p-3 rounded-xl cursor-pointer text-[10px] font-black" onclick="selectMethod('truemoney')">TRUE</div>
+            <div id="btn-stripe" class="method-btn p-3 rounded-xl cursor-pointer text-[10px] font-black" onclick="selectMethod('stripe')">CARD</div>
+        </div>
 
-<div class="grid grid-cols-3 gap-2 mt-6">
-<div id="btn-pp" class="method-btn p-3" onclick="selectMethod('promptpay')">SCB</div>
-<div id="btn-tw" class="method-btn p-3" onclick="selectMethod('truemoney')">TRUE</div>
-<div id="btn-stripe" class="method-btn p-3" onclick="selectMethod('stripe')">CARD</div>
-</div>
+        <div id="tw-input-section" class="hidden mb-6">
+            <input id="twLink" placeholder="https://gift.truemoney.com/..." class="w-full bg-black/40 border border-orange-500/30 p-3 rounded-xl text-white text-xs mono outline-none">
+        </div>
 
-<button onclick="executePayment()"
-class="mt-8 w-full bg-red-600 py-4 font-black">
-EXECUTE PAYMENT
-</button>
-
+        <button onclick="executePayment()" class="w-full bg-red-600 text-white py-5 rounded-2xl font-black text-sm tracking-widest">EXECUTE PAYMENT</button>
+    </div>
 </main>
 
-<!-- MODAL -->
 <div id="qr-modal-overlay">
-<div class="bg-white p-6 rounded-xl text-black">
-<img id="qr-img-display" class="w-64 mx-auto">
-<p id="display-amt" class="text-center mt-4 font-black"></p>
-<button onclick="closeQR()" class="mt-4 w-full bg-black text-white py-2">CLOSE</button>
-</div>
+    <div class="bg-[#050505] rounded-[40px] border border-white/5 w-full max-w-[360px] overflow-hidden">
+        <div id="modal-header" class="p-4 flex flex-col items-center justify-center text-center bg-red-600">
+            <span class="text-[10px] text-white/70 font-black uppercase">ลิขสิทธิ์ พัฒนาโดย</span>
+            <span class="text-xs font-black italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
+        </div>
+        <div class="p-6 text-center">
+            <div class="qr-frame">
+                <div id="pBar" class="p-bar" style="width:100%"></div>
+                <img id="qr-img-display" class="w-full rounded-lg">
+                <img id="center-logo" src="assets/images/payment.png" class="absolute w-16 h-16 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden rounded-full border-4 border-white object-cover">
+            </div>
+            <p id="display-amt" class="text-2xl font-black mono mt-4"></p>
+            <p id="timerText" class="text-red-500 text-[10px] mt-2 mono uppercase tracking-widest"></p>
+            <div class="mt-8 flex gap-3">
+                <button onclick="downloadQR()" class="flex-1 bg-white/10 py-4 rounded-xl text-[10px] font-black">DOWNLOAD</button>
+                <button onclick="closeQR()" class="flex-1 bg-red-600/20 text-red-500 py-4 rounded-xl text-[10px] font-black">CANCEL</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
 const API_BASE = "https://api.sn-designstudio.dev";
 const CITIZEN_ID = "3100503536486";
-
 let currentMethod='promptpay';
 let timerInt,pollInt;
 
 const BASE_RATE=100;
-const BONUS_TIERS=[
-    {min:1000,bonus:0.30},
-    {min:300,bonus:0.20},
-    {min:100,bonus:0.10}
-];
+const BONUS_TIERS=[ {min:1000,bonus:0.30}, {min:300,bonus:0.20}, {min:100,bonus:0.10} ];
 
 function calculateCredit(amount){
-    let base = amount * BASE_RATE;
-    let percent = 0;
-
-    for(const t of BONUS_TIERS){
-        if(amount >= t.min){
-            percent = t.bonus;
-            break;
-        }
-    }
-
-    return { total: base + Math.floor(base * percent) };
+    let base=amount*BASE_RATE; let percent=0;
+    for(const t of BONUS_TIERS){ if(amount>=t.min){percent=t.bonus;break;} }
+    return{total:base+Math.floor(base*percent)};
 }
 
 function selectMethod(method){
-    currentMethod = method;
-
-    document.querySelectorAll('.method-btn')
-        .forEach(b => b.classList.remove('active'));
-
+    currentMethod=method;
+    document.querySelectorAll('.method-btn').forEach(b=>b.classList.remove('active'));
     document.getElementById("tw-input-section").classList.add("hidden");
-
-    if(method === 'truemoney'){
+    if(method==='truemoney'){
         document.getElementById("btn-tw").classList.add("active");
         document.getElementById("tw-input-section").classList.remove("hidden");
     } else {
-        document.getElementById(`btn-${method === 'promptpay' ? 'pp' : 'stripe'}`)
-            .classList.add("active");
+        document.getElementById(`btn-${method === 'promptpay' ? 'pp' : 'stripe'}`).classList.add("active");
     }
 }
 
-/* =========================
-   MAIN PAYMENT HANDLER
-========================= */
 async function executePayment(){
+    const amount=parseInt(document.getElementById("payAmount").value);
+    const email=localStorage.getItem("user_email")||"test@sn.com";
+    if(!amount||amount<10) return alert("ขั้นต่ำ 10 บาท");
 
-    const amount = parseInt(
-        document.getElementById("payAmount").value
-    );
 
-    const email = localStorage.getItem("user_email") || "test@sn.com";
-
-    if(!amount || amount < 10){
-        alert("ขั้นต่ำ 10 บาท");
-        return;
-    }
-
-    /* =========================
-       STRIPE FLOW
-    ========================= */
-    if(currentMethod === 'stripe'){
-        try{
-            const res = await fetch(`${API_BASE}/api/stripe`,{
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount, email })
-            });
-
-            const data = await res.json();
-
-            if(data.success && data.url){
-                window.location.href = data.url;
-            } else {
-                alert("Stripe Error");
-            }
-
-        } catch(err){
-            alert("Cannot Connect to API");
-        }
-
-        return;
-    }
-
-    /* =========================
-       SCB / TRUE FLOW
-    ========================= */
-    let endpoint = currentMethod === 'promptpay'
-        ? "/api/scb/create-qr"
-        : "/api/truemoney/verify";
-
-    let payload = {
-        amount,
-        email,
-        id_card: CITIZEN_ID
-    };
-
-    if(currentMethod === 'truemoney'){
-        const link = document.getElementById("twLink").value;
-
-        if(!link || !link.includes("gift.truemoney.com")){
-            return alert("ต้องใส่ลิ้งค์ TrueMoney");
-        }
-
-        payload.link = link;
-    }
-
-    try{
-        const res = await fetch(API_BASE + endpoint, {
+if (currentMethod === 'stripe') {
+    try {
+        const res = await fetch(`${API_BASE}/api/stripe`, { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload)
+            body: JSON.stringify({ amount, email })
         });
 
         const data = await res.json();
 
-        if(data.qrImage){
-            openPopup(data.qrImage, amount);
+        if (data.success && data.url) {
+            window.location.href = data.url;
+        } else {
+            alert("Stripe Error: " + (data.message || "Unknown Error"));
         }
 
-        startPolling(email);
-
-    } catch(err){
-        openPopup(
-            `https://promptpay.io/${CITIZEN_ID}/${amount}.png`,
-            amount
-        );
+    } catch (e) {
+        alert("Cannot Connect to API 5002");
     }
+
+    return;
 }
 
-/* =========================
-   QR POPUP
-========================= */
-function openPopup(qr, amount){
+function openPopup(qr,amount){
+    const modal=document.getElementById("qr-modal-overlay");
+    const header=document.getElementById("modal-header");
+    const pBar=document.getElementById("pBar");
+    const credit=calculateCredit(amount);
+    const logo=document.getElementById("center-logo");
 
-    const modal = document.getElementById("qr-modal-overlay");
-    const header = document.getElementById("modal-header");
-    const pBar = document.getElementById("pBar");
-    const credit = calculateCredit(amount);
-    const logo = document.getElementById("center-logo");
-
-    document.getElementById("qr-img-display").src = qr;
-
-    if(currentMethod === "promptpay"){
-        header.style.background = "#4e2e7f";
-        pBar.style.background = "#4e2e7f";
-        logo.style.display = "block";
+    document.getElementById("qr-img-display").src=qr;
+    if(currentMethod==="promptpay"){
+        header.style.background="#4e2e7f"; pBar.style.background="#4e2e7f"; logo.style.display="block";
     } else {
-        header.style.background = "#ff8c00";
-        pBar.style.background = "#ff8c00";
-        logo.style.display = "none";
+        header.style.background="#ff8c00"; pBar.style.background="#ff8c00"; logo.style.display="none";
     }
 
-    document.getElementById("display-amt").innerText =
-        amount + " THB | +" + credit.total.toLocaleString() + " CR";
+    document.getElementById("display-amt").innerText=amount+" THB | +"+credit.total.toLocaleString()+" CR";
+    modal.style.display="flex";
 
-    modal.style.display = "flex";
-
-    let t = 300;
-    clearInterval(timerInt);
-
-    timerInt = setInterval(()=>{
-        let m = Math.floor(t / 60);
-        let s = t % 60;
-
-        document.getElementById("timerText").innerText =
-            "EXPIRES " + m + ":" + (s < 10 ? '0' + s : s);
-
-        document.getElementById("pBar").style.width =
-            (t / 300 * 100) + "%";
-
-        if(--t < 0) closeQR();
-
-    }, 1000);
+    let t=300; clearInterval(timerInt);
+    timerInt=setInterval(()=>{
+        let m=Math.floor(t/60), s=t%60;
+        document.getElementById("timerText").innerText="EXPIRES "+m+":"+(s<10?'0'+s:s);
+        document.getElementById("pBar").style.width=(t/300*100)+"%";
+        if(--t<0) closeQR();
+    },1000);
 }
 
-/* =========================
-   POLLING PAYMENT STATUS
-========================= */
 function startPolling(email){
-
     clearInterval(pollInt);
-
-    pollInt = setInterval(async ()=>{
-
+    pollInt=setInterval(async()=>{
         try{
-            const res = await fetch(
-                `${API_BASE}/api/check-status?email=${email}`
-            );
-
-            const data = await res.json();
-
-            if(data.paid){
-                clearInterval(pollInt);
-                location.href = "create.html";
-            }
-
-        } catch(e){}
-    }, 3000);
+            const res=await fetch(`${API_BASE}/api/check-status?email=${email}`);
+            const data=await res.json();
+            if(data.paid) { clearInterval(pollInt); location.href="create.html"; }
+        }catch(e){}
+    },3000);
 }
 
-/* =========================
-   CLOSE / DOWNLOAD
-========================= */
-function closeQR(){
-    document.getElementById("qr-modal-overlay").style.display = "none";
-    clearInterval(timerInt);
-    clearInterval(pollInt);
-}
-
-function downloadQR(){
-    const a = document.createElement("a");
-    a.href = document.getElementById("qr-img-display").src;
-    a.download = "SN-QR.png";
-    a.click();
-}
-
-document.addEventListener("DOMContentLoaded", ()=>{
-    selectMethod("promptpay");
-});
+function closeQR(){ document.getElementById("qr-modal-overlay").style.display="none"; clearInterval(timerInt); clearInterval(pollInt); }
+function downloadQR(){ const a=document.createElement("a"); a.href=document.getElementById("qr-img-display").src; a.download="SN-QR.png"; a.click(); }
+document.addEventListener("DOMContentLoaded",()=> selectMethod("promptpay") );
 </script>
-
 </body>
 </html>
+
 
