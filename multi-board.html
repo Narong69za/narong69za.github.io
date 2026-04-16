@@ -9,75 +9,32 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root { 
-            --bg: #050505; 
-            --card: rgba(15, 15, 15, 0.7); 
-            --blue: #007aff; 
-            --red: #ff3b30; 
-            --amber: #ffcc00;
-            --cyan: #32d74b;
-            --border: rgba(255, 255, 255, 0.08); 
-            --glow: rgba(0, 122, 255, 0.15);
+            --bg: #050505; --card: rgba(15, 15, 15, 0.7); 
+            --blue: #007aff; --red: #ff3b30; --amber: #ffcc00; --cyan: #32d74b;
+            --border: rgba(255, 255, 255, 0.08); --glow: rgba(0, 122, 255, 0.15);
         }
         body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: var(--bg); 
-            color: #fff; 
-            overflow-x: hidden; 
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.04), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(255, 59, 48, 0.04), transparent 25%);
+            font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; overflow-x: hidden; 
+            background-image: radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.04), transparent 25%), radial-gradient(circle at 85% 30%, rgba(255, 59, 48, 0.04), transparent 25%);
         }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        /* Glassmorphism & Hover Effects */
         .session-box { 
-            background: var(--card); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border); 
-            border-radius: 20px; 
-            overflow: hidden; 
-            display: flex; 
-            flex-direction: column; 
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            background: var(--card); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border); border-radius: 20px; overflow: hidden; display: flex; flex-direction: column; 
+            transition: all 0.4s ease; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+            /* ใช้ min-height เพื่อให้กล่องยืดหยุ่นตามมือถือ ไม่ให้ตัวอักษรล้น */
+            min-height: 250px; 
         }
         .session-box:hover { 
-            border-color: rgba(255,255,255,0.2); 
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px var(--glow);
+            border-color: rgba(255,255,255,0.2); transform: translateY(-4px); box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px var(--glow);
         }
-        
-        /* Grid System (Desktop / Mobile Switch) */
-        .dashboard-grid { 
-            display: grid; 
-            gap: 16px; 
-            padding: 20px; 
-            max-width: 1600px; 
-            margin: 0 auto; 
-            grid-template-columns: repeat(1, 1fr);
-            transition: all 0.3s ease;
-        }
-        @media (min-width: 768px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
-        /* Default Desktop View (4 columns) */
-        .grid-view-desktop { grid-template-columns: repeat(4, 1fr) !important; }
-        /* Expanded View (2 columns) */
-        .grid-view-expanded { grid-template-columns: repeat(2, 1fr) !important; }
 
-        .h-standard { height: 280px; }
-        .h-tall { height: 400px; }
-
-        /* Animations */
         .pulse-dot { animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,65,0.4); } 70% { opacity: 0.5; box-shadow: 0 0 0 10px rgba(0,255,65,0); } 100% { opacity: 1; } }
         
         .header-box { border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
         .terminal-box { background: rgba(0,0,0,0.8); border-radius: 12px; border: 1px solid var(--border); font-size: 10px; line-height: 1.6; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
     </style>
 </head>
 <body class="pb-10">
@@ -91,85 +48,83 @@
                 </div>
                 <div>
                     <h2 class="text-sm font-black tracking-wide text-white">ต้องดีแค่ไหน โลกถึงจะจำ</h2>
-                    <p class="text-[9px] text-blue-400 uppercase tracking-widest">Lead Architect & Founder</p>
+                    <p class="text-[9px] text-blue-400 uppercase tracking-widest" data-i18n="founder">Lead Architect & Founder</p>
                 </div>
             </div>
 
             <div class="flex items-center gap-3 bg-white/5 p-1 rounded-xl border border-white/10">
-                <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 text-white shadow-sm transition">TH</button>
-                <button class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-white transition">EN</button>
+                <button id="btn-th" onclick="setLang('th')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 text-white shadow-sm transition">TH</button>
+                <button id="btn-en" onclick="setLang('en')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-white transition">EN</button>
                 <div class="w-px h-4 bg-white/20 mx-1"></div>
-                <button onclick="toggleGrid('desktop')" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition" title="Grid View"><i class="fas fa-th"></i></button>
-                <button onclick="toggleGrid('expanded')" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition" title="Expanded View"><i class="fas fa-th-large"></i></button>
+                <button onclick="toggleGrid()" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition" title="Toggle View"><i class="fas fa-mobile-alt"></i> / <i class="fas fa-desktop"></i></button>
             </div>
-
         </div>
     </div>
 
-    <header class="max-w-[1600px] mx-auto p-6 pt-8 flex justify-between items-end">
+    <header class="max-w-[1600px] mx-auto p-6 pt-8 flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
         <div>
-            <p class="text-xs text-gray-500 uppercase tracking-[0.3em] mb-1">Production Monitor</p>
+            <p class="text-xs text-gray-500 uppercase tracking-[0.3em] mb-1" data-i18n="sys_monitor">Production Monitor</p>
             <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none drop-shadow-lg">SN ULTRA <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">v8.5</span></h1>
         </div>
-        <div class="flex gap-3">
+        <div class="flex flex-wrap gap-3">
             <div id="sync-gateway" class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-[10px] font-black text-red-500 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> GW: OFFLINE</div>
             <div id="sync-core" class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-[10px] font-black text-red-500 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> CORE: OFFLINE</div>
         </div>
     </header>
 
-    <div id="mainGrid" class="dashboard-grid grid-view-desktop">
+    <div id="mainGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1600px] mx-auto px-6 transition-all duration-500">
         
-        <div class="session-box h-standard" style="--glow: rgba(0, 255, 65, 0.15)">
+        <div class="session-box" style="--glow: rgba(0, 255, 65, 0.15)">
             <div class="header-box">
-                <span class="text-[10px] font-black text-green-400 uppercase tracking-widest"><i class="fas fa-server mr-2"></i>Core Health</span>
+                <span class="text-[10px] font-black text-green-400 uppercase tracking-widest" data-i18n="box1_title"><i class="fas fa-server mr-2"></i>Core Health</span>
             </div>
             <div class="p-5 flex flex-col gap-3 h-full justify-center">
                 <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
-                    <span class="text-xs text-gray-400 font-bold">API GATEWAY</span>
+                    <span class="text-xs text-gray-400 font-bold" data-i18n="box1_gw">API GATEWAY</span>
                     <span id="gw-stat" class="text-xs font-black text-red-500">404 DISCONNECT</span>
                 </div>
                 <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
-                    <span class="text-xs text-gray-400 font-bold">AI RENDER ENGINE</span>
+                    <span class="text-xs text-gray-400 font-bold" data-i18n="box1_ai">AI RENDER ENGINE</span>
                     <span id="core-stat" class="text-xs font-black text-red-500">UNREACHABLE</span>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-standard" style="--glow: rgba(255, 204, 0, 0.15)">
+        <div class="session-box" style="--glow: rgba(255, 204, 0, 0.15)">
             <div class="header-box border-b border-amber-500/20">
-                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest"><i class="fas fa-coins mr-2"></i>Faucet Crypto</span>
-                <span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-bold">ACTIVE</span>
+                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest" data-i18n="box2_title"><i class="fas fa-coins mr-2"></i>Faucet Crypto</span>
+                <span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-bold" data-i18n="status_active">ACTIVE</span>
             </div>
             <div class="p-5 flex flex-col justify-between h-full">
                 <div class="text-center mt-2">
-                    <p class="text-[10px] text-gray-500 uppercase">Total Dispensed (24h)</p>
+                    <p class="text-[10px] text-gray-500 uppercase" data-i18n="box2_total">Total Dispensed (24h)</p>
                     <p class="text-3xl font-black mono text-amber-400 mt-1">0.045 <span class="text-sm">SOL</span></p>
                 </div>
                 <div class="bg-black/50 p-3 rounded-lg border border-amber-500/10 flex justify-between items-center mt-4">
-                    <span class="text-[10px] text-gray-400">Wallet Balance</span>
+                    <span class="text-[10px] text-gray-400" data-i18n="box2_wallet">Wallet Balance</span>
                     <span class="text-xs mono font-bold text-white">12.550 SOL</span>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-standard" style="--glow: rgba(50, 215, 75, 0.15)">
+        <div class="session-box" style="--glow: rgba(50, 215, 75, 0.15)">
             <div class="header-box border-b border-blue-500/20">
-                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest"><i class="fab fa-telegram-plane mr-2"></i>Hamster Bot</span>
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest" data-i18n="box3_title"><i class="fab fa-telegram-plane mr-2"></i>Hamster Bot</span>
                 <span class="text-[9px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-bold">S2 RUNNING</span>
             </div>
             <div class="p-5 flex flex-col justify-between h-full">
                 <div class="flex justify-between items-end">
                     <div>
-                        <p class="text-[10px] text-gray-500 uppercase">Active Tappers</p>
+                        <p class="text-[10px] text-gray-500 uppercase" data-i18n="box3_active">Active Tappers</p>
                         <p class="text-3xl font-black mono text-blue-400">1,204</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-[10px] text-gray-500 uppercase">Req/Sec</p>
+                        <p class="text-[10px] text-gray-500 uppercase" data-i18n="box3_req">Req/Sec</p>
                         <p class="text-xl font-black mono text-white">45.2</p>
                     </div>
                 </div>
                 <div class="mt-4">
-                    <div class="flex justify-between text-[9px] mb-1 text-gray-400"><span>Server Load</span><span>85%</span></div>
+                    <div class="flex justify-between text-[9px] mb-1 text-gray-400"><span data-i18n="box3_load">Server Load</span><span>85%</span></div>
                     <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
                         <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400" style="width: 85%"></div>
                     </div>
@@ -177,9 +132,9 @@
             </div>
         </div>
 
-        <div class="session-box h-standard">
+        <div class="session-box">
             <div class="header-box">
-                <span class="text-[10px] font-black text-purple-400 uppercase tracking-widest"><i class="fas fa-microchip mr-2"></i>System Load</span>
+                <span class="text-[10px] font-black text-purple-400 uppercase tracking-widest" data-i18n="box4_title"><i class="fas fa-microchip mr-2"></i>System Load</span>
             </div>
             <div class="p-5 flex flex-col justify-center h-full gap-4">
                 <div class="flex justify-between items-center">
@@ -192,28 +147,28 @@
             </div>
         </div>
 
-        <div class="session-box h-standard" style="--glow: rgba(255, 59, 48, 0.15)">
+        <div class="session-box" style="--glow: rgba(255, 59, 48, 0.15)">
             <div class="header-box border-b border-red-500/20">
-                <span class="text-[10px] font-black text-red-400 uppercase tracking-widest"><i class="fas fa-tasks mr-2"></i>AI Render Queue</span>
-                <span class="text-[10px] mono text-gray-400">0 PENDING</span>
+                <span class="text-[10px] font-black text-red-400 uppercase tracking-widest" data-i18n="box5_title"><i class="fas fa-tasks mr-2"></i>AI Render Queue</span>
+                <span class="text-[10px] mono text-gray-400" id="pending-count">0 PENDING</span>
             </div>
             <div class="p-4 overflow-hidden flex flex-col">
                 <div id="recent-jobs" class="flex-1 overflow-y-auto pr-2 space-y-2">
                     <div class="h-full flex items-center justify-center">
-                        <p class="text-[10px] text-gray-600 italic"><i class="fas fa-check-circle mr-1"></i> QUEUE IS EMPTY</p>
+                        <p class="text-[10px] text-gray-600 italic" data-i18n="box5_empty"><i class="fas fa-check-circle mr-1"></i> QUEUE IS EMPTY</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-standard">
+        <div class="session-box">
             <div class="header-box">
-                <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2"></i>Security & Auth</span>
+                <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest" data-i18n="box6_title"><i class="fas fa-shield-alt mr-2"></i>Security & Auth</span>
             </div>
             <div class="p-5 flex flex-col justify-center h-full">
                 <div class="text-center mb-4">
                     <div class="w-12 h-12 bg-white/10 rounded-full mx-auto mb-2 flex items-center justify-center border border-white/20"><i class="fas fa-user-astronaut text-xl text-white"></i></div>
-                    <p class="text-[10px] text-gray-500 uppercase">Active Identity</p>
+                    <p class="text-[10px] text-gray-500 uppercase" data-i18n="box6_identity">Active Identity</p>
                     <p id="user-display" class="text-sm font-black text-white mono">MASTER_ADMIN</p>
                 </div>
                 <div class="flex gap-2">
@@ -223,11 +178,11 @@
             </div>
         </div>
 
-        <div class="session-box h-standard col-span-1 md:col-span-2 xl:col-span-1 border-red-500/20">
+        <div class="session-box col-span-1 md:col-span-2 lg:col-span-1 border-red-500/20">
             <div class="header-box bg-red-500/5">
-                <span class="text-[10px] font-black text-red-500 uppercase tracking-widest"><i class="fas fa-terminal mr-2"></i>Live Watchdog</span>
+                <span class="text-[10px] font-black text-red-500 uppercase tracking-widest" data-i18n="box7_title"><i class="fas fa-terminal mr-2"></i>Live Watchdog</span>
             </div>
-            <div class="p-3 flex flex-col h-full">
+            <div class="p-3 flex flex-col h-full min-h-[150px]">
                 <div id="error-logs" class="flex-1 terminal-box p-4 mono text-red-500 overflow-y-auto shadow-inner">
                     <p class="opacity-50">root@sn-ultra:~# tail -f /var/log/syslog</p>
                     <p class="opacity-50 text-green-500">> SYSTEM INITIALIZED...</p>
@@ -236,80 +191,116 @@
             </div>
         </div>
 
-        <div class="session-box h-standard col-span-1 md:col-span-2 xl:col-span-1 border-purple-500/20 relative overflow-hidden group">
+        <div class="session-box col-span-1 md:col-span-2 lg:col-span-1 border-purple-500/20 relative overflow-hidden group">
             <div class="absolute inset-0 bg-gradient-to-tr from-purple-900/40 to-black z-0"></div>
             <div class="absolute inset-0 flex items-center justify-center opacity-20 group-hover:scale-110 transition duration-700">
                 <i class="fas fa-camera-retro text-9xl"></i>
             </div>
             <div class="header-box relative z-10 border-b border-purple-500/30 bg-black/40">
-                <span class="text-[10px] font-black text-purple-300 uppercase tracking-widest"><i class="fas fa-photo-video mr-2"></i>Asset Feed</span>
+                <span class="text-[10px] font-black text-purple-300 uppercase tracking-widest" data-i18n="box8_title"><i class="fas fa-photo-video mr-2"></i>Asset Feed</span>
             </div>
-            <div class="p-4 relative z-10 flex flex-col items-center justify-center h-full">
+            <div class="p-4 relative z-10 flex flex-col items-center justify-center h-full min-h-[150px]">
                 <div class="w-16 h-16 rounded-full border-2 border-dashed border-purple-500/50 flex items-center justify-center mb-3 animate-spin" style="animation-duration: 4s;">
                     <i class="fas fa-sync-alt text-purple-400"></i>
                 </div>
-                <p class="text-[10px] font-bold text-purple-200 tracking-widest">WAITING FOR GENERATION...</p>
+                <p class="text-[10px] font-bold text-purple-200 tracking-widest text-center" data-i18n="box8_wait">WAITING FOR GENERATION...</p>
             </div>
         </div>
 
     </div>
 
     <script>
-        const API_BASE = "https://api.sn-designstudio.dev";
-        const CORE_BASE = "http://147.93.159.30:5003"; 
+        // � TRANSLATION DICTIONARY
+        const i18n = {
+            en: {
+                founder: "Lead Architect & Founder",
+                sys_monitor: "Production Monitor",
+                box1_title: '<i class="fas fa-server mr-2"></i>Core Health',
+                box1_gw: "API GATEWAY",
+                box1_ai: "AI RENDER ENGINE",
+                box2_title: '<i class="fas fa-coins mr-2"></i>Faucet Crypto',
+                box2_total: "Total Dispensed (24h)",
+                box2_wallet: "Wallet Balance",
+                status_active: "ACTIVE",
+                box3_title: '<i class="fab fa-telegram-plane mr-2"></i>Hamster Bot',
+                box3_active: "Active Tappers",
+                box3_req: "Req/Sec",
+                box3_load: "Server Load",
+                box4_title: '<i class="fas fa-microchip mr-2"></i>System Load',
+                box5_title: '<i class="fas fa-tasks mr-2"></i>AI Render Queue',
+                box5_empty: '<i class="fas fa-check-circle mr-1"></i> QUEUE IS EMPTY',
+                box6_title: '<i class="fas fa-shield-alt mr-2"></i>Security & Auth',
+                box6_identity: "Active Identity",
+                box7_title: '<i class="fas fa-terminal mr-2"></i>Live Watchdog',
+                box8_title: '<i class="fas fa-photo-video mr-2"></i>Asset Feed',
+                box8_wait: "WAITING FOR GENERATION..."
+            },
+            th: {
+                founder: "หัวหน้าสถาปนิกและผู้ก่อตั้ง",
+                sys_monitor: "ระบบตรวจสอบสถานะเซิร์ฟเวอร์",
+                box1_title: '<i class="fas fa-server mr-2"></i>สถานะระบบหลัก',
+                box1_gw: "เกตเวย์ API",
+                box1_ai: "ระบบประมวลผล AI",
+                box2_title: '<i class="fas fa-coins mr-2"></i>ระบบแจกเหรียญ',
+                box2_total: "ยอดจ่ายออกรวม (24 ชม.)",
+                box2_wallet: "ยอดเงินคงเหลือ",
+                status_active: "กำลังทำงาน",
+                box3_title: '<i class="fab fa-telegram-plane mr-2"></i>บอทแฮมสเตอร์',
+                box3_active: "ผู้เล่นที่ออนไลน์",
+                box3_req: "คำขอ/วินาที",
+                box3_load: "ภาระเซิร์ฟเวอร์",
+                box4_title: '<i class="fas fa-microchip mr-2"></i>ภาระระบบเครื่อง',
+                box5_title: '<i class="fas fa-tasks mr-2"></i>คิวงานเรนเดอร์ AI',
+                box5_empty: '<i class="fas fa-check-circle mr-1"></i> ไม่มีคิวงาน',
+                box6_title: '<i class="fas fa-shield-alt mr-2"></i>ระบบความปลอดภัย',
+                box6_identity: "บัญชีที่ใช้งานอยู่",
+                box7_title: '<i class="fas fa-terminal mr-2"></i>บันทึกข้อผิดพลาด',
+                box8_title: '<i class="fas fa-photo-video mr-2"></i>แสดงผลชิ้นงาน',
+                box8_wait: "กำลังรอการสร้างผลงาน..."
+            }
+        };
 
-        // � GRID SWITCHER
-        function toggleGrid(mode) {
+        // � LANGUAGE SWITCHER
+        function setLang(lang) {
+            // สลับสีปุ่ม
+            document.getElementById('btn-th').className = lang === 'th' ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 text-white shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-white transition';
+            document.getElementById('btn-en').className = lang === 'en' ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 text-white shadow-sm transition' : 'px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-white transition';
+            
+            // เปลี่ยนข้อความ
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (i18n[lang][key]) el.innerHTML = i18n[lang][key];
+            });
+        }
+
+        // � MOBILE / DESKTOP GRID TOGGLE (Force)
+        let isForcedMobile = false;
+        function toggleGrid() {
             const grid = document.getElementById('mainGrid');
-            if(mode === 'desktop') {
-                grid.classList.remove('grid-view-expanded');
-                grid.classList.add('grid-view-desktop');
+            isForcedMobile = !isForcedMobile;
+            if(isForcedMobile) {
+                // บังคับ 1 คอลัมน์ (โหมดดูในมือถือ)
+                grid.className = "grid grid-cols-1 gap-4 max-w-[1600px] mx-auto px-6 transition-all duration-500";
             } else {
-                grid.classList.remove('grid-view-desktop');
-                grid.classList.add('grid-view-expanded');
+                // กลับสู่โหมด Responsive อัตโนมัติ (1 แถวในมือถือ, 2 ในแท็บเล็ต, 4 ใน PC)
+                grid.className = "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-[1600px] mx-auto px-6 transition-all duration-500";
             }
         }
 
         // � REAL-TIME SYNC PROTOCOL
+        const API_BASE = "https://api.sn-designstudio.dev";
+        const CORE_BASE = "http://147.93.159.30:5003"; 
+
         async function runHealthCheck() {
             try {
-                // Gateway Check
                 const gw = await fetch(`${API_BASE}/`);
                 if(gw.ok) {
                     updateStatus('sync-gateway', '<div class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></div> GW: ONLINE', 'text-green-400', 'bg-green-900/30', 'border-green-500/30');
                     document.getElementById('gw-stat').innerText = 'STABLE (200 OK)';
                     document.getElementById('gw-stat').className = 'text-xs font-black text-green-400';
                 }
-
-                // Core Check
-                const core = await fetch(`${CORE_BASE}/`);
+                const core = await fetch(`${CORE_BASE}/health`); // ดึงจาก /health ที่ทำไว้
                 if(core.ok) {
                     updateStatus('sync-core', '<div class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></div> CORE: ONLINE', 'text-green-400', 'bg-green-900/30', 'border-green-500/30');
                     document.getElementById('core-stat').innerText = 'READY (SN-ULTRA)';
-                    document.getElementById('core-stat').className = 'text-xs font-black text-green-400';
-                }
-            } catch (e) {
-                // Ignore if still booting
-            }
-        }
-
-        function updateStatus(id, html, textColor, bgColor, borderColor) {
-            const el = document.getElementById(id);
-            el.innerHTML = html;
-            el.className = `px-4 py-2 ${bgColor} border ${borderColor} rounded-xl text-[10px] font-black ${textColor} flex items-center gap-2 transition-all duration-500 shadow-[0_0_15px_rgba(0,255,65,0.2)]`;
-        }
-
-        function fetchMetrics() {
-            // Fake Metrics for UI testing
-            document.getElementById('cpu-val').innerText = (Math.random()*20 + 15).toFixed(0) + '%';
-            document.getElementById('ram-val').innerText = (Math.random()*5 + 40).toFixed(1) + '%';
-            document.getElementById('traffic-bar').style.height = (Math.random()*80 + 10) + '%';
-        }
-
-        setInterval(runHealthCheck, 5000);
-        setInterval(fetchMetrics, 2000);
-        window.onload = () => { runHealthCheck(); fetchMetrics(); };
-    </script>
-</body>
-</html>
-
+                    document.getElementById('core-stat').clas
