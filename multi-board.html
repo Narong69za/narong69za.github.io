@@ -3,116 +3,252 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - PRODUCTION MONITOR v8.0</title>
+    <title>SN ULTRA - PRODUCTION MASTER v8.5</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root { --bg: #000; --card: #080808; --blue: #007aff; --red: #ff3b30; --border: rgba(255, 255, 255, 0.05); --neon: #00ff41; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; overflow-x: hidden; width: 100vw; margin: 0; }
+        :root { 
+            --bg: #050505; 
+            --card: rgba(15, 15, 15, 0.7); 
+            --blue: #007aff; 
+            --red: #ff3b30; 
+            --amber: #ffcc00;
+            --cyan: #32d74b;
+            --border: rgba(255, 255, 255, 0.08); 
+            --glow: rgba(0, 122, 255, 0.15);
+        }
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: var(--bg); 
+            color: #fff; 
+            overflow-x: hidden; 
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(0, 122, 255, 0.04), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(255, 59, 48, 0.04), transparent 25%);
+        }
         .mono { font-family: 'JetBrains Mono', monospace; }
         
-        .dashboard-container { display: grid; gap: 12px; padding: 12px; max-width: 1400px; margin: 0 auto; }
-        @media (min-width: 1024px) { .dashboard-container { grid-template-columns: repeat(3, 1fr); } }
-
-        .session-box { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; }
-        .session-box:hover { border-color: var(--blue); }
+        /* Glassmorphism & Hover Effects */
+        .session-box { 
+            background: var(--card); 
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border); 
+            border-radius: 20px; 
+            overflow: hidden; 
+            display: flex; 
+            flex-direction: column; 
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+        .session-box:hover { 
+            border-color: rgba(255,255,255,0.2); 
+            transform: translateY(-4px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 20px var(--glow);
+        }
         
-        /* � ปรับลดความสูงลง 30% ตามสั่ง */
-        .h-s { height: 250px; } /* เดิม 360 */
-        .h-m { height: 300px; } /* เดิม 420 */
-        .h-n { height: 360px; } /* เดิม 520 */
-        .h-l { height: 580px; } /* เดิม 820 */
+        /* Grid System (Desktop / Mobile Switch) */
+        .dashboard-grid { 
+            display: grid; 
+            gap: 16px; 
+            padding: 20px; 
+            max-width: 1600px; 
+            margin: 0 auto; 
+            grid-template-columns: repeat(1, 1fr);
+            transition: all 0.3s ease;
+        }
+        @media (min-width: 768px) { .dashboard-grid { grid-template-columns: repeat(2, 1fr); } }
+        /* Default Desktop View (4 columns) */
+        .grid-view-desktop { grid-template-columns: repeat(4, 1fr) !important; }
+        /* Expanded View (2 columns) */
+        .grid-view-expanded { grid-template-columns: repeat(2, 1fr) !important; }
 
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .dot-pulse { animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+        .h-standard { height: 280px; }
+        .h-tall { height: 400px; }
 
-        .header-box { border-bottom: 1px solid var(--border); padding: 10px; display: flex; justify-content: center; align-items: center; position: relative; }
-        .terminal-box { background: #000; border-radius: 12px; border: 1px solid var(--border); font-size: 9px; line-height: 1.4; }
+        /* Animations */
+        .pulse-dot { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(0,255,65,0.4); } 70% { opacity: 0.5; box-shadow: 0 0 0 10px rgba(0,255,65,0); } 100% { opacity: 1; } }
+        
+        .header-box { border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.02); }
+        .terminal-box { background: rgba(0,0,0,0.8); border-radius: 12px; border: 1px solid var(--border); font-size: 10px; line-height: 1.6; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
     </style>
 </head>
 <body class="pb-10">
 
-    <header class="max-w-[1400px] mx-auto p-6 flex justify-between items-center border-b border-white/5">
+    <div class="border-b border-white/10 bg-black/50 backdrop-blur-md sticky top-0 z-50">
+        <div class="max-w-[1600px] mx-auto px-6 py-3 flex flex-wrap justify-between items-center gap-4">
+            
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center shadow-[0_0_15px_rgba(0,122,255,0.5)]">
+                    <i class="fab fa-facebook-f text-white text-sm"></i>
+                </div>
+                <div>
+                    <h2 class="text-sm font-black tracking-wide text-white">ต้องดีแค่ไหน โลกถึงจะจำ</h2>
+                    <p class="text-[9px] text-blue-400 uppercase tracking-widest">Lead Architect & Founder</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3 bg-white/5 p-1 rounded-xl border border-white/10">
+                <button class="px-3 py-1.5 rounded-lg text-xs font-bold bg-white/10 text-white shadow-sm transition">TH</button>
+                <button class="px-3 py-1.5 rounded-lg text-xs font-bold text-gray-500 hover:text-white transition">EN</button>
+                <div class="w-px h-4 bg-white/20 mx-1"></div>
+                <button onclick="toggleGrid('desktop')" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition" title="Grid View"><i class="fas fa-th"></i></button>
+                <button onclick="toggleGrid('expanded')" class="p-2 rounded-lg text-gray-400 hover:text-white hover:bg-white/10 transition" title="Expanded View"><i class="fas fa-th-large"></i></button>
+            </div>
+
+        </div>
+    </div>
+
+    <header class="max-w-[1600px] mx-auto p-6 pt-8 flex justify-between items-end">
         <div>
-            <h1 class="text-2xl font-black italic tracking-tighter uppercase leading-none">SN ULTRA <span class="text-blue-500">v8.0</span></h1>
+            <p class="text-xs text-gray-500 uppercase tracking-[0.3em] mb-1">Production Monitor</p>
+            <h1 class="text-4xl font-black italic tracking-tighter uppercase leading-none drop-shadow-lg">SN ULTRA <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-500">v8.5</span></h1>
         </div>
         <div class="flex gap-3">
-            <div id="sync-gateway" class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-[10px] font-black text-red-500 transition-all">GW: OFFLINE</div>
-            <div id="sync-core" class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-[10px] font-black text-red-500 transition-all">CORE: OFFLINE</div>
+            <div id="sync-gateway" class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-[10px] font-black text-red-500 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> GW: OFFLINE</div>
+            <div id="sync-core" class="px-4 py-2 bg-red-500/10 border border-red-500/30 rounded-xl text-[10px] font-black text-red-500 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-red-500"></div> CORE: OFFLINE</div>
         </div>
     </header>
 
-    <div id="mainGrid" class="dashboard-container">
+    <div id="mainGrid" class="dashboard-grid grid-view-desktop">
         
-        <div class="session-box h-s">
-            <div class="header-box"><span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Core Health Check</span></div>
-            <div class="p-4 space-y-4">
-                <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                    <span class="text-[10px] text-gray-500 font-bold">API GATEWAY</span>
-                    <span id="gw-stat" class="text-[10px] font-black text-red-500">404 DISCONNECTED</span>
-                </div>
-                <div class="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                    <span class="text-[10px] text-gray-500 font-bold">PYTHON RENDER</span>
-                    <span id="core-stat" class="text-[10px] font-black text-red-500">UNREACHABLE</span>
-                </div>
-                <button onclick="location.reload()" class="w-full py-2 bg-blue-500 text-black rounded-lg font-black text-[10px] uppercase">Re-Sync System</button>
+        <div class="session-box h-standard" style="--glow: rgba(0, 255, 65, 0.15)">
+            <div class="header-box">
+                <span class="text-[10px] font-black text-green-400 uppercase tracking-widest"><i class="fas fa-server mr-2"></i>Core Health</span>
             </div>
-        </div>
-
-        <div class="session-box h-s">
-            <div class="header-box"><span class="text-[10px] font-black text-red-500 uppercase tracking-widest">Job Status Tracking</span></div>
-            <div class="p-4">
-                <div id="recent-jobs" class="space-y-2 max-h-[160px] overflow-y-auto pr-2">
-                    <p class="text-[9px] text-gray-700 italic text-center py-8">NO ACTIVE JOBS IN QUEUE</p>
+            <div class="p-5 flex flex-col gap-3 h-full justify-center">
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
+                    <span class="text-xs text-gray-400 font-bold">API GATEWAY</span>
+                    <span id="gw-stat" class="text-xs font-black text-red-500">404 DISCONNECT</span>
+                </div>
+                <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl border border-white/5">
+                    <span class="text-xs text-gray-400 font-bold">AI RENDER ENGINE</span>
+                    <span id="core-stat" class="text-xs font-black text-red-500">UNREACHABLE</span>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-s">
-            <div class="header-box"><span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Auth / Token System</span></div>
-            <div class="p-4 space-y-4 flex flex-col justify-center h-full">
-                <div class="text-center">
-                    <p class="text-[9px] text-gray-500 uppercase mb-1">Active Session</p>
-                    <p id="user-display" class="text-xs font-black text-white mono">GUEST_USER@SN</p>
+        <div class="session-box h-standard" style="--glow: rgba(255, 204, 0, 0.15)">
+            <div class="header-box border-b border-amber-500/20">
+                <span class="text-[10px] font-black text-amber-400 uppercase tracking-widest"><i class="fas fa-coins mr-2"></i>Faucet Crypto</span>
+                <span class="text-[9px] bg-amber-500/20 text-amber-400 px-2 py-1 rounded text-bold">ACTIVE</span>
+            </div>
+            <div class="p-5 flex flex-col justify-between h-full">
+                <div class="text-center mt-2">
+                    <p class="text-[10px] text-gray-500 uppercase">Total Dispensed (24h)</p>
+                    <p class="text-3xl font-black mono text-amber-400 mt-1">0.045 <span class="text-sm">SOL</span></p>
                 </div>
-                <div class="flex gap-2">
-                    <input type="password" id="token" readonly value="****************" class="flex-1 bg-white/5 p-2 rounded-lg text-[10px] mono text-blue-400 border border-white/5 text-center">
-                    <button onclick="copyToken()" class="bg-blue-500 text-black px-4 rounded-lg font-black text-[9px] uppercase">Reveal</button>
+                <div class="bg-black/50 p-3 rounded-lg border border-amber-500/10 flex justify-between items-center mt-4">
+                    <span class="text-[10px] text-gray-400">Wallet Balance</span>
+                    <span class="text-xs mono font-bold text-white">12.550 SOL</span>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-m">
-            <div class="header-box"><span class="text-[10px] font-black text-red-500 uppercase tracking-widest">Error Visualization</span></div>
-            <div class="p-4 flex-1 flex flex-col gap-2">
-                <div id="error-logs" class="flex-1 terminal-box p-3 mono text-red-500 overflow-y-auto">
-                    <p class="opacity-30">// ERROR WATCHDOG ACTIVE...</p>
-                </div>
+        <div class="session-box h-standard" style="--glow: rgba(50, 215, 75, 0.15)">
+            <div class="header-box border-b border-blue-500/20">
+                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest"><i class="fab fa-telegram-plane mr-2"></i>Hamster Bot</span>
+                <span class="text-[9px] bg-blue-500/20 text-blue-400 px-2 py-1 rounded text-bold">S2 RUNNING</span>
             </div>
-        </div>
-
-        <div class="session-box h-l">
-            <div class="header-box"><span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Dynamic Asset Feed</span></div>
-            <div class="p-4 flex-1 flex flex-col gap-4">
-                <div id="asset-feed" class="flex-1 grid grid-cols-2 gap-2 overflow-y-auto content-start">
-                    <div class="aspect-square bg-white/5 rounded-xl border border-white/5 flex items-center justify-center">
-                        <p class="text-[8px] text-gray-700">FEED IDLE</p>
+            <div class="p-5 flex flex-col justify-between h-full">
+                <div class="flex justify-between items-end">
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase">Active Tappers</p>
+                        <p class="text-3xl font-black mono text-blue-400">1,204</p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[10px] text-gray-500 uppercase">Req/Sec</p>
+                        <p class="text-xl font-black mono text-white">45.2</p>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex justify-between text-[9px] mb-1 text-gray-400"><span>Server Load</span><span>85%</span></div>
+                    <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                        <div class="h-full bg-gradient-to-r from-blue-500 to-cyan-400" style="width: 85%"></div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="session-box h-n">
-            <div class="header-box"><span class="text-[10px] font-black text-blue-500 uppercase tracking-widest">Real Metrics (CPU / RAM)</span></div>
-            <div class="p-6 space-y-8 flex-1 flex flex-col justify-center">
-                <div class="grid grid-cols-2 gap-4 text-center">
-                    <div><p class="text-[9px] text-gray-500 uppercase mb-2">CPU LOAD</p><p class="text-3xl font-black mono text-blue-500" id="cpu-val">--%</p></div>
-                    <div><p class="text-[9px] text-gray-500 uppercase mb-2">RAM USAGE</p><p class="text-3xl font-black mono text-red-500" id="ram-val">--%</p></div>
+        <div class="session-box h-standard">
+            <div class="header-box">
+                <span class="text-[10px] font-black text-purple-400 uppercase tracking-widest"><i class="fas fa-microchip mr-2"></i>System Load</span>
+            </div>
+            <div class="p-5 flex flex-col justify-center h-full gap-4">
+                <div class="flex justify-between items-center">
+                    <div><p class="text-[10px] text-gray-500 uppercase">CPU</p><p class="text-2xl font-black mono text-purple-400" id="cpu-val">--%</p></div>
+                    <div><p class="text-[10px] text-gray-500 uppercase text-right">RAM</p><p class="text-2xl font-black mono text-pink-400 text-right" id="ram-val">--%</p></div>
                 </div>
-                <div class="h-20 border border-white/5 rounded-xl bg-black relative overflow-hidden">
-                    <div id="traffic-bar" class="absolute bottom-0 w-full bg-blue-500/10 border-t border-blue-500/40 transition-all duration-1000"></div>
+                <div class="h-16 border border-white/5 rounded-xl bg-black relative overflow-hidden flex items-end">
+                    <div id="traffic-bar" class="w-full bg-gradient-to-t from-purple-500/20 to-transparent border-t border-purple-500/50 transition-all duration-700" style="height: 10%"></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="session-box h-standard" style="--glow: rgba(255, 59, 48, 0.15)">
+            <div class="header-box border-b border-red-500/20">
+                <span class="text-[10px] font-black text-red-400 uppercase tracking-widest"><i class="fas fa-tasks mr-2"></i>AI Render Queue</span>
+                <span class="text-[10px] mono text-gray-400">0 PENDING</span>
+            </div>
+            <div class="p-4 overflow-hidden flex flex-col">
+                <div id="recent-jobs" class="flex-1 overflow-y-auto pr-2 space-y-2">
+                    <div class="h-full flex items-center justify-center">
+                        <p class="text-[10px] text-gray-600 italic"><i class="fas fa-check-circle mr-1"></i> QUEUE IS EMPTY</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-standard">
+            <div class="header-box">
+                <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2"></i>Security & Auth</span>
+            </div>
+            <div class="p-5 flex flex-col justify-center h-full">
+                <div class="text-center mb-4">
+                    <div class="w-12 h-12 bg-white/10 rounded-full mx-auto mb-2 flex items-center justify-center border border-white/20"><i class="fas fa-user-astronaut text-xl text-white"></i></div>
+                    <p class="text-[10px] text-gray-500 uppercase">Active Identity</p>
+                    <p id="user-display" class="text-sm font-black text-white mono">MASTER_ADMIN</p>
+                </div>
+                <div class="flex gap-2">
+                    <input type="password" readonly value="SN-ULTRA-SECURE-TOKEN-XXX" class="flex-1 bg-black p-2 rounded-lg text-[10px] mono text-gray-400 border border-white/10 text-center focus:outline-none">
+                    <button class="bg-white/10 hover:bg-white/20 text-white px-4 rounded-lg font-black text-[10px] uppercase transition"><i class="far fa-copy"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-standard col-span-1 md:col-span-2 xl:col-span-1 border-red-500/20">
+            <div class="header-box bg-red-500/5">
+                <span class="text-[10px] font-black text-red-500 uppercase tracking-widest"><i class="fas fa-terminal mr-2"></i>Live Watchdog</span>
+            </div>
+            <div class="p-3 flex flex-col h-full">
+                <div id="error-logs" class="flex-1 terminal-box p-4 mono text-red-500 overflow-y-auto shadow-inner">
+                    <p class="opacity-50">root@sn-ultra:~# tail -f /var/log/syslog</p>
+                    <p class="opacity-50 text-green-500">> SYSTEM INITIALIZED...</p>
+                    <p class="opacity-50 text-green-500">> ALL SERVICES NOMINAL.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="session-box h-standard col-span-1 md:col-span-2 xl:col-span-1 border-purple-500/20 relative overflow-hidden group">
+            <div class="absolute inset-0 bg-gradient-to-tr from-purple-900/40 to-black z-0"></div>
+            <div class="absolute inset-0 flex items-center justify-center opacity-20 group-hover:scale-110 transition duration-700">
+                <i class="fas fa-camera-retro text-9xl"></i>
+            </div>
+            <div class="header-box relative z-10 border-b border-purple-500/30 bg-black/40">
+                <span class="text-[10px] font-black text-purple-300 uppercase tracking-widest"><i class="fas fa-photo-video mr-2"></i>Asset Feed</span>
+            </div>
+            <div class="p-4 relative z-10 flex flex-col items-center justify-center h-full">
+                <div class="w-16 h-16 rounded-full border-2 border-dashed border-purple-500/50 flex items-center justify-center mb-3 animate-spin" style="animation-duration: 4s;">
+                    <i class="fas fa-sync-alt text-purple-400"></i>
+                </div>
+                <p class="text-[10px] font-bold text-purple-200 tracking-widest">WAITING FOR GENERATION...</p>
             </div>
         </div>
 
@@ -120,58 +256,59 @@
 
     <script>
         const API_BASE = "https://api.sn-designstudio.dev";
-        const CORE_BASE = "http://147.93.159.30:5003"; // ท่อ Render ตรง
+        const CORE_BASE = "http://147.93.159.30:5003"; 
 
-        // � REAL-TIME SYNC PROTOCOL
-        async function runHealthCheck() {
-            try {
-                // 1. Gateway Check (5002)
-                const gw = await fetch(`${API_BASE}/`);
-                if(gw.ok) {
-                    updateStatus('sync-gateway', 'GW: ONLINE', 'text-green-500', 'bg-green-500/10');
-                    document.getElementById('gw-stat').innerText = 'STABLE (200 OK)';
-                    document.getElementById('gw-stat').className = 'text-[10px] font-black text-green-500';
-                }
-
-                // 2. Core Check (5003)
-                const core = await fetch(`${CORE_BASE}/`);
-                if(core.ok) {
-                    updateStatus('sync-core', 'CORE: ONLINE', 'text-green-500', 'bg-green-500/10');
-                    document.getElementById('core-stat').innerText = 'READY (SN-ULTRA-CORE)';
-                    document.getElementById('core-stat').className = 'text-[10px] font-black text-green-500';
-                }
-            } catch (e) {
-                logError("CONNECTION_REFUSED: Check if PM2 is running.");
+        // � GRID SWITCHER
+        function toggleGrid(mode) {
+            const grid = document.getElementById('mainGrid');
+            if(mode === 'desktop') {
+                grid.classList.remove('grid-view-expanded');
+                grid.classList.add('grid-view-desktop');
+            } else {
+                grid.classList.remove('grid-view-desktop');
+                grid.classList.add('grid-view-expanded');
             }
         }
 
-        function updateStatus(id, text, textColor, bgColor) {
-            const el = document.getElementById(id);
-            el.innerText = text;
-            el.className = `px-4 py-2 ${bgColor} border border-white/10 rounded-xl text-[10px] font-black ${textColor}`;
+        // � REAL-TIME SYNC PROTOCOL
+        async function runHealthCheck() {
+            try {
+                // Gateway Check
+                const gw = await fetch(`${API_BASE}/`);
+                if(gw.ok) {
+                    updateStatus('sync-gateway', '<div class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></div> GW: ONLINE', 'text-green-400', 'bg-green-900/30', 'border-green-500/30');
+                    document.getElementById('gw-stat').innerText = 'STABLE (200 OK)';
+                    document.getElementById('gw-stat').className = 'text-xs font-black text-green-400';
+                }
+
+                // Core Check
+                const core = await fetch(`${CORE_BASE}/`);
+                if(core.ok) {
+                    updateStatus('sync-core', '<div class="w-2 h-2 rounded-full bg-green-400 pulse-dot"></div> CORE: ONLINE', 'text-green-400', 'bg-green-900/30', 'border-green-500/30');
+                    document.getElementById('core-stat').innerText = 'READY (SN-ULTRA)';
+                    document.getElementById('core-stat').className = 'text-xs font-black text-green-400';
+                }
+            } catch (e) {
+                // Ignore if still booting
+            }
         }
 
-        function logError(msg) {
-            const container = document.getElementById('error-logs');
-            const p = document.createElement('p');
-            p.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
-            container.appendChild(p);
-            container.scrollTop = container.scrollHeight;
+        function updateStatus(id, html, textColor, bgColor, borderColor) {
+            const el = document.getElementById(id);
+            el.innerHTML = html;
+            el.className = `px-4 py-2 ${bgColor} border ${borderColor} rounded-xl text-[10px] font-black ${textColor} flex items-center gap-2 transition-all duration-500 shadow-[0_0_15px_rgba(0,255,65,0.2)]`;
         }
 
         function fetchMetrics() {
-            // จำลองการดึงค่า (ถ้าพี่ทำ Monitor API 5004 เสร็จ ให้เปลี่ยนตรงนี้ครับ)
-            document.getElementById('cpu-val').innerText = (Math.random()*15 + 10).toFixed(0) + '%';
-            document.getElementById('ram-val').innerText = (Math.random()*2 + 8.5).toFixed(1) + '%';
-            document.getElementById('traffic-bar').style.height = (Math.random()*60 + 20) + '%';
+            // Fake Metrics for UI testing
+            document.getElementById('cpu-val').innerText = (Math.random()*20 + 15).toFixed(0) + '%';
+            document.getElementById('ram-val').innerText = (Math.random()*5 + 40).toFixed(1) + '%';
+            document.getElementById('traffic-bar').style.height = (Math.random()*80 + 10) + '%';
         }
 
         setInterval(runHealthCheck, 5000);
-        setInterval(fetchMetrics, 3000);
-        window.onload = () => {
-            runHealthCheck();
-            document.getElementById('user_email') && (document.getElementById('user-display').innerText = localStorage.getItem('user_email'));
-        };
+        setInterval(fetchMetrics, 2000);
+        window.onload = () => { runHealthCheck(); fetchMetrics(); };
     </script>
 </body>
 </html>
