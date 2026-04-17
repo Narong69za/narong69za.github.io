@@ -19,17 +19,16 @@ body { background:#000; color:#fff; font-family:'Inter',sans-serif; overflow-x: 
     -webkit-text-fill-color:transparent;
 }
 
-/* ✨ เอฟเฟกต์ตัวหนังสือสีทองวิ่งสะท้อนแสง (อลังการ) */
-.gold-vip {
-    background: linear-gradient(to right, #bf953f, #fcf6ba, #b38728, #fbf5b7, #aa771c);
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: shine 3s linear infinite;
-    text-shadow: 0 0 10px rgba(191, 149, 63, 0.3);
+/* ✨ เอฟเฟกต์วิ๊งวับ (แว๊บไปแว๊บมา สว่างสลับมืด) */
+.gold-blink {
+    color: #fcf6ba;
+    text-shadow: 0 0 10px rgba(252, 246, 186, 0.8), 0 0 20px rgba(191, 149, 63, 0.5);
+    animation: blink-sparkle 1.5s ease-in-out infinite alternate;
 }
-@keyframes shine {
-    to { background-position: 200% center; }
+
+@keyframes blink-sparkle {
+    0% { opacity: 0.3; text-shadow: 0 0 5px rgba(191, 149, 63, 0.3); transform: scale(0.98); }
+    100% { opacity: 1; text-shadow: 0 0 15px rgba(252, 246, 186, 1), 0 0 25px rgba(255, 255, 255, 0.8); transform: scale(1.02); }
 }
 
 .method-btn {
@@ -84,13 +83,21 @@ input#payAmount:focus {
 
 <main class="p-4 md:p-6 max-w-md mx-auto min-h-screen flex flex-col justify-center relative">
 
-<div class="w-full bg-gradient-to-r from-yellow-900/30 via-yellow-600/10 to-yellow-900/30 border border-yellow-500/20 rounded-2xl p-4 mb-8 text-center shadow-[0_0_20px_rgba(191,149,63,0.15)] relative overflow-hidden">
+<div class="w-full bg-gradient-to-r from-yellow-900/30 via-yellow-600/10 to-yellow-900/30 border border-yellow-500/20 rounded-2xl p-4 md:p-5 mb-8 text-center shadow-[0_0_20px_rgba(191,149,63,0.15)] relative overflow-hidden">
     <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20 mix-blend-overlay"></div>
-    <p class="gold-vip font-black text-[10px] md:text-[11px] leading-loose tracking-widest uppercase relative z-10">
-        ✨ บริการ รับทำระบบ เติมเงิน ระบบ AI ระบบเว็บไซต์ ✨<br>
-        เติมเกมส์ เกมส์ออนไลน์ ที่ปิดตัวไปแล้ว<br>
-        <span class="text-white drop-shadow-[0_0_5px_rgba(255,255,255,0.8)] text-xs bg-black/50 px-3 py-1 rounded-full border border-white/10 inline-block mt-2">ให้บริการ ระบบเติมเงิน เพียง 50 ต่อยอด โอน 5000</span>
-    </p>
+    <div class="relative z-10 flex flex-col gap-2">
+        <p class="gold-blink font-black text-[11px] md:text-xs tracking-widest uppercase">
+            ✨ บริการ รับทำระบบ เติมเงิน ระบบ AI ระบบเว็บไซต์ ✨
+        </p>
+        <p class="text-yellow-200/80 font-bold text-[9px] md:text-[10px] tracking-widest uppercase">
+            เติมเกมส์ เกมส์ออนไลน์ ที่ปิดตัวไปแล้ว
+        </p>
+        <div class="mt-2">
+            <span class="gold-blink text-[10px] md:text-[11px] bg-black/60 px-4 py-2 rounded-full border border-yellow-500/30 inline-block font-black tracking-wider shadow-[0_0_10px_rgba(191,149,63,0.3)]">
+                ให้บริการ ระบบเติมเงิน เพียง 50 ต่อยอด โอน 5000
+            </span>
+        </div>
+    </div>
 </div>
 
 <div class="text-center mb-10">
@@ -132,7 +139,7 @@ input#payAmount:focus {
         <div id="modal-header" class="p-4 text-center bg-red-600 relative overflow-hidden">
             <div class="absolute inset-0 bg-white/10"></div>
             <span class="text-[10px] text-white/90 font-bold uppercase tracking-wider relative z-10">พัฒนาโดย</span>
-            <div class="text-sm font-black italic text-white relative z-10 drop-shadow-md">SN PAYMENT SYSTEM</div>
+            <div class="text-sm font-black italic text-white relative z-10 drop-shadow-md">ต้องดีแค่ไหน โลกถึงจะจำ</div>
         </div>
 
         <div class="p-6 text-center">
