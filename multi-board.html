@@ -29,8 +29,9 @@
         .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
         ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
         
-        /* Faucet Overlay Blur */
+        /* Faucet Overlay Blur & Terminal */
         .locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        .termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #0f0; padding: 10px; height: 120px; overflow-y: auto; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
     </style>
 </head>
 <body class="pb-12">
@@ -61,8 +62,43 @@
             <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/40 transition"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </header>
+
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 max-w-[1800px] mx-auto px-4 sm:px-6">
-        
+
+        <div class="session-box xl:col-span-4" style="--glow: rgba(255, 149, 0, 0.2)">
+            <div class="header-box border-b border-orange-500/20 p-4 flex justify-between items-center">
+                <span class="text-xs font-black text-orange-400 uppercase"><i class="fas fa-gamepad mr-2"></i>Private Game Server Control</span>
+                <span id="gs-main-status" class="text-[10px] font-bold text-gray-500"><i class="fas fa-circle text-gray-600 mr-1"></i>SYSTEM IDLE</span>
+            </div>
+            <div class="p-5 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-black/50 p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-sm font-black text-white uppercase mb-1"><i class="fab fa-windows text-blue-400 mr-2"></i>Windows Engine</h3>
+                            <p class="text-[10px] text-gray-500 mono">game_server_core.exe</p>
+                        </div>
+                        <span id="gs-win-status" class="px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase">OFFLINE</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="controlServer('win', 'start')" class="flex-1 py-2 bg-green-600/20 text-green-400 hover:bg-green-600 hover:text-white border border-green-500/50 rounded-lg text-[10px] font-bold uppercase transition"><i class="fas fa-play mr-1"></i> Start</button>
+                        <button onclick="controlServer('win', 'stop')" class="flex-1 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-500/50 rounded-lg text-[10px] font-bold uppercase transition"><i class="fas fa-stop mr-1"></i> Stop</button>
+                    </div>
+                </div>
+                <div class="bg-black/50 p-4 rounded-2xl border border-white/5 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-4">
+                        <div>
+                            <h3 class="text-sm font-black text-white uppercase mb-1"><i class="fab fa-android text-green-400 mr-2"></i>Android Engine</h3>
+                            <p class="text-[10px] text-gray-500 mono">api_mobile_bridge.js</p>
+                        </div>
+                        <span id="gs-and-status" class="px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase">OFFLINE</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="controlServer('android', 'start')" class="flex-1 py-2 bg-green-600/20 text-green-400 hover:bg-green-600 hover:text-white border border-green-500/50 rounded-lg text-[10px] font-bold uppercase transition"><i class="fas fa-play mr-1"></i> Start</button>
+                        <button onclick="controlServer('android', 'stop')" class="flex-1 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-500/50 rounded-lg text-[10px] font-bold uppercase transition"><i class="fas fa-stop mr-1"></i> Stop</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="session-box" style="--glow: rgba(0, 122, 255, 0.15)">
             <div class="header-box border-b border-blue-500/20 p-4"><span class="text-xs font-black text-blue-400 uppercase"><i class="fas fa-users-cog mr-2"></i>User Control</span></div>
             <div class="p-5 flex flex-col flex-1 gap-4">
@@ -75,12 +111,12 @@
         </div>
 
         <div class="session-box" style="--glow: rgba(191, 90, 242, 0.15)">
-            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits</span></div>
+            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits (Live)</span></div>
             <div class="p-5 flex flex-col justify-center gap-4">
-                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">RunwayML</span><span id="cr-runway" class="text-purple-400 mono">...</span></div>
-                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Replicate</span><span id="cr-replicate" class="text-green-400 mono">...</span></div>
-                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Gemini</span><span id="cr-gemini" class="text-blue-400 mono">...</span></div>
-                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">ElevenLabs</span><span id="cr-eleven" class="text-red-400 mono">...</span></div>
+                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">RunwayML</span><span id="cr-runway" class="text-purple-400 mono">Fetching...</span></div>
+                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Replicate</span><span id="cr-replicate" class="text-green-400 mono">Fetching...</span></div>
+                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Gemini</span><span id="cr-gemini" class="text-blue-400 mono">Fetching...</span></div>
+                <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">ElevenLabs</span><span id="cr-eleven" class="text-red-400 mono">Fetching...</span></div>
             </div>
         </div>
 
@@ -98,17 +134,23 @@
         </div>
 
         <div class="session-box" style="--glow: rgba(255, 204, 0, 0.15)">
-            <div class="header-box border-b border-amber-500/20 p-4"><span class="text-xs font-black text-amber-400 uppercase"><i class="fas fa-coins mr-2"></i>Faucet Engine</span></div>
+            <div class="header-box border-b border-amber-500/20 p-4"><span class="text-xs font-black text-amber-400 uppercase"><i class="fas fa-coins mr-2"></i>Faucet Termux Bot</span></div>
             
             <div id="faucet-locked" class="locked-overlay rounded-b-2xl">
                 <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
-                <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">You need to register<br>to access Faucet Crypto</p>
-                <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition shadow-[0_0_15px_rgba(255,204,0,0.4)]">Register Now</button>
+                <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register to run<br>Termux Auto-Faucet</p>
+                <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition shadow-[0_0_15px_rgba(255,204,0,0.4)]">Initialize Script</button>
             </div>
 
-            <div class="p-5 flex flex-col justify-center h-full text-center gap-4 filter blur-sm transition duration-300" id="faucet-content">
-                <div><p class="text-[10px] text-gray-500 uppercase">Total Dispensed (24h)</p><p class="text-4xl font-black mono text-amber-400 mt-1"><span id="faucet-dispensed">0.000</span> <span class="text-lg">SOL</span></p></div>
-                <div class="bg-black/50 p-3 rounded-lg border border-amber-500/20 flex justify-between items-center"><span class="text-xs text-gray-400">Hot Wallet</span><span id="faucet-bal" class="text-sm mono font-bold text-white">0.000 SOL</span></div>
+            <div class="p-4 flex flex-col justify-between h-full gap-3 filter blur-sm transition duration-300" id="faucet-content">
+                <div class="flex justify-between items-center bg-black/50 p-2 rounded border border-amber-500/20">
+                    <div><p class="text-[9px] text-gray-500 uppercase">Total Earned</p><p class="text-xl font-black mono text-amber-400"><span id="faucet-dispensed">0.00000</span> <span class="text-[10px]">USDT</span></p></div>
+                    <div class="text-right"><p class="text-[9px] text-gray-500 uppercase">Status</p><p class="text-[10px] text-green-400 font-bold pulse-dot"><i class="fas fa-circle text-[8px]"></i> FARMING</p></div>
+                </div>
+                <div id="termux-console" class="termux-box flex-1">
+                    <div class="text-gray-500">root@sn-server:~# ./faucet_bot.sh</div>
+                    <div class="text-cyan-400">[SYSTEM] Connecting to pool...</div>
+                </div>
             </div>
         </div>
 
@@ -120,7 +162,6 @@
                 <div class="flex-1 video-container shadow-lg border border-cyan-500/30">
                     <iframe src="https://www.youtube.com/embed/O3k277TKgws" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                 </div>
-                
                 <div class="flex-1 flex flex-col justify-between gap-4">
                     <div>
                         <p id="lbl-api-key" class="text-[10px] text-gray-400 uppercase font-bold mb-1">Termux API Key</p>
@@ -132,50 +173,48 @@
                             <i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Subscribe & Unlock Key</span>
                         </button>
                     </div>
-
                     <div class="grid grid-cols-2 gap-2 mt-2">
                         <button id="btn-99" class="bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/50 text-white text-[10px] font-bold py-3 rounded-xl transition">99 / Month</button>
                         <button id="btn-299" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-[10px] font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(0,122,255,0.3)] transition">299 / Month</button>
                     </div>
-
-                    <div class="bg-white/5 p-3 rounded-xl border border-white/5 grid grid-cols-2 gap-2 text-center mt-2">
-                        <div><p id="lbl-tappers" class="text-[9px] text-gray-500 uppercase">Tappers</p><p id="bot-tappers" class="text-xl font-black text-white">0</p></div>
-                        <div><p class="text-[9px] text-gray-500 uppercase">Req/Sec</p><p id="bot-req" class="text-xl font-black text-white">0</p></div>
-                    </div>
                 </div>
             </div>
         </div>
-
         <div class="session-box xl:col-span-2 border-gray-700">
-            <div class="header-box bg-gray-900/50 p-4"><span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-history mr-2"></i>Security Audit Trail</span></div>
+            <div class="header-box bg-gray-900/50 p-4"><span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit Trail (Live)</span></div>
             <div class="p-0 flex-1 overflow-x-auto min-h-[200px]">
                 <table class="w-full text-left text-[10px] mono">
-                    <thead class="bg-white/5 text-gray-400"><tr><th class="p-3">TIMESTAMP</th><th class="p-3">USER / ROLE</th><th class="p-3">IP ADDRESS</th><th class="p-3">EVENT STATUS</th></tr></thead>
+                    <thead class="bg-white/5 text-gray-400"><tr><th class="p-3">TIMESTAMP</th><th class="p-3">USER / SERVICE</th><th class="p-3">IP ADDRESS</th><th class="p-3">EVENT ACTION</th></tr></thead>
                     <tbody id="audit-table-body" class="text-gray-300"></tbody>
                 </table>
             </div>
         </div>
         
         <div class="session-box xl:col-span-2 border-gray-700">
-            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-chart-line mr-2"></i>Live System Analytics</span></div>
+            <div class="header-box border-b border-purple-500/20 p-4 flex justify-between">
+                <span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-server mr-2"></i>Live Resource Analytics</span>
+                <div class="text-[9px] mono text-gray-400"><span class="mr-2">DISK: <span id="sys-disk" class="text-white">--%</span></span> <span>NET: <span id="sys-net" class="text-white">-- mbps</span></span></div>
+            </div>
             <div class="p-5 flex-1 relative w-full h-full min-h-[200px]"><canvas id="sysChart"></canvas></div>
         </div>
         
-        <div class="session-box xl:col-span-2" style="--glow: rgba(255, 59, 48, 0.15)">
-            <div class="header-box border-b border-red-500/20 p-4"><span class="text-xs font-black text-red-400 uppercase"><i class="fas fa-tasks mr-2"></i>Render Queue</span></div>
-            <div class="p-4 flex-1 flex flex-col justify-center items-center">
-                <div class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center mb-3"><i id="queue-icon" class="fas fa-check text-green-500 text-xl"></i></div>
-                <p id="queue-text" class="text-[11px] text-gray-500 uppercase font-bold">ALL QUEUES CLEAR</p>
+        <div class="session-box xl:col-span-4" style="--glow: rgba(255, 59, 48, 0.15)">
+            <div class="header-box border-b border-red-500/20 p-4"><span class="text-xs font-black text-red-400 uppercase"><i class="fas fa-tasks mr-2"></i>Global Render & Job Queue</span></div>
+            <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
+                <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-spinner fa-spin text-amber-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Pending</p><p id="q-pending" class="text-xl font-black text-white">0</p></div>
+                <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-cog fa-spin text-blue-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Processing</p><p id="q-processing" class="text-xl font-black text-white">0</p></div>
+                <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-check-circle text-green-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Completed</p><p id="q-completed" class="text-xl font-black text-white">0</p></div>
+                <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-times-circle text-red-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Failed</p><p id="q-failed" class="text-xl font-black text-white">0</p></div>
             </div>
         </div>
 
     </div>
+    
     <script>
-        // � วิ่งตรงเข้าโดเมน API (Nginx Reverse Proxy) ตัวเดียวจบ!
         const API_BASE = "https://api.sn-designstudio.dev"; 
         let socket;
 
-        // ================= LANGUAGE TOGGLE LOGIC =================
+        // ================= LANGUAGE TOGGLE =================
         let currentLang = 'EN';
         const langDict = {
             EN: { botTitle: "Hamster Bot & Termux Key", unlockText: "Subscribe & Unlock Key", m99: "99 / Month", m299: "299 / Month", lblApi: "Termux API Key", lblTapper: "Tappers" },
@@ -185,36 +224,27 @@
         function toggleLanguage() {
             currentLang = currentLang === 'EN' ? 'TH' : 'EN';
             document.getElementById('lang-btn').innerText = currentLang === 'EN' ? 'TH | EN' : 'EN | TH';
-            
-            // แปลเฉพาะส่วน Bot ตามที่คุณขอ
             document.getElementById('bot-title').innerHTML = `<i class="fab fa-telegram-plane mr-2"></i>${langDict[currentLang].botTitle}`;
             document.getElementById('txt-unlock').innerText = langDict[currentLang].unlockText;
             document.getElementById('btn-99').innerText = langDict[currentLang].m99;
             document.getElementById('btn-299').innerText = langDict[currentLang].m299;
             document.getElementById('lbl-api-key').innerText = langDict[currentLang].lblApi;
-            document.getElementById('lbl-tappers').innerText = langDict[currentLang].lblTapper;
         }
 
         // ================= BOT API KEY LOGIC =================
         let isKeyUnlocked = false;
         function unlockAPIKey() {
-            // เปิดคลิป YouTube Shorts ในแท็บใหม่
             window.open('https://youtube.com/shorts/O3k277TKgws?si=tVf24rQs6tUeBS6w', '_blank');
-            showToast("System checking your subscription...", "warning");
-            
-            // หน่วงเวลาจำลองการตรวจสอบ 5 วินาที ก่อนโชว์ Key จริง
+            showToast("Checking subscription...", "warning");
             const btn = document.getElementById('btn-unlock');
             btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> <span>Verifying...</span>';
-            btn.disabled = true;
-            btn.classList.replace('bg-red-600', 'bg-gray-600');
+            btn.disabled = true; btn.classList.replace('bg-red-600', 'bg-gray-600');
 
             setTimeout(() => {
                 isKeyUnlocked = true;
                 const keyInput = document.getElementById('termux-key');
                 keyInput.value = "HM-TRMX-9982-XXXX-POLCY";
-                keyInput.classList.remove('text-gray-500');
-                keyInput.classList.add('text-cyan-300', 'border-cyan-500/50');
-                
+                keyInput.classList.remove('text-gray-500'); keyInput.classList.add('text-cyan-300', 'border-cyan-500/50');
                 btn.innerHTML = '<i class="fas fa-check-circle text-sm"></i> <span>Unlocked Successfully</span>';
                 btn.classList.replace('bg-gray-600', 'bg-green-600');
                 showToast("Termux API Key Unlocked!", "success");
@@ -222,23 +252,69 @@
         }
 
         function copyKey() {
-            if(!isKeyUnlocked) {
-                showToast("Please subscribe and watch the video to unlock first!", "error");
-                return;
-            }
-            const key = document.getElementById('termux-key').value;
-            navigator.clipboard.writeText(key).then(() => {
-                showToast("API Key copied to clipboard!", "success");
-            });
+            if(!isKeyUnlocked) return showToast("Watch the video to unlock first!", "error");
+            navigator.clipboard.writeText(document.getElementById('termux-key').value).then(() => showToast("Key copied!", "success"));
         }
 
-        // ================= FAUCET LOGIC =================
+        // ================= FAUCET TERMUX BOT SIMULATION =================
+        let faucetInterval;
+        let faucetTotal = 0.00000;
+        const coins = ['USDT', 'SOL', 'BTC', 'ETH', 'TON'];
+        
         function registerFaucet() {
-            // ซ่อน Overlay และยกเลิกเบลอ
             document.getElementById('faucet-locked').style.display = 'none';
             document.getElementById('faucet-content').classList.remove('blur-sm');
             localStorage.setItem('faucet_registered', 'true');
-            showToast("Faucet Engine Registered Successfully!", "success");
+            showToast("Script Initialized!", "success");
+            startTermuxBot();
+        }
+
+        function startTermuxBot() {
+            const consoleDiv = document.getElementById('termux-console');
+            faucetInterval = setInterval(() => {
+                const coin = coins[Math.floor(Math.random() * coins.length)];
+                const amt = (Math.random() * 0.05).toFixed(5);
+                faucetTotal += parseFloat(amt);
+                
+                const line = document.createElement('div');
+                line.className = 'text-green-400 mt-1';
+                line.innerText = `[SUCCESS] Bypassed captacha. Claimed +${amt} ${coin}`;
+                
+                consoleDiv.appendChild(line);
+                if(consoleDiv.childElementCount > 6) consoleDiv.removeChild(consoleDiv.firstChild);
+                consoleDiv.scrollTop = consoleDiv.scrollHeight;
+                
+                document.getElementById('faucet-dispensed').innerText = faucetTotal.toFixed(5);
+            }, 3500);
+        }
+
+        // ================= GAME SERVER CONTROL (API CALLS) =================
+        async function controlServer(type, action) {
+            // Note: Frontend UI code. The Backend (Node.js) needs an endpoint /api/system/server to actually execute OS commands.
+            showToast(`Sending ${action} command to ${type} server...`, "warning");
+            try {
+                // ตัวอย่างการยิง API จริง (ฝั่งหลังบ้านต้องเขียนรับด้วยนะครับ)
+                /*
+                const res = await fetch(`${API_BASE}/api/system/server`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('sn_jwt')}` },
+                    body: JSON.stringify({ server_type: type, command: action })
+                });
+                const data = await res.json();
+                */
+                
+                // Simulation for now until backend is written:
+                setTimeout(() => {
+                    const statusEl = document.getElementById(`gs-${type === 'win' ? 'win' : 'and'}-status`);
+                    if(action === 'start') {
+                        statusEl.innerText = "ONLINE"; statusEl.className = "px-2 py-1 bg-green-900/50 text-green-400 text-[9px] rounded font-bold uppercase pulse-dot";
+                        showToast(`${type.toUpperCase()} Server Started!`, "success");
+                    } else {
+                        statusEl.innerText = "OFFLINE"; statusEl.className = "px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase";
+                        showToast(`${type.toUpperCase()} Server Stopped!`, "error");
+                    }
+                }, 1000);
+                
+            } catch (e) { showToast("Command failed!", "error"); }
         }
 
         // ================= CORE SYSTEM LOGIC =================
@@ -256,47 +332,26 @@
                 { label: 'CPU %', borderColor: '#bf5af2', backgroundColor: 'rgba(191, 90, 242, 0.1)', data: Array(20).fill(0), fill: true, tension: 0.4 },
                 { label: 'RAM %', borderColor: '#32d74b', backgroundColor: 'rgba(50, 215, 75, 0.1)', data: Array(20).fill(0), fill: true, tension: 0.4 }
             ]},
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } } }
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } }, animation: false }
         });
 
         async function loginAdmin() {
             const user = document.getElementById('admin-user').value;
             const pass = document.getElementById('admin-pass').value;
             try {
-                const res = await fetch(`${API_BASE}/api/admin/login`, { 
-                    method: 'POST', 
-                    headers: { 'Content-Type': 'application/json' }, 
-                    body: JSON.stringify({ username: user, password: pass }) 
-                });
+                const res = await fetch(`${API_BASE}/api/admin/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: user, password: pass }) });
                 const data = await res.json();
                 if(data.success) {
-                    localStorage.setItem('sn_jwt', data.token);
-                    localStorage.setItem('sn_refresh', data.refreshToken);
-                    localStorage.setItem('sn_user', user);
-                    localStorage.setItem('sn_role', data.role);
+                    localStorage.setItem('sn_jwt', data.token); localStorage.setItem('sn_refresh', data.refreshToken);
+                    localStorage.setItem('sn_user', user); localStorage.setItem('sn_role', data.role);
                     location.reload();
                 } else document.getElementById('login-error').style.display = 'block';
-            } catch (e) { showToast("API Offline or SSL Error", "error"); console.error(e); }
+            } catch (e) { showToast("API Offline or SSL Error", "error"); }
         }
 
         async function logoutAdmin() {
-            await fetch(`${API_BASE}/api/admin/logout`, { 
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('sn_jwt')}` }, 
-                body: JSON.stringify({ username: localStorage.getItem('sn_user') }) 
-            });
             localStorage.clear(); location.reload();
         }
-
-        async function refreshToken() {
-            try {
-                const res = await fetch(`${API_BASE}/api/admin/refresh`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: localStorage.getItem('sn_user'), refreshToken: localStorage.getItem('sn_refresh') }) });
-                const data = await res.json();
-                if(data.success) { localStorage.setItem('sn_jwt', data.token); initSocket(data.token); } 
-                else logoutAdmin();
-            } catch (e) { logoutAdmin(); }
-        }
-        setInterval(() => { if (localStorage.getItem('sn_jwt')) refreshToken(); }, 14 * 60 * 1000);
 
         function initSocket(token) {
             if(socket) socket.disconnect();
@@ -308,62 +363,51 @@
                 el.className = 'px-4 py-2 bg-green-900/30 text-green-400 rounded-xl text-[10px] font-black border border-green-500/30';
             });
 
-            socket.on("connect_error", (err) => { if(err.message.includes("expired") || err.message.includes("Unauthorized")) refreshToken(); });
-            socket.on("system_alert", (alert) => showToast(alert.msg, alert.type));
-            
             socket.on("metrics_history", (history) => {
-                sysChart.data.datasets[0].data = history.map(h => h.cpu);
-                sysChart.data.datasets[1].data = history.map(h => h.ram);
-                sysChart.update();
+                sysChart.data.datasets[0].data = history.map(h => h.cpu); sysChart.data.datasets[1].data = history.map(h => h.ram); sysChart.update();
             });
 
-            socket.on("audit_update", (logs) => {
-                document.getElementById('audit-table-body').innerHTML = logs.map(log => `
-                    <tr class="border-b border-white/5 hover:bg-white/5 transition">
-                        <td class="p-3">${new Date(log.time).toLocaleTimeString()}</td>
-                        <td class="p-3 text-blue-400">${log.user}</td>
-                        <td class="p-3 text-gray-500">${log.ip.replace('::ffff:', '')}</td>
-                        <td class="p-3 ${log.status.includes('SUCCESS') ? 'text-green-400' : 'text-red-500'}">${log.status}</td>
-                    </tr>
-                `).join('');
-            });
-
+            // REAL DATA ASSIGNMENT FROM BACKEND
             socket.on("system_update", (data) => {
+                // 1. Live System Analytics
                 if(data.system) {
                     sysChart.data.datasets[0].data.shift(); sysChart.data.datasets[0].data.push(data.system.cpu);
                     sysChart.data.datasets[1].data.shift(); sysChart.data.datasets[1].data.push(data.system.ram);
                     sysChart.update();
+                    document.getElementById('sys-disk').innerText = (data.system.disk || '0') + '%';
+                    document.getElementById('sys-net').innerText = (data.system.network || '0') + ' mbps';
                 }
+                // 2. Real Users
                 if(data.users) {
-                    document.getElementById('db-total-users').innerText = data.users.total;
-                    document.getElementById('db-active-users').innerText = data.users.active_today;
+                    document.getElementById('db-total-users').innerText = data.users.total || '0';
+                    document.getElementById('db-active-users').innerText = data.users.active_today || '0';
                 }
+                // 3. Real Engine Credits
                 if(data.ai_engines) {
-                    document.getElementById('cr-runway').innerText = '$' + data.ai_engines.runway;
-                    document.getElementById('cr-replicate').innerText = '$' + data.ai_engines.replicate;
-                    document.getElementById('cr-gemini').innerText = '$' + data.ai_engines.gemini;
-                    document.getElementById('cr-eleven').innerText = data.ai_engines.elevenlabs;
+                    document.getElementById('cr-runway').innerText = '$' + (data.ai_engines.runway || '0.00');
+                    document.getElementById('cr-replicate').innerText = '$' + (data.ai_engines.replicate || '0.00');
+                    document.getElementById('cr-gemini').innerText = '$' + (data.ai_engines.gemini || '0.00');
+                    document.getElementById('cr-eleven').innerText = data.ai_engines.elevenlabs || '0';
                 }
-                if(data.hamster_bot) {
-                    document.getElementById('bot-tappers').innerText = data.hamster_bot.tappers;
-                    document.getElementById('bot-req').innerText = data.hamster_bot.req_sec + '/s';
-                }
-                if(data.faucet) {
-                    document.getElementById('faucet-dispensed').innerText = data.faucet.dispensed;
-                    document.getElementById('faucet-bal').innerText = data.faucet.balance;
-                }
+                // 4. Real Render Queue
                 if(data.jobs) {
-                    const pending = data.jobs.pending;
-                    const icon = document.getElementById('queue-icon');
-                    const text = document.getElementById('queue-text');
-                    if(pending > 0) {
-                        icon.className = 'fas fa-spinner fa-spin text-amber-500 text-xl';
-                        text.innerText = pending + ' PENDING';
-                    } else {
-                        icon.className = 'fas fa-check text-green-500 text-xl';
-                        text.innerText = 'ALL QUEUES CLEAR';
-                    }
+                    document.getElementById('q-pending').innerText = data.jobs.pending || '0';
+                    document.getElementById('q-processing').innerText = data.jobs.processing || '0';
+                    document.getElementById('q-completed').innerText = data.jobs.completed || '0';
+                    document.getElementById('q-failed').innerText = data.jobs.failed || '0';
                 }
+            });
+
+            // REAL AUDIT LOGS
+            socket.on("audit_update", (logs) => {
+                document.getElementById('audit-table-body').innerHTML = logs.map(log => `
+                    <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                        <td class="p-3">${new Date(log.time).toLocaleTimeString()}</td>
+                        <td class="p-3 text-blue-400 font-bold">${log.user}</td>
+                        <td class="p-3 text-gray-500">${log.ip.replace('::ffff:', '')}</td>
+                        <td class="p-3 ${log.status.includes('OK') || log.status.includes('SUCCESS') ? 'text-green-400' : 'text-red-500'} font-bold">${log.status}</td>
+                    </tr>
+                `).join('');
             });
         }
 
@@ -372,14 +416,12 @@
             if(token) {
                 document.getElementById('login-overlay').style.display = 'none';
                 document.getElementById('role-badge').style.display = 'block';
-                const role = localStorage.getItem('sn_role') || "viewer";
-                document.getElementById('role-badge').innerText = `ROLE: ${role}`;
-                if(role !== "owner") document.getElementById('btn-manage-db').style.display = 'none';
+                document.getElementById('role-badge').innerText = `ROLE: ${localStorage.getItem('sn_role') || "owner"}`;
                 initSocket(token);
-                
-                // เช็คสถานะ Faucet (จำลองว่าถ้าเคยลงทะเบียนแล้ว ให้เปิดเลย)
                 if(localStorage.getItem('faucet_registered')) {
-                    registerFaucet();
+                    document.getElementById('faucet-locked').style.display = 'none';
+                    document.getElementById('faucet-content').classList.remove('blur-sm');
+                    startTermuxBot();
                 }
             }
         };
