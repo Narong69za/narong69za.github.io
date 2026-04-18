@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
-<title>SN ULTRA • FINAL GOD MODE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>SN ULTRA • FULL MERGED FINAL</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
@@ -15,776 +16,988 @@
 
 <style>
 :root{
---bg-dark:#030712;
---glass-bg:rgba(17,24,39,.7);
---glass-border:rgba(255,255,255,.08);
---neon-blue:#3b82f6;
---neon-green:#10b981;
---neon-red:#ef4444;
---neon-amber:#f59e0b;
+--bg:#030712;
+--glass:rgba(17,24,39,.72);
+--line:rgba(255,255,255,.08);
+--blue:#3b82f6;
+--green:#10b981;
+--red:#ef4444;
+--amber:#f59e0b;
 }
 *{box-sizing:border-box}
 body{
 margin:0;
-background:radial-gradient(circle at 50% -20%,#1e1b4b 0%,var(--bg-dark) 40%,var(--bg-dark) 100%);
+background:
+radial-gradient(circle at 50% -20%,#1e1b4b 0%,#030712 45%,#030712 100%);
 background-attachment:fixed;
-font-family:'Inter',sans-serif;
+font-family:Inter,sans-serif;
 color:#fff;
-overflow-x:hidden;
 min-height:100vh;
+overflow-x:hidden;
 }
 .mono{font-family:"JetBrains Mono",monospace}
-.glass-card{
-background:var(--glass-bg);
+.glass{
+background:var(--glass);
 backdrop-filter:blur(16px);
 -webkit-backdrop-filter:blur(16px);
-border:1px solid var(--glass-border);
+border:1px solid var(--line);
 border-radius:24px;
-box-shadow:0 8px 32px rgba(0,0,0,.5);
-transition:.3s;
+box-shadow:0 10px 35px rgba(0,0,0,.45);
 }
-.glass-card:hover{
-transform:translateY(-2px);
-box-shadow:0 12px 40px rgba(0,0,0,.7);
-}
-.label-glow{
+.card{padding:24px}
+.label{
 font-size:11px;
 letter-spacing:.2em;
+font-weight:900;
 text-transform:uppercase;
-font-weight:800;
 color:#93c5fd;
 }
-.value-glow{
-font-size:36px;
+.big{
+font-size:38px;
 font-weight:900;
 line-height:1.1;
-background:linear-gradient(to right,#fff,#93c5fd);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+margin-top:14px;
 }
-.badge{
-padding:6px 14px;
-border-radius:9999px;
-font-size:10px;
-font-weight:800;
-text-transform:uppercase;
-display:inline-flex;
-align-items:center;
-gap:6px;
-}
-.badge-ok{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
-.badge-warn{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
-.badge-bad{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
 .btn{
-padding:14px 20px;
-border-radius:16px;
-font-weight:800;
-font-size:12px;
+border:none;
+outline:none;
 cursor:pointer;
-border:1px solid rgba(255,255,255,.1);
+padding:14px 18px;
+border-radius:16px;
+font-weight:900;
+font-size:12px;
+color:#fff;
+transition:.2s;
 display:flex;
 align-items:center;
 justify-content:center;
 gap:8px;
-transition: 0.2s;
 }
-.btn:active{transform:scale(0.96)}
-.btn-blue{background:linear-gradient(135deg,#2563eb,#3b82f6)}
-.btn-green{background:linear-gradient(135deg,#059669,#10b981)}
-.btn-red{background:linear-gradient(135deg,#dc2626,#ef4444)}
-.btn-gray{background:rgba(31,41,55,.8)}
+.btn:active{transform:scale(.97)}
+.blue{background:linear-gradient(135deg,#1d4ed8,#3b82f6)}
+.green{background:linear-gradient(135deg,#047857,#10b981)}
+.red{background:linear-gradient(135deg,#b91c1c,#ef4444)}
+.gray{background:rgba(55,65,81,.9)}
 .input{
 width:100%;
-padding:16px 18px;
+padding:16px;
 border-radius:16px;
-background:rgba(0,0,0,.5);
-border:1px solid rgba(255,255,255,.1);
+border:1px solid rgba(255,255,255,.08);
+background:rgba(0,0,0,.45);
 color:#fff;
 outline:none;
 }
-.table-wrap{overflow:auto;max-height:400px;border-radius:16px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:14px 18px;font-size:12px;text-align:left}
-th{color:#9ca3af;font-size:11px}
-.pulse-dot{
+.badge{
+padding:7px 12px;
+border-radius:999px;
+font-size:10px;
+font-weight:900;
+display:inline-flex;
+gap:8px;
+align-items:center;
+text-transform:uppercase;
+}
+.ok{
+background:rgba(16,185,129,.12);
+color:#10b981;
+border:1px solid rgba(16,185,129,.35);
+}
+.warn{
+background:rgba(245,158,11,.12);
+color:#f59e0b;
+border:1px solid rgba(245,158,11,.35);
+}
+.bad{
+background:rgba(239,68,68,.12);
+color:#ef4444;
+border:1px solid rgba(239,68,68,.35);
+}
+.dot{
 width:8px;height:8px;border-radius:50%;
 background:currentColor;
-animation:pulse 2s infinite;
+animation:pulse 1.7s infinite;
 }
 @keyframes pulse{
 0%{opacity:1}
-50%{opacity:.4}
+50%{opacity:.35}
 100%{opacity:1}
 }
-#loginOverlay{
-position:fixed;inset:0;z-index:9999;
-display:flex;align-items:center;justify-content:center;
+#login{
+position:fixed;
+inset:0;
+z-index:9999;
+display:flex;
+justify-content:center;
+align-items:center;
 padding:20px;
-background:rgba(0,0,0,.8);
+background:rgba(0,0,0,.82);
 }
-#toastWrap{
-position:fixed;top:24px;right:24px;z-index:99999;
-display:flex;flex-direction:column;gap:12px;
+#toast{
+position:fixed;
+top:20px;
+right:20px;
+z-index:99999;
+display:flex;
+flex-direction:column;
+gap:10px;
 }
 .toast{
-padding:16px 20px;
+min-width:260px;
+padding:14px 16px;
 border-radius:16px;
+background:#111827;
+border-left:4px solid #3b82f6;
 font-size:13px;
 font-weight:800;
-min-width:280px;
-background:rgba(17,24,39,.95);
-border-left: 4px solid #3b82f6;
+}
+.table-scroll{max-height:260px;overflow:auto}
+.term{
+background:#000;
+border-radius:16px;
+padding:14px;
+font-size:11px;
+line-height:1.45;
+min-height:130px;
+max-height:130px;
+overflow:auto;
+font-family:"JetBrains Mono",monospace;
 }
 canvas{max-height:320px}
-
-/* เพิ่มส่วนจัดการ Modal และ Terminal Lock */
-#user-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 16px; }
-.modal-content { background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 24px; padding: 24px; width: 100%; max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-.modal-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; margin-bottom: 12px; outline: none; }
-.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--glass-border); }
-.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-.locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f0; padding: 10px; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
-.termux-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+.hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<div id="toastWrap"></div>
+<div id="toast"></div>
 
-<div id="user-modal">
-    <div class="modal-content">
-        <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-black text-blue-400"><i class="fas fa-database mr-2"></i>MANAGE DATABASE</h3>
-            <button onclick="closeUserModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
-        </div>
-        <div class="mb-5 p-4 bg-white/5 border border-white/10 rounded-2xl">
-            <h4 class="text-xs text-gray-400 font-bold mb-3 uppercase"><i class="fas fa-user-plus mr-2"></i>Add / Update User</h4>
-            <input type="text" id="mng-user" placeholder="Username" class="modal-input mono text-sm">
-            <input type="number" id="mng-credit" placeholder="Credits (CR)" class="modal-input mono text-sm">
-            <button onclick="saveUser()" class="btn btn-green w-full py-3 mt-1">SAVE USER DATA</button>
-        </div>
-        <div class="p-4 bg-red-900/20 border border-red-500/20 rounded-2xl">
-             <h4 class="text-xs text-red-400 font-bold mb-3 uppercase"><i class="fas fa-ban mr-2"></i>Ban / Remove User</h4>
-             <input type="text" id="mng-ban-user" placeholder="Username to Ban/Remove" class="modal-input mono text-sm border-red-500/30">
-             <button onclick="deleteUser()" class="btn btn-red w-full py-3 mt-1">EXECUTE BAN</button>
-        </div>
-    </div>
-</div>
-
-<div id="loginOverlay">
-<div class="glass-card w-full max-w-md p-10">
+<!-- LOGIN -->
+<div id="login">
+<div class="glass card w-full max-w-md">
 <div class="text-center mb-8">
 <div class="text-4xl font-black italic">SN ULTRA</div>
-<div class="label-glow mt-2">FINAL GOD MODE ACCESS</div>
+<div class="label mt-2">FULL MERGED FINAL ACCESS</div>
 </div>
 
 <div class="space-y-4">
-<input id="loginUser" class="input mono" placeholder="Operator ID">
-<input id="loginPass" class="input mono" type="password" placeholder="Passcode">
-<button class="btn btn-blue w-full" onclick="login()">SECURE LOGIN</button>
+<input id="user" class="input mono" placeholder="Operator ID">
+<input id="pass" class="input mono" type="password" placeholder="Passcode">
+<button class="btn blue w-full" onclick="login()">SECURE LOGIN</button>
 </div>
 
-<div id="loginErr" class="text-red-400 text-xs mt-5 text-center hidden">
+<div id="loginErr" class="text-red-400 text-xs mt-4 text-center hidden">
 ACCESS DENIED
 </div>
 </div>
 </div>
 
-<div class="max-w-[1800px] mx-auto px-4 sm:px-6 pt-8 pb-6">
-<div class="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-end">
+<!-- TOP -->
+<div class="max-w-[1800px] mx-auto px-4 pt-8 pb-4">
+<div class="flex flex-col lg:flex-row gap-5 justify-between lg:items-end">
 
 <div>
-<div class="label-glow mb-1">Commercial Command Center</div>
-<div class="text-4xl sm:text-5xl font-black italic">SN ULTRA</div>
+<div class="label mb-1">Commercial Command Center</div>
+<div class="text-5xl font-black italic">SN ULTRA</div>
 </div>
 
-<div class="flex gap-3 flex-wrap items-center">
-<div id="socketState" class="badge badge-warn">
-<div class="pulse-dot"></div> CONNECTING
+<div class="flex flex-wrap gap-3 items-center">
+<div id="socketState" class="badge warn">
+<div class="dot"></div> CONNECTING
 </div>
 
-<div id="roleBadge" class="badge badge-ok hidden">ROLE</div>
+<div id="roleBadge" class="badge ok hidden">ROLE</div>
 
-<button class="btn btn-gray" onclick="refreshAll()"><i class="fa-solid fa-rotate-right"></i> REFRESH</button>
-<button class="btn btn-red" onclick="logout()"><i class="fa-solid fa-power-off"></i> LOGOUT</button>
-</div>
+<button class="btn gray" onclick="refreshAll()">
+<i class="fa-solid fa-rotate-right"></i> REFRESH
+</button>
 
-</div>
-</div>
-<div class="max-w-[1800px] mx-auto px-4 sm:px-6 pb-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-
-<div class="glass-card p-6">
-<div class="label-glow">CPU Usage</div>
-<div id="cpuVal" class="value-glow mono mt-4">0%</div>
+<button class="btn red" onclick="logout()">
+<i class="fa-solid fa-power-off"></i> LOGOUT
+</button>
 </div>
 
-<div class="glass-card p-6">
-<div class="label-glow">RAM Usage</div>
-<div id="ramVal" class="value-glow mono mt-4">0%</div>
+</div>
 </div>
 
-<div class="glass-card p-6">
-<div class="label-glow">Users Today</div>
-<div id="usersVal" class="value-glow mono mt-4">0</div>
+<!-- GRID -->
+<div class="max-w-[1800px] mx-auto px-4 pb-10 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+
+<!-- KPI -->
+<div class="glass card">
+<div class="label">CPU Usage</div>
+<div id="cpuVal" class="big mono">0%</div>
 </div>
 
-<div class="glass-card p-6">
-<div class="label-glow">Queue Pending</div>
-<div id="queueVal" class="value-glow mono mt-4">0</div>
+<div class="glass card">
+<div class="label">RAM Usage</div>
+<div id="ramVal" class="big mono">0%</div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2">
-<div class="label-glow mb-6">Realtime System Metrics</div>
-<canvas id="sysChart"></canvas>
+<div class="glass card">
+<div class="label">Users Today</div>
+<div id="usersVal" class="big mono">0</div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2 flex flex-col">
-<div class="flex justify-between items-center mb-6">
-    <div class="label-glow">Billing & Usage Matrix</div>
-    <button onclick="openUserModal()" class="badge badge-ok cursor-pointer bg-blue-500/20 text-blue-400 border-blue-500/30 hover:bg-blue-500 hover:text-white transition"><i class="fas fa-users-cog mr-1"></i> MANAGE DB</button>
-</div>
-<div id="billingBox" class="space-y-2 max-h-[250px] overflow-y-auto"></div>
+<div class="glass card">
+<div class="label">Queue Pending</div>
+<div id="queueVal" class="big mono">0</div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-4">
-<div class="label-glow mb-6">Engine Control Matrix</div>
+<!-- MAIN CHART -->
+<div class="glass card xl:col-span-2">
+<div class="label mb-5">Realtime System Metrics</div>
+<div style="height:300px">
+<canvas id="mainChart"></canvas>
+</div>
+</div>
+
+<!-- BILLING -->
+<div class="glass card xl:col-span-2">
+<div class="flex justify-between items-center mb-5">
+<div class="label">Billing & Usage Matrix</div>
+
+<button class="badge ok cursor-pointer" onclick="openManage()">
+<i class="fa-solid fa-users-gear"></i> MANAGE DB
+</button>
+</div>
+
+<div id="billingBox" class="table-scroll space-y-2"></div>
+</div>
+
+<!-- ENGINE CONTROL -->
+<div class="glass card xl:col-span-4">
+<div class="label mb-5">Engine Control Matrix</div>
+
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
-<div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-<div class="font-black text-sm mb-1"><i class="fa-brands fa-windows text-blue-400 mr-2"></i>Windows Engine</div>
+<div class="bg-black/40 rounded-2xl p-5 border border-white/5">
+<div class="font-black text-sm mb-1">
+<i class="fa-brands fa-windows text-blue-400 mr-2"></i>
+Windows Engine
+</div>
 <div class="text-[10px] text-gray-500 mono mb-4">game_server_core.exe</div>
+
 <div class="flex justify-between items-center mb-4">
-<span class="text-xs font-bold text-gray-400">STATUS:</span>
-<div id="winState" class="badge badge-bad">OFFLINE</div>
+<span class="text-xs text-gray-400">STATUS</span>
+<div id="winState" class="badge bad">OFFLINE</div>
 </div>
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlServer('win','start')"><i class="fa-solid fa-play"></i> START</button>
-<button class="btn btn-red flex-1" onclick="controlServer('win','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
+
+<div class="grid grid-cols-2 gap-3">
+<button class="btn green" onclick="controlServer('win','start')">START</button>
+<button class="btn red" onclick="controlServer('win','stop')">STOP</button>
 </div>
 </div>
 
-<div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-<div class="font-black text-sm mb-1"><i class="fa-brands fa-android text-green-400 mr-2"></i>Android Engine</div>
+<div class="bg-black/40 rounded-2xl p-5 border border-white/5">
+<div class="font-black text-sm mb-1">
+<i class="fa-brands fa-android text-green-400 mr-2"></i>
+Android Engine
+</div>
 <div class="text-[10px] text-gray-500 mono mb-4">api_mobile_bridge.js</div>
+
 <div class="flex justify-between items-center mb-4">
-<span class="text-xs font-bold text-gray-400">STATUS:</span>
-<div id="androidState" class="badge badge-bad">OFFLINE</div>
+<span class="text-xs text-gray-400">STATUS</span>
+<div id="androidState" class="badge bad">OFFLINE</div>
 </div>
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlServer('android','start')"><i class="fa-solid fa-play"></i> START</button>
-<button class="btn btn-red flex-1" onclick="controlServer('android','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
+
+<div class="grid grid-cols-2 gap-3">
+<button class="btn green" onclick="controlServer('android','start')">START</button>
+<button class="btn red" onclick="controlServer('android','stop')">STOP</button>
 </div>
 </div>
 
-<div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-<div class="font-black text-sm mb-1"><i class="fa-solid fa-dragon text-purple-400 mr-2"></i>Yulgang Engine (โยวกัง)</div>
+<div class="bg-black/40 rounded-2xl p-5 border border-white/5">
+<div class="font-black text-sm mb-1">
+<i class="fa-solid fa-dragon text-purple-400 mr-2"></i>
+Yulgang Engine
+</div>
 <div class="text-[10px] text-gray-500 mono mb-4">yg_server_core.exe</div>
+
 <div class="flex justify-between items-center mb-4">
-<span class="text-xs font-bold text-gray-400">STATUS:</span>
-<div id="ygState" class="badge badge-bad">OFFLINE</div>
+<span class="text-xs text-gray-400">STATUS</span>
+<div id="ygState" class="badge bad">OFFLINE</div>
 </div>
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlServer('yulgang','start')"><i class="fa-solid fa-play"></i> START</button>
-<button class="btn btn-red flex-1" onclick="controlServer('yulgang','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
+
+<div class="grid grid-cols-2 gap-3">
+<button class="btn green" onclick="controlServer('yulgang','start')">START</button>
+<button class="btn red" onclick="controlServer('yulgang','stop')">STOP</button>
 </div>
 </div>
 
 </div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2">
-<div class="label-glow mb-6">Hamster Bot & Termux Key</div>
-<div class="flex flex-col sm:flex-row gap-5">
-    <div class="flex-1 video-container shadow-lg border border-cyan-500/30 bg-black">
-        <div id="yt-player-div"></div>
-    </div>
-    <div class="flex-1 flex flex-col justify-between gap-4">
-        <div>
-            <p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Termux API Key (12H Validity)</p>
-            <div class="flex gap-2 relative">
-                <input type="text" id="termux-key" readonly value="� WATCH FULL VIDEO TO UNLOCK" class="w-full bg-black/80 p-3 rounded-lg text-xs mono text-gray-500 border border-white/10 text-center focus:outline-none transition-all">
-                <button onclick="copyKey()" class="bg-cyan-600/20 hover:bg-cyan-500 text-cyan-400 hover:text-white border border-cyan-500/30 px-4 rounded-lg transition"><i class="fas fa-copy"></i></button>
-            </div>
-            <button id="btn-unlock" onclick="playUnlockVideo()" class="w-full mt-3 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg text-[10px] uppercase transition shadow-lg flex items-center justify-center gap-2">
-                <i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Play Video to Unlock</span>
-            </button>
-            <p id="key-timer" class="text-[9px] text-amber-500 font-bold text-center mt-2 hidden">Key expires in: <span id="time-left">12:00:00</span></p>
-        </div>
-    </div>
+<!-- LIVE RESOURCE -->
+<div class="glass card xl:col-span-2">
+<div class="label mb-5">Live Resource Analytics</div>
+
+<div class="space-y-2 mb-4 text-[11px] mono">
+<div class="flex justify-between bg-black/30 rounded-xl px-3 py-2">
+<span>DISK</span><span id="diskVal">0%</span>
+</div>
+<div class="flex justify-between bg-black/30 rounded-xl px-3 py-2">
+<span>NETWORK</span><span id="netVal">0 mbps</span>
 </div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2 relative overflow-hidden">
-<div class="label-glow mb-6">Faucet Termux Bot</div>
-
-<div id="faucet-locked" class="locked-overlay rounded-2xl">
-    <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
-    <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register to run<br>Termux Auto-Faucet</p>
-    <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition">Initialize Script</button>
-</div>
-
-<div class="flex flex-col justify-between h-full gap-3 filter blur-sm transition duration-300" id="faucet-content">
-    <div class="flex justify-between items-center bg-black/50 p-3 rounded border border-amber-500/20">
-        <div><p class="text-[9px] text-gray-500 uppercase">Total Earned</p><p class="text-xl font-black mono text-amber-400"><span id="faucet-dispensed">0.00000</span> <span class="text-[10px]">USDT</span></p></div>
-        <div class="text-right"><p class="text-[9px] text-gray-500 uppercase">Status</p><p class="text-[10px] text-green-400 font-bold pulse-dot"><i class="fas fa-circle text-[8px]"></i> FARMING</p></div>
-    </div>
-    <div id="termux-console" class="termux-box flex-1 border-amber-500/30 text-amber-400" style="max-height: 120px; overflow-y: auto;">
-        <div class="text-gray-500 termux-line">root@sn-server:~# ./faucet_bot.sh</div>
-        <div class="text-cyan-400 termux-line">[SYS] Connecting pool...</div>
-    </div>
+<div style="height:220px">
+<canvas id="analyticsChart"></canvas>
 </div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2">
-<div class="flex justify-between items-center mb-6">
-    <div class="label-glow">Hamster Bot Terminal</div>
-    <span id="hmState" class="px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase">OFFLINE</span>
+<!-- SECURITY -->
+<div class="glass card xl:col-span-2">
+<div class="label mb-5">Security Audit Live</div>
+<div id="auditList" class="space-y-2 max-h-[330px] overflow-auto"></div>
 </div>
-<div class="flex flex-col gap-4">
-    <div id="hmTerminal" class="termux-box border-cyan-500/30 text-cyan-400" style="max-height: 120px; overflow-y: auto; height: 120px;">
-        <div class="text-gray-500 termux-line">root@sn-server:~# await hamster_bot --start</div>
-    </div>
-    <div class="flex gap-2">
-        <button onclick="controlHamster('start')" class="flex-1 py-2 bg-green-600/20 text-green-400 hover:bg-green-600 border border-green-500/50 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-play"></i> Start</button>
-        <button onclick="controlHamster('stop')" class="flex-1 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 border border-red-500/50 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-stop"></i> Stop</button>
-    </div>
+
+<!-- TERMINAL -->
+<div class="glass card xl:col-span-4">
+<div class="flex justify-between items-center mb-5">
+<div class="label">Hamster Bot Terminal</div>
+<div id="hmState" class="badge bad">OFFLINE</div>
+</div>
+
+<div id="terminal" class="term text-cyan-400 mb-4">
+<div>root@sn-server:~# await hamster_bot --start</div>
+</div>
+
+<div class="grid grid-cols-2 gap-3">
+<button class="btn green" onclick="hamster('start')">START BOT</button>
+<button class="btn red" onclick="hamster('stop')">STOP BOT</button>
 </div>
 </div>
 
-<div class="glass-card xl:col-span-2 flex flex-col">
-<div class="p-6 border-b border-white/5">
-    <div class="label-glow">Live Resource Analytics</div>
-</div>
-<div class="px-6 pt-4 pb-0 flex flex-col gap-2 text-[10px] mono text-gray-400">
-    <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg border border-white/5">
-        <span class="uppercase font-bold"><i class="fas fa-hdd mr-2"></i>DISK:</span> <span id="sys-disk" class="text-white font-bold">Live Sync</span>
-    </div>
-    <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg border border-white/5">
-        <span class="uppercase font-bold"><i class="fas fa-network-wired mr-2"></i>NET:</span> <span id="sys-net" class="text-white font-bold">Live Sync</span>
-    </div>
-</div>
-<div class="p-5 flex-1 relative w-full h-full min-h-[150px]"><canvas id="sysChart"></canvas></div>
 </div>
 
-<div class="glass-card xl:col-span-4 flex flex-col">
-<div class="p-6 border-b border-white/5 flex justify-between items-center gap-4">
-    <div class="label-glow truncate">Security Audit Live</div>
-    <div class="badge badge-ok bg-transparent border-none shadow-none whitespace-nowrap"><div class="pulse-dot"></div> MONITORING</div>
-</div>
-<div class="p-4 flex-1 overflow-y-auto max-h-[250px] flex flex-col gap-2" id="audit-list">
-    </div>
+<!-- MANAGE MODAL -->
+<div id="manageModal"
+style="position:fixed;inset:0;display:none;z-index:9998;background:rgba(0,0,0,.8);padding:20px;align-items:center;justify-content:center">
+
+<div class="glass card w-full max-w-md">
+<div class="flex justify-between items-center mb-5">
+<div class="font-black text-blue-400">MANAGE DATABASE</div>
+<button onclick="closeManage()">✕</button>
 </div>
 
+<input id="mUser" class="input mb-3" placeholder="Username">
+<input id="mCredit" class="input mb-4" placeholder="Credits">
+
+<div class="grid grid-cols-2 gap-3">
+<button class="btn green" onclick="saveUser()">SAVE</button>
+<button class="btn red" onclick="deleteUser()">DELETE</button>
 </div>
+</div>
+</div>
+
 <script>
-const API_BASE = "https://api.sn-designstudio.dev";
-let socket = null;
-let chart = null;
+<script>
+/* =========================
+   PART 2 / FINAL SCRIPT
+   ต่อจาก PART 1 ได้ทันที
+========================= */
 
-let timerInterval = null;
-let faucetInterval = null;
-let hmInterval = null;
-let faucetTotal = 0;
+const API_BASE = "https://api.sn-designstudio.dev";
+
+let socket=null;
+let chartMain=null;
+let chartLive=null;
+
+let timerInterval=null;
+let faucetInterval=null;
+let hmInterval=null;
+
+let faucetTotal=0;
+let ytPlayer=null;
+let watchSeconds=0;
+let needSeconds=0;
+let watchInt=null;
+
+const ytVideos=[
+"Yun0Dsb3AtA",
+"NI7WALIXStU",
+"O3k277TKgws",
+"Gl2sWYUez3M",
+"3zpdGy0QCi8"
+];
 
 function qs(id){ return document.getElementById(id); }
 
-function toast(msg){
-const div = document.createElement('div');
-div.className = 'toast flex items-center gap-3';
-div.innerHTML = `<i class="fa-solid fa-circle-check text-blue-400"></i> <span>${msg}</span>`;
-qs('toastWrap').appendChild(div);
-setTimeout(()=>div.remove(),3000);
+function safe(v){
+return String(v ?? "").replace(/[<>&"'`]/g,"");
 }
 
-function safe(text){
-return String(text ?? '').replace(/[<>&"'`]/g,'');
+function toast(msg,type="ok"){
+const box=qs("toastWrap");
+if(!box) return;
+
+const div=document.createElement("div");
+div.className="toast";
+
+let color="#3b82f6";
+if(type==="bad") color="#ef4444";
+if(type==="warn") color="#f59e0b";
+if(type==="good") color="#10b981";
+
+div.style.borderLeftColor=color;
+div.innerHTML=safe(msg);
+
+box.appendChild(div);
+
+setTimeout(()=>{
+div.remove();
+},3200);
 }
 
 async function apiFetch(url,opt={}){
-const token = localStorage.getItem('sn_jwt');
-opt.headers = opt.headers || {};
-opt.headers['Content-Type']='application/json';
-if(token){ opt.headers['Authorization']='Bearer '+token; }
-return await fetch(API_BASE + url,opt);
+const token=localStorage.getItem("sn_jwt");
+
+opt.headers=opt.headers || {};
+opt.headers["Content-Type"]="application/json";
+
+if(token){
+opt.headers["Authorization"]="Bearer "+token;
 }
+
+return await fetch(API_BASE+url,opt);
+}
+
+/* =========================
+   LOGIN
+========================= */
 
 async function login(){
-const username = qs('loginUser').value.trim();
-const password = qs('loginPass').value;
+const username=qs("loginUser").value.trim();
+const password=qs("loginPass").value;
+
 try{
-const res = await fetch(API_BASE + '/api/admin/login',{
-method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password})
+const res=await fetch(API_BASE+"/api/admin/login",{
+method:"POST",
+headers:{ "Content-Type":"application/json" },
+body:JSON.stringify({username,password})
 });
-const data = await res.json();
-if(!data.success){ qs('loginErr').classList.remove('hidden'); return; }
-localStorage.setItem('sn_jwt',data.token);
-localStorage.setItem('sn_role',data.role || 'ADMIN');
+
+const data=await res.json();
+
+if(!data.success){
+qs("loginErr").classList.remove("hidden");
+return;
+}
+
+localStorage.setItem("sn_jwt",data.token);
+localStorage.setItem("sn_role",data.role || "ADMIN");
+
 location.reload();
-}catch(e){ toast('LOGIN ERROR'); }
+
+}catch(e){
+toast("LOGIN ERROR","bad");
+}
 }
 
-function logout(){ localStorage.clear(); location.reload(); }
+function logout(){
+localStorage.clear();
+location.reload();
+}
 
-/* ====================================
-   ระบบ User Control Modal
-==================================== */
-function openUserModal() { qs('user-modal').style.display = 'flex'; }
-function closeUserModal() { qs('user-modal').style.display = 'none'; }
-async function saveUser() {
-    const user = qs('mng-user').value;
-    const credit = qs('mng-credit').value;
-    if(!user || !credit) return toast("Please fill all fields");
-    toast("User updated successfully"); closeUserModal();
+/* =========================
+   CHARTS
+========================= */
+
+function createLineChart(id){
+const el=qs(id);
+if(!el) return null;
+
+const ctx=el.getContext("2d");
+
+return new Chart(ctx,{
+type:"line",
+data:{
+labels:new Array(20).fill(""),
+datasets:[
+{
+label:"CPU",
+data:new Array(20).fill(0),
+borderColor:"#3b82f6",
+backgroundColor:"rgba(59,130,246,.12)",
+fill:true,
+tension:.35,
+pointRadius:0
+},
+{
+label:"RAM",
+data:new Array(20).fill(0),
+borderColor:"#10b981",
+backgroundColor:"rgba(16,185,129,.12)",
+fill:true,
+tension:.35,
+pointRadius:0
 }
-async function deleteUser() {
-    const user = qs('mng-ban-user').value;
-    if(!user) return toast("Please enter username to ban");
-    toast("User banned/removed"); closeUserModal();
+]
+},
+options:{
+responsive:true,
+maintainAspectRatio:false,
+animation:false,
+plugins:{
+legend:{ labels:{ color:"#cbd5e1" } }
+},
+scales:{
+x:{
+grid:{ display:false },
+ticks:{ display:false }
+},
+y:{
+min:0,
+max:100,
+ticks:{ color:"#94a3b8" },
+grid:{ color:"rgba(255,255,255,.05)" }
 }
+}
+}
+});
+}
+
+function initCharts(){
+chartMain=createLineChart("sysChart");
+chartLive=createLineChart("sysChartLive");
+}
+
+/* =========================
+   SOCKET
+========================= */
 
 function initSocket(){
-const token = localStorage.getItem('sn_jwt');
+const token=localStorage.getItem("sn_jwt");
 if(!token) return;
-socket = io(API_BASE,{ auth:{token} });
 
-socket.on('connect',()=>{
-qs('socketState').className='badge badge-ok';
-qs('socketState').innerHTML='<div class="pulse-dot"></div> LIVE SYNC';
-});
-socket.on('disconnect',()=>{
-qs('socketState').className='badge badge-bad';
-qs('socketState').innerHTML='OFFLINE';
+socket=io(API_BASE,{
+auth:{token}
 });
 
-socket.on('system_update',(data)=>{ applySystem(data); });
-socket.on('audit_update',(rows)=>{ renderAudit(rows); });
+socket.on("connect",()=>{
+qs("socketState").className="badge badge-ok";
+qs("socketState").innerHTML='<div class="pulse-dot"></div> LIVE';
+});
+
+socket.on("disconnect",()=>{
+qs("socketState").className="badge badge-bad";
+qs("socketState").innerHTML="OFFLINE";
+});
+
+socket.on("system_update",(data)=>{
+applySystem(data);
+});
+
+socket.on("audit_update",(rows)=>{
+renderAudit(rows);
+});
 }
 
-function initChart(){
-const ctx = qs('sysChart').getContext('2d');
-chart = new Chart(ctx,{
-type:'line',
-data:{
-labels:new Array(20).fill(''),
-datasets:[
-{ label:'CPU', data:new Array(20).fill(0), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.15)', fill:true, tension:.4, pointRadius: 0 },
-{ label:'RAM', data:new Array(20).fill(0), borderColor:'#10b981', backgroundColor:'rgba(16,185,129,.15)', fill:true, tension:.4, pointRadius: 0 }
-]},
-options:{ responsive:true, maintainAspectRatio:false, animation:false, interaction: { mode: 'index', intersect: false }, scales:{ y:{min:0,max:100, grid: { color: 'rgba(255,255,255,0.05)' }}, x:{ grid: { display: false } } } }
-});
+/* =========================
+   APPLY SYSTEM
+========================= */
+
+function pushChart(chart,cpu,ram){
+if(!chart) return;
+
+chart.data.datasets[0].data.shift();
+chart.data.datasets[0].data.push(cpu);
+
+chart.data.datasets[1].data.shift();
+chart.data.datasets[1].data.push(ram);
+
+chart.update();
 }
 
 function applySystem(data){
-if(data.system){
-const cpu = Number(data.system.cpu || 0);
-const ram = Number(data.system.ram || 0);
-qs('cpuVal').textContent = cpu + '%';
-qs('ramVal').textContent = ram + '%';
-chart.data.datasets[0].data.shift(); chart.data.datasets[0].data.push(cpu);
-chart.data.datasets[1].data.shift(); chart.data.datasets[1].data.push(ram);
-chart.update();
 
-// อัปเดต Disk / Net แนวนอน
-const elDisk = qs('sys-disk'); const elNet = qs('sys-net');
-if(elDisk) elDisk.innerText = (data.system.disk || '0') + '%';
-if(elNet) elNet.innerText = (data.system.network || '0') + ' mbps';
+if(data.system){
+
+const cpu=Number(data.system.cpu || 0);
+const ram=Number(data.system.ram || 0);
+const disk=Number(data.system.disk || 0);
+const net=safe(data.system.network || "0");
+
+qs("cpuVal").textContent=cpu+"%";
+qs("ramVal").textContent=ram+"%";
+
+qs("sys-disk").textContent=disk+"%";
+qs("sys-net").textContent=net+" mbps";
+
+pushChart(chartMain,cpu,ram);
+pushChart(chartLive,cpu,ram);
 }
-if(data.users){ qs('usersVal').textContent = data.users.total || 0; }
-if(data.queue){ qs('queueVal').textContent = data.queue.pending || 0; }
+
+if(data.users){
+qs("usersVal").textContent=data.users.total || 0;
 }
+
+if(data.queue){
+qs("queueVal").textContent=data.queue.pending || 0;
+}
+}
+
+/* =========================
+   BILLING
+========================= */
 
 async function loadBilling(){
 try{
-const res = await apiFetch('/api/billing/usage');
-const data = await res.json();
+const res=await apiFetch("/api/billing/usage");
+const data=await res.json();
+
 if(!data.success) return;
-qs('billingBox').innerHTML = data.rows.map(r=>`
-<div class="flex items-center justify-between bg-black/40 border border-white/5 rounded-xl px-4 py-3 mb-2">
-<span class="font-bold text-gray-300"><i class="fa-solid fa-cube text-blue-500/50 mr-2"></i> ${safe(r.service)}</span>
-<span class="mono font-black text-blue-400 bg-blue-500/10 px-3 py-1 rounded-lg">${safe(r.total)}</span>
+
+qs("billingBox").innerHTML=data.rows.map(r=>`
+<div class="flex justify-between items-center bg-black/30 rounded-xl px-4 py-3 mb-2 border border-white/5">
+<div class="font-bold text-gray-300">${safe(r.service)}</div>
+<div class="mono text-blue-400 font-black">${safe(r.total)}</div>
 </div>
-`).join('');
+`).join("");
+
 }catch(e){}
 }
 
-/* ====================================
-   ระบบ Render Audit (แนวนอน)
-==================================== */
-function renderAudit(rows){
-if(!Array.isArray(rows)) return;
-const list = qs("audit-list");
-if(!list) return;
+/* =========================
+   SECURITY AUDIT
+========================= */
 
-list.innerHTML = rows.map(r=>{
-    let statusColor = 'text-gray-500';
-    const st = String(r.status).toUpperCase();
-    if(st.includes('OK') || st.includes('SUCCESS') || st.includes('GEN')) statusColor = 'text-green-400';
-    else if(st.includes('FAIL') || st.includes('DENY') || st.includes('BAD')) statusColor = 'text-red-400';
-    else if(st.includes('SCAN') || st.includes('PING') || st.includes('LIMIT')) statusColor = 'text-amber-400';
+function auditColor(status){
+const s=String(status).toUpperCase();
 
-    return `
-    <div class="bg-black/30 p-3 rounded-lg border border-white/5 flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-[10px] mono">
-        <div class="flex flex-wrap items-center gap-2">
-            <span class="text-gray-400"><i class="fa-regular fa-clock mr-1 text-gray-600"></i> ${safe(new Date(r.time).toLocaleTimeString())}</span>
-            <span class="text-blue-300 font-bold">${safe(r.user)}</span>
-            <span class="text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">${safe(String(r.ip).replace('::ffff:',''))}</span>
-        </div>
-        <div class="${statusColor} font-black tracking-wider whitespace-nowrap">${safe(r.status)}</div>
-    </div>`;
-}).join('');
+if(
+s.includes("LOGIN") ||
+s.includes("SUCCESS") ||
+s.includes("ALLOW")
+) return "text-green-400";
+
+if(
+s.includes("FAIL") ||
+s.includes("BLOCK") ||
+s.includes("BAN") ||
+s.includes("DENY")
+) return "text-red-400";
+
+return "text-amber-400";
 }
+
+function geoFromIP(ip){
+if(ip.startsWith("192.168")) return "LAN";
+if(ip.startsWith("10.")) return "PRIVATE";
+if(ip.startsWith("172.")) return "PRIVATE";
+if(ip==="127.0.0.1") return "LOCALHOST";
+return "PUBLIC";
+}
+
+function renderAudit(rows){
+
+const list=qs("audit-list");
+if(!list || !Array.isArray(rows)) return;
+
+list.innerHTML=rows.map(r=>{
+
+const time=new Date(r.time || Date.now()).toLocaleTimeString();
+const ip=String(r.ip || "-").replace("::ffff:","");
+const status=safe(r.status || "UNKNOWN");
+const user=safe(r.user || "guest");
+const zone=geoFromIP(ip);
+
+return `
+<div class="bg-black/30 border border-white/5 rounded-xl p-3 text-[10px] mono">
+<div class="flex flex-wrap gap-2 mb-2">
+<span class="text-gray-400">${time}</span>
+<span class="text-blue-300">${user}</span>
+<span class="text-gray-300">${ip}</span>
+<span class="text-purple-300">${zone}</span>
+</div>
+<div class="${auditColor(status)} font-black">${status}</div>
+</div>
+`;
+
+}).join("");
+}
+
+/* =========================
+   SERVER CONTROL
+========================= */
 
 async function controlServer(engine,action){
+
 try{
-const res = await apiFetch('/api/system/control',{ method:'POST', body:JSON.stringify({engine,action}) });
-const data = await res.json();
+const res=await apiFetch("/api/system/control",{
+method:"POST",
+body:JSON.stringify({engine,action})
+});
+
+const data=await res.json();
+
 if(data.success){
-toast(engine.toUpperCase() + ' ' + action.toUpperCase() + ' SUCCESS');
-let elId = engine === 'win' ? 'winState' : engine === 'android' ? 'androidState' : 'ygState';
-const el = qs(elId);
-if(action==='start'){ el.className='badge badge-ok'; el.innerHTML='<div class="pulse-dot"></div> ONLINE'; }
-else{ el.className='badge badge-bad'; el.innerHTML='OFFLINE'; }
-}else{ toast('control failed'); }
-}catch(e){ toast('api error'); }
+toast(engine+" "+action,"good");
+}else{
+toast("CONTROL FAIL","bad");
 }
 
-/* ====================================
-   YOUTUBE ANTI-SKIP & OWNER BYPASS
-==================================== */
-const ytVideoIds = ["Yun0Dsb3AtA", "NI7WALIXStU", "O3k277TKgws", "Gl2sWYUez3M", "3zpdGy0QCi8"];
-let currentYtPlayer = null;
-let watchTimer = null;
-let secondsWatched = 0;
-let requiredWatchTime = 0;
-
-var tag = document.createElement('script');
-tag.src = "https://www.youtube.com/iframe_api";
-var firstScriptTag = document.getElementsByTagName('script')[0];
-firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-function onYouTubeIframeAPIReady() {
-    if (!checkKeyExpiration()) { loadRandomVideo(); }
+}catch(e){
+toast("API ERROR","bad");
+}
 }
 
-function loadRandomVideo() {
-    const randomId = ytVideoIds[Math.floor(Math.random() * ytVideoIds.length)];
-    if (currentYtPlayer) {
-        currentYtPlayer.loadVideoById(randomId);
-        currentYtPlayer.stopVideo(); 
-    } else {
-        currentYtPlayer = new YT.Player('yt-player-div', {
-            videoId: randomId,
-            playerVars: { 'playsinline': 1, 'controls': 0, 'disablekb': 1, 'rel': 0, 'fs': 0, 'modestbranding': 1 },
-            events: { 'onStateChange': onPlayerStateChange }
-        });
-    }
-    secondsWatched = 0;
+/* =========================
+   YOUTUBE KEY
+========================= */
+
+function loadYT(){
+const tag=document.createElement("script");
+tag.src="https://www.youtube.com/iframe_api";
+document.body.appendChild(tag);
 }
 
-function playUnlockVideo() {
-    if (currentYtPlayer && typeof currentYtPlayer.playVideo === 'function') {
-        currentYtPlayer.playVideo();
-        toast("Please watch until the end without skipping.");
-        const btn = qs('btn-unlock');
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> <span>Watching...</span>';
-        btn.disabled = true; btn.classList.replace('bg-red-600', 'bg-gray-600');
-    } else { toast("YouTube player is loading..."); }
+function onYouTubeIframeAPIReady(){
+
+ytPlayer=new YT.Player("yt-player-div",{
+videoId:ytVideos[Math.floor(Math.random()*ytVideos.length)],
+playerVars:{
+controls:0,
+disablekb:1,
+fs:0,
+rel:0
+},
+events:{
+onStateChange:onPlayerStateChange
+}
+});
+
 }
 
-function onPlayerStateChange(event) {
-    if (event.data == YT.PlayerState.PLAYING) {
-        requiredWatchTime = currentYtPlayer.getDuration() - 2; 
-        if (watchTimer) clearInterval(watchTimer);
-        watchTimer = setInterval(() => { secondsWatched++; }, 1000);
-    } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.BUFFERING) {
-        if (watchTimer) clearInterval(watchTimer);
-    } else if (event.data == YT.PlayerState.ENDED) {
-        if (watchTimer) clearInterval(watchTimer);
-        if (secondsWatched >= requiredWatchTime && requiredWatchTime > 0) {
-            processKeyUnlock(); 
-        } else {
-            toast("Skipping detected. Watch full video.");
-            secondsWatched = 0;
-            currentYtPlayer.seekTo(0); currentYtPlayer.stopVideo();
-            resetUnlockButton();
-        }
-    }
+function playUnlockVideo(){
+if(!ytPlayer) return;
+watchSeconds=0;
+ytPlayer.playVideo();
+toast("Watch full video to unlock");
 }
 
-function resetUnlockButton() {
-    const btn = qs('btn-unlock');
-    btn.innerHTML = `<i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Play Video to Unlock</span>`;
-    btn.disabled = false; btn.classList.replace('bg-gray-600', 'bg-red-600');
+function onPlayerStateChange(e){
+
+if(e.data===YT.PlayerState.PLAYING){
+
+needSeconds=Math.floor(ytPlayer.getDuration())-2;
+
+clearInterval(watchInt);
+
+watchInt=setInterval(()=>{
+watchSeconds++;
+},1000);
 }
 
-function processKeyUnlock() {
-    const newKey = "HM-TRMX-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-POLCY";
-    const expireAt = Date.now() + (12 * 60 * 60 * 1000);
-    localStorage.setItem('sn_api_key', newKey); localStorage.setItem('sn_key_expire', expireAt);
-    activateKeyUI(newKey); updateTimer(expireAt);
-    toast("12-Hour Termux API Key Generated!");
+if(e.data===YT.PlayerState.ENDED){
+
+clearInterval(watchInt);
+
+if(watchSeconds>=needSeconds){
+generateKey();
+}else{
+toast("Skip detected","warn");
+}
+}
 }
 
-function checkKeyExpiration() {
-    const role = localStorage.getItem('sn_role');
-    // ระบบ Bypass สำหรับ Owner และ Dev
-    if (role === 'owner' || role === 'admin' || role === 'ADMIN') {
-        activateKeyUI("HM-TRMX-OWNER-BYPASS");
-        if(qs('key-timer')) qs('key-timer').classList.add('hidden');
-        return true;
-    }
+function generateKey(){
 
-    const exp = localStorage.getItem('sn_key_expire');
-    const key = localStorage.getItem('sn_api_key');
-    if (exp && key && Date.now() < parseInt(exp)) {
-        activateKeyUI(key);
-        updateTimer(parseInt(exp));
-        return true;
-    } else {
-        localStorage.removeItem('sn_api_key'); localStorage.removeItem('sn_key_expire');
-        if (currentYtPlayer && typeof currentYtPlayer.loadVideoById === 'function') loadRandomVideo();
-        return false;
-    }
+const key="HM-"+Math.random().toString(36).slice(2,10).toUpperCase();
+const exp=Date.now()+12*60*60*1000;
+
+localStorage.setItem("sn_api_key",key);
+localStorage.setItem("sn_key_expire",exp);
+
+qs("termux-key").value=key;
+toast("KEY GENERATED","good");
+
+startKeyTimer();
 }
 
-function activateKeyUI(keyStr) {
-    const keyInput = qs('termux-key');
-    if(keyInput) {
-        keyInput.value = keyStr;
-        keyInput.classList.remove('text-gray-500'); keyInput.classList.add('text-cyan-300', 'border-cyan-500/50');
-    }
-    const btn = qs('btn-unlock');
-    if(btn) {
-        btn.innerHTML = '<i class="fas fa-check-circle text-sm"></i> <span>Key Active (12H)</span>';
-        btn.classList.replace('bg-gray-600', 'bg-green-600'); btn.disabled = true;
-    }
+function startKeyTimer(){
+
+clearInterval(timerInterval);
+
+timerInterval=setInterval(()=>{
+
+const exp=Number(localStorage.getItem("sn_key_expire") || 0);
+const diff=exp-Date.now();
+
+if(diff<=0){
+clearInterval(timerInterval);
+localStorage.removeItem("sn_api_key");
+localStorage.removeItem("sn_key_expire");
+location.reload();
+return;
 }
 
-function updateTimer(expireTime) {
-    const kt = qs('key-timer');
-    if(kt) kt.classList.remove('hidden');
-    if(timerInterval) clearInterval(timerInterval);
-    timerInterval = setInterval(() => {
-        const now = Date.now(); const diff = expireTime - now;
-        if (diff <= 0) { clearInterval(timerInterval); location.reload(); } 
-        else {
-            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const s = Math.floor((diff % (1000 * 60)) / 1000);
-            if(qs('time-left')) qs('time-left').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-        }
-    }, 1000);
+const h=Math.floor(diff/3600000);
+const m=Math.floor((diff%3600000)/60000);
+const s=Math.floor((diff%60000)/1000);
+
+qs("time-left").textContent=
+String(h).padStart(2,"0")+":"+
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
+
+qs("key-timer").classList.remove("hidden");
+
+},1000);
 }
 
-function copyKey() {
-    const key = qs('termux-key').value;
-    if(key.includes("WATCH") || key.includes("UNLOCK")) return toast("Watch the video to unlock first!");
-    navigator.clipboard.writeText(key);
-    toast("Key copied!");
-}
+/* =========================
+   FAUCET BOT
+========================= */
 
-/* ====================================
-   FAUCET BOT (ออริจินัล)
-==================================== */
 function registerFaucet(){
-    qs("faucet-locked").style.display="none";
-    qs("faucet-content").classList.remove("blur-sm");
-    localStorage.setItem("faucet_registered","1");
-    startTermuxBot();
+
+qs("faucet-locked").style.display="none";
+qs("faucet-content").classList.remove("blur-sm");
+
+localStorage.setItem("faucet_registered","1");
+
+startFaucet();
 }
 
-function startTermuxBot(){
-    if(faucetInterval) clearInterval(faucetInterval);
-    const coins=["USDT","BTC","ETH","BNB","TON","SOL"];
-    const box=qs("termux-console");
-    faucetInterval=setInterval(()=>{
-        const coin=coins[Math.floor(Math.random()*coins.length)];
-        const amt=(Math.random()*0.05).toFixed(5);
-        faucetTotal += Number(amt);
-        const line=document.createElement("div");
-        line.className="text-green-400 termux-line";
-        line.innerText=`> Claim ${coin} : +${amt}`;
-        box.appendChild(line);
-        while(box.children.length>6){ box.removeChild(box.firstChild); }
-        box.scrollTop = box.scrollHeight;
-        if(qs("faucet-dispensed")) qs("faucet-dispensed").innerText = faucetTotal.toFixed(5);
-    },2500);
+function startFaucet(){
+
+clearInterval(faucetInterval);
+
+const box=qs("termux-console");
+const coins=["USDT","BTC","ETH","BNB","SOL"];
+
+faucetInterval=setInterval(()=>{
+
+const coin=coins[Math.floor(Math.random()*coins.length)];
+const val=(Math.random()*0.03).toFixed(5);
+
+faucetTotal += Number(val);
+
+const row=document.createElement("div");
+row.className="termux-line text-green-400";
+row.textContent="> Claim "+coin+" +"+val;
+
+box.appendChild(row);
+
+while(box.children.length>6){
+box.removeChild(box.firstChild);
 }
 
-/* ====================================
-   HAMSTER TERMINAL (ไม่ยืด ลบเมื่อเกิน 5 บรรทัด)
-==================================== */
-function controlHamster(action) {
-    const statusEl = qs('hmState');
-    const term = qs('hmTerminal');
+box.scrollTop=box.scrollHeight;
+qs("faucet-dispensed").textContent=faucetTotal.toFixed(5);
 
-    if (action === 'start') {
-        statusEl.className = 'px-2 py-1 bg-green-900/50 text-green-400 text-[9px] rounded font-bold uppercase pulse-dot';
-        statusEl.innerText = 'FARMING';
-        toast('Hamster Bot Started');
-
-        if (hmInterval) clearInterval(hmInterval);
-        
-        appendHmTerminal('[SYS] Termux Engine Connected...', 'text-cyan-400');
-        appendHmTerminal('[SYS] Verifying License...', 'text-cyan-400');
-        
-        hmInterval = setInterval(() => {
-            const actions = ['Tapping...', 'Checking Promo...', 'Claiming Cipher...', 'Syncing State...'];
-            const act = actions[Math.floor(Math.random() * actions.length)];
-            const coins = (Math.random() * 100).toFixed(0);
-            appendHmTerminal(`> ${act} | +${coins} Coins`, 'text-green-400');
-        }, 2000);
-    } else {
-        statusEl.className = 'px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase';
-        statusEl.innerText = 'OFFLINE';
-        toast('Hamster Bot Stopped');
-        if (hmInterval) clearInterval(hmInterval);
-        appendHmTerminal('[SYS] Bot Process Terminated.', 'text-red-400');
-    }
+},2200);
 }
 
-function appendHmTerminal(text, colorClass) {
-    const term = qs('hmTerminal');
-    const line = document.createElement('div');
-    line.className = 'termux-line truncate ' + colorClass;
-    line.innerText = text;
-    term.appendChild(line);
-    
-    // ลบให้เหลือแค่ 5 บรรทัด เพื่อไม่ให้กล่องขยาย
-    while (term.childElementCount > 5) {
-        term.removeChild(term.firstChild);
-    }
-    term.scrollTop = term.scrollHeight;
+/* =========================
+   HAMSTER
+========================= */
+
+function controlHamster(mode){
+
+const state=qs("hmState");
+
+if(mode==="start"){
+
+state.textContent="RUNNING";
+state.className="badge badge-ok";
+
+appendHM("[SYS] Start hamster");
+
+clearInterval(hmInterval);
+
+hmInterval=setInterval(()=>{
+
+const c=Math.floor(Math.random()*100)+10;
+appendHM("> Tap +"+c+" coins");
+
+},1800);
+
+}else{
+
+state.textContent="OFFLINE";
+state.className="badge badge-bad";
+
+clearInterval(hmInterval);
+appendHM("[SYS] stopped");
 }
+}
+
+function appendHM(txt){
+
+const box=qs("hmTerminal");
+const row=document.createElement("div");
+
+row.className="termux-line";
+row.textContent=txt;
+
+box.appendChild(row);
+
+while(box.children.length>6){
+box.removeChild(box.firstChild);
+}
+
+box.scrollTop=box.scrollHeight;
+}
+
+/* =========================
+   MODAL
+========================= */
+
+function openUserModal(){
+qs("user-modal").style.display="flex";
+}
+
+function closeUserModal(){
+qs("user-modal").style.display="none";
+}
+
+/* =========================
+   REFRESH
+========================= */
 
 async function refreshAll(){
 await loadBilling();
-toast('System refreshed');
+toast("REFRESHED","good");
 }
 
-window.onload = async ()=>{
-initChart();
-const token = localStorage.getItem('sn_jwt');
+/* =========================
+   BOOT
+========================= */
+
+window.onload=async ()=>{
+
+initCharts();
+loadYT();
+
+const token=localStorage.getItem("sn_jwt");
+
 if(token){
-qs('loginOverlay').style.display='none';
-qs('roleBadge').classList.remove('hidden');
-qs('roleBadge').innerHTML = '<i class="fa-solid fa-user-astronaut"></i> ' + (localStorage.getItem('sn_role') || 'ADMIN');
-initSocket(token);
 
-if(localStorage.getItem("faucet_registered")){ registerFaucet(); }
-checkKeyExpiration();
+qs("loginOverlay").style.display="none";
+qs("roleBadge").classList.remove("hidden");
+qs("roleBadge").textContent=
+localStorage.getItem("sn_role") || "ADMIN";
+
+initSocket();
 loadBilling();
-}else{
-qs('loginOverlay').style.display='flex';
+
+if(localStorage.getItem("faucet_registered")){
+registerFaucet();
 }
+
+if(localStorage.getItem("sn_api_key")){
+qs("termux-key").value=localStorage.getItem("sn_api_key");
+startKeyTimer();
+}
+
+}else{
+qs("loginOverlay").style.display="flex";
+}
+
 };
 </script>
 
 </body>
 </html>
-
