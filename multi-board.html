@@ -1,379 +1,200 @@
+<!-- FULL CONTROL CENTER : PART 1 / 2 -->
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0" />
-<title>SN ULTRA • FINAL GOD MODE</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SN FULL CONTROL CENTER</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet">
 
 <style>
-:root{
---bg-dark:#030712;
---glass-bg:rgba(17,24,39,.7);
---glass-border:rgba(255,255,255,.08);
---neon-blue:#3b82f6;
---neon-green:#10b981;
---neon-red:#ef4444;
---neon-amber:#f59e0b;
-}
-*{box-sizing:border-box}
 body{
 margin:0;
-background:radial-gradient(circle at 50% -20%,#1e1b4b 0%,var(--bg-dark) 40%,var(--bg-dark) 100%);
-background-attachment:fixed;
-font-family:'Inter',sans-serif;
+font-family:Arial,Helvetica,sans-serif;
+background:#0b1020;
 color:#fff;
-overflow-x:hidden;
-min-height:100vh;
 }
-.mono{font-family:"JetBrains Mono",monospace}
-.glass-card{
-background:var(--glass-bg);
-backdrop-filter:blur(16px);
--webkit-backdrop-filter:blur(16px);
-border:1px solid var(--glass-border);
-border-radius:24px;
-box-shadow:0 8px 32px rgba(0,0,0,.5);
-transition:.3s;
-}
-.glass-card:hover{
-transform:translateY(-2px);
-box-shadow:0 12px 40px rgba(0,0,0,.7);
-}
-.label-glow{
-font-size:11px;
-letter-spacing:.2em;
-text-transform:uppercase;
-font-weight:800;
-color:#93c5fd;
-}
-.value-glow{
-font-size:36px;
-font-weight:900;
-line-height:1.1;
-background:linear-gradient(to right,#fff,#93c5fd);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-.badge{
-padding:6px 14px;
-border-radius:9999px;
-font-size:10px;
-font-weight:800;
-text-transform:uppercase;
-display:inline-flex;
-align-items:center;
-gap:6px;
-}
-.badge-ok{background:rgba(16,185,129,.15);color:#10b981;border:1px solid rgba(16,185,129,.3)}
-.badge-warn{background:rgba(245,158,11,.15);color:#f59e0b;border:1px solid rgba(245,158,11,.3)}
-.badge-bad{background:rgba(239,68,68,.15);color:#ef4444;border:1px solid rgba(239,68,68,.3)}
-.btn{
-padding:14px 20px;
+.card{
+background:#111827;
+border:1px solid #1f2937;
 border-radius:16px;
-font-weight:800;
-font-size:12px;
-cursor:pointer;
-border:1px solid rgba(255,255,255,.1);
-display:flex;
-align-items:center;
-justify-content:center;
-gap:8px;
-transition: 0.2s;
+padding:16px;
 }
-.btn:active{transform:scale(0.96)}
-.btn-blue{background:linear-gradient(135deg,#2563eb,#3b82f6)}
-.btn-green{background:linear-gradient(135deg,#059669,#10b981)}
-.btn-red{background:linear-gradient(135deg,#dc2626,#ef4444)}
-.btn-gray{background:rgba(31,41,55,.8)}
+.btn{
+padding:12px 16px;
+border-radius:12px;
+font-weight:bold;
+cursor:pointer;
+border:none;
+}
+.blue{background:#2563eb;color:#fff}
+.green{background:#059669;color:#fff}
+.red{background:#dc2626;color:#fff}
+.gray{background:#374151;color:#fff}
 .input{
 width:100%;
-padding:16px 18px;
-border-radius:16px;
-background:rgba(0,0,0,.5);
-border:1px solid rgba(255,255,255,.1);
+padding:12px;
+border-radius:12px;
+border:1px solid #374151;
+background:#0f172a;
 color:#fff;
-outline:none;
 }
-.table-wrap{overflow:auto;max-height:400px;border-radius:16px}
-table{width:100%;border-collapse:collapse}
-th,td{padding:14px 18px;font-size:12px;text-align:left}
-th{color:#9ca3af;font-size:11px}
-.pulse-dot{
-width:8px;height:8px;border-radius:50%;
-background:currentColor;
-animation:pulse 2s infinite;
+.gridx{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:16px;
 }
-@keyframes pulse{
-0%{opacity:1}
-50%{opacity:.4}
-100%{opacity:1}
-}
-#loginOverlay{
-position:fixed;inset:0;z-index:9999;
-display:flex;align-items:center;justify-content:center;
-padding:20px;
-background:rgba(0,0,0,.8);
-}
-#toastWrap{
-position:fixed;top:24px;right:24px;z-index:99999;
-display:flex;flex-direction:column;gap:12px;
-}
-.toast{
-padding:16px 20px;
-border-radius:16px;
-font-size:13px;
-font-weight:800;
-min-width:280px;
-background:rgba(17,24,39,.95);
-border-left: 4px solid #3b82f6;
-}
-canvas{max-height:320px}
+.small{font-size:12px;color:#9ca3af}
+.big{font-size:32px;font-weight:900}
 </style>
 </head>
 
 <body>
 
-<div id="toastWrap"></div>
+<div class="max-w-7xl mx-auto p-4">
 
-<div id="loginOverlay">
-<div class="glass-card w-full max-w-md p-10">
-<div class="text-center mb-8">
-<div class="text-4xl font-black italic">SN ULTRA</div>
-<div class="label-glow mt-2">FINAL GOD MODE ACCESS</div>
-</div>
-
-<div class="space-y-4">
-<input id="loginUser" class="input mono" placeholder="Operator ID">
-<input id="loginPass" class="input mono" type="password" placeholder="Passcode">
-<button class="btn btn-blue w-full" onclick="login()">SECURE LOGIN</button>
-</div>
-
-<div id="loginErr" class="text-red-400 text-xs mt-5 text-center hidden">
-ACCESS DENIED
-</div>
-</div>
-</div>
-
-<div class="max-w-[1800px] mx-auto px-4 sm:px-6 pt-8 pb-6">
-<div class="flex flex-col lg:flex-row gap-6 justify-between items-start lg:items-end">
-
+<div class="flex flex-col md:flex-row gap-4 justify-between items-center mb-6">
 <div>
-<div class="label-glow mb-1">Commercial Command Center</div>
-<div class="text-4xl sm:text-5xl font-black italic">SN ULTRA</div>
+<div class="small">SN MULTI TENANT SYSTEM</div>
+<div style="font-size:36px;font-weight:900;">FULL CONTROL CENTER</div>
 </div>
 
-<div class="flex gap-3 flex-wrap items-center">
-<div id="socketState" class="badge badge-warn">
-<div class="pulse-dot"></div> CONNECTING
-</div>
-
-<div id="roleBadge" class="badge badge-ok hidden">ROLE</div>
-
-<button class="btn btn-gray" onclick="refreshAll()"><i class="fa-solid fa-rotate-right"></i> REFRESH</button>
-<button class="btn btn-red" onclick="logout()"><i class="fa-solid fa-power-off"></i> LOGOUT</button>
-</div>
-
+<div class="flex gap-2">
+<button class="btn gray" onclick="refreshAll()">REFRESH</button>
+<button class="btn red" onclick="logout()">LOGOUT</button>
 </div>
 </div>
 
-<div class="max-w-[1800px] mx-auto px-4 sm:px-6 pb-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+<div class="gridx mb-6">
 
-<div class="glass-card p-6">
-<div class="label-glow">CPU Usage</div>
-<div id="cpuVal" class="value-glow mono mt-4">0%</div>
+<div class="card">
+<div class="small">CPU</div>
+<div id="cpu" class="big">0%</div>
 </div>
 
-<div class="glass-card p-6">
-<div class="label-glow">RAM Usage</div>
-<div id="ramVal" class="value-glow mono mt-4">0%</div>
+<div class="card">
+<div class="small">RAM</div>
+<div id="ram" class="big">0%</div>
 </div>
 
-<div class="glass-card p-6">
-<div class="label-glow">Users Today</div>
-<div id="usersVal" class="value-glow mono mt-4">0</div>
+<div class="card">
+<div class="small">USERS</div>
+<div id="users" class="big">0</div>
 </div>
 
-<div class="glass-card p-6">
-<div class="label-glow">Queue Pending</div>
-<div id="queueVal" class="value-glow mono mt-4">0</div>
+<div class="card">
+<div class="small">QUEUE</div>
+<div id="queue" class="big">0</div>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2">
-<div class="label-glow mb-6">Realtime System Metrics</div>
-<canvas id="sysChart"></canvas>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2">
-<div class="label-glow mb-6">Billing & Usage Matrix</div>
-<div id="billingBox" class="space-y-2 max-h-[250px] overflow-y-auto"></div>
-</div>
-<div class="glass-card p-6 xl:col-span-4">
-<div class="label-glow mb-6">Engine Control Matrix</div>
+<div class="gridx mb-6">
 
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
-
-<div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
-<div class="font-black text-sm mb-1"><i class="fa-brands fa-windows text-blue-400 mr-2"></i>Windows Engine</div>
-<div class="text-[10px] text-gray-500 mono mb-4">game_server_core.exe</div>
-
-<div class="flex justify-between items-center mb-4">
-<span class="text-xs font-bold text-gray-400">STATUS:</span>
-<div id="winState" class="badge badge-bad">OFFLINE</div>
+<div class="card">
+<div class="small mb-2">REALTIME SYSTEM</div>
+<canvas id="chart" height="120"></canvas>
 </div>
 
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlServer('win','start')"><i class="fa-solid fa-play"></i> START</button>
-<button class="btn btn-red flex-1" onclick="controlServer('win','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
-</div>
-</div>
-
-<div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
-<div class="font-black text-sm mb-1"><i class="fa-brands fa-android text-green-400 mr-2"></i>Android Engine</div>
-<div class="text-[10px] text-gray-500 mono mb-4">api_mobile_bridge.js</div>
-
-<div class="flex justify-between items-center mb-4">
-<span class="text-xs font-bold text-gray-400">STATUS:</span>
-<div id="androidState" class="badge badge-bad">OFFLINE</div>
+<div class="card">
+<div class="small mb-2">PROFILE</div>
+<div class="mb-2">User : <b id="userBox">-</b></div>
+<div class="mb-2">Role : <b id="roleBox">-</b></div>
+<div class="mb-2">Tenant : <b id="tenantBox">-</b></div>
+<div class="mb-2">Status : <b style="color:#22c55e;">ONLINE</b></div>
 </div>
 
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlServer('android','start')"><i class="fa-solid fa-play"></i> START</button>
-<button class="btn btn-red flex-1" onclick="controlServer('android','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
+</div>
+
+<div class="gridx mb-6">
+
+<div class="card">
+<div class="small mb-3">GAME SERVER</div>
+<div class="flex gap-2">
+<button class="btn green" onclick="serverCmd('game','start')">START</button>
+<button class="btn red" onclick="serverCmd('game','stop')">STOP</button>
+<button class="btn blue" onclick="serverCmd('game','restart')">RESTART</button>
 </div>
 </div>
 
-<div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
-<div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-<div class="font-black text-sm mb-1"><i class="fa-solid fa-dragon text-purple-400 mr-2"></i>Yulgang Engine (โยวกัง)</div>
-<div class="text-[10px] text-gray-500 mono mb-4">yg_server_core.exe</div>
-
-<div class="flex justify-between items-center mb-4">
-<span class="text-xs font-bold text-gray-400">STATUS:</span>
-<div id="ygState" class="badge badge-bad">OFFLINE</div>
+<div class="card">
+<div class="small mb-3">PAYMENT GATEWAY</div>
+<div class="flex gap-2">
+<button class="btn green" onclick="serverCmd('payment','start')">START</button>
+<button class="btn red" onclick="serverCmd('payment','stop')">STOP</button>
+<button class="btn blue" onclick="serverCmd('payment','restart')">RESTART</button>
+</div>
 </div>
 
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlServer('yulgang','start')"><i class="fa-solid fa-play"></i> START</button>
-<button class="btn btn-red flex-1" onclick="controlServer('yulgang','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
+<div class="card">
+<div class="small mb-3">AI ENGINE (14 MODEL)</div>
+<div class="flex gap-2">
+<button class="btn green" onclick="serverCmd('ai','start')">START</button>
+<button class="btn red" onclick="serverCmd('ai','stop')">STOP</button>
+<button class="btn blue" onclick="serverCmd('ai','restart')">RESTART</button>
+</div>
+</div>
+
+<div class="card">
+<div class="small mb-3">SOCKET CORE</div>
+<div class="flex gap-2">
+<button class="btn green" onclick="serverCmd('socket','start')">START</button>
+<button class="btn red" onclick="serverCmd('socket','stop')">STOP</button>
+<button class="btn blue" onclick="serverCmd('socket','restart')">RESTART</button>
 </div>
 </div>
 
 </div>
+
+<div class="gridx mb-6">
+
+<div class="card">
+<div class="small mb-3">GENERATE LICENSE</div>
+<input id="license" class="input mb-3" readonly placeholder="LICENSE KEY">
+<button class="btn blue" onclick="genLicense()">GENERATE</button>
 </div>
 
-<div class="glass-card p-6 xl:col-span-2">
-<div class="label-glow mb-6">License Provisioning</div>
-
-<div class="bg-black/50 rounded-2xl p-6">
-<div class="text-xs text-gray-400 mb-3 font-bold">SECURE KEY GENERATION</div>
-
-<div class="flex flex-col sm:flex-row gap-3">
-<input id="licenseKey" class="input mono text-cyan-300 font-bold" readonly placeholder="HM-TRMX-XXXXXX">
-<div class="flex gap-3">
-<button class="btn btn-blue" onclick="generateKey()"><i class="fa-solid fa-bolt"></i> GENERATE</button>
-<button class="btn btn-gray" onclick="copyKey()"><i class="fa-regular fa-copy"></i> COPY</button>
-</div>
+<div class="card">
+<div class="small mb-3">SEND GLOBAL MESSAGE</div>
+<input id="broadcastText" class="input mb-3" placeholder="ข้อความประกาศ">
+<button class="btn blue" onclick="broadcastMsg()">SEND</button>
 </div>
 
-<div id="licenseExpire" class="text-xs text-amber-400 mt-5 mono font-bold flex items-center gap-2">
-<i class="fa-solid fa-clock-rotate-left"></i> AWAITING GENERATION
 </div>
-</div>
-</div>
+<!-- FULL CONTROL CENTER : PART 2 / 2 -->
 
-<div class="glass-card xl:col-span-2">
-<div class="p-6 border-b border-white/5 flex justify-between items-center">
-<div class="label-glow">Security Audit Trail</div>
-<div class="badge badge-ok bg-transparent border-none shadow-none"><div class="pulse-dot"></div> MONITORING</div>
-</div>
-
-<div class="p-4">
-<div class="table-wrap">
-<table>
+<div class="card mb-6">
+<div class="small mb-3">AUDIT LOG</div>
+<div style="max-height:300px;overflow:auto;">
+<table style="width:100%;font-size:12px;">
 <thead>
 <tr>
-<th>TIMESTAMP</th>
-<th>IDENTITY</th>
-<th>IP ADDRESS</th>
-<th>EVENT ACTION</th>
+<th align="left">TIME</th>
+<th align="left">USER</th>
+<th align="left">ACTION</th>
 </tr>
 </thead>
-<tbody id="auditBody" class="mono text-[11px]"></tbody>
+<tbody id="logs"></tbody>
 </table>
 </div>
 </div>
-</div>
 
 </div>
+
 <script>
 const API_BASE = "https://api.sn-designstudio.dev";
-let socket = null;
-let chart = null;
+let socket=null;
+let chart=null;
 
 function qs(id){
 return document.getElementById(id);
 }
 
-function toast(msg){
-const div = document.createElement('div');
-div.className = 'toast flex items-center gap-3';
-div.innerHTML = `<i class="fa-solid fa-circle-check text-blue-400"></i> <span>${msg}</span>`;
-qs('toastWrap').appendChild(div);
-setTimeout(()=>div.remove(),3000);
-}
-
-function safe(text){
-return String(text ?? '').replace(/[<>&"'`]/g,'');
-}
-
-async function apiFetch(url,opt={}){
-const token = localStorage.getItem('sn_jwt');
-
-opt.headers = opt.headers || {};
-opt.headers['Content-Type']='application/json';
-
-if(token){
-opt.headers['Authorization']='Bearer '+token;
-}
-
-return await fetch(API_BASE + url,opt);
-}
-
-async function login(){
-const username = qs('loginUser').value.trim();
-const password = qs('loginPass').value;
-
-try{
-const res = await fetch(API_BASE + '/api/admin/login',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({username,password})
-});
-
-const data = await res.json();
-
-if(!data.success){
-qs('loginErr').classList.remove('hidden');
-return;
-}
-
-localStorage.setItem('sn_jwt',data.token);
-localStorage.setItem('sn_role',data.role || 'ADMIN');
-location.reload();
-
-}catch(e){
-toast('LOGIN ERROR');
-}
+function token(){
+return localStorage.getItem("sn_jwt");
 }
 
 function logout(){
@@ -381,58 +202,67 @@ localStorage.clear();
 location.reload();
 }
 
-function initSocket(){
-const token = localStorage.getItem('sn_jwt');
-if(!token) return;
+async function api(url,opt={}){
 
-socket = io(API_BASE,{
-auth:{token}
-});
+opt.headers=opt.headers||{};
+opt.headers["Content-Type"]="application/json";
 
-socket.on('connect',()=>{
-qs('socketState').className='badge badge-ok';
-qs('socketState').innerHTML='<div class="pulse-dot"></div> LIVE SYNC';
-});
+if(token()){
+opt.headers["Authorization"]="Bearer "+token();
+}
 
-socket.on('disconnect',()=>{
-qs('socketState').className='badge badge-bad';
-qs('socketState').innerHTML='OFFLINE';
-});
+return await fetch(API_BASE+url,opt);
+}
 
-socket.on('system_update',(data)=>{
-applySystem(data);
-});
+function parseJwt(t){
+try{
+return JSON.parse(atob(t.split('.')[1]));
+}catch(e){
+return {};
+}
+}
 
-socket.on('audit_update',(rows)=>{
-renderAudit(rows);
-});
+function initProfile(){
+
+const t = token();
+
+if(!t){
+alert("NO TOKEN");
+location.href="/";
+return;
+}
+
+const data = parseJwt(t);
+
+qs("userBox").innerText = data.user || "-";
+qs("roleBox").innerText = data.role || "-";
+qs("tenantBox").innerText = data.tenant || "-";
 }
 
 function initChart(){
-const ctx = qs('sysChart').getContext('2d');
+
+const ctx = qs("chart").getContext("2d");
 
 chart = new Chart(ctx,{
-type:'line',
+type:"line",
 data:{
-labels:new Array(20).fill(''),
+labels:new Array(20).fill(""),
 datasets:[
 {
-label:'CPU',
+label:"CPU",
 data:new Array(20).fill(0),
-borderColor:'#3b82f6',
-backgroundColor:'rgba(59,130,246,.15)',
+borderColor:"#3b82f6",
+backgroundColor:"rgba(59,130,246,.15)",
 fill:true,
-tension:.4,
-pointRadius: 0
+tension:.4
 },
 {
-label:'RAM',
+label:"RAM",
 data:new Array(20).fill(0),
-borderColor:'#10b981',
-backgroundColor:'rgba(16,185,129,.15)',
+borderColor:"#10b981",
+backgroundColor:"rgba(16,185,129,.15)",
 fill:true,
-tension:.4,
-pointRadius: 0
+tension:.4
 }
 ]
 },
@@ -440,24 +270,12 @@ options:{
 responsive:true,
 maintainAspectRatio:false,
 animation:false,
-interaction: { mode: 'index', intersect: false },
-scales:{
-y:{min:0,max:100, grid: { color: 'rgba(255,255,255,0.05)' }},
-x:{ grid: { display: false } } 
-}
+scales:{y:{min:0,max:100}}
 }
 });
 }
 
-function applySystem(data){
-
-if(data.system){
-
-const cpu = Number(data.system.cpu || 0);
-const ram = Number(data.system.ram || 0);
-
-qs('cpuVal').textContent = cpu + '%';
-qs('ramVal').textContent = ram + '%';
+function updateChart(cpu,ram){
 
 chart.data.datasets[0].data.shift();
 chart.data.datasets[0].data.push(cpu);
@@ -468,141 +286,157 @@ chart.data.datasets[1].data.push(ram);
 chart.update();
 }
 
-if(data.users){
-qs('usersVal').textContent = data.users.total || 0;
+function addLog(user,action){
+
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${new Date().toLocaleString()}</td>
+<td>${user}</td>
+<td>${action}</td>
+`;
+
+qs("logs").prepend(tr);
 }
 
-if(data.queue){
-qs('queueVal').textContent = data.queue.pending || 0;
-}
+function initSocket(){
+
+socket = io(API_BASE,{
+auth:{token:token()}
+});
+
+socket.on("connect",()=>{
+addLog("SYSTEM","SOCKET CONNECTED");
+});
+
+socket.on("system_update",(d)=>{
+
+const cpu = Number(d.system?.cpu || 0);
+const ram = Number(d.system?.ram || 0);
+const users = Number(d.users?.total || 0);
+const queue = Number(d.queue?.pending || 0);
+
+qs("cpu").innerText = cpu + "%";
+qs("ram").innerText = ram + "%";
+qs("users").innerText = users;
+qs("queue").innerText = queue;
+
+updateChart(cpu,ram);
+});
+
+socket.on("audit_update",(rows)=>{
+
+if(!Array.isArray(rows)) return;
+
+rows.forEach(r=>{
+addLog(r.user || "SYSTEM",r.status || "EVENT");
+});
+});
+
+socket.on("disconnect",()=>{
+addLog("SYSTEM","SOCKET DISCONNECTED");
+});
 }
 
-async function loadBilling(){
+async function serverCmd(service,action){
 
 try{
-const res = await apiFetch('/api/billing/usage');
+
+const res = await api("/api/system/control",{
+method:"POST",
+body:JSON.stringify({
+engine:service,
+action:action
+})
+});
+
 const data = await res.json();
 
-if(!data.success) return;
+if(data.success){
+addLog("OWNER",service+" "+action+" success");
+}else{
+addLog("OWNER",service+" "+action+" fail");
+}
 
-qs('billingBox').innerHTML = data.rows.map(r=>`
-<div class="flex items-center justify-between bg-black/40 border border-white/5 rounded-xl px-4 py-3 mb-2">
-<span class="font-bold text-gray-300"><i class="fa-solid fa-cube text-blue-500/50 mr-2"></i> ${safe(r.service)}</span>
-<span class="mono font-black text-blue-400 bg-blue-500/10 px-3 py-1 rounded-lg">${safe(r.total)}</span>
-</div>
-`).join('');
+}catch(e){
+addLog("OWNER","api error");
+}
+}
+
+async function genLicense(){
+
+try{
+
+const res = await api("/api/license/generate",{
+method:"POST"
+});
+
+const data = await res.json();
+
+if(data.success){
+qs("license").value = data.key;
+addLog("OWNER","license generated");
+}
+
+}catch(e){
+addLog("OWNER","license error");
+}
+}
+
+async function broadcastMsg(){
+
+const msg = qs("broadcastText").value.trim();
+
+if(!msg) return;
+
+try{
+
+const res = await api("/api/system/broadcast",{
+method:"POST",
+body:JSON.stringify({message:msg})
+});
+
+const data = await res.json();
+
+if(data.success){
+addLog("OWNER","broadcast sent");
+qs("broadcastText").value="";
+}else{
+addLog("OWNER","broadcast fail");
+}
+
+}catch(e){
+addLog("OWNER","broadcast error");
+}
+}
+
+async function refreshAll(){
+
+try{
+
+const res = await api("/api/billing/usage");
+await res.json();
+
+addLog("OWNER","manual refresh");
 
 }catch(e){}
 }
 
-function renderAudit(rows){
+window.onload=()=>{
 
-if(!Array.isArray(rows)) return;
-
-qs('auditBody').innerHTML = rows.map(r=>`
-<tr class="hover:bg-white/5 transition border-b border-white/5">
-<td class="text-gray-400">${safe(new Date(r.time).toLocaleString())}</td>
-<td class="text-blue-300 font-bold">${safe(r.user)}</td>
-<td class="text-gray-500">${safe(String(r.ip).replace('::ffff:',''))}</td>
-<td class="font-bold text-gray-300">${safe(r.status)}</td>
-</tr>
-`).join('');
+if(!token()){
+alert("LOGIN FIRST");
+location.href="/";
+return;
 }
 
-async function controlServer(engine,action){
-
-try{
-const res = await apiFetch('/api/system/control',{
-method:'POST',
-body:JSON.stringify({engine,action})
-});
-
-const data = await res.json();
-
-if(data.success){
-toast(engine.toUpperCase() + ' ' + action.toUpperCase() + ' SUCCESS');
-setServerState(engine,action==='start');
-}else{
-toast('control failed');
-}
-
-}catch(e){
-toast('api error');
-}
-}
-
-function setServerState(engine,on){
-let el;
-if(engine === 'win') el = qs('winState');
-else if(engine === 'android') el = qs('androidState');
-else if(engine === 'yulgang') el = qs('ygState'); // <--- เพิ่มเช็คสถานะ โยวกัง
-
-if(on){
-el.className='badge badge-ok';
-el.innerHTML='<div class="pulse-dot"></div> ONLINE';
-}else{
-el.className='badge badge-bad';
-el.innerHTML='OFFLINE';
-}
-}
-
-async function generateKey(){
-
-try{
-const res = await apiFetch('/api/license/generate',{
-method:'POST'
-});
-
-const data = await res.json();
-
-if(data.success){
-qs('licenseKey').value = data.key;
-qs('licenseExpire').innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> VALID UNTIL : ' + new Date(data.expires_at).toLocaleString();
-toast('Secure key generated');
-}
-
-}catch(e){
-toast('license error');
-}
-}
-
-function copyKey(){
-
-const val = qs('licenseKey').value;
-if(!val) return;
-
-navigator.clipboard.writeText(val);
-toast('Copied to clipboard');
-}
-
-async function refreshAll(){
-await loadBilling();
-toast('System refreshed');
-}
-
-window.onload = async ()=>{
-
+initProfile();
 initChart();
-
-const token = localStorage.getItem('sn_jwt');
-
-if(token){
-
-qs('loginOverlay').style.display='none';
-
-qs('roleBadge').classList.remove('hidden');
-qs('roleBadge').innerHTML = '<i class="fa-solid fa-user-astronaut"></i> ' + (localStorage.getItem('sn_role') || 'ADMIN');
-
 initSocket();
-loadBilling();
-
-}else{
-qs('loginOverlay').style.display='flex';
-}
+addLog("SYSTEM","CONTROL CENTER READY");
 
 };
 </script>
 
 </body>
 </html>
-
