@@ -157,7 +157,7 @@ animation:slideIn .25s ease forwards;
         </div>
 
         <div class="session-box" style="--glow: rgba(191, 90, 242, 0.15)">
-            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits (Live DB)</span></div>
+            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits Live DB</span></div>
             <div class="p-5 flex flex-col justify-center gap-4">
                 <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">RunwayML</span><span id="cr-runway" class="text-purple-400 mono">Live Sync...</span></div>
                 <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Replicate</span><span id="cr-replicate" class="text-green-400 mono">Live Sync...</span></div>
@@ -184,7 +184,7 @@ animation:slideIn .25s ease forwards;
             
             <div id="faucet-locked" class="locked-overlay rounded-b-2xl">
                 <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
-                <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register to run<br>Termux Auto-Faucet</p>
+                <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register run<br>Termux Auto-Faucet</p>
                 <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition shadow-[0_0_15px_rgba(255,204,0,0.4)]">Initialize Script</button>
             </div>
 
@@ -212,7 +212,7 @@ animation:slideIn .25s ease forwards;
                     <div>
                         <p id="lbl-api-key" class="text-[10px] text-gray-400 uppercase font-bold mb-1">Termux API Key (12H Validity)</p>
                         <div class="flex gap-2 relative">
-                            <input type="text" id="termux-key" readonly value="ðŸ” WATCH FULL VIDEO TO UNLOCK" class="w-full bg-black/80 p-3 rounded-lg text-xs mono text-gray-500 border border-white/10 text-center focus:outline-none transition-all">
+                            <input type="text" id="termux-key" readonly value="WATCH FULL VIDEO TO UNLOCK" class="w-full bg-black/80 p-3 rounded-lg text-xs mono text-gray-500 border border-white/10 text-center focus:outline-none transition-all">
                             <button onclick="copyKey()" class="bg-cyan-600/20 hover:bg-cyan-500 text-cyan-400 hover:text-white border border-cyan-500/30 px-4 rounded-lg transition"><i class="fas fa-copy"></i></button>
                         </div>
                         <button id="btn-unlock" onclick="processKeyUnlock()" class="w-full mt-2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg text-[10px] uppercase transition shadow-lg flex items-center justify-center gap-2">
@@ -246,8 +246,8 @@ animation:slideIn .25s ease forwards;
 
         <div class="session-box xl:col-span-2 border-gray-700">
             <div class="header-box bg-gray-900/50 p-4 flex justify-between">
-                <span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit Public Live</span>
-                <span class="text-[9px] text-green-400 pulse-dot font-bold">MONITORING</span>
+                <span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit Live</span>
+                <span class="text-[9px] text-green-400 pulse-dot font-bold">MONITOR</span>
             </div>
             <div class="p-0 flex-1 overflow-x-auto min-h-[200px]">
                 <table class="w-full text-left text-[10px] mono">
@@ -259,7 +259,7 @@ animation:slideIn .25s ease forwards;
 
         <div class="session-box xl:col-span-2 border-gray-700">
             <div class="header-box border-b border-purple-500/20 p-4 flex justify-between">
-                <span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-server mr-2"></i>Live Resource Analytics</span>
+                <span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-server mr-2"></i>Resource Analytics</span>
                 <div class="text-[9px] mono text-gray-400"><span class="mr-2">DISK: <span id="sys-disk" class="text-white">Live Sync</span></span> <span>NET: <span id="sys-net" class="text-white">Live Sync</span></span></div>
             </div>
             <div class="p-5 flex-1 relative w-full h-full min-h-[200px]"><canvas id="sysChart"></canvas></div>
