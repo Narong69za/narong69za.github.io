@@ -137,13 +137,15 @@ border-left: 4px solid #3b82f6;
 }
 canvas{max-height:320px}
 
-/* ========================================= */
-/* CSS สำหรับ User Control Modal ที่เพิ่มมาใหม่ */
-/* ========================================= */
+/* เพิ่มส่วนจัดการ Modal และ Terminal Lock */
 #user-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 16px; }
-.modal-content { background: rgba(15,15,15,0.9); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 24px; width: 100%; max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-.modal-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; margin-bottom: 12px; outline: none; transition: 0.3s; }
-.modal-input:focus { border-color: #3b82f6; }
+.modal-content { background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 24px; padding: 24px; width: 100%; max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.modal-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; margin-bottom: 12px; outline: none; }
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--glass-border); }
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+.locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f0; padding: 10px; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
+.termux-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
 </style>
 </head>
 
@@ -154,20 +156,18 @@ canvas{max-height:320px}
 <div id="user-modal">
     <div class="modal-content">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-lg font-black text-blue-400 uppercase tracking-wider"><i class="fas fa-database mr-2"></i>Manage Database</h3>
-            <button onclick="closeUserModal()" class="text-gray-400 hover:text-white transition"><i class="fas fa-times text-xl"></i></button>
+            <h3 class="text-lg font-black text-blue-400"><i class="fas fa-database mr-2"></i>MANAGE DATABASE</h3>
+            <button onclick="closeUserModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times text-xl"></i></button>
         </div>
-        
         <div class="mb-5 p-4 bg-white/5 border border-white/10 rounded-2xl">
-            <h4 class="text-xs text-gray-400 font-bold mb-3 uppercase tracking-widest"><i class="fas fa-user-plus mr-2"></i>Add / Update User</h4>
-            <input type="text" id="mng-user" placeholder="Username / Operator ID" class="modal-input mono text-sm">
-            <input type="number" id="mng-credit" placeholder="Credits Amount (CR)" class="modal-input mono text-sm">
+            <h4 class="text-xs text-gray-400 font-bold mb-3 uppercase"><i class="fas fa-user-plus mr-2"></i>Add / Update User</h4>
+            <input type="text" id="mng-user" placeholder="Username" class="modal-input mono text-sm">
+            <input type="number" id="mng-credit" placeholder="Credits (CR)" class="modal-input mono text-sm">
             <button onclick="saveUser()" class="btn btn-green w-full py-3 mt-1">SAVE USER DATA</button>
         </div>
-
         <div class="p-4 bg-red-900/20 border border-red-500/20 rounded-2xl">
-             <h4 class="text-xs text-red-400 font-bold mb-3 uppercase tracking-widest"><i class="fas fa-ban mr-2"></i>Ban / Remove User</h4>
-             <input type="text" id="mng-ban-user" placeholder="Username to Ban/Remove" class="modal-input mono text-sm border-red-500/30 focus:border-red-500">
+             <h4 class="text-xs text-red-400 font-bold mb-3 uppercase"><i class="fas fa-ban mr-2"></i>Ban / Remove User</h4>
+             <input type="text" id="mng-ban-user" placeholder="Username to Ban/Remove" class="modal-input mono text-sm border-red-500/30">
              <button onclick="deleteUser()" class="btn btn-red w-full py-3 mt-1">EXECUTE BAN</button>
         </div>
     </div>
@@ -213,7 +213,6 @@ ACCESS DENIED
 
 </div>
 </div>
-
 <div class="max-w-[1800px] mx-auto px-4 sm:px-6 pb-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
 <div class="glass-card p-6">
@@ -243,26 +242,24 @@ ACCESS DENIED
 
 <div class="glass-card p-6 xl:col-span-2 flex flex-col">
 <div class="flex justify-between items-center mb-6">
-    <div class="label-glow">User Control & Matrix</div>
-    <button onclick="openUserModal()" class="badge badge-ok cursor-pointer bg-blue-500/20 text-blue-400 border-blue-500/30 hover:bg-blue-500 hover:text-white transition"><i class="fas fa-users-cog"></i> MANAGE DB</button>
+    <div class="label-glow">Billing & Usage Matrix</div>
+    <button onclick="openUserModal()" class="badge badge-ok cursor-pointer bg-blue-500/20 text-blue-400 border-blue-500/30 hover:bg-blue-500 hover:text-white transition"><i class="fas fa-users-cog mr-1"></i> MANAGE DB</button>
 </div>
-<div id="billingBox" class="space-y-2 max-h-[250px] overflow-y-auto flex-1"></div>
+<div id="billingBox" class="space-y-2 max-h-[250px] overflow-y-auto"></div>
 </div>
+
 <div class="glass-card p-6 xl:col-span-4">
 <div class="label-glow mb-6">Engine Control Matrix</div>
-
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
 
 <div class="bg-black/50 border border-white/5 rounded-2xl p-5 relative overflow-hidden">
 <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
 <div class="font-black text-sm mb-1"><i class="fa-brands fa-windows text-blue-400 mr-2"></i>Windows Engine</div>
 <div class="text-[10px] text-gray-500 mono mb-4">game_server_core.exe</div>
-
 <div class="flex justify-between items-center mb-4">
 <span class="text-xs font-bold text-gray-400">STATUS:</span>
 <div id="winState" class="badge badge-bad">OFFLINE</div>
 </div>
-
 <div class="flex gap-3">
 <button class="btn btn-green flex-1" onclick="controlServer('win','start')"><i class="fa-solid fa-play"></i> START</button>
 <button class="btn btn-red flex-1" onclick="controlServer('win','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
@@ -273,12 +270,10 @@ ACCESS DENIED
 <div class="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
 <div class="font-black text-sm mb-1"><i class="fa-brands fa-android text-green-400 mr-2"></i>Android Engine</div>
 <div class="text-[10px] text-gray-500 mono mb-4">api_mobile_bridge.js</div>
-
 <div class="flex justify-between items-center mb-4">
 <span class="text-xs font-bold text-gray-400">STATUS:</span>
 <div id="androidState" class="badge badge-bad">OFFLINE</div>
 </div>
-
 <div class="flex gap-3">
 <button class="btn btn-green flex-1" onclick="controlServer('android','start')"><i class="fa-solid fa-play"></i> START</button>
 <button class="btn btn-red flex-1" onclick="controlServer('android','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
@@ -289,12 +284,10 @@ ACCESS DENIED
 <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
 <div class="font-black text-sm mb-1"><i class="fa-solid fa-dragon text-purple-400 mr-2"></i>Yulgang Engine (โยวกัง)</div>
 <div class="text-[10px] text-gray-500 mono mb-4">yg_server_core.exe</div>
-
 <div class="flex justify-between items-center mb-4">
 <span class="text-xs font-bold text-gray-400">STATUS:</span>
 <div id="ygState" class="badge badge-bad">OFFLINE</div>
 </div>
-
 <div class="flex gap-3">
 <button class="btn btn-green flex-1" onclick="controlServer('yulgang','start')"><i class="fa-solid fa-play"></i> START</button>
 <button class="btn btn-red flex-1" onclick="controlServer('yulgang','stop')"><i class="fa-solid fa-stop"></i> STOP</button>
@@ -305,66 +298,86 @@ ACCESS DENIED
 </div>
 
 <div class="glass-card p-6 xl:col-span-2">
-<div class="label-glow mb-6">License Provisioning</div>
-
-<div class="bg-black/50 rounded-2xl p-6 h-full flex flex-col justify-center">
-<div class="text-xs text-gray-400 mb-3 font-bold">SECURE KEY GENERATION</div>
-
-<div class="flex flex-col sm:flex-row gap-3">
-<input id="licenseKey" class="input mono text-cyan-300 font-bold" readonly placeholder="HM-TRMX-XXXXXX">
-<div class="flex gap-3">
-<button class="btn btn-blue" onclick="generateKey()"><i class="fa-solid fa-bolt"></i> GENERATE</button>
-<button class="btn btn-gray" onclick="copyKey()"><i class="fa-regular fa-copy"></i> COPY</button>
+<div class="label-glow mb-6">Hamster Bot & Termux Key</div>
+<div class="flex flex-col sm:flex-row gap-5">
+    <div class="flex-1 video-container shadow-lg border border-cyan-500/30 bg-black">
+        <div id="yt-player-div"></div>
+    </div>
+    <div class="flex-1 flex flex-col justify-between gap-4">
+        <div>
+            <p class="text-[10px] text-gray-400 uppercase font-bold mb-2">Termux API Key (12H Validity)</p>
+            <div class="flex gap-2 relative">
+                <input type="text" id="termux-key" readonly value="� WATCH FULL VIDEO TO UNLOCK" class="w-full bg-black/80 p-3 rounded-lg text-xs mono text-gray-500 border border-white/10 text-center focus:outline-none transition-all">
+                <button onclick="copyKey()" class="bg-cyan-600/20 hover:bg-cyan-500 text-cyan-400 hover:text-white border border-cyan-500/30 px-4 rounded-lg transition"><i class="fas fa-copy"></i></button>
+            </div>
+            <button id="btn-unlock" onclick="playUnlockVideo()" class="w-full mt-3 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-lg text-[10px] uppercase transition shadow-lg flex items-center justify-center gap-2">
+                <i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Play Video to Unlock</span>
+            </button>
+            <p id="key-timer" class="text-[9px] text-amber-500 font-bold text-center mt-2 hidden">Key expires in: <span id="time-left">12:00:00</span></p>
+        </div>
+    </div>
 </div>
 </div>
 
-<div id="licenseExpire" class="text-xs text-amber-400 mt-5 mono font-bold flex items-center gap-2">
-<i class="fa-solid fa-clock-rotate-left"></i> AWAITING GENERATION
+<div class="glass-card p-6 xl:col-span-2 relative overflow-hidden">
+<div class="label-glow mb-6">Faucet Termux Bot</div>
+
+<div id="faucet-locked" class="locked-overlay rounded-2xl">
+    <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
+    <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register to run<br>Termux Auto-Faucet</p>
+    <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition">Initialize Script</button>
 </div>
+
+<div class="flex flex-col justify-between h-full gap-3 filter blur-sm transition duration-300" id="faucet-content">
+    <div class="flex justify-between items-center bg-black/50 p-3 rounded border border-amber-500/20">
+        <div><p class="text-[9px] text-gray-500 uppercase">Total Earned</p><p class="text-xl font-black mono text-amber-400"><span id="faucet-dispensed">0.00000</span> <span class="text-[10px]">USDT</span></p></div>
+        <div class="text-right"><p class="text-[9px] text-gray-500 uppercase">Status</p><p class="text-[10px] text-green-400 font-bold pulse-dot"><i class="fas fa-circle text-[8px]"></i> FARMING</p></div>
+    </div>
+    <div id="termux-console" class="termux-box flex-1 border-amber-500/30 text-amber-400" style="max-height: 120px; overflow-y: auto;">
+        <div class="text-gray-500 termux-line">root@sn-server:~# ./faucet_bot.sh</div>
+        <div class="text-cyan-400 termux-line">[SYS] Connecting pool...</div>
+    </div>
 </div>
 </div>
 
 <div class="glass-card p-6 xl:col-span-2">
 <div class="flex justify-between items-center mb-6">
-<div class="label-glow"><i class="fa-brands fa-telegram mr-2"></i>Hamster Bot Terminal</div>
-<div id="hmState" class="badge badge-bad">OFFLINE</div>
+    <div class="label-glow">Hamster Bot Terminal</div>
+    <span id="hmState" class="px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase">OFFLINE</span>
 </div>
-
-<div class="bg-black border border-white/10 rounded-xl p-3 h-[130px] overflow-hidden font-mono text-[11px] text-green-400 mb-4 flex flex-col gap-1" id="hmTerminal">
-<div class="text-gray-500 truncate">root@sn-server:~# await hamster_bot --start</div>
-</div>
-
-<div class="flex gap-3">
-<button class="btn btn-green flex-1" onclick="controlHamster('start')"><i class="fa-solid fa-play"></i> START BOT</button>
-<button class="btn btn-red flex-1" onclick="controlHamster('stop')"><i class="fa-solid fa-stop"></i> STOP BOT</button>
-</div>
-</div>
-
-<div class="glass-card xl:col-span-2 flex flex-col">
-<div class="p-6 border-b border-white/5 flex justify-between items-center gap-2">
-<div class="label-glow truncate"><i class="fas fa-shield-alt mr-2"></i>Security Audit Live</div>
-<div class="badge badge-ok bg-transparent border-none shadow-none whitespace-nowrap"><div class="pulse-dot"></div> MONITORING</div>
-</div>
-
-<div class="p-4 flex-1 overflow-y-auto max-h-[250px] flex flex-col gap-2" id="audit-list">
+<div class="flex flex-col gap-4">
+    <div id="hmTerminal" class="termux-box border-cyan-500/30 text-cyan-400" style="max-height: 120px; overflow-y: auto; height: 120px;">
+        <div class="text-gray-500 termux-line">root@sn-server:~# await hamster_bot --start</div>
+    </div>
+    <div class="flex gap-2">
+        <button onclick="controlHamster('start')" class="flex-1 py-2 bg-green-600/20 text-green-400 hover:bg-green-600 border border-green-500/50 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-play"></i> Start</button>
+        <button onclick="controlHamster('stop')" class="flex-1 py-2 bg-red-600/20 text-red-400 hover:bg-red-600 border border-red-500/50 rounded-lg text-[10px] font-bold uppercase"><i class="fas fa-stop"></i> Stop</button>
+    </div>
 </div>
 </div>
 
 <div class="glass-card xl:col-span-2 flex flex-col">
-<div class="p-6 border-b border-white/5 flex justify-between items-center">
-<div class="label-glow"><i class="fas fa-server mr-2"></i>Live Resource Analytics</div>
+<div class="p-6 border-b border-white/5">
+    <div class="label-glow">Live Resource Analytics</div>
 </div>
-
 <div class="px-6 pt-4 pb-0 flex flex-col gap-2 text-[10px] mono text-gray-400">
     <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg border border-white/5">
-        <span class="uppercase tracking-widest"><i class="fas fa-hdd mr-2"></i>DISK:</span> <span id="sys-disk" class="text-white font-bold">Live Sync</span>
+        <span class="uppercase font-bold"><i class="fas fa-hdd mr-2"></i>DISK:</span> <span id="sys-disk" class="text-white font-bold">Live Sync</span>
     </div>
     <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg border border-white/5">
-        <span class="uppercase tracking-widest"><i class="fas fa-network-wired mr-2"></i>NET:</span> <span id="sys-net" class="text-white font-bold">Live Sync</span>
+        <span class="uppercase font-bold"><i class="fas fa-network-wired mr-2"></i>NET:</span> <span id="sys-net" class="text-white font-bold">Live Sync</span>
     </div>
 </div>
+<div class="p-5 flex-1 relative w-full h-full min-h-[150px]"><canvas id="sysChart"></canvas></div>
+</div>
 
-<div class="p-6 flex-1 relative w-full h-full min-h-[150px]"><canvas id="sysChart"></canvas></div>
+<div class="glass-card xl:col-span-4 flex flex-col">
+<div class="p-6 border-b border-white/5 flex justify-between items-center gap-4">
+    <div class="label-glow truncate">Security Audit Live</div>
+    <div class="badge badge-ok bg-transparent border-none shadow-none whitespace-nowrap"><div class="pulse-dot"></div> MONITORING</div>
+</div>
+<div class="p-4 flex-1 overflow-y-auto max-h-[250px] flex flex-col gap-2" id="audit-list">
+    </div>
 </div>
 
 </div>
@@ -373,11 +386,12 @@ const API_BASE = "https://api.sn-designstudio.dev";
 let socket = null;
 let chart = null;
 
-let hmInterval = null; // ตัวแปรสำหรับ Hamster Bot
+let timerInterval = null;
+let faucetInterval = null;
+let hmInterval = null;
+let faucetTotal = 0;
 
-function qs(id){
-return document.getElementById(id);
-}
+function qs(id){ return document.getElementById(id); }
 
 function toast(msg){
 const div = document.createElement('div');
@@ -393,193 +407,117 @@ return String(text ?? '').replace(/[<>&"'`]/g,'');
 
 async function apiFetch(url,opt={}){
 const token = localStorage.getItem('sn_jwt');
-
 opt.headers = opt.headers || {};
 opt.headers['Content-Type']='application/json';
-
-if(token){
-opt.headers['Authorization']='Bearer '+token;
-}
-
+if(token){ opt.headers['Authorization']='Bearer '+token; }
 return await fetch(API_BASE + url,opt);
 }
 
 async function login(){
 const username = qs('loginUser').value.trim();
 const password = qs('loginPass').value;
-
 try{
 const res = await fetch(API_BASE + '/api/admin/login',{
-method:'POST',
-headers:{'Content-Type':'application/json'},
-body:JSON.stringify({username,password})
+method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username,password})
 });
-
 const data = await res.json();
-
-if(!data.success){
-qs('loginErr').classList.remove('hidden');
-return;
-}
-
+if(!data.success){ qs('loginErr').classList.remove('hidden'); return; }
 localStorage.setItem('sn_jwt',data.token);
 localStorage.setItem('sn_role',data.role || 'ADMIN');
 location.reload();
-
-}catch(e){
-toast('LOGIN ERROR');
-}
+}catch(e){ toast('LOGIN ERROR'); }
 }
 
-function logout(){
-localStorage.clear();
-location.reload();
-}
+function logout(){ localStorage.clear(); location.reload(); }
 
 /* ====================================
    ระบบ User Control Modal
 ==================================== */
-function openUserModal() { document.getElementById('user-modal').style.display = 'flex'; }
-function closeUserModal() { document.getElementById('user-modal').style.display = 'none'; }
+function openUserModal() { qs('user-modal').style.display = 'flex'; }
+function closeUserModal() { qs('user-modal').style.display = 'none'; }
 async function saveUser() {
-    const user = document.getElementById('mng-user').value;
-    const credit = document.getElementById('mng-credit').value;
+    const user = qs('mng-user').value;
+    const credit = qs('mng-credit').value;
     if(!user || !credit) return toast("Please fill all fields");
-    try { toast("User updated successfully"); closeUserModal(); } catch(e) { toast("Failed to update user"); }
+    toast("User updated successfully"); closeUserModal();
 }
 async function deleteUser() {
-    const user = document.getElementById('mng-ban-user').value;
+    const user = qs('mng-ban-user').value;
     if(!user) return toast("Please enter username to ban");
-    try { toast("User banned/removed"); closeUserModal(); } catch(e) { toast("Failed to ban user"); }
+    toast("User banned/removed"); closeUserModal();
 }
 
 function initSocket(){
 const token = localStorage.getItem('sn_jwt');
 if(!token) return;
-
-socket = io(API_BASE,{
-auth:{token}
-});
+socket = io(API_BASE,{ auth:{token} });
 
 socket.on('connect',()=>{
 qs('socketState').className='badge badge-ok';
 qs('socketState').innerHTML='<div class="pulse-dot"></div> LIVE SYNC';
 });
-
 socket.on('disconnect',()=>{
 qs('socketState').className='badge badge-bad';
 qs('socketState').innerHTML='OFFLINE';
 });
 
-socket.on('system_update',(data)=>{
-applySystem(data);
-});
-
-socket.on('audit_update',(rows)=>{
-renderAudit(rows);
-});
+socket.on('system_update',(data)=>{ applySystem(data); });
+socket.on('audit_update',(rows)=>{ renderAudit(rows); });
 }
 
 function initChart(){
 const ctx = qs('sysChart').getContext('2d');
-
 chart = new Chart(ctx,{
 type:'line',
 data:{
 labels:new Array(20).fill(''),
 datasets:[
-{
-label:'CPU',
-data:new Array(20).fill(0),
-borderColor:'#3b82f6',
-backgroundColor:'rgba(59,130,246,.15)',
-fill:true,
-tension:.4,
-pointRadius: 0
-},
-{
-label:'RAM',
-data:new Array(20).fill(0),
-borderColor:'#10b981',
-backgroundColor:'rgba(16,185,129,.15)',
-fill:true,
-tension:.4,
-pointRadius: 0
-}
-]
-},
-options:{
-responsive:true,
-maintainAspectRatio:false,
-animation:false,
-interaction: { mode: 'index', intersect: false },
-scales:{
-y:{min:0,max:100, grid: { color: 'rgba(255,255,255,0.05)' }},
-x:{ grid: { display: false } } 
-}
-}
+{ label:'CPU', data:new Array(20).fill(0), borderColor:'#3b82f6', backgroundColor:'rgba(59,130,246,.15)', fill:true, tension:.4, pointRadius: 0 },
+{ label:'RAM', data:new Array(20).fill(0), borderColor:'#10b981', backgroundColor:'rgba(16,185,129,.15)', fill:true, tension:.4, pointRadius: 0 }
+]},
+options:{ responsive:true, maintainAspectRatio:false, animation:false, interaction: { mode: 'index', intersect: false }, scales:{ y:{min:0,max:100, grid: { color: 'rgba(255,255,255,0.05)' }}, x:{ grid: { display: false } } } }
 });
 }
 
 function applySystem(data){
-
 if(data.system){
-
 const cpu = Number(data.system.cpu || 0);
 const ram = Number(data.system.ram || 0);
-
 qs('cpuVal').textContent = cpu + '%';
 qs('ramVal').textContent = ram + '%';
-
-chart.data.datasets[0].data.shift();
-chart.data.datasets[0].data.push(cpu);
-
-chart.data.datasets[1].data.shift();
-chart.data.datasets[1].data.push(ram);
-
+chart.data.datasets[0].data.shift(); chart.data.datasets[0].data.push(cpu);
+chart.data.datasets[1].data.shift(); chart.data.datasets[1].data.push(ram);
 chart.update();
 
-// อัปเดต Disk และ Net แนวนอน
-const elDisk = document.getElementById('sys-disk');
-const elNet = document.getElementById('sys-net');
+// อัปเดต Disk / Net แนวนอน
+const elDisk = qs('sys-disk'); const elNet = qs('sys-net');
 if(elDisk) elDisk.innerText = (data.system.disk || '0') + '%';
 if(elNet) elNet.innerText = (data.system.network || '0') + ' mbps';
 }
-
-if(data.users){
-qs('usersVal').textContent = data.users.total || 0;
-}
-
-if(data.queue){
-qs('queueVal').textContent = data.queue.pending || 0;
-}
+if(data.users){ qs('usersVal').textContent = data.users.total || 0; }
+if(data.queue){ qs('queueVal').textContent = data.queue.pending || 0; }
 }
 
 async function loadBilling(){
-
 try{
 const res = await apiFetch('/api/billing/usage');
 const data = await res.json();
-
 if(!data.success) return;
-
 qs('billingBox').innerHTML = data.rows.map(r=>`
 <div class="flex items-center justify-between bg-black/40 border border-white/5 rounded-xl px-4 py-3 mb-2">
 <span class="font-bold text-gray-300"><i class="fa-solid fa-cube text-blue-500/50 mr-2"></i> ${safe(r.service)}</span>
 <span class="mono font-black text-blue-400 bg-blue-500/10 px-3 py-1 rounded-lg">${safe(r.total)}</span>
 </div>
 `).join('');
-
 }catch(e){}
 }
 
 /* ====================================
-   ระบบ Render Audit แบบกล่องแนวนอน
+   ระบบ Render Audit (แนวนอน)
 ==================================== */
 function renderAudit(rows){
-
 if(!Array.isArray(rows)) return;
-const list = document.getElementById("audit-list");
+const list = qs("audit-list");
 if(!list) return;
 
 list.innerHTML = rows.map(r=>{
@@ -590,61 +528,200 @@ list.innerHTML = rows.map(r=>{
     else if(st.includes('SCAN') || st.includes('PING') || st.includes('LIMIT')) statusColor = 'text-amber-400';
 
     return `
-    <div class="bg-black/30 p-2.5 rounded-lg border border-white/5 flex flex-col sm:flex-row justify-between sm:items-center gap-1 text-[10px] mono">
+    <div class="bg-black/30 p-3 rounded-lg border border-white/5 flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-[10px] mono">
         <div class="flex flex-wrap items-center gap-2">
             <span class="text-gray-400"><i class="fa-regular fa-clock mr-1 text-gray-600"></i> ${safe(new Date(r.time).toLocaleTimeString())}</span>
             <span class="text-blue-300 font-bold">${safe(r.user)}</span>
             <span class="text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">${safe(String(r.ip).replace('::ffff:',''))}</span>
         </div>
         <div class="${statusColor} font-black tracking-wider whitespace-nowrap">${safe(r.status)}</div>
-    </div>
-    `;
+    </div>`;
 }).join('');
 }
 
 async function controlServer(engine,action){
-
 try{
-const res = await apiFetch('/api/system/control',{
-method:'POST',
-body:JSON.stringify({engine,action})
-});
-
+const res = await apiFetch('/api/system/control',{ method:'POST', body:JSON.stringify({engine,action}) });
 const data = await res.json();
-
 if(data.success){
 toast(engine.toUpperCase() + ' ' + action.toUpperCase() + ' SUCCESS');
-setServerState(engine,action==='start');
-}else{
-toast('control failed');
-}
-
-}catch(e){
-toast('api error');
-}
-}
-
-function setServerState(engine,on){
-let el;
-if(engine === 'win') el = qs('winState');
-else if(engine === 'android') el = qs('androidState');
-else if(engine === 'yulgang') el = qs('ygState'); 
-
-if(on){
-el.className='badge badge-ok';
-el.innerHTML='<div class="pulse-dot"></div> ONLINE';
-}else{
-el.className='badge badge-bad';
-el.innerHTML='OFFLINE';
-}
+let elId = engine === 'win' ? 'winState' : engine === 'android' ? 'androidState' : 'ygState';
+const el = qs(elId);
+if(action==='start'){ el.className='badge badge-ok'; el.innerHTML='<div class="pulse-dot"></div> ONLINE'; }
+else{ el.className='badge badge-bad'; el.innerHTML='OFFLINE'; }
+}else{ toast('control failed'); }
+}catch(e){ toast('api error'); }
 }
 
 /* ====================================
-   ระบบ Hamster Terminal (จำกัด 6 บรรทัด ไม่ให้ยืด)
+   YOUTUBE ANTI-SKIP & OWNER BYPASS
+==================================== */
+const ytVideoIds = ["Yun0Dsb3AtA", "NI7WALIXStU", "O3k277TKgws", "Gl2sWYUez3M", "3zpdGy0QCi8"];
+let currentYtPlayer = null;
+let watchTimer = null;
+let secondsWatched = 0;
+let requiredWatchTime = 0;
+
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+function onYouTubeIframeAPIReady() {
+    if (!checkKeyExpiration()) { loadRandomVideo(); }
+}
+
+function loadRandomVideo() {
+    const randomId = ytVideoIds[Math.floor(Math.random() * ytVideoIds.length)];
+    if (currentYtPlayer) {
+        currentYtPlayer.loadVideoById(randomId);
+        currentYtPlayer.stopVideo(); 
+    } else {
+        currentYtPlayer = new YT.Player('yt-player-div', {
+            videoId: randomId,
+            playerVars: { 'playsinline': 1, 'controls': 0, 'disablekb': 1, 'rel': 0, 'fs': 0, 'modestbranding': 1 },
+            events: { 'onStateChange': onPlayerStateChange }
+        });
+    }
+    secondsWatched = 0;
+}
+
+function playUnlockVideo() {
+    if (currentYtPlayer && typeof currentYtPlayer.playVideo === 'function') {
+        currentYtPlayer.playVideo();
+        toast("Please watch until the end without skipping.");
+        const btn = qs('btn-unlock');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> <span>Watching...</span>';
+        btn.disabled = true; btn.classList.replace('bg-red-600', 'bg-gray-600');
+    } else { toast("YouTube player is loading..."); }
+}
+
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+        requiredWatchTime = currentYtPlayer.getDuration() - 2; 
+        if (watchTimer) clearInterval(watchTimer);
+        watchTimer = setInterval(() => { secondsWatched++; }, 1000);
+    } else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.BUFFERING) {
+        if (watchTimer) clearInterval(watchTimer);
+    } else if (event.data == YT.PlayerState.ENDED) {
+        if (watchTimer) clearInterval(watchTimer);
+        if (secondsWatched >= requiredWatchTime && requiredWatchTime > 0) {
+            processKeyUnlock(); 
+        } else {
+            toast("Skipping detected. Watch full video.");
+            secondsWatched = 0;
+            currentYtPlayer.seekTo(0); currentYtPlayer.stopVideo();
+            resetUnlockButton();
+        }
+    }
+}
+
+function resetUnlockButton() {
+    const btn = qs('btn-unlock');
+    btn.innerHTML = `<i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Play Video to Unlock</span>`;
+    btn.disabled = false; btn.classList.replace('bg-gray-600', 'bg-red-600');
+}
+
+function processKeyUnlock() {
+    const newKey = "HM-TRMX-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-POLCY";
+    const expireAt = Date.now() + (12 * 60 * 60 * 1000);
+    localStorage.setItem('sn_api_key', newKey); localStorage.setItem('sn_key_expire', expireAt);
+    activateKeyUI(newKey); updateTimer(expireAt);
+    toast("12-Hour Termux API Key Generated!");
+}
+
+function checkKeyExpiration() {
+    const role = localStorage.getItem('sn_role');
+    // ระบบ Bypass สำหรับ Owner และ Dev
+    if (role === 'owner' || role === 'admin' || role === 'ADMIN') {
+        activateKeyUI("HM-TRMX-OWNER-BYPASS");
+        if(qs('key-timer')) qs('key-timer').classList.add('hidden');
+        return true;
+    }
+
+    const exp = localStorage.getItem('sn_key_expire');
+    const key = localStorage.getItem('sn_api_key');
+    if (exp && key && Date.now() < parseInt(exp)) {
+        activateKeyUI(key);
+        updateTimer(parseInt(exp));
+        return true;
+    } else {
+        localStorage.removeItem('sn_api_key'); localStorage.removeItem('sn_key_expire');
+        if (currentYtPlayer && typeof currentYtPlayer.loadVideoById === 'function') loadRandomVideo();
+        return false;
+    }
+}
+
+function activateKeyUI(keyStr) {
+    const keyInput = qs('termux-key');
+    if(keyInput) {
+        keyInput.value = keyStr;
+        keyInput.classList.remove('text-gray-500'); keyInput.classList.add('text-cyan-300', 'border-cyan-500/50');
+    }
+    const btn = qs('btn-unlock');
+    if(btn) {
+        btn.innerHTML = '<i class="fas fa-check-circle text-sm"></i> <span>Key Active (12H)</span>';
+        btn.classList.replace('bg-gray-600', 'bg-green-600'); btn.disabled = true;
+    }
+}
+
+function updateTimer(expireTime) {
+    const kt = qs('key-timer');
+    if(kt) kt.classList.remove('hidden');
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval = setInterval(() => {
+        const now = Date.now(); const diff = expireTime - now;
+        if (diff <= 0) { clearInterval(timerInterval); location.reload(); } 
+        else {
+            const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((diff % (1000 * 60)) / 1000);
+            if(qs('time-left')) qs('time-left').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }
+    }, 1000);
+}
+
+function copyKey() {
+    const key = qs('termux-key').value;
+    if(key.includes("WATCH") || key.includes("UNLOCK")) return toast("Watch the video to unlock first!");
+    navigator.clipboard.writeText(key);
+    toast("Key copied!");
+}
+
+/* ====================================
+   FAUCET BOT (ออริจินัล)
+==================================== */
+function registerFaucet(){
+    qs("faucet-locked").style.display="none";
+    qs("faucet-content").classList.remove("blur-sm");
+    localStorage.setItem("faucet_registered","1");
+    startTermuxBot();
+}
+
+function startTermuxBot(){
+    if(faucetInterval) clearInterval(faucetInterval);
+    const coins=["USDT","BTC","ETH","BNB","TON","SOL"];
+    const box=qs("termux-console");
+    faucetInterval=setInterval(()=>{
+        const coin=coins[Math.floor(Math.random()*coins.length)];
+        const amt=(Math.random()*0.05).toFixed(5);
+        faucetTotal += Number(amt);
+        const line=document.createElement("div");
+        line.className="text-green-400 termux-line";
+        line.innerText=`> Claim ${coin} : +${amt}`;
+        box.appendChild(line);
+        while(box.children.length>6){ box.removeChild(box.firstChild); }
+        box.scrollTop = box.scrollHeight;
+        if(qs("faucet-dispensed")) qs("faucet-dispensed").innerText = faucetTotal.toFixed(5);
+    },2500);
+}
+
+/* ====================================
+   HAMSTER TERMINAL (ไม่ยืด ลบเมื่อเกิน 5 บรรทัด)
 ==================================== */
 function controlHamster(action) {
-    const statusEl = document.getElementById('hmState');
-    const term = document.getElementById('hmTerminal');
+    const statusEl = qs('hmState');
+    const term = qs('hmTerminal');
 
     if (action === 'start') {
         statusEl.className = 'px-2 py-1 bg-green-900/50 text-green-400 text-[9px] rounded font-bold uppercase pulse-dot';
@@ -672,45 +749,17 @@ function controlHamster(action) {
 }
 
 function appendHmTerminal(text, colorClass) {
-    const term = document.getElementById('hmTerminal');
+    const term = qs('hmTerminal');
     const line = document.createElement('div');
-    line.className = 'truncate ' + colorClass;
+    line.className = 'termux-line truncate ' + colorClass;
     line.innerText = text;
     term.appendChild(line);
     
-    // จำกัดให้โชว์แค่ 5 บรรทัด (กล่องจะได้ไม่ยืดออกเด็ดขาด)
+    // ลบให้เหลือแค่ 5 บรรทัด เพื่อไม่ให้กล่องขยาย
     while (term.childElementCount > 5) {
         term.removeChild(term.firstChild);
     }
-}
-
-async function generateKey(){
-
-try{
-const res = await apiFetch('/api/license/generate',{
-method:'POST'
-});
-
-const data = await res.json();
-
-if(data.success){
-qs('licenseKey').value = data.key;
-qs('licenseExpire').innerHTML = '<i class="fa-solid fa-clock-rotate-left"></i> VALID UNTIL : ' + new Date(data.expires_at).toLocaleString();
-toast('Secure key generated');
-}
-
-}catch(e){
-toast('license error');
-}
-}
-
-function copyKey(){
-
-const val = qs('licenseKey').value;
-if(!val) return;
-
-navigator.clipboard.writeText(val);
-toast('Copied to clipboard');
+    term.scrollTop = term.scrollHeight;
 }
 
 async function refreshAll(){
@@ -719,25 +768,20 @@ toast('System refreshed');
 }
 
 window.onload = async ()=>{
-
 initChart();
-
 const token = localStorage.getItem('sn_jwt');
-
 if(token){
-
 qs('loginOverlay').style.display='none';
-
 qs('roleBadge').classList.remove('hidden');
 qs('roleBadge').innerHTML = '<i class="fa-solid fa-user-astronaut"></i> ' + (localStorage.getItem('sn_role') || 'ADMIN');
+initSocket(token);
 
-initSocket();
+if(localStorage.getItem("faucet_registered")){ registerFaucet(); }
+checkKeyExpiration();
 loadBilling();
-
 }else{
 qs('loginOverlay').style.display='flex';
 }
-
 };
 </script>
 
