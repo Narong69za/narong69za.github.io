@@ -75,7 +75,6 @@ animation:slideIn .25s ease forwards;
 ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
 .locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-/* ล็อค terminal-box ไม่ให้ยืด */
 .termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f0; padding: 10px; height: 120px; overflow-y: hidden; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
 .termux-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
 .pulse-dot { width:8px;height:8px;border-radius:50%; background:currentColor; animation:pulse 2s infinite; }
@@ -89,7 +88,6 @@ animation:slideIn .25s ease forwards;
 </style>
 </head>
 <body class="pb-12">
-
     <div id="toast-container"></div>
 
     <div id="user-modal">
@@ -138,6 +136,7 @@ animation:slideIn .25s ease forwards;
             <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/40 transition"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </header>
+
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 max-w-[1800px] mx-auto px-4 sm:px-6">
 
         <div class="session-box xl:col-span-4" style="--glow: rgba(255, 149, 0, 0.2)">
@@ -175,7 +174,6 @@ animation:slideIn .25s ease forwards;
                 </div>
             </div>
         </div>
-
         <div class="session-box" style="--glow: rgba(0, 122, 255, 0.15)">
             <div class="header-box border-b border-blue-500/20 p-4"><span class="text-xs font-black text-blue-400 uppercase"><i class="fas fa-users-cog mr-2"></i>User Control</span></div>
             <div class="p-5 flex flex-col flex-1 gap-4">
@@ -209,17 +207,20 @@ animation:slideIn .25s ease forwards;
                 <div class="flex justify-between bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Topup >= 1000 THB</span><span class="text-green-400 mono">+30% BONUS</span></div>
             </div>
         </div>
+
         <div class="session-box" style="--glow: rgba(255, 204, 0, 0.15)">
             <div class="header-box border-b border-amber-500/20 p-4"><span class="text-xs font-black text-amber-400 uppercase"><i class="fas fa-coins mr-2"></i>Faucet Termux Bot</span></div>
+            
             <div id="faucet-locked" class="locked-overlay rounded-b-2xl">
                 <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
                 <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register to run<br>Termux Auto-Faucet</p>
                 <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition shadow-[0_0_15px_rgba(255,204,0,0.4)]">Initialize Script</button>
             </div>
+
             <div class="p-4 flex flex-col justify-between h-full gap-3 filter blur-sm transition duration-300" id="faucet-content">
                 <div class="flex justify-between items-center bg-black/50 p-2 rounded border border-amber-500/20">
                     <div><p class="text-[9px] text-gray-500 uppercase">Total Earned</p><p class="text-xl font-black mono text-amber-400"><span id="faucet-dispensed">0.00000</span> <span class="text-[10px]">USDT</span></p></div>
-                    <div class="text-right"><p class="text-[9px] text-gray-500 uppercase">Status</p><p class="text-[10px] text-green-400 font-bold pulse-dot"><i class="fas fa-circle text-[8px]"></i> FARMING</p></div>
+                    <div class="text-right whitespace-nowrap"><p class="text-[9px] text-gray-500 uppercase">Status</p><p class="text-[10px] text-green-400 font-bold"><i class="fas fa-circle text-[8px] pulse-dot mr-1"></i>FARMING</p></div>
                 </div>
                 <div id="termux-console" class="termux-box flex-1">
                     <div class="text-gray-500 termux-line">root@sn-server:~# ./faucet_bot.sh</div>
@@ -244,13 +245,13 @@ animation:slideIn .25s ease forwards;
                             <button onclick="copyKey()" class="bg-cyan-600/20 hover:bg-cyan-500 text-cyan-400 hover:text-white border border-cyan-500/30 px-4 rounded-lg transition"><i class="fas fa-copy"></i></button>
                         </div>
                         <button id="btn-unlock" onclick="playUnlockVideo()" class="w-full mt-2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg text-[10px] uppercase transition shadow-lg flex items-center justify-center gap-2">
-                            <i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Play Video to Unlock</span>
+                            <i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Generate Key</span>
                         </button>
                         <p id="key-timer" class="text-[9px] text-amber-500 font-bold text-center mt-2 hidden">Key expires in: <span id="time-left">12:00:00</span></p>
                     </div>
                     <div class="grid grid-cols-2 gap-2 mt-2">
-                        <button id="btn-99" class="bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/50 text-white text-[10px] font-bold py-3 rounded-xl transition">99 / Month</button>
-                        <button id="btn-299" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-[10px] font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(0,122,255,0.3)] transition">299 / Month</button>
+                        <button id="btn-99" onclick="window.location.href='payment.html?package=99'" class="bg-white/5 hover:bg-cyan-500/20 border border-white/10 hover:border-cyan-500/50 text-white text-[10px] font-bold py-3 rounded-xl transition">99 / Month</button>
+                        <button id="btn-299" onclick="window.location.href='payment.html?package=299'" class="bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-[10px] font-bold py-3 rounded-xl shadow-[0_0_15px_rgba(0,122,255,0.3)] transition">299 / Month</button>
                     </div>
                 </div>
             </div>
@@ -272,13 +273,17 @@ animation:slideIn .25s ease forwards;
             </div>
         </div>
 
-        <div class="session-box xl:col-span-4 border-gray-700">
-            <div class="header-box bg-gray-900/50 p-4 flex justify-between items-center gap-4">
-                <span class="text-xs font-black text-gray-400 uppercase truncate"><i class="fas fa-shield-alt mr-2"></i>Security Audit Live</span>
-                <span class="text-[9px] text-green-400 pulse-dot font-bold whitespace-nowrap">MONITOR</span>
+        <div class="session-box xl:col-span-2 border-gray-700">
+            <div class="header-box bg-gray-900/50 p-4 flex justify-between items-center flex-wrap gap-2">
+                <span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit Live</span>
+                <span class="text-[9px] text-green-400 font-bold whitespace-nowrap"><i class="fas fa-circle text-[8px] pulse-dot mr-1"></i>MONITORING</span>
             </div>
-            <div class="p-4 flex-1 overflow-y-auto max-h-[250px] flex flex-col gap-2" id="audit-list">
-                </div>
+            <div class="p-0 flex-1 overflow-x-auto min-h-[200px]">
+                <table class="w-full text-left text-[10px] mono whitespace-nowrap">
+                    <thead class="bg-white/5 text-gray-400"><tr><th class="p-3">TIMESTAMP</th><th class="p-3">USER/SERVICE</th><th class="p-3">IP ADDRESS</th><th class="p-3">EVENT ACTION</th></tr></thead>
+                    <tbody id="audit-table-body" class="text-gray-300"></tbody>
+                </table>
+            </div>
         </div>
 
         <div class="session-box xl:col-span-2 border-gray-700">
@@ -287,18 +292,18 @@ animation:slideIn .25s ease forwards;
             </div>
             <div class="px-5 pt-4 pb-0 flex flex-col gap-2 text-[10px] mono text-gray-400">
                 <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg border border-white/5">
-                    <span class="uppercase font-bold"><i class="fas fa-hdd mr-2"></i>DISK:</span> <span id="sys-disk" class="text-white font-bold">Live Sync</span>
+                    <span class="uppercase tracking-widest"><i class="fas fa-hdd mr-2"></i>DISK:</span> <span id="sys-disk" class="text-white font-bold">Live Sync</span>
                 </div>
                 <div class="flex justify-between items-center bg-black/30 p-2.5 rounded-lg border border-white/5">
-                    <span class="uppercase font-bold"><i class="fas fa-network-wired mr-2"></i>NET:</span> <span id="sys-net" class="text-white font-bold">Live Sync</span>
+                    <span class="uppercase tracking-widest"><i class="fas fa-network-wired mr-2"></i>NET:</span> <span id="sys-net" class="text-white font-bold">Live Sync</span>
                 </div>
             </div>
             <div class="p-5 flex-1 relative w-full h-full min-h-[150px]"><canvas id="sysChart"></canvas></div>
         </div>
         
-        <div class="session-box xl:col-span-2" style="--glow: rgba(255, 59, 48, 0.15)">
+        <div class="session-box xl:col-span-4" style="--glow: rgba(255, 59, 48, 0.15)">
             <div class="header-box border-b border-red-500/20 p-4"><span class="text-xs font-black text-red-400 uppercase"><i class="fas fa-tasks mr-2"></i>Global Render & Job Queue</span></div>
-            <div class="p-4 grid grid-cols-2 gap-4 flex-1">
+            <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-4 flex-1">
                 <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-spinner fa-spin text-amber-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Pending</p><p id="q-pending" class="text-xl font-black text-white">0</p></div>
                 <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-cog fa-spin text-blue-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Processing</p><p id="q-processing" class="text-xl font-black text-white">0</p></div>
                 <div class="bg-white/5 rounded-xl p-4 text-center border border-white/5"><i class="fas fa-check-circle text-green-500 mb-2"></i><p class="text-[10px] text-gray-400 uppercase">Completed</p><p id="q-completed" class="text-xl font-black text-white">0</p></div>
@@ -307,347 +312,352 @@ animation:slideIn .25s ease forwards;
         </div>
 
     </div>
-    <script>
-        const API_BASE = "https://api.sn-designstudio.dev"; 
-        let socket;
-        let sysChart = null;
+<script>
+const API_BASE = "https://api.sn-designstudio.dev";
+let socket = null;
+let sysChart = null;
+let timerInterval = null;
+let faucetInterval = null;
+let faucetTotal = 0;
+let hmInterval = null;
 
-        function showToast(msg, type = "success") {
-            const container = document.getElementById("toast-container");
-            const toast = document.createElement("div");
-            toast.className = `toast ${type}`; toast.innerHTML = `<i class="fas ${type==='error'?'fa-times-circle':type==='warning'?'fa-exclamation-triangle':'fa-check-circle'} mr-2"></i> ${msg}`;
-            container.appendChild(toast); setTimeout(() => toast.remove(), 5000);
+function safeHtml(id, html) { const el = document.getElementById(id); if (el) el.innerHTML = html; }
+function safeText(id, text) { const el = document.getElementById(id); if (el) el.innerText = text; }
+function showToast(msg, type = "success") {
+    const container = document.getElementById("toast-container");
+    const toast = document.createElement("div");
+    toast.className = `toast ${type}`; 
+    toast.innerHTML = `<i class="fas ${type==='error'?'fa-times-circle':type==='warning'?'fa-exclamation-triangle':'fa-check-circle'} mr-2"></i> ${msg}`;
+    container.appendChild(toast); setTimeout(() => toast.remove(), 5000);
+}
+
+async function api(endpoint, method, body) {
+    const token = localStorage.getItem('sn_jwt');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    const opt = { method, headers };
+    if (body) opt.body = JSON.stringify(body);
+    const res = await fetch(API_BASE + endpoint, opt);
+    return await res.json();
+}
+
+async function loginAdmin() {
+    const user = document.getElementById('admin-user').value; 
+    const pass = document.getElementById('admin-pass').value;
+    try {
+        const res = await fetch(`${API_BASE}/api/admin/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: user, password: pass }) });
+        const data = await res.json();
+        if(data.success) { localStorage.setItem('sn_jwt', data.token); localStorage.setItem('sn_role', data.role); location.reload(); } 
+        else document.getElementById('login-error').style.display = 'block';
+    } catch (e) { showToast("API Offline", "error"); }
+}
+function logoutAdmin() { localStorage.clear(); location.reload(); }
+
+// ================= ฟังก์ชันจัดการฐานข้อมูล (Modal) =================
+function openUserModal() { document.getElementById('user-modal').style.display = 'flex'; }
+function closeUserModal() { document.getElementById('user-modal').style.display = 'none'; }
+function saveUser() { showToast("User data saved successfully", "success"); closeUserModal(); }
+function deleteUser() { showToast("User banned/removed from DB", "warning"); closeUserModal(); }
+
+function initSocket(token){
+    socket = io(API_BASE,{ auth:{token}, transports:["websocket","polling"] });
+
+    socket.on("connect",()=>{
+        safeHtml("socket-status", '<div class="w-2 h-2 rounded-full bg-green-400 pulse-dot inline-block mr-2"></div> LIVE SYNC');
+        document.getElementById("socket-status").className = 'px-4 py-2 bg-green-900/30 text-green-400 rounded-xl text-[10px] font-black border border-green-500/30';
+    });
+
+    socket.on("disconnect",()=>{ safeHtml("socket-status", '<i class="fas fa-plug mr-2"></i> DISCONNECTED'); });
+
+    socket.on("system_update",(data)=>{
+        if(data.system && sysChart){
+            sysChart.data.datasets[0].data.shift(); sysChart.data.datasets[0].data.push(data.system.cpu || 0);
+            sysChart.data.datasets[1].data.shift(); sysChart.data.datasets[1].data.push(data.system.ram || 0);
+            sysChart.update();
+            const elDisk = document.getElementById('sys-disk'); const elNet = document.getElementById('sys-net');
+            if(elDisk) elDisk.innerText = (data.system.disk || '0') + '%';
+            if(elNet) elNet.innerText = (data.system.network || '0') + ' mbps';
         }
-
-        // ================= LANGUAGE TOGGLE =================
-        let currentLang = 'EN';
-        const langDict = {
-            EN: { botTitle: "Hamster Bot & Termux Key", unlockText: "Play Video to Unlock", m99: "99 / Month", m299: "299 / Month", lblApi: "Termux API Key (12H Validity)" },
-            TH: { botTitle: "บอทแฮมสเตอร์ & รหัสเทอมุกซ์", unlockText: "กดดูคลิปเพื่อปลดล็อค", m99: "99 / เดือน", m299: "299 / เดือน", lblApi: "รหัส API เทอมุกซ์ (อายุ 12 ชม.)" }
-        };
-        function toggleLanguage() {
-            currentLang = currentLang === 'EN' ? 'TH' : 'EN';
-            document.getElementById('lang-btn').innerText = currentLang === 'EN' ? 'TH | EN' : 'EN | TH';
-            document.getElementById('bot-title').innerHTML = `<i class="fab fa-telegram-plane mr-2"></i>${langDict[currentLang].botTitle}`;
-            document.getElementById('txt-unlock').innerText = langDict[currentLang].unlockText;
-            document.getElementById('btn-99').innerText = langDict[currentLang].m99;
-            document.getElementById('btn-299').innerText = langDict[currentLang].m299;
-            document.getElementById('lbl-api-key').innerText = langDict[currentLang].lblApi;
+        if(data.users){ safeText("db-total-users",data.users.total || 0); safeText("db-active-users",data.users.active_today || 0); }
+        if(data.ai_engines){
+            safeText("cr-runway","$"+(data.ai_engines.runway || "0.00")); safeText("cr-replicate","$"+(data.ai_engines.replicate || "0.00"));
+            safeText("cr-gemini","$"+(data.ai_engines.gemini || "0.00")); safeText("cr-eleven",data.ai_engines.elevenlabs || "0");
         }
-
-        // ================= YOUTUBE IFrame API & OWNER BYPASS =================
-        const ytVideoIds = ["Yun0Dsb3AtA", "NI7WALIXStU", "O3k277TKgws", "Gl2sWYUez3M", "3zpdGy0QCi8"];
-        let currentYtPlayer = null;
-        let watchTimer = null;
-        let secondsWatched = 0;
-        let requiredWatchTime = 0;
-
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        function onYouTubeIframeAPIReady() {
-            if (!checkKeyExpiration()) { loadRandomVideo(); }
+        if(data.queue){
+            safeText("q-pending",data.queue.pending || 0); safeText("q-processing",data.queue.processing || 0);
+            safeText("q-completed",data.queue.completed || 0); safeText("q-failed",data.queue.failed || 0);
         }
+    });
 
-        function loadRandomVideo() {
-            const randomId = ytVideoIds[Math.floor(Math.random() * ytVideoIds.length)];
-            if (currentYtPlayer) {
-                currentYtPlayer.loadVideoById(randomId);
-                currentYtPlayer.stopVideo(); 
-            } else {
-                currentYtPlayer = new YT.Player('yt-player-div', {
-                    videoId: randomId,
-                    playerVars: { 'playsinline': 1, 'controls': 0, 'disablekb': 1, 'rel': 0, 'fs': 0, 'modestbranding': 1 },
-                    events: { 'onStateChange': onPlayerStateChange }
-                });
+    // แสดงผลข้อมูลตาราง Audit ที่ฟื้นฟูกลับมา
+    socket.on("audit_update",(logs)=>{
+        const tb = document.getElementById("audit-table-body");
+        if(!tb) return;
+        tb.innerHTML = logs.map(log=>{
+            let color="text-gray-400";
+            if((log.status||"").includes("OK") || (log.status||"").includes("SUCCESS")) color="text-green-400";
+            if((log.status||"").includes("FAIL") || (log.status||"").includes("DENY")) color="text-red-400";
+            if((log.status||"").includes("SCAN")) color="text-amber-400";
+            return `
+            <tr class="border-b border-white/5 hover:bg-white/5 transition">
+                <td class="p-3">${new Date(log.time).toLocaleTimeString()}</td>
+                <td class="p-3 text-blue-400 font-bold">${log.user || "System"}</td>
+                <td class="p-3 text-gray-500">${(log.ip || "").replace("::ffff:","")}</td>
+                <td class="p-3 ${color} font-bold">${log.status || "-"}</td>
+            </tr>`;
+        }).join("");
+    });
+}
+
+async function controlServer(type,action){
+    try{
+        showToast(`Sending ${action} to ${type} engine...`,"warning");
+        const data = await api("/api/admin/server/control", "POST", {type,action});
+        if(data.success){
+            let id="gs-win-status";
+            if(type==="android") id="gs-and-status";
+            if(type==="yulgang") id="gs-yg-status"; 
+            const el=document.getElementById(id);
+            if(action==="start"){
+                el.innerText="ONLINE"; el.className="px-3 py-1 bg-green-900/50 text-green-400 text-[9px] rounded-full font-bold uppercase pulse-dot mb-4";
+            }else{
+                el.innerText="OFFLINE"; el.className="px-3 py-1 bg-gray-800 text-gray-400 text-[9px] rounded-full font-bold uppercase mb-4";
             }
-            secondsWatched = 0;
-        }
+            showToast("Command success","success");
+        }else{ showToast("Command failed","error"); }
+    }catch(e){ showToast("Server API error","error"); }
+}
 
-        function playUnlockVideo() {
-            if (currentYtPlayer && typeof currentYtPlayer.playVideo === 'function') {
-                currentYtPlayer.playVideo();
-                showToast("Please watch until the end without skipping.", "warning");
-                const btn = document.getElementById('btn-unlock');
-                btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> <span>Watching...</span>';
-                btn.disabled = true; btn.classList.replace('bg-red-600', 'bg-gray-600');
-            } else { showToast("YouTube player is still loading...", "warning"); }
-        }
+/* ====================================
+   YOUTUBE ANTI-SKIP & OWNER BYPASS
+==================================== */
+const ytVideoIds = ["Yun0Dsb3AtA", "NI7WALIXStU", "O3k277TKgws", "Gl2sWYUez3M", "3zpdGy0QCi8"];
+let currentYtPlayer = null;
+let watchTimer = null;
+let secondsWatched = 0;
+let requiredWatchTime = 0;
 
-        function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING) {
-                requiredWatchTime = currentYtPlayer.getDuration() - 2; 
-                if (watchTimer) clearInterval(watchTimer);
-                watchTimer = setInterval(() => { secondsWatched++; }, 1000);
-            } 
-            else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.BUFFERING) {
-                if (watchTimer) clearInterval(watchTimer);
-            }
-            else if (event.data == YT.PlayerState.ENDED) {
-                if (watchTimer) clearInterval(watchTimer);
-                if (secondsWatched >= requiredWatchTime && requiredWatchTime > 0) {
-                    processKeyUnlock(); 
-                } else {
-                    showToast("System detected skipping. You must watch the full video.", "error");
-                    secondsWatched = 0;
-                    currentYtPlayer.seekTo(0); currentYtPlayer.stopVideo();
-                    resetUnlockButton();
-                }
-            }
-        }
+var tag = document.createElement('script');
+tag.src = "https://www.youtube.com/iframe_api";
+var firstScriptTag = document.getElementsByTagName('script')[0];
+firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        function resetUnlockButton() {
+function onYouTubeIframeAPIReady() {
+    if (!checkKeyExpiration()) { loadRandomVideo(); }
+}
+
+function loadRandomVideo() {
+    const randomId = ytVideoIds[Math.floor(Math.random() * ytVideoIds.length)];
+    if (currentYtPlayer) {
+        currentYtPlayer.loadVideoById(randomId);
+        currentYtPlayer.stopVideo(); 
+    } else {
+        currentYtPlayer = new YT.Player('yt-player-div', {
+            videoId: randomId,
+            playerVars: { 'playsinline': 1, 'controls': 0, 'disablekb': 1, 'rel': 0, 'fs': 0, 'modestbranding': 1 },
+            events: { 'onStateChange': onPlayerStateChange }
+        });
+    }
+    secondsWatched = 0;
+}
+
+function playUnlockVideo() {
+    if (currentYtPlayer && typeof currentYtPlayer.playVideo === 'function') {
+        currentYtPlayer.playVideo(); showToast("Please watch until the end without skipping.", "warning");
+        const btn = document.getElementById('btn-unlock');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin text-sm"></i> <span>Watching...</span>';
+        btn.disabled = true; btn.classList.replace('bg-red-600', 'bg-gray-600');
+    } else { showToast("YouTube player is still loading...", "warning"); }
+}
+
+function onPlayerStateChange(event) {
+    if (event.data == YT.PlayerState.PLAYING) {
+        requiredWatchTime = currentYtPlayer.getDuration() - 2; 
+        if (watchTimer) clearInterval(watchTimer);
+        watchTimer = setInterval(() => { secondsWatched++; }, 1000);
+    } 
+    else if (event.data == YT.PlayerState.PAUSED || event.data == YT.PlayerState.BUFFERING) {
+        if (watchTimer) clearInterval(watchTimer);
+    }
+    else if (event.data == YT.PlayerState.ENDED) {
+        if (watchTimer) clearInterval(watchTimer);
+        if (secondsWatched >= requiredWatchTime && requiredWatchTime > 0) {
+            processKeyUnlock(); 
+        } else {
+            showToast("System detected skipping. You must watch the full video.", "error");
+            secondsWatched = 0; currentYtPlayer.seekTo(0); currentYtPlayer.stopVideo();
             const btn = document.getElementById('btn-unlock');
-            btn.innerHTML = `<i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">${currentLang === 'EN' ? 'Play Video to Unlock' : 'กดดูคลิปเพื่อปลดล็อค'}</span>`;
+            btn.innerHTML = `<i class="fab fa-youtube text-sm"></i> <span id="txt-unlock">Generate Key</span>`;
             btn.disabled = false; btn.classList.replace('bg-gray-600', 'bg-red-600');
         }
+    }
+}
 
-        function processKeyUnlock() {
-            const newKey = "HM-TRMX-" + Math.random().toString(36).substring(2, 8).toUpperCase() + "-POLCY";
-            const expireAt = Date.now() + (12 * 60 * 60 * 1000);
-            localStorage.setItem('sn_api_key', newKey); localStorage.setItem('sn_key_expire', expireAt);
-            activateKeyUI(newKey); updateTimer(expireAt);
-            showToast("12-Hour Termux API Key Generated!", "success");
+async function processKeyUnlock(){
+    try{
+        const data = await api("/api/key/generate","POST",{plan:"termux"});
+        if(!data.success){ showToast("Generate key failed","error"); return; }
+        const key = data.key;
+        const expireAt = Date.now() + (12*60*60*1000);
+        localStorage.setItem("sn_api_key",key); localStorage.setItem("sn_key_expire",expireAt);
+        activateKeyUI(key); updateTimer(expireAt);
+        showToast("12-Hour Key Generated","success");
+    }catch(e){ showToast("API key service offline","error"); }
+}
+
+function activateKeyUI(key){
+    const input=document.getElementById("termux-key");
+    if(input){ input.value=key; input.classList.remove("text-gray-500"); input.classList.add("text-cyan-300"); }
+    const btn=document.getElementById("btn-unlock");
+    if(btn){ btn.innerHTML='<i class="fas fa-check-circle mr-2"></i> Key Active (12H)'; btn.disabled=true; btn.classList.remove("bg-red-600"); btn.classList.add("bg-green-600"); }
+}
+
+function updateTimer(expire){
+    const wrap=document.getElementById("key-timer");
+    if(wrap) wrap.classList.remove("hidden");
+    if(timerInterval) clearInterval(timerInterval);
+    timerInterval=setInterval(()=>{
+        const diff = expire - Date.now();
+        if(diff<=0){
+            clearInterval(timerInterval); localStorage.removeItem("sn_api_key"); localStorage.removeItem("sn_key_expire"); location.reload(); return;
         }
+        const h=Math.floor(diff/1000/60/60); const m=Math.floor((diff/1000/60)%60); const s=Math.floor((diff/1000)%60);
+        safeText("time-left", `${String(h).padStart(2,"0")}:${String(m).padStart(2,"0")}:${String(s).padStart(2,"0")}`);
+    },1000);
+}
 
-        function checkKeyExpiration() {
-            // Owner Bypass: ไม่ต้องดูคลิปถ้าเป็น Admin
-            const role = localStorage.getItem('sn_role');
-            if (role === 'owner' || role === 'admin' || role === 'ADMIN') {
-                activateKeyUI("HM-TRMX-OWNER-BYPASS");
-                const kt = document.getElementById('key-timer');
-                if(kt) kt.classList.add('hidden');
-                return true;
-            }
+function checkKeyExpiration(){
+    // ระบบ Bypass สำหรับ Owner หรือ Admin (ไม่ต้องดูวิดีโอ)
+    const role = localStorage.getItem("sn_role");
+    if(role === 'owner' || role === 'admin' || role === 'ADMIN') {
+        activateKeyUI("HM-TRMX-OWNER-BYPASS");
+        const kt = document.getElementById("key-timer");
+        if(kt) kt.classList.add("hidden");
+        return true;
+    }
 
-            const expireTime = localStorage.getItem('sn_key_expire');
-            if (expireTime && Date.now() < parseInt(expireTime)) {
-                activateKeyUI(localStorage.getItem('sn_api_key'));
-                updateTimer(parseInt(expireTime));
-                return true;
-            } else {
-                localStorage.removeItem('sn_api_key'); localStorage.removeItem('sn_key_expire');
-                if (currentYtPlayer && typeof currentYtPlayer.loadVideoById === 'function') loadRandomVideo();
-                return false;
-            }
-        }
+    const exp = localStorage.getItem("sn_key_expire");
+    const key = localStorage.getItem("sn_api_key");
+    if(exp && key && Date.now() < Number(exp)){
+        activateKeyUI(key); updateTimer(Number(exp)); return true;
+    }
+    return false;
+}
 
-        let timerInterval;
-        function updateTimer(expireTime) {
-            document.getElementById('key-timer').classList.remove('hidden');
-            if(timerInterval) clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                const now = Date.now(); const diff = expireTime - now;
-                if (diff <= 0) { clearInterval(timerInterval); location.reload(); } 
-                else {
-                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                    const s = Math.floor((diff % (1000 * 60)) / 1000);
-                    document.getElementById('time-left').innerText = `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                }
-            }, 1000);
-        }
+function copyKey(){
+    const key = document.getElementById("termux-key").value;
+    if(!key || key.includes("WATCH") || key.includes("UNLOCK")){ showToast("Watch video first","error"); return; }
+    navigator.clipboard.writeText(key); showToast("Copied","success");
+}
 
-        function activateKeyUI(keyStr) {
-            const keyInput = document.getElementById('termux-key');
-            keyInput.value = keyStr; keyInput.classList.remove('text-gray-500'); keyInput.classList.add('text-cyan-300', 'border-cyan-500/50');
-            const btn = document.getElementById('btn-unlock');
-            btn.innerHTML = '<i class="fas fa-check-circle text-sm"></i> <span>Key Active (12H)</span>';
-            btn.classList.replace('bg-gray-600', 'bg-green-600');
-            btn.disabled = true;
-        }
+/* ====================================
+   FAUCET BOT (ออริจินัล)
+==================================== */
+function registerFaucet(){
+    document.getElementById("faucet-locked").style.display="none";
+    document.getElementById("faucet-content").classList.remove("blur-sm");
+    localStorage.setItem("faucet_registered","1");
+    startTermuxBot();
+}
 
-        function copyKey() {
-            const key = document.getElementById('termux-key').value;
-            if(key.includes("WATCH") || key.includes("UNLOCK")) return showToast("Watch the video to unlock first!", "error");
-            navigator.clipboard.writeText(key).then(() => showToast("Key copied!", "success"));
-        }
+function startTermuxBot(){
+    if(faucetInterval) clearInterval(faucetInterval);
+    const coins=["USDT","BTC","ETH","BNB","TON","SOL"];
+    const box=document.getElementById("termux-console");
+    faucetInterval=setInterval(()=>{
+        const coin=coins[Math.floor(Math.random()*coins.length)];
+        const amt=(Math.random()*0.05).toFixed(5);
+        faucetTotal += Number(amt);
+        const line=document.createElement("div");
+        line.className="text-green-400 termux-line";
+        line.innerText=`> Claim ${coin} : +${amt}`;
+        box.appendChild(line);
+        while(box.children.length>6){ box.removeChild(box.firstChild); }
+        box.scrollTop = box.scrollHeight;
+        if(document.getElementById("faucet-dispensed")) document.getElementById("faucet-dispensed").innerText = faucetTotal.toFixed(5);
+    },2500);
+}
 
-        // ================= FAUCET BOT =================
-        let faucetInterval; let faucetTotal = 0.00000;
-        const coins = ['USDT', 'SOL', 'BTC', 'ETH', 'TON', 'BNB'];
+/* ====================================
+   HAMSTER TERMINAL (ไม่ยืด)
+==================================== */
+function controlHamster(action) {
+    const statusEl = document.getElementById('hmState');
+    if (action === 'start') {
+        statusEl.className = 'px-2 py-1 bg-green-900/50 text-green-400 text-[9px] rounded font-bold uppercase pulse-dot';
+        statusEl.innerText = 'FARMING';
+        showToast('Hamster Bot Started', 'success');
+
+        if (hmInterval) clearInterval(hmInterval);
         
-        function registerFaucet() {
-            document.getElementById('faucet-locked').style.display = 'none'; document.getElementById('faucet-content').classList.remove('blur-sm');
-            localStorage.setItem('faucet_registered', 'true');
-            startTermuxBot();
-        }
+        appendHmTerminal('[SYS] Termux Engine Connected...', 'text-cyan-400');
+        appendHmTerminal('[SYS] Verifying License...', 'text-cyan-400');
+        
+        hmInterval = setInterval(() => {
+            const actions = ['Tapping...', 'Checking Promo...', 'Claiming Cipher...', 'Syncing State...'];
+            const act = actions[Math.floor(Math.random() * actions.length)];
+            const coins = (Math.random() * 100).toFixed(0);
+            appendHmTerminal(`> ${act} | +${coins} Coins`, 'text-green-400');
+        }, 2000);
+    } else {
+        statusEl.className = 'px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase';
+        statusEl.innerText = 'OFFLINE';
+        showToast('Hamster Bot Stopped', 'error');
+        if (hmInterval) clearInterval(hmInterval);
+        appendHmTerminal('[SYS] Bot Process Terminated.', 'text-red-400');
+    }
+}
 
-        function startTermuxBot() {
-            const consoleDiv = document.getElementById('termux-console');
-            faucetInterval = setInterval(() => {
-                const coin = coins[Math.floor(Math.random() * coins.length)]; const amt = (Math.random() * 0.05).toFixed(5);
-                faucetTotal += parseFloat(amt);
-                const line = document.createElement('div');
-                line.className = 'text-green-400 termux-line'; line.innerText = `> Claim ${coin} : +${amt}`; 
-                consoleDiv.appendChild(line);
-                if(consoleDiv.childElementCount > 5) consoleDiv.removeChild(consoleDiv.firstChild);
-                consoleDiv.scrollTop = consoleDiv.scrollHeight;
-                document.getElementById('faucet-dispensed').innerText = faucetTotal.toFixed(5);
-            }, 2500);
-        }
+function appendHmTerminal(text, colorClass) {
+    const term = document.getElementById('hmTerminal');
+    const line = document.createElement('div');
+    line.className = 'termux-line truncate ' + colorClass;
+    line.innerText = text;
+    term.appendChild(line);
+    
+    // ลบให้เหลือแค่ 5 บรรทัด เพื่อไม่ให้กล่องขยาย
+    while (term.childElementCount > 5) {
+        term.removeChild(term.firstChild);
+    }
+}
 
-        // ================= USER CONTROL MODAL =================
-        function openUserModal() { document.getElementById('user-modal').style.display = 'flex'; }
-        function closeUserModal() { document.getElementById('user-modal').style.display = 'none'; }
-        function saveUser() { showToast("User data saved successfully", "success"); closeUserModal(); }
-        function deleteUser() { showToast("User banned/removed from DB", "warning"); closeUserModal(); }
+function bootChart(){
+    const cv=document.getElementById("sysChart");
+    if(!cv) return;
+    const ctx=cv.getContext("2d");
+    sysChart = new Chart(ctx,{
+        type:"line",
+        data:{
+            labels:Array(20).fill(""),
+            datasets:[
+                { label:"CPU %", data:Array(20).fill(0), borderColor:"#bf5af2", backgroundColor:"rgba(191,90,242,.1)", fill:true, tension:.4 },
+                { label:"RAM %", data:Array(20).fill(0), borderColor:"#32d74b", backgroundColor:"rgba(50,215,75,.1)", fill:true, tension:.4 }
+            ]
+        },
+        options:{ responsive:true, maintainAspectRatio:false, animation:false, scales:{y:{min:0,max:100}} }
+    });
+}
 
-        // ================= GAME SERVER =================
-        function controlServer(type, action) {
-            showToast(`Sending ${action} to ${type} Engine...`, "warning");
-            setTimeout(() => {
-                let statusElId = `gs-${type === 'win' ? 'win' : 'and'}-status`;
-                if(type === 'yulgang') statusElId = 'gs-yg-status';
+function bootSystem(){
+    bootChart();
+    if(localStorage.getItem("faucet_registered")){ registerFaucet(); }
+    checkKeyExpiration();
+}
 
-                const statusEl = document.getElementById(statusElId);
-                
-                if(action === 'start') {
-                    statusEl.innerText = "ONLINE"; statusEl.className = "px-3 py-1 bg-green-900/50 text-green-400 text-[9px] rounded-full font-bold uppercase pulse-dot mb-4";
-                    showToast(`${type.toUpperCase()} Engine Started!`, "success");
-                } else {
-                    statusEl.innerText = "OFFLINE"; statusEl.className = "px-3 py-1 bg-gray-800 text-gray-400 text-[9px] rounded-full font-bold uppercase mb-4";
-                    showToast(`${type.toUpperCase()} Engine Stopped!`, "error");
-                }
-            }, 1000);
-        }
-
-        // ================= HAMSTER TERMINAL (ไม่ยืด) =================
-        let hmInterval = null;
-        function controlHamster(action) {
-            const statusEl = document.getElementById('hmState');
-            const term = document.getElementById('hmTerminal');
-
-            if (action === 'start') {
-                statusEl.className = 'px-2 py-1 bg-green-900/50 text-green-400 text-[9px] rounded font-bold uppercase pulse-dot';
-                statusEl.innerText = 'FARMING';
-                showToast('Hamster Bot Started', 'success');
-
-                if (hmInterval) clearInterval(hmInterval);
-                
-                appendHmTerminal('[SYS] Termux Engine Connected...', 'text-cyan-400');
-                appendHmTerminal('[SYS] Verifying License...', 'text-cyan-400');
-                
-                hmInterval = setInterval(() => {
-                    const actions = ['Tapping...', 'Checking Promo...', 'Claiming Cipher...', 'Syncing State...'];
-                    const act = actions[Math.floor(Math.random() * actions.length)];
-                    const coins = (Math.random() * 100).toFixed(0);
-                    appendHmTerminal(`> ${act} | +${coins} Coins`, 'text-green-400');
-                }, 2000);
-            } else {
-                statusEl.className = 'px-2 py-1 bg-gray-800 text-gray-400 text-[9px] rounded font-bold uppercase';
-                statusEl.innerText = 'OFFLINE';
-                showToast('Hamster Bot Stopped', 'error');
-                if (hmInterval) clearInterval(hmInterval);
-                appendHmTerminal('[SYS] Bot Process Terminated.', 'text-red-400');
-            }
-        }
-
-        function appendHmTerminal(text, colorClass) {
-            const term = document.getElementById('hmTerminal');
-            const line = document.createElement('div');
-            line.className = 'termux-line ' + colorClass;
-            line.innerText = text;
-            term.appendChild(line);
-            
-            // ล็อคให้แสดงไม่เกิน 5 บรรทัด (กล่องจะได้ไม่ยืดออก)
-            while (term.childElementCount > 5) {
-                term.removeChild(term.firstChild);
-            }
-        }
-
-        // ================= SYSTEM LOGIC & PUBLIC DATA =================
-        function bootChart(){
-            const cv = document.getElementById('sysChart');
-            if(!cv) return;
-            const ctx = cv.getContext('2d');
-            sysChart = new Chart(ctx, {
-                type: 'line', data: { labels: Array(20).fill(''), datasets: [{ label: 'CPU %', borderColor: '#bf5af2', backgroundColor: 'rgba(191, 90, 242, 0.1)', data: Array(20).fill(0), fill: true, tension: 0.4 }, { label: 'RAM %', borderColor: '#32d74b', backgroundColor: 'rgba(50, 215, 75, 0.1)', data: Array(20).fill(0), fill: true, tension: 0.4 }]}, options: { responsive: true, maintainAspectRatio: false, scales: { y: { min: 0, max: 100 } }, animation: false }
-            });
-        }
-
-        async function loginAdmin() {
-            const user = document.getElementById('admin-user').value; const pass = document.getElementById('admin-pass').value;
-            try {
-                const res = await fetch(`${API_BASE}/api/admin/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: user, password: pass }) });
-                const data = await res.json();
-                if(data.success) { localStorage.setItem('sn_jwt', data.token); localStorage.setItem('sn_role', data.role); location.reload(); } 
-                else document.getElementById('login-error').style.display = 'block';
-            } catch (e) { showToast("API Offline", "error"); }
-        }
-        function logoutAdmin() { localStorage.clear(); location.reload(); }
-
-        // ================= RENDER AUDIT แนวนอน =================
-        function renderAudit(logs) {
-            if(!Array.isArray(logs)) return;
-            const list = document.getElementById("audit-list");
-            if(!list) return;
-
-            list.innerHTML = logs.map(r => {
-                let color="text-gray-400";
-                if((r.status||"").includes("OK") || (r.status||"").includes("SUCCESS")) color="text-green-400";
-                else if((r.status||"").includes("FAIL") || (r.status||"").includes("DENY")) color="text-red-400";
-                else if((r.status||"").includes("SCAN")) color="text-amber-400";
-
-                return `
-                <div class="bg-black/30 p-2.5 rounded-lg border border-white/5 flex flex-col sm:flex-row justify-between sm:items-center gap-1 text-[10px] mono">
-                    <div class="flex items-center flex-wrap gap-2">
-                        <span class="text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${new Date(r.time || Date.now()).toLocaleTimeString()}</span>
-                        <span class="text-blue-300 font-bold">${r.user || "System"}</span>
-                        <span class="text-gray-500 bg-white/5 px-1.5 py-0.5 rounded">${(r.ip || "").replace("::ffff:","")}</span>
-                    </div>
-                    <div class="${color} font-bold tracking-wider">${r.status || "-"}</div>
-                </div>`;
-            }).join("");
-        }
-
-        function initSocket(token) {
-            socket = io(API_BASE, { auth: { token } });
-            socket.on("connect", () => {
-                const el = document.getElementById('socket-status');
-                el.innerHTML = '<div class="w-2 h-2 rounded-full bg-green-400 pulse-dot inline-block mr-1"></div> LIVE SYNC';
-                el.className = 'px-4 py-2 bg-green-900/30 text-green-400 rounded-xl text-[10px] font-black border border-green-500/30';
-            });
-            socket.on("disconnect", () => {
-                const el = document.getElementById('socket-status');
-                el.innerHTML = '<i class="fas fa-plug mr-1"></i> DISCONNECTED';
-                el.className = 'px-4 py-2 bg-red-900/30 text-red-400 rounded-xl text-[10px] font-black border border-red-500/30';
-            });
-            socket.on("system_update", (data) => {
-                if(data.system) {
-                    sysChart.data.datasets[0].data.shift(); sysChart.data.datasets[0].data.push(data.system.cpu);
-                    sysChart.data.datasets[1].data.shift(); sysChart.data.datasets[1].data.push(data.system.ram); sysChart.update();
-                    const elDisk = document.getElementById('sys-disk'); const elNet = document.getElementById('sys-net');
-                    if(elDisk) elDisk.innerText = (data.system.disk || '0') + '%';
-                    if(elNet) elNet.innerText = (data.system.network || '0') + ' mbps';
-                }
-                if(data.users) { document.getElementById('db-total-users').innerText = data.users.total || '0'; document.getElementById('db-active-users').innerText = data.users.active_today || '0'; }
-                if(data.ai_engines) {
-                    document.getElementById('cr-runway').innerText = '$' + (data.ai_engines.runway || '0.00'); document.getElementById('cr-replicate').innerText = '$' + (data.ai_engines.replicate || '0.00');
-                    document.getElementById('cr-gemini').innerText = '$' + (data.ai_engines.gemini || '0.00'); document.getElementById('cr-eleven').innerText = data.ai_engines.elevenlabs || '0';
-                }
-            });
-            socket.on("audit_update", (logs) => {
-                renderAudit(logs);
-            });
-        }
-
-        window.onload = () => {
-            bootChart();
-            const token = localStorage.getItem('sn_jwt');
-            if(token) {
-                document.getElementById('login-overlay').style.display = 'none';
-                document.getElementById('role-badge').style.display = 'block';
-                document.getElementById('role-badge').innerText = `ROLE: ${localStorage.getItem('sn_role') || "public"}`;
-                initSocket(token);
-                if(localStorage.getItem('faucet_registered')) {
-                    document.getElementById('faucet-locked').style.display = 'none'; document.getElementById('faucet-content').classList.remove('blur-sm'); startTermuxBot();
-                }
-            }
-        };
-    </script>
+window.onload=()=>{
+    bootChart();
+    const token = localStorage.getItem("sn_jwt");
+    if(token){
+        document.getElementById("login-overlay").style.display="none";
+        document.getElementById("role-badge").classList.remove("hidden");
+        safeText("role-badge", "ROLE: "+(localStorage.getItem("sn_role") || "admin"));
+        initSocket(token);
+        bootSystem();
+    }else{
+        document.getElementById("login-overlay").style.display="flex";
+    }
+};
+</script>
 </body>
 </html>
 
