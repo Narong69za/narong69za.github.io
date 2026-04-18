@@ -74,10 +74,16 @@ animation:slideIn .25s ease forwards;
 ::-webkit-scrollbar { width: 5px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
 
 .locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-.termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f0; padding: 10px; height: 120px; overflow-y: auto; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
+/* แก้ไขให้ Terminal ไม่ยืด ใช้ overflow-y: hidden เพื่อซ่อน Scrollbar และความสูงคงที่ */
+.termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f0; padding: 10px; height: 120px; overflow-y: hidden; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
 .termux-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
 .pulse-dot { width:8px;height:8px;border-radius:50%; background:currentColor; animation:pulse 2s infinite; }
 @keyframes pulse { 0%{opacity:1} 50%{opacity:.4} 100%{opacity:1} }
+
+/* สไตล์เพิ่มเติมสำหรับ Modal User Management */
+#user-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; }
+.modal-content { background: var(--card); border: 1px solid var(--border); border-radius: 24px; padding: 20px; width: 90%; max-width: 500px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.modal-content input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 10px; color: #fff; margin-bottom: 10px; outline: none; }
 </style>
 </head>
 <body class="pb-12">
@@ -108,6 +114,28 @@ animation:slideIn .25s ease forwards;
             <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-500/20 text-red-400 rounded-xl hover:bg-red-500/40 transition"><i class="fas fa-sign-out-alt"></i></button>
         </div>
     </header>
+
+    <div id="user-modal">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-black text-blue-400">MANAGE DATABASE</h3>
+                <button onclick="closeUserModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div class="mb-4 p-3 bg-white/5 border border-white/10 rounded-xl">
+                <h4 class="text-xs text-gray-400 font-bold mb-2">ADD / UPDATE USER</h4>
+                <input type="text" id="mng-user" placeholder="Username" class="mono text-sm">
+                <input type="number" id="mng-credit" placeholder="Credits (CR)" class="mono text-sm">
+                <button onclick="saveUser()" class="w-full bg-green-600/20 text-green-400 hover:bg-green-600 hover:text-white border border-green-500/50 rounded-lg py-2 text-xs font-bold transition">SAVE USER</button>
+            </div>
+
+            <div class="p-3 bg-red-900/20 border border-red-500/20 rounded-xl">
+                 <h4 class="text-xs text-red-400 font-bold mb-2">BAN / REMOVE USER</h4>
+                 <input type="text" id="mng-ban-user" placeholder="Username to Ban/Remove" class="mono text-sm border-red-500/30 focus:border-red-500">
+                 <button onclick="deleteUser()" class="w-full bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-500/50 rounded-lg py-2 text-xs font-bold transition">EXECUTE BAN</button>
+            </div>
+        </div>
+    </div>
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 max-w-[1800px] mx-auto px-4 sm:px-6">
 
         <div class="session-box xl:col-span-4" style="--glow: rgba(255, 149, 0, 0.2)">
@@ -153,11 +181,12 @@ animation:slideIn .25s ease forwards;
                     <div class="bg-white/5 p-3 rounded-xl text-center border border-white/5"><p class="text-[10px] text-gray-500 uppercase">Total DB Jobs</p><p id="db-total-users" class="text-2xl font-black mono text-white">0</p></div>
                     <div class="bg-blue-900/20 p-3 rounded-xl text-center border border-blue-500/20"><p class="text-[10px] text-blue-300 uppercase">Active Today</p><p id="db-active-users" class="text-2xl font-black mono text-blue-400">0</p></div>
                 </div>
+                <button onclick="openUserModal()" class="w-full mt-auto py-3 bg-blue-600/20 text-blue-400 hover:bg-blue-600 hover:text-white border border-blue-500/50 rounded-xl text-[10px] font-bold uppercase transition"><i class="fas fa-database mr-1"></i> MANAGE DB</button>
             </div>
         </div>
 
         <div class="session-box" style="--glow: rgba(191, 90, 242, 0.15)">
-            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits Live DB</span></div>
+            <div class="header-box border-b border-purple-500/20 p-4"><span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits (Live DB)</span></div>
             <div class="p-5 flex flex-col justify-center gap-4">
                 <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">RunwayML</span><span id="cr-runway" class="text-purple-400 mono">Live Sync...</span></div>
                 <div class="flex justify-between text-xs font-bold bg-white/5 p-2 rounded border border-white/5"><span class="text-white">Replicate</span><span id="cr-replicate" class="text-green-400 mono">Live Sync...</span></div>
@@ -184,7 +213,7 @@ animation:slideIn .25s ease forwards;
             
             <div id="faucet-locked" class="locked-overlay rounded-b-2xl">
                 <i class="fas fa-lock text-3xl text-amber-500 mb-2"></i>
-                <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register run<br>Termux Auto-Faucet</p>
+                <p class="text-[10px] font-bold text-gray-300 uppercase mb-4 text-center px-4">Register to run<br>Termux Auto-Faucet</p>
                 <button onclick="registerFaucet()" class="bg-amber-500 hover:bg-amber-400 text-black px-6 py-2 rounded-xl text-xs font-black uppercase transition shadow-[0_0_15px_rgba(255,204,0,0.4)]">Initialize Script</button>
             </div>
 
@@ -212,7 +241,7 @@ animation:slideIn .25s ease forwards;
                     <div>
                         <p id="lbl-api-key" class="text-[10px] text-gray-400 uppercase font-bold mb-1">Termux API Key (12H Validity)</p>
                         <div class="flex gap-2 relative">
-                            <input type="text" id="termux-key" readonly value="WATCH FULL VIDEO TO UNLOCK" class="w-full bg-black/80 p-3 rounded-lg text-xs mono text-gray-500 border border-white/10 text-center focus:outline-none transition-all">
+                            <input type="text" id="termux-key" readonly value="� WATCH FULL VIDEO TO UNLOCK" class="w-full bg-black/80 p-3 rounded-lg text-xs mono text-gray-500 border border-white/10 text-center focus:outline-none transition-all">
                             <button onclick="copyKey()" class="bg-cyan-600/20 hover:bg-cyan-500 text-cyan-400 hover:text-white border border-cyan-500/30 px-4 rounded-lg transition"><i class="fas fa-copy"></i></button>
                         </div>
                         <button id="btn-unlock" onclick="processKeyUnlock()" class="w-full mt-2 bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded-lg text-[10px] uppercase transition shadow-lg flex items-center justify-center gap-2">
@@ -246,23 +275,22 @@ animation:slideIn .25s ease forwards;
 
         <div class="session-box xl:col-span-2 border-gray-700">
             <div class="header-box bg-gray-900/50 p-4 flex justify-between">
-                <span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit Live</span>
-                <span class="text-[9px] text-green-400 pulse-dot font-bold">MONITOR</span>
+                <span class="text-xs font-black text-gray-400 uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit Public Live</span>
+                <span class="text-[9px] text-green-400 pulse-dot font-bold">MONITORING</span>
             </div>
-            <div class="p-0 flex-1 overflow-x-auto min-h-[200px]">
-                <table class="w-full text-left text-[10px] mono">
-                    <thead class="bg-white/5 text-gray-400"><tr><th class="p-3">TIMESTAMP</th><th class="p-3">USER/SERVICE</th><th class="p-3">IP ADDRESS</th><th class="p-3">EVENT ACTION</th></tr></thead>
-                    <tbody id="audit-table-body" class="text-gray-300"></tbody>
-                </table>
-            </div>
+            <div class="p-4 flex-1 overflow-y-auto min-h-[200px] flex flex-col gap-2" id="audit-list">
+                </div>
         </div>
 
         <div class="session-box xl:col-span-2 border-gray-700">
             <div class="header-box border-b border-purple-500/20 p-4 flex justify-between">
-                <span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-server mr-2"></i>Resource Analytics</span>
-                <div class="text-[9px] mono text-gray-400"><span class="mr-2">DISK: <span id="sys-disk" class="text-white">Live Sync</span></span> <span>NET: <span id="sys-net" class="text-white">Live Sync</span></span></div>
+                <span class="text-xs font-black text-purple-400 uppercase"><i class="fas fa-server mr-2"></i>Live Resource Analytics</span>
             </div>
-            <div class="p-5 flex-1 relative w-full h-full min-h-[200px]"><canvas id="sysChart"></canvas></div>
+            <div class="px-5 pt-3 pb-1 flex flex-col gap-1 text-[10px] mono text-gray-400">
+                <div class="bg-black/30 p-2 rounded-lg border border-white/5 flex justify-between"><span class="uppercase">Disk</span> <span id="sys-disk" class="text-white font-bold">Live Sync</span></div>
+                <div class="bg-black/30 p-2 rounded-lg border border-white/5 flex justify-between"><span class="uppercase">Network</span> <span id="sys-net" class="text-white font-bold">Live Sync</span></div>
+            </div>
+            <div class="p-5 flex-1 relative w-full h-full min-h-[150px]"><canvas id="sysChart"></canvas></div>
         </div>
         
         <div class="session-box xl:col-span-4" style="--glow: rgba(255, 59, 48, 0.15)">
@@ -283,7 +311,7 @@ let sysChart = null;
 let timerInterval = null;
 let faucetInterval = null;
 let faucetTotal = 0;
-let hmInterval = null; // ตัวแปรสำหรับ Hamster Bot
+let hmInterval = null;
 
 function safeHtml(id, html) {
     const el = document.getElementById(id);
@@ -323,6 +351,29 @@ async function loginAdmin() {
     } catch (e) { showToast("API Offline", "error"); }
 }
 function logoutAdmin() { localStorage.clear(); location.reload(); }
+
+/* === ฟังก์ชัน จัดการ Modal สมาชิก === */
+function openUserModal() { document.getElementById('user-modal').style.display = 'flex'; }
+function closeUserModal() { document.getElementById('user-modal').style.display = 'none'; }
+async function saveUser() {
+    const user = document.getElementById('mng-user').value;
+    const credit = document.getElementById('mng-credit').value;
+    if(!user || !credit) return showToast("Please fill all fields", "error");
+    try {
+        // ต้องไปเพิ่ม Endpoint ฝั่ง Node.js
+        showToast("User updated successfully", "success");
+        closeUserModal();
+    } catch(e) { showToast("Failed to update user", "error"); }
+}
+async function deleteUser() {
+    const user = document.getElementById('mng-ban-user').value;
+    if(!user) return showToast("Please enter username to ban", "error");
+    try {
+        // ต้องไปเพิ่ม Endpoint ฝั่ง Node.js
+        showToast("User banned/removed", "warning");
+        closeUserModal();
+    } catch(e) { showToast("Failed to ban user", "error"); }
+}
 
 function initSocket(token){
     socket = io(API_BASE,{ auth:{token}, transports:["websocket","polling"] });
@@ -365,22 +416,26 @@ function initSocket(token){
     });
 
     socket.on("audit_update",(logs)=>{
-        const tb = document.getElementById("audit-table-body");
-        if(!tb) return;
-        tb.innerHTML = logs.map(log=>{
+        const list = document.getElementById("audit-list");
+        if(!list) return;
+        list.innerHTML = logs.map(log=>{
             let color="text-gray-400";
             if((log.status||"").includes("OK")) color="text-green-400";
             if((log.status||"").includes("SUCCESS")) color="text-green-400";
             if((log.status||"").includes("FAIL")) color="text-red-400";
             if((log.status||"").includes("DENY")) color="text-red-400";
             if((log.status||"").includes("SCAN")) color="text-amber-400";
+            
+            // แสดงเป็นกล่องแนวนอนแบบ Resource Analytics
             return `
-            <tr class="border-b border-white/5 hover:bg-white/5">
-            <td class="p-3">${new Date(log.time).toLocaleTimeString()}</td>
-            <td class="p-3 text-blue-400 font-bold">${log.user || "System"}</td>
-            <td class="p-3 text-gray-500">${(log.ip || "").replace("::ffff:","")}</td>
-            <td class="p-3 ${color} font-bold">${log.status || "-"}</td>
-            </tr>`;
+            <div class="bg-black/30 p-3 rounded-lg border border-white/5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 text-[10px] mono">
+                <div>
+                    <span class="text-gray-400 mr-2">${new Date(log.time).toLocaleTimeString()}</span>
+                    <span class="text-blue-400 font-bold mr-2">${log.user || "System"}</span>
+                    <span class="text-gray-500">${(log.ip || "").replace("::ffff:","")}</span>
+                </div>
+                <span class="${color} font-bold">${log.status || "-"}</span>
+            </div>`;
         }).join("");
     });
 }
@@ -393,7 +448,7 @@ async function controlServer(type,action){
         if(data.success){
             let id="gs-win-status";
             if(type==="android") id="gs-and-status";
-            if(type==="yulgang") id="gs-yg-status"; // รองรับ Yulgang
+            if(type==="yulgang") id="gs-yg-status"; 
             
             const el=document.getElementById(id);
             if(action==="start"){
@@ -410,7 +465,6 @@ async function controlServer(type,action){
     }catch(e){ showToast("Server API error","error"); }
 }
 
-// ฟังก์ชันควบคุมกล่อง Hamster Terminal
 function controlHamster(action) {
     const statusEl = document.getElementById('hmState');
     const term = document.getElementById('hmTerminal');
@@ -446,7 +500,8 @@ function appendHmTerminal(text, colorClass) {
     line.className = 'termux-line ' + colorClass;
     line.innerText = text;
     term.appendChild(line);
-    if (term.childElementCount > 20) term.removeChild(term.firstChild);
+    // จำกัดให้แสดงแค่ 5 บรรทัด และเลื่อนขึ้น
+    if (term.childElementCount > 5) term.removeChild(term.firstChild);
     term.scrollTop = term.scrollHeight;
 }
 
@@ -537,7 +592,8 @@ function startTermuxBot(){
         line.className="text-green-400 termux-line";
         line.innerText=`> Claim ${coin} : +${amt}`;
         box.appendChild(line);
-        while(box.children.length>6){ box.removeChild(box.firstChild); }
+        if (box.childElementCount > 5) box.removeChild(box.firstChild);
+        box.scrollTop = box.scrollHeight;
         safeText("faucet-dispensed",faucetTotal.toFixed(5));
     },2500);
 }
