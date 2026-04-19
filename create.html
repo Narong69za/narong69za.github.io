@@ -85,6 +85,25 @@ const engines = [
     { id:"13", mode:"REMOVE BG VIDEO", type:"upscale", need:"VIDEO SOURCE" },
     { id:"14", mode:"FRAME INTERPOLATION", type:"deep_motion", need:"VIDEO SOURCE" }
 ];
+async function syncProfile() {
+    // บังคับใช้อีเมล narongsack.69@gmail.com เพื่อดึงยอด 148,400
+    const email = localStorage.getItem("user_email") || "narongsack.69@gmail.com"; 
+    localStorage.setItem("user_email", email); // บันทึกไว้เผื่อยังไม่มี
+
+    try {
+        const response = await fetch(`${API_BASE}/api/user-profile?email=${email}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // อัปเดตตัวเลขบนหน้าจอ
+            document.getElementById('top-credits').innerHTML = `
+                ${data.credits.toLocaleString()} <span class="text-[10px] text-gray-500">CR</span>
+            `;
+            // เก็บยอดเงินไว้เช็คตอนกดยิง
+            localStorage.setItem("user_credits", data.credits);
+        }
+    } catch (e) { console.log("Sync Profile Error"); }
+}
 
 function render(){
     document.getElementById('engine-grid').innerHTML = engines.map(e => `
@@ -221,7 +240,11 @@ async function dispatchJob(id) {
     }
 }
 
-document.addEventListener("DOMContentLoaded", render);
+document.addEventListener("DOMContentLoaded", () => {
+    render();
+    syncProfile();
+});
+
 </script>
 
 </body>
