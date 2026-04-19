@@ -1,76 +1,15 @@
-"use strict";
-
-const ENV = {
-    API_BASE: "https://api.sn-designstudio.dev"
-};
-
-const STATE = {
-    socket: null,
-    sysChart: null,
-    timers: { key: null, faucet: null, hamster: null },
-    faucetTotal: 0,
-    reconnectAttempts: 0
-};
-
-function qs(id) { return document.getElementById(id); }
-
-function safeText(id, text) {
-    const el = qs(id);
-    if (el) el.textContent = text;
-}
-
-function showToast(msg, type = "success") {
-    const container = qs("toast-container");
-    if(!container) return;
-    const toast = document.createElement("div");
-    toast.className = `toast ${type} flex items-center gap-3`;
-
-    let iconClass = "fa-check-circle text-green-400";
-    if(type === 'error') iconClass = "fa-times-circle text-red-400";
-    if(type === 'warning') iconClass = "fa-exclamation-triangle text-amber-400";
-
-    toast.innerHTML = `<i class="fa-solid ${iconClass}"></i> <span>${msg}</span>`;
-    container.appendChild(toast);
-    setTimeout(() => toast.remove(), 5000);
-}
-
-function getAuthToken() {
-    return sessionStorage.getItem('sn_jwt') || localStorage.getItem('sn_jwt');
-}
-
-function setAuthData(data) {
-    sessionStorage.setItem('sn_jwt', data.token);
-    sessionStorage.setItem('sn_role', data.role || 'ADMIN');
-    localStorage.setItem('sn_user', data.user || 'admin');
-}
-
-async function apiFetch(endpoint, method = 'GET', body = null) {
-    const token = getAuthToken();
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-
-    const options = { method, headers };
-    if (body) options.body = JSON.stringify(body);
-
-    let res = await fetch(ENV.API_BASE + endpoint, options);
-    if (res.status === 401 || res.status === 403) {
-        showToast("Session expired. Logging out...", "error");
-        setTimeout(logoutAdmin, 1500);
-        throw new Error("Unauthorized");
-    }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-}
-
 async function loginAdmin() {
     const userEl = qs('admin-user');
     const passEl = qs('admin-pass');
     const errEl = qs('login-error');
     const btn = qs('btn-login');
 
+    if (!userEl || !passEl) return;
+
     const username = userEl.value.trim();
     const password = passEl.value;
 
+    // เช็ค Rate Limit ฝั่ง Client (ดักจับการกดรัวๆ)
     const lockTime = localStorage.getItem('sn_login_lock');
     if (lockTime && Date.now() < parseInt(lockTime)) {
         errEl.textContent = `TOO MANY ATTEMPTS. TRY AGAIN LATER.`;
@@ -78,85 +17,77 @@ async function loginAdmin() {
         return;
     }
 
+    // � [NEW] เพิ่มระบบ AbortController เพื่อทำ Timeout (ป้องกันปุ่มค้าง)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 วินาที ตัดจบ!
+
     try {
-        if(btn) {
+        // ล็อคปุ่ม และแสดงสถานะกำลังโหลด
+        if (btn) {
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> VERIFYING...';
             btn.disabled = true;
         }
+        errEl.style.display = 'none'; // ซ่อน Error เก่า
 
+        // ยิง API ไปที่ Server
         const res = await fetch(`${ENV.API_BASE}/api/admin/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, password }),
+            signal: controller.signal // ผูกตัวจับเวลา
         });
-        
-        // เช็คว่า Server ส่ง 502 / 404 / 500 หรือไม่
+
+        clearTimeout(timeoutId); // ปลดล็อคเวลาถ้า Server ตอบกลับมาทัน
+
+        // ตรวจจับ Error จาก Server (เช่น 429 Too Many Requests, 502 Bad Gateway)
         if (!res.ok) {
-            errEl.textContent = `ERROR: HTTP ${res.status} (API Backend Issue)`;
+            if (res.status === 429) {
+                errEl.textContent = "ERROR: HTTP 429 (ถูกบล็อกชั่วคราว ลองใหม่ภายหลัง)";
+            } else if (res.status === 404) {
+                errEl.textContent = "ERROR: HTTP 404 (API Endpoint ไม่ถูกต้อง)";
+            } else {
+                errEl.textContent = `ERROR: HTTP ${res.status} (API Backend Issue)`;
+            }
             errEl.style.display = 'block';
-            if(btn) { btn.innerHTML = 'SECURE LOGIN'; btn.disabled = false; }
-            return;
+            return; // ออกจากฟังก์ชัน โยนไปที่ finally
         }
 
         const data = await res.json();
 
+        // ตรวจสอบข้อมูลล็อกอิน
         if (data.success) {
             data.user = username;
             setAuthData(data);
             localStorage.removeItem('sn_login_fails');
-            location.reload();
+            location.reload(); // ล็อกอินสำเร็จ รีเฟรชหน้า
         } else {
             let fails = parseInt(localStorage.getItem('sn_login_fails') || '0') + 1;
             localStorage.setItem('sn_login_fails', fails);
             if (fails >= 5) {
-                localStorage.setItem('sn_login_lock', Date.now() + 60000); 
+                localStorage.setItem('sn_login_lock', Date.now() + 60000); // ล็อค 1 นาที
                 errEl.textContent = "LOCKED OUT FOR 1 MINUTE";
             } else {
                 errEl.textContent = `INVALID CREDENTIALS (${5 - fails} ATTEMPTS LEFT)`;
             }
             errEl.style.display = 'block';
-            if(btn) { btn.innerHTML = 'SECURE LOGIN'; btn.disabled = false; }
         }
+
     } catch (e) {
-        // ถ้าเข้า Catch แสดงว่าเน็ตหลุด, โดน CORS บล็อก หรือ API ล่มจนส่ง Response ไม่ได้
-        errEl.textContent = `NETWORK/CORS ERROR: Backend Unreachable`;
+        // ตรวจจับกรณี Timeout หรือเน็ตหลุด/CORS
+        if (e.name === 'AbortError') {
+            errEl.textContent = "NETWORK TIMEOUT: Server ไม่ตอบสนอง (เกิน 10 วินาที)";
+        } else {
+            errEl.textContent = "NETWORK/CORS ERROR: ไม่สามารถเชื่อมต่อ Backend ได้";
+        }
         errEl.style.display = 'block';
-        if(btn) { btn.innerHTML = 'SECURE LOGIN'; btn.disabled = false; }
+        
+    } finally {
+        // � [NEW] finally จะทำงานเสมอ ไม่ว่าจะเกิด Error อะไรก็ตาม
+        // รับประกันว่าปุ่มจะไม่ค้างอยู่ที่ "VERIFYING..." แน่นอน
+        if (btn) {
+            btn.innerHTML = 'SECURE LOGIN';
+            btn.disabled = false;
+        }
     }
-}
-
-async function logoutAdmin() {
-    try { await apiFetch('/api/admin/logout', 'POST'); } catch(e) {}
-    sessionStorage.clear(); localStorage.clear(); location.reload();
-}
-
-function openUserModal() { qs('user-modal').style.display = 'flex'; }
-function closeUserModal() { qs('user-modal').style.display = 'none'; }
-
-async function saveUser() {
-    const user = qs('mng-user').value.trim();
-    const credit = qs('mng-credit').value.trim();
-    if(!user || !credit) return showToast("Please fill all fields", "error");
-    const btn = qs('btn-save-user'); btn.textContent = "SAVING..."; btn.disabled = true;
-
-    try {
-        const res = await apiFetch('/api/admin/users/save', 'POST', { username: user, credit: parseFloat(credit) });
-        showToast(res.success ? "User updated successfully" : "Save failed", res.success ? "success" : "error");
-        if(res.success) closeUserModal();
-    } catch(e) { showToast("Failed to connect to DB", "error"); }
-    finally { btn.textContent = "SAVE USER DATA"; btn.disabled = false; }
-}
-
-async function deleteUser() {
-    const user = qs('mng-ban-user').value.trim();
-    if(!user) return showToast("Enter username to ban", "error");
-    const btn = qs('btn-delete-user'); btn.textContent = "EXECUTING..."; btn.disabled = true;
-
-    try {
-        const res = await apiFetch('/api/admin/users/delete', 'POST', { username: user });
-        showToast(res.success ? "User banned/removed" : "Ban failed", res.success ? "warning" : "error");
-        if(res.success) closeUserModal();
-    } catch(e) { showToast("Failed to connect to DB", "error"); }
-    finally { btn.textContent = "EXECUTE BAN"; btn.disabled = false; }
 }
 
