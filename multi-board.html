@@ -48,35 +48,18 @@
             <div class="grid grid-cols-3 gap-6">
                 <div class="text-center bg-black/50 p-4 rounded-xl border border-white/5"><div id="gs-win-status" class="text-gray-400 text-xs mb-2">WIN: OFFLINE</div><button onclick="controlServer('win','start')" class="text-green-400 mr-2">START</button><button onclick="controlServer('win','stop')" class="text-red-400">STOP</button></div>
                 <div class="text-center bg-black/50 p-4 rounded-xl border border-white/5"><div id="gs-and-status" class="text-gray-400 text-xs mb-2">AND: OFFLINE</div><button onclick="controlServer('android','start')" class="text-green-400 mr-2">START</button><button onclick="controlServer('android','stop')" class="text-red-400">STOP</button></div>
-                <div class="text-center bg-black/50 p-4 rounded-xl border border-white/5"><div id="gs-yg-status" class="text-gray-400 text-xs mb-2">YG: OFFLINE</div><button onclick="controlServer('yulgang','start')" class="text-green-400 mr-2">START</button><button onclick="controlServer('yulgang','stop')" class="text-red-400">STOP</button></div>
+                <div class="text-center bg-black/50 p-4 rounded-xl border border-white/5"><div id="gs-yg-status" class="text-gray-400 text-xs mb-2">YG: OFFLINE</div><button onclick="controlServer('yulgang','start')" class="text-green-400 mr-2">START</button>
+        <div class="session-box p-5 flex flex-col">
+            <div class="flex justify-between items-start gap-2 mb-4">
+                <div class="text-cyan-400 font-black truncate">HAMSTER TERMINAL</div>
+                <div id="hmState" class="text-[9px] text-gray-400 whitespace-nowrap flex-shrink-0">OFFLINE</div>
+            </div>
+            <div id="hmTerminal" class="termux-box flex-1 bg-black p-2 text-cyan-400 text-[10px] mono overflow-hidden h-[120px] mb-3"></div>
+            <div class="flex gap-2 mt-auto">
+                <button onclick="controlHamster('start')" class="flex-1 bg-green-500/20 text-green-400 py-2 rounded text-xs font-bold">START</button>
+                <button onclick="controlHamster('stop')" class="flex-1 bg-red-500/20 text-red-400 py-2 rounded text-xs font-bold">STOP</button>
             </div>
         </div>
-
-        <div class="session-box p-5 flex flex-col"><div class="text-blue-400 font-black mb-4">USER CONTROL</div>
-            <div class="grid grid-cols-2 gap-2 mb-4"><div class="bg-white/5 p-3 rounded text-center"><p id="db-total-users" class="text-xl font-black">0</p></div><div class="bg-white/5 p-3 rounded text-center"><p id="db-active-users" class="text-xl font-black text-blue-400">0</p></div></div>
-            <button onclick="openUserModal()" class="w-full mt-auto bg-blue-600/20 text-blue-400 py-3 rounded-lg font-bold">MANAGE DB</button>
-        </div>
-
-        <div class="session-box p-5"><div class="text-purple-400 font-black mb-4">ENGINE CREDITS</div>
-            <div class="space-y-2"><div class="flex justify-between bg-white/5 p-2 rounded"><span class="text-xs">Runway</span><span id="cr-runway" class="text-xs font-bold text-purple-400">0</span></div><div class="flex justify-between bg-white/5 p-2 rounded"><span class="text-xs">Replicate</span><span id="cr-replicate" class="text-xs font-bold text-green-400">0</span></div><div class="flex justify-between bg-white/5 p-2 rounded"><span class="text-xs">Gemini</span><span id="cr-gemini" class="text-xs font-bold text-blue-400">0</span></div><div class="flex justify-between bg-white/5 p-2 rounded"><span class="text-xs">ElevenLabs</span><span id="cr-eleven" class="text-xs font-bold text-red-400">0</span></div></div>
-        </div>
-
-        <div class="session-box p-5 relative"><div class="text-amber-400 font-black mb-4">FAUCET TERMUX</div>
-            <div id="faucet-locked" class="absolute inset-0 bg-black/90 flex flex-col justify-center items-center z-10"><button onclick="registerFaucet()" class="bg-amber-500 text-black px-4 py-2 rounded font-bold text-xs">INIT SCRIPT</button></div>
-            <div id="faucet-content" class="flex flex-col h-full blur-sm">
-                <div class="flex justify-between mb-2"><span id="faucet-dispensed" class="text-xl font-black text-amber-400">0.00</span><span class="text-green-400 text-[10px]">FARMING</span></div>
-                <div id="termux-console" class="termux-box flex-1 bg-black p-2 text-green-400 text-[10px] mono overflow-hidden h-[120px]"></div>
-            </div>
-        </div>
-
-        <div class="flex justify-between items-start gap-2 mb-4">
-    <div class="text-cyan-400 font-black truncate">HAMSTER TERMINAL</div>
-    <div id="hmState" class="text-[9px] text-gray-400 whitespace-nowrap flex-shrink-0">OFFLINE</div>
-</div>
-
-</div>
-
-
 
         <div class="session-box xl:col-span-2 p-5 flex flex-col sm:flex-row gap-4"><div class="text-cyan-400 font-black mb-4 absolute top-4">TERMUX KEY</div>
             <div class="flex-1 video-container mt-8"><div id="yt-player-div"></div></div>
