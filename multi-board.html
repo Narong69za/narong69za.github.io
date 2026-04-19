@@ -115,10 +115,15 @@
                 <div id="termux-console" class="termux-box flex-1 border-amber-500/30 text-green-400 text-[10px] p-3 shadow-inner"></div>
             </div>
         </div>
+        
         <div class="session-box p-4 sm:p-5 flex flex-col">
-            <div class="flex justify-between items-center gap-2 mb-3 border-b border-cyan-500/20 pb-3">
-                <div class="text-cyan-400 font-black text-xs tracking-widest truncate flex-1 min-w-0"><i class="fas fa-terminal mr-2"></i>HAMSTER BOT</div>
-                <div id="hmState" class="text-[9px] text-gray-400 bg-gray-800 px-2 py-1 rounded font-bold whitespace-nowrap flex-shrink-0">OFFLINE</div>
+            <div class="flex justify-between items-center w-full border-b border-cyan-500/20 pb-3 mb-3">
+                <div class="text-cyan-400 font-black text-xs tracking-widest truncate mr-3 flex-1 min-w-0">
+                    <span class="text-cyan-500 mr-1">>_</span> HAMSTER BOT
+                </div>
+                <div id="hmState" class="text-[9px] text-gray-400 bg-gray-800 px-2 py-1 rounded font-bold uppercase whitespace-nowrap flex-none">
+                    OFFLINE
+                </div>
             </div>
             <div id="hmTerminal" class="termux-box flex-1 border-cyan-500/30 text-cyan-400 text-[10px] p-3 mb-3 shadow-inner"></div>
             <div class="flex gap-2 mt-auto">
@@ -126,6 +131,7 @@
                 <button onclick="controlHamster('stop')" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-400 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
             </div>
         </div>
+
 
         <div class="session-box xl:col-span-2 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 relative">
             <div class="text-cyan-400 font-black text-xs tracking-widest absolute top-4 sm:top-6 left-4 sm:left-6"><i class="fab fa-telegram-plane mr-2"></i>TERMUX KEY BYPASS</div>
