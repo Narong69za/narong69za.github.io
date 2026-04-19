@@ -1,0 +1,37 @@
+:root {
+    --bg: #030303;
+    --card: rgba(15,15,15,.82);
+    --border: rgba(255,255,255,.08);
+    --glow: rgba(0, 122, 255, 0.15);
+}
+body { font-family: 'Inter', sans-serif; background: #030303; color: #fff; overflow-x: hidden; }
+.mono { font-family: 'JetBrains Mono', monospace; }
+.session-box { background: var(--card); backdrop-filter: blur(16px); border: 1px solid var(--border); border-radius: 24px; display: flex; flex-direction: column; min-height: 250px; box-shadow: 0 10px 40px rgba(0,0,0,.5); position: relative; overflow: hidden; }
+#login-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.95); z-index: 9999; display: flex; justify-content: center; align-items: center; }
+#toast-container { position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 10px; }
+.toast { padding: 15px 20px; border-radius: 12px; font-size: 12px; font-weight: bold; border: 1px solid rgba(255,255,255,.15); backdrop-filter: blur(10px); animation: slideIn .25s ease forwards; }
+.toast.error { background: rgba(255, 59, 48, 0.9); color: white; } 
+.toast.warning { background: rgba(255, 204, 0, 0.9); color: black; } 
+.toast.success { background: rgba(50, 215, 75, 0.9); color: white; }
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+.video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; border: 1px solid var(--border); background: #000;}
+.video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+::-webkit-scrollbar { width: 5px; } 
+::-webkit-scrollbar-track { background: transparent; } 
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+.locked-overlay { position: absolute; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+
+/* Terminal ล็อคความสูง */
+.termux-box { background: #000; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #0f0; padding: 10px; height: 120px; max-height: 120px; overflow-y: hidden; border: 1px solid rgba(0,255,0,0.3); border-radius: 8px; text-align: left; }
+.termux-line { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; }
+.pulse-dot { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 2s infinite; }
+@keyframes pulse { 0%{opacity:1} 50%{opacity:.4} 100%{opacity:1} }
+
+/* Modal User Management */
+#user-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 9999; display: none; justify-content: center; align-items: center; padding: 16px; }
+.modal-content { background: rgba(15,15,15,0.95); border: 1px solid rgba(255,255,255,0.08); border-radius: 24px; padding: 24px; width: 100%; max-width: 450px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
+.modal-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; margin-bottom: 12px; outline: none; transition: 0.3s; }
+.modal-input:focus { border-color: #3b82f6; }
+
