@@ -35,3 +35,15 @@ body { font-family: 'Inter', sans-serif; background: #030303; color: #fff; overf
 .modal-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px 16px; color: #fff; margin-bottom: 12px; outline: none; transition: 0.3s; }
 .modal-input:focus { border-color: #3b82f6; }
 
+/* ตกแต่ง Scrollbar ให้ดูเป็น SaaS ทันสมัย */
+.custom-scrollbar::-webkit-scrollbar { width: 6px; }
+.custom-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 10px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
+
+/* ป้องกันตัวหนังสือล้นกรอบ */
+.truncate-text { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* เติมแสงเงาให้กล่อง Network ให้ดูมีมิติ */
+.shadow-inner { box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
+

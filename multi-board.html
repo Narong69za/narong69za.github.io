@@ -83,8 +83,58 @@
             </div>
         </div>
 
-        <div class="session-box xl:col-span-4 p-5 flex flex-col h-[250px]"><div class="text-gray-400 font-black mb-2">SECURITY AUDIT</div><div id="audit-list" class="flex-1 overflow-y-auto space-y-2"></div></div>
-        <div class="session-box xl:col-span-4 p-5"><div class="flex justify-between"><div class="text-purple-400 font-black mb-2">RESOURCE ANALYTICS</div><div class="text-xs text-white">DISK: <span id="sys-disk">0%</span> | NET: <span id="sys-net">0</span></div></div><div class="h-[200px] w-full"><canvas id="sysChart"></canvas></div></div>
+        <div class="session-box xl:col-span-4 p-6 flex flex-col h-[300px]">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                <div class="text-gray-400 font-black tracking-widest text-xs"><i class="fas fa-shield-alt mr-2"></i>SECURITY AUDIT</div>
+                <div class="text-[9px] text-green-400 font-bold flex items-center bg-green-900/20 px-2 py-1 rounded border border-green-500/20"><span class="pulse-dot mr-2"></span>LIVE MONITOR</div>
+            </div>
+            <div id="audit-list" class="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
+                </div>
+        </div>
+
+        <div class="session-box xl:col-span-4 p-6">
+            <div class="flex justify-between items-center mb-5 border-b border-purple-500/20 pb-3">
+                <div class="text-purple-400 font-black tracking-widest text-xs"><i class="fas fa-server mr-2"></i>RESOURCE ANALYTICS</div>
+                <div class="text-[9px] text-purple-400 font-bold border border-purple-500/30 px-3 py-1 rounded bg-purple-500/10 tracking-widest">CORE ENGINE</div>
+            </div>
+            
+            <div class="grid grid-cols-3 gap-3 sm:gap-6 mb-5">
+                <div class="bg-black/60 border border-white/5 rounded-xl p-3 sm:p-4 text-center shadow-inner">
+                    <div class="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-1 sm:mb-2"><i class="fas fa-microchip mr-1"></i>CPU LOAD</div>
+                    <div class="text-xl sm:text-2xl font-black text-white mono" id="sys-cpu">0%</div>
+                </div>
+                <div class="bg-black/60 border border-white/5 rounded-xl p-3 sm:p-4 text-center shadow-inner">
+                    <div class="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-1 sm:mb-2"><i class="fas fa-memory mr-1"></i>MEMORY</div>
+                    <div class="text-xl sm:text-2xl font-black text-white mono" id="sys-ram">0%</div>
+                </div>
+                <div class="bg-black/60 border border-white/5 rounded-xl p-3 sm:p-4 text-center shadow-inner">
+                    <div class="text-[9px] sm:text-[10px] text-gray-500 uppercase tracking-widest mb-1 sm:mb-2"><i class="fas fa-hdd mr-1"></i>STORAGE</div>
+                    <div class="text-xl sm:text-2xl font-black text-white mono" id="sys-disk">0%</div>
+                </div>
+            </div>
+
+            <div class="h-[180px] w-full mb-6 chart-container">
+                <canvas id="sysChart"></canvas>
+            </div>
+
+            <div class="bg-[#050505] border border-blue-500/20 rounded-xl p-4 sm:p-5 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500/50"></div>
+                <div class="flex justify-between items-center mb-3 pl-2">
+                    <div class="text-[10px] text-blue-400 font-black tracking-widest"><i class="fas fa-network-wired mr-2"></i>NETWORK TRAFFIC</div>
+                    <div class="text-[9px] text-blue-500/50 uppercase"><i class="fas fa-sync fa-spin mr-1"></i> Syncing</div>
+                </div>
+                <div class="grid grid-cols-2 gap-4 pl-2">
+                    <div class="bg-white/5 rounded-lg p-3 text-center border border-white/5">
+                        <div class="text-[9px] text-gray-400 mb-1 tracking-widest"><i class="fas fa-arrow-down text-green-400 mr-1"></i> INBOUND</div>
+                        <div class="text-sm sm:text-base font-black text-white mono" id="net-in">0.00 Mbps</div>
+                    </div>
+                    <div class="bg-white/5 rounded-lg p-3 text-center border border-white/5">
+                        <div class="text-[9px] text-gray-400 mb-1 tracking-widest"><i class="fas fa-arrow-up text-blue-400 mr-1"></i> OUTBOUND</div>
+                        <div class="text-sm sm:text-base font-black text-white mono" id="net-out">0.00 Mbps</div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
 
@@ -93,6 +143,7 @@
     <script src="assets/js/modules/youtube.js"></script>
     <script src="assets/js/modules/faucet.js"></script>
     <script src="assets/js/modules/hamster.js"></script>
-    <script src="assets/js/dashboard.js"></script> </body>
+    <script src="assets/js/dashboard.js"></script> 
+</body>
 </html>
 
