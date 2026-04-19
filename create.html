@@ -1,259 +1,181 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA - AI PRODUCTION WORKSTATION</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg: #000; --card: #050505; --neon: #00ff41; --border: rgba(0, 255, 65, 0.1); --premium-silver: linear-gradient(145deg, #fff 0%, #777 100%); }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); color: #fff; margin: 0; overflow-x: hidden; letter-spacing: -0.02em; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .silver-text { background: var(--premium-silver); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 900; }
-        
-        /* � Glassmorphism & Neon FX */
-        .top-nav { border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.8); backdrop-filter: blur(20px); position: sticky; top: 0; z-index: 100; }
-        .engine-card { background: var(--card); border: 1px solid #111; border-radius: 24px; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; overflow: hidden; }
-        .engine-card:hover { border-color: var(--neon); box-shadow: 0 0 30px rgba(0, 255, 65, 0.05); transform: translateY(-5px); }
-        
-        /* �️ Preview Slot */
-        .preview-area { width: 100%; height: 180px; background: #000; border-radius: 16px; border: 1px dashed #222; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; }
-        .preview-area img, .preview-area video { width: 100%; height: 100%; object-fit: cover; }
-        
-        /* �️ Inputs */
-        textarea, select { background: #080808 !important; border: 1px solid #1a1a1a !important; color: #fff !important; font-size: 12px !important; transition: 0.3s; border-radius: 12px !important; }
-        textarea:focus, select:focus { border-color: var(--neon) !important; outline: none; box-shadow: 0 0 10px rgba(0, 255, 65, 0.1); }
-        
-        /* � Action Buttons */
-        .btn-generate { background: var(--neon); color: #000; font-weight: 900; border-radius: 14px; transition: 0.3s; text-transform: uppercase; letter-spacing: 0.05em; box-shadow: 0 10px 20px rgba(0, 255, 65, 0.15); }
-        .btn-generate:hover { transform: scale(1.02); filter: brightness(1.1); }
-        .btn-generate:disabled { background: #111; color: #333; cursor: not-allowed; transform: none; box-shadow: none; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SN ULTRA - AI PRODUCTION WORKSTATION</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-        .import-label { background: rgba(255,255,255,0.03); border: 1px solid #1a1a1a; padding: 6px 12px; border-radius: 10px; font-size: 10px; cursor: pointer; transition: 0.2s; }
-        .import-label:hover { background: #fff; color: #000; }
-
-        .status-badge { font-size: 8px; padding: 2px 8px; border-radius: 100px; background: #111; color: var(--neon); border: 1px solid var(--border); }
-    </style>
+<style>
+:root{ --bg:#000; --card:#050505; --neon:#00ff41; --border:rgba(0,255,65,.10); --premium-silver:linear-gradient(145deg,#fff 0%,#777 100%); }
+body{ font-family:'Inter',sans-serif; background:#000; color:#fff; margin:0; overflow-x:hidden; letter-spacing:-0.02em; }
+.mono{font-family:'JetBrains Mono',monospace;}
+.silver-text{ background:var(--premium-silver); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; }
+.top-nav{ border-bottom:1px solid var(--border); background:rgba(0,0,0,.8); backdrop-filter:blur(20px); position:sticky; top:0; z-index:100; }
+.engine-card{ background:var(--card); border:1px solid #111; border-radius:24px; transition:all .35s ease; overflow:hidden; }
+.engine-card:hover{ border-color:var(--neon); box-shadow:0 0 30px rgba(0,255,65,.12); transform:translateY(-4px); }
+.preview-area{ width:100%; height:180px; background:#000; border-radius:16px; border:1px dashed #222; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
+.preview-area img, .preview-area video{ width:100%; height:100%; object-fit:cover; }
+textarea,select{ background:#080808 !important; border:1px solid #1a1a1a !important; color:#fff !important; font-size:12px !important; border-radius:12px !important; }
+textarea:focus,select:focus{ outline:none; border-color:var(--neon)!important; box-shadow:0 0 10px rgba(0,255,65,.1); }
+.btn-generate{ background:var(--neon); color:#000; font-weight:900; border-radius:14px; transition:.2s; text-transform:uppercase; box-shadow:0 10px 20px rgba(0,255,65,.15); }
+.btn-generate:hover{ transform:scale(1.02); opacity:0.9; }
+.btn-generate:disabled{ background:#111; color:#333; cursor:not-allowed; }
+.import-label{ background:rgba(255,255,255,.03); border:1px solid #1a1a1a; padding:6px 12px; border-radius:10px; font-size:10px; cursor:pointer; }
+.status-badge{ font-size:8px; padding:2px 8px; border-radius:100px; background:#111; color:var(--neon); border:1px solid var(--border); }
+</style>
 </head>
 <body class="pb-20">
 <header class="top-nav px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
     <div class="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-center md:text-left">
         <h2 class="text-xl md:text-2xl italic silver-text tracking-tighter uppercase">SN ULTRA PRODUCTION</h2>
         <nav class="hidden lg:flex gap-6 text-[10px] font-bold text-gray-500 tracking-widest">
-            <a href="multi-board.html" class="hover:text-white transition">DASHBOARD</a>
-            <a href="#" class="hover:text-white transition">GALLERY</a>
-            <a href="#" class="text-white">API DOCS</a>
+            <a href="multi-board.html" class="hover:text-white">DASHBOARD</a>
+            <a href="#" class="hover:text-white">GALLERY</a>
+            <a href="#" class="hover:text-white">API DOCS</a>
         </nav>
     </div>
-
-    <div class="flex items-center gap-4 bg-black/50 p-2 md:p-0 rounded-2xl md:bg-transparent">
+    <div class="flex items-center gap-4">
         <div class="text-right">
-            <p class="text-[9px] font-black text-gray-600 uppercase">System Status: <span class="text-[#00ff41]">Secure</span></p>
-            <p class="text-lg md:text-xl font-black mono text-[#00ff41]" id="top-credits">1,480,500 <span class="text-[10px] text-gray-500">CR</span></p>
+            <p class="text-[9px] font-black text-gray-600 uppercase">SYSTEM: <span class="text-[#00ff41]">SECURE</span></p>
+            <p class="text-lg md:text-xl font-black mono text-[#00ff41]" id="top-credits">0 <span class="text-[10px] text-gray-500">CR</span></p>
         </div>
-        <a href="payment.html" class="h-10 px-5 flex items-center justify-center bg-white text-black font-black text-[10px] rounded-full uppercase hover:invert transition shadow-lg">Deposit</a>
+        <a href="payment.html" class="h-10 px-5 flex items-center justify-center bg-white text-black font-black text-[10px] rounded-full uppercase">Deposit</a>
     </div>
 </header>
 
 <main class="max-w-[1400px] mx-auto p-4 md:p-6">
     <div class="flex flex-col mb-8 text-center md:text-left">
         <h1 class="text-3xl md:text-5xl font-black silver-text mb-2">ENGINE WORKSTATION</h1>
-        <p class="text-gray-500 text-[10px] md:text-xs tracking-wide">CONNECTED TO 14 HIGH-END AI MODELS | v15.1 SYNC ACTIVE</p>
+        <p class="text-gray-500 text-[10px] md:text-xs tracking-wide uppercase">Connected to 14 High-End AI Models • Enterprise Multi-Wallet System</p>
     </div>
-
     <div class="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-2" id="engine-grid"></div>
 </main>
+
 <script>
-// เชื่อมต่อ Gateway v15.1 (เปลี่ยนจาก v6.0 เดิม)
 const API_BASE = "https://api.sn-designstudio.dev";
 const ENGINE_BASE_COSTS = { image:50, upscale:80, video:200, deep_motion:300 };
 
 const engines = [
-    { id:"01", mode:"TEXT TO VIDEO", type:"video", need:"PROMPT ONLY" },
-    { id:"02", mode:"IMAGE TO VIDEO", type:"video", need:"IMAGE SOURCE" },
-    { id:"03", mode:"VIDEO TO VIDEO", type:"deep_motion", need:"VIDEO SOURCE" },
-    { id:"04", mode:"TEXT TO IMAGE", type:"image", need:"PROMPT ONLY" },
-    { id:"05", mode:"FACE SWAP", type:"image", need:"TARGET IMAGE" },
-    { id:"06", mode:"UPSCALE 4K", type:"upscale", need:"LOW-RES IMAGE" },
-    { id:"07", mode:"MOTION BRUSH", type:"deep_motion", need:"IMAGE SOURCE" },
-    { id:"08", mode:"AUDIO TO VIDEO", type:"video", need:"AUDIO SOURCE" },
-    { id:"09", mode:"VIRTUAL TRY-ON", type:"image", need:"PERSON IMAGE" },
-    { id:"10", mode:"3D GENERATION", type:"deep_motion", need:"IMAGE/TEXT" },
-    { id:"11", mode:"STYLE TRANSFER", type:"video", need:"VIDEO SOURCE" },
-    { id:"12", mode:"LIP SYNC AI", type:"video", need:"VIDEO SOURCE" },
-    { id:"13", mode:"REMOVE BG VIDEO", type:"upscale", need:"VIDEO SOURCE" },
-    { id:"14", mode:"FRAME INTERPOLATION", type:"deep_motion", need:"VIDEO SOURCE" }
+    {id:"01",mode:"TEXT TO VIDEO",type:"video",need:"PROMPT ONLY"},
+    {id:"02",mode:"IMAGE TO VIDEO",type:"video",need:"IMAGE SOURCE"},
+    {id:"03",mode:"VIDEO TO VIDEO",type:"deep_motion",need:"VIDEO SOURCE"},
+    {id:"04",mode:"TEXT TO IMAGE",type:"image",need:"PROMPT ONLY"},
+    {id:"05",mode:"FACE SWAP",type:"image",need:"TARGET IMAGE"},
+    {id:"06",mode:"UPSCALE 4K",type:"upscale",need:"LOW-RES IMAGE"},
+    {id:"07",mode:"MOTION BRUSH",type:"deep_motion",need:"IMAGE SOURCE"},
+    {id:"08",mode:"AUDIO TO VIDEO",type:"video",need:"AUDIO SOURCE"},
+    {id:"09",mode:"VIRTUAL TRY-ON",type:"image",need:"PERSON IMAGE"},
+    {id:"10",mode:"3D GENERATION",type:"deep_motion",need:"IMAGE/TEXT"},
+    {id:"11",mode:"STYLE TRANSFER",type:"video",need:"VIDEO SOURCE"},
+    {id:"12",mode:"LIP SYNC AI",type:"video",need:"VIDEO SOURCE"},
+    {id:"13",mode:"REMOVE BG VIDEO",type:"upscale",need:"VIDEO SOURCE"},
+    {id:"14",mode:"FRAME INTERPOLATION",type:"deep_motion",need:"VIDEO SOURCE"}
 ];
-async function syncProfile() {
-    const email = localStorage.getItem("user_email") || "narongsack.69@gmail.com"; 
-    localStorage.setItem("user_email", email); // บันทึกไว้เผื่อยังไม่มี
-
-    try {
-        const response = await fetch(`${API_BASE}/api/user-profile?email=${email}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            document.getElementById('top-credits').innerHTML = `
-                ${data.credits.toLocaleString()} <span class="text-[10px] text-gray-500">CR</span>
-            `;
-            // เก็บยอดเงินไว้เช็คตอนกดยิง
-            localStorage.setItem("user_credits", data.credits);
+/* ===========================
+   PROFILE SYNC: Multi-Wallet (ตรงตาม Python Remix)
+   =========================== */
+async function syncProfile(){
+    const email = localStorage.getItem("user_email") || "narongsack.69@gmail.com";
+    try{
+        const res = await fetch(`${API_BASE}/?email=${encodeURIComponent(email)}`);
+        const data = await res.json();
+        if(data.success){
+            // ดึงยอดรวมจากทุกกระเป๋าที่ Python คำนวณมาให้แล้ว
+            const total = Number(data.credits || 0);
+            document.getElementById("top-credits").innerHTML = 
+                `${total.toLocaleString()} <span class="text-[10px] text-gray-500">CR</span>`;
+            
+            localStorage.setItem("user_profile", JSON.stringify(data));
+            localStorage.setItem("user_credits", total);
         }
-    } catch (e) { console.log("Sync Profile Error"); }
+    }catch(e){ console.log("Sync Fail"); }
 }
 
 function render(){
-    document.getElementById('engine-grid').innerHTML = engines.map(e => `
-        <div class="engine-card p-5 md:p-6 flex flex-col gap-6">
-            <div class="flex justify-between items-start">
-                <div>
-                    <span class="status-badge mb-2 inline-block">ENGINE ${e.id}</span>
-                    <h3 class="text-lg md:text-xl font-black italic silver-text uppercase tracking-tighter">${e.mode}</h3>
+    document.getElementById("engine-grid").innerHTML = engines.map(e => `
+    <div class="engine-card p-5 md:p-6 flex flex-col gap-6">
+        <div class="flex justify-between items-start">
+            <div><span class="status-badge mb-2 inline-block">ENGINE ${e.id}</span>
+            <h3 class="text-lg md:text-xl font-black italic silver-text uppercase tracking-tighter">${e.mode}</h3></div>
+            <div class="text-right"><p class="text-[9px] text-gray-600 font-bold uppercase">Base Cost</p>
+            <p class="text-base md:text-lg font-black mono text-[#00ff41]">${ENGINE_BASE_COSTS[e.type]}</p></div>
+        </div>
+        <div class="flex flex-col md:flex-row gap-6">
+            <div class="md:w-1/2 flex flex-col gap-3">
+                <div id="preview-area-${e.id}" class="preview-area">
+                    <p class="text-[9px] text-gray-700 font-bold uppercase">Waiting for ${e.need}</p>
                 </div>
-                <div class="text-right">
-                    <p class="text-[9px] text-gray-600 font-bold uppercase">Base Cost</p>
-                    <p class="text-base md:text-lg font-black mono text-[#00ff41]">${ENGINE_BASE_COSTS[e.type]}</p>
-                </div>
+                <input type="file" id="file-${e.id}" class="hidden" onchange="handlePreview('${e.id}')">
+                <label for="file-${e.id}" class="import-label text-center font-bold uppercase tracking-widest">Import Asset</label>
             </div>
-
-            <div class="flex flex-col md:flex-row gap-6">
-                <div class="md:w-1/2 flex flex-col gap-3">
-                    <div id="preview-area-${e.id}" class="preview-area">
-                        <p class="text-[9px] text-gray-700 font-bold uppercase">Waiting for ${e.need}</p>
-                    </div>
-                    <input type="file" id="file-${e.id}" class="hidden" onchange="handlePreview('${e.id}')">
-                    <label for="file-${e.id}" class="import-label text-center font-bold uppercase tracking-widest">
-                        Import Source Asset
-                    </label>
+            <div class="md:w-1/2 flex flex-col">
+                <p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Instruction / Prompt</p>
+                <textarea id="prompt-${e.id}" class="flex-1 p-3 rounded-xl mb-4 min-h-[80px]"></textarea>
+                <div class="grid grid-cols-2 gap-3 mb-6">
+                    <div><p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Resolution</p>
+                    <select id="res-${e.id}" onchange="updateCost('${e.id}','${e.type}')"><option value="1">720P</option><option value="2">1080P</option><option value="4">4K</option></select></div>
+                    <div><p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Duration</p>
+                    <select id="dur-${e.id}" onchange="updateCost('${e.id}','${e.type}')"><option value="1">5 Sec</option><option value="2">10 Sec</option><option value="3">15 Sec</option></select></div>
                 </div>
-
-                <div class="md:w-1/2 flex flex-col">
-                    <p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Instruction / Prompt</p>
-                    <textarea id="prompt-${e.id}" class="flex-1 p-3 rounded-xl mb-4 min-h-[80px]" placeholder="Describe your vision..."></textarea>
-                    
-                    <div class="grid grid-cols-2 gap-3 mb-6">
-                        <div>
-                            <p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Resolution</p>
-                            <select id="res-${e.id}" onchange="updateCost('${e.id}','${e.type}')" class="w-full p-2">
-                                <option value="1">720P (Base)</option>
-                                <option value="2">1080P (High)</option>
-                                <option value="4">4K (Ultra)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Duration</p>
-                            <select id="dur-${e.id}" onchange="updateCost('${e.id}','${e.type}')" class="w-full p-2">
-                                <option value="1">5 Sec</option>
-                                <option value="2">10 Sec</option>
-                                <option value="3">15 Sec</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between border-t border-white/5 pt-4">
-                        <div class="flex flex-col">
-                            <p class="text-[9px] text-gray-600 font-bold uppercase">Est. Total</p>
-                            <p class="text-xl md:text-2xl font-black mono text-[#00ff41] neon-text" id="cost-display-${e.id}">${ENGINE_BASE_COSTS[e.type]}</p>
-                        </div>
-                        <button id="btn-${e.id}" class="btn-generate h-12 md:h-14 w-28 md:w-36 text-[10px] md:text-xs" onclick="dispatchJob('${e.id}')">
-                            Generate
-                        </button>
-                    </div>
+                <div class="flex items-center justify-between border-t border-white/5 pt-4">
+                    <div><p class="text-[9px] text-gray-600 font-bold uppercase">Est. Total</p>
+                    <p class="text-xl md:text-2xl font-black mono text-[#00ff41]" id="cost-display-${e.id}">${ENGINE_BASE_COSTS[e.type]}</p></div>
+                    <button id="btn-${e.id}" class="btn-generate h-12 md:h-14 w-28 md:w-36 text-[10px] md:text-xs" onclick="dispatchJob('${e.id}')">Generate</button>
                 </div>
             </div>
         </div>
-    `).join("");
+    </div>`).join("");
 }
-// �️ ระบบ Live Preview สมจริง
-function handlePreview(id) {
+function handlePreview(id){
     const file = document.getElementById(`file-${id}`).files[0];
     const area = document.getElementById(`preview-area-${id}`);
-    if (!file) return;
-
+    if(!file) return;
     const url = URL.createObjectURL(file);
-    const size = (file.size / (1024 * 1024)).toFixed(2);
-    
-    if (file.type.startsWith('image/')) {
-        area.innerHTML = `<img src="${url}" class="fade-in"><div class="absolute bottom-2 left-2 bg-black/80 px-2 py-1 text-[8px] mono">${size} MB</div>`;
-    } else if (file.type.startsWith('video/')) {
-        area.innerHTML = `<video src="${url}" autoplay muted loop></video><div class="absolute bottom-2 left-2 bg-black/80 px-2 py-1 text-[8px] mono">VIDEO: ${size} MB</div>`;
-    }
+    if(file.type.startsWith("image/")){ area.innerHTML = `<img src="${url}">`; }
+    else if(file.type.startsWith("video/")){ area.innerHTML = `<video src="${url}" autoplay muted loop></video>`; }
 }
 
-function updateCost(id, type) {
+function updateCost(id,type){
     const res = parseFloat(document.getElementById(`res-${id}`).value);
     const dur = parseFloat(document.getElementById(`dur-${id}`).value);
     const total = Math.floor(ENGINE_BASE_COSTS[type] * res * dur);
     document.getElementById(`cost-display-${id}`).innerText = total.toLocaleString();
 }
 
-// � ระบบ Dispatch งานเข้า Gateway v15.1 (ใส่ระบบ x-auth-token)
-async function dispatchJob(id) {
+async function dispatchJob(id){
     const btn = document.getElementById(`btn-${id}`);
-    const email = localStorage.getItem("user_email") || "guest@sn.com";
-    const engine = engines.find(e => e.id === id);
-    const jwtToken = localStorage.getItem('sn_jwt') || "GUEST"; // ดึง Token หรือใช้สถานะ Guest
-    const resValue = parseFloat(document.getElementById(`res-${id}`).value);
-    const durValue = parseFloat(document.getElementById(`dur-${id}`).value);
-    const totalCost = Math.floor(ENGINE_BASE_COSTS[engine.type] * resValue * durValue);
-    const currentCredits = parseInt(localStorage.getItem("user_credits") || 0);
-
-    if (currentCredits < totalCost) {
-        alert("เครดิตไม่พอ! ระบบกำลังพาคุณไปหน้าเติมเงินครับพาร์ทเนอร์");
-        window.location.href = "payment.html"; 
-        return; // หยุดการทำงาน ไม่ให้ยิง API
-    }
+    const engine = engines.find(x => x.id === id);
+    const email = localStorage.getItem("user_email") || "narongsack.69@gmail.com";
     
+    btn.disabled = true; btn.innerText = "DISPATCHING...";
+
     const formData = new FormData();
     formData.append("email", email);
     formData.append("engine_id", id);
     formData.append("prompt", document.getElementById(`prompt-${id}`).value);
     formData.append("resolution", document.getElementById(`res-${id}`).value);
     formData.append("duration", document.getElementById(`dur-${id}`).value);
-    
     const file = document.getElementById(`file-${id}`).files[0];
     if(file) formData.append("asset", file);
 
-    btn.disabled = true;
-    btn.innerText = "Processing...";
-    btn.style.opacity = "0.5";
-
-    try {
-        const response = await fetch(`${API_BASE}/api/generate/${engine.type}`, {
-            method: "POST",
-            headers: {
-                "x-auth-token": jwtToken // ส่งรหัสยืนยันตัวตนให้ Gateway
-            },
-            body: formData
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-            btn.innerText = "SUCCESS";
-            btn.classList.add("bg-white");
-            console.log("TRACE_ID:", data.trace_id);
-            if(data.preview) window.open(data.preview);
+    try{
+        const res = await fetch(`${API_BASE}/api/generate/${engine.type}`, { method:"POST", body:formData });
+        const data = await res.json();
+        if(data.success){
+            btn.innerText = "QUEUED"; 
+            await syncProfile();
+            setTimeout(() => { btn.disabled = false; btn.innerText = "Generate"; }, 3000);
         } else {
-            alert("ERROR: " + (data.code || data.message));
-            btn.innerText = "RETRY";
-            btn.disabled = false;
+            alert(data.code === "INSUFFICIENT_CREDITS" ? "เครดิตไม่พอ" : (data.code || "Error"));
+            btn.disabled = false; btn.innerText = "Generate";
         }
-    } catch (e) {
-        alert("GATEWAY TIMEOUT / NETWORK ERROR");
-        btn.innerText = "GENERATE";
-        btn.disabled = false;
-    }
+    }catch(e){ alert("Network Error"); btn.disabled = false; btn.innerText = "Generate"; }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    render();
-    syncProfile();
-});
-
+document.addEventListener("DOMContentLoaded", async () => { render(); await syncProfile(); });
 </script>
-
 </body>
 </html>
 
