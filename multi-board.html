@@ -81,7 +81,6 @@
                 </div>
             </div>
         </div>
-
         <div class="session-box p-4 sm:p-5 flex flex-col">
             <div class="text-blue-400 font-black mb-4 text-xs tracking-widest border-b border-blue-500/20 pb-3"><i class="fas fa-users-cog mr-2"></i>USER CONTROL</div>
             <div class="grid grid-cols-2 gap-3 mb-4">
@@ -115,23 +114,17 @@
                 <div id="termux-console" class="termux-box flex-1 border-amber-500/30 text-green-400 text-[10px] p-3 shadow-inner"></div>
             </div>
         </div>
-        
         <div class="session-box p-4 sm:p-5 flex flex-col">
-            <div class="flex justify-between items-center w-full border-b border-cyan-500/20 pb-3 mb-3">
-                <div class="text-cyan-400 font-black text-xs tracking-widest truncate mr-3 flex-1 min-w-0">
-                    <span class="text-cyan-500 mr-1">>_</span> HAMSTER BOT
-                </div>
-                <div id="hmState" class="text-[9px] text-gray-400 bg-gray-800 px-2 py-1 rounded font-bold uppercase whitespace-nowrap flex-none">
-                    OFFLINE
-                </div>
+            <div class="flex justify-between items-center gap-2 mb-3 border-b border-cyan-500/20 pb-3">
+                <div class="text-cyan-400 font-black text-xs tracking-widest truncate flex-1 min-w-0"><i class="fas fa-terminal mr-2"></i>HAMSTER BOT</div>
+                <div id="hmState" class="text-[9px] text-gray-400 bg-gray-800 px-2 py-1 rounded font-bold whitespace-nowrap flex-shrink-0">OFFLINE</div>
             </div>
-            <div id="hmTerminal" class="termux-box flex-1 border-cyan-500/30 text-cyan-400 text-[10px] p-3 mb-3 shadow-inner"></div>
+            <div id="hmTerminal" class="termux-box flex-1 border-cyan-500/30 text-cyan-400 text-[10px] p-3 mb-3 shadow-inner overflow-y-auto"></div>
             <div class="flex gap-2 mt-auto">
                 <button onclick="controlHamster('start')" class="flex-1 bg-green-500/10 border border-green-500/30 text-green-400 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
                 <button onclick="controlHamster('stop')" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-400 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
             </div>
         </div>
-
 
         <div class="session-box xl:col-span-2 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 relative">
             <div class="text-cyan-400 font-black text-xs tracking-widest absolute top-4 sm:top-6 left-4 sm:left-6"><i class="fab fa-telegram-plane mr-2"></i>TERMUX KEY BYPASS</div>
@@ -165,15 +158,15 @@
             
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6">
                 <div class="bg-black/60 border border-white/5 rounded-xl p-4 sm:p-5 text-center shadow-inner flex sm:flex-col justify-between items-center sm:justify-center">
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest sm:mb-2"><i class="fas fa-microchip mr-2"></i>CPU LOAD</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2"><i class="fas fa-microchip mr-2"></i>CPU LOAD</div>
                     <div class="text-xl sm:text-3xl font-black text-white mono" id="sys-cpu">0%</div>
                 </div>
                 <div class="bg-black/60 border border-white/5 rounded-xl p-4 sm:p-5 text-center shadow-inner flex sm:flex-col justify-between items-center sm:justify-center">
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest sm:mb-2"><i class="fas fa-memory mr-2"></i>MEMORY</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2"><i class="fas fa-memory mr-2"></i>MEMORY</div>
                     <div class="text-xl sm:text-3xl font-black text-white mono" id="sys-ram">0%</div>
                 </div>
                 <div class="bg-black/60 border border-white/5 rounded-xl p-4 sm:p-5 text-center shadow-inner flex sm:flex-col justify-between items-center sm:justify-center">
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest sm:mb-2"><i class="fas fa-hdd mr-2"></i>STORAGE</div>
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2"><i class="fas fa-hdd mr-2"></i>STORAGE</div>
                     <div class="text-xl sm:text-3xl font-black text-white mono" id="sys-disk">0%</div>
                 </div>
             </div>
@@ -205,6 +198,29 @@
 
     <script src="assets/js/admin-auth.js"></script>
     <script src="assets/js/socket.js"></script>
+    <script>
+        // --- LOGIC ดึงสถานะแบบเงียบๆ ไม่กระทบ UI ---
+        function syncHamsterStatus() {
+            fetch('/api/hamster/status').then(res => res.json()).then(res => {
+                if (res.success && res.data) {
+                    const d = res.data;
+                    document.getElementById('hmState').innerText = 'ACTIVE';
+                    document.getElementById('hmState').className = 'text-[9px] text-green-400 bg-green-900/20 px-2 py-1 rounded font-bold';
+                    
+                    const term = document.getElementById('hmTerminal');
+                    const time = new Date().toLocaleTimeString();
+                    // พ่นข้อมูลลงใน Terminal แทนการสร้างกล่องใหม่
+                    term.innerHTML += `<div class="mb-1 text-cyan-500/80">[${time}] SYNC: ${d.account_name} | Dia: ${d.diamonds.toFixed(2)} | Profit: ${d.profit_per_hour.toLocaleString()} | S2: ${d.s2_total.toLocaleString()}</div>`;
+                    term.scrollTop = term.scrollHeight;
+                }
+            }).catch(() => {
+                document.getElementById('hmState').innerText = 'OFFLINE';
+                document.getElementById('hmState').className = 'text-[9px] text-red-500 bg-red-900/20 px-2 py-1 rounded font-bold';
+            });
+        }
+        setInterval(syncHamsterStatus, 30000);
+        syncHamsterStatus();
+    </script>
     <script src="assets/js/modules/youtube.js"></script>
     <script src="assets/js/modules/faucet.js"></script>
     <script src="assets/js/modules/hamster.js"></script>
