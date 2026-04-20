@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
 <body class="pb-12 bg-[#030303]">
-    <div id="toast-container"></div>
+    <div id="toast-container" class="fixed top-4 right-4 z-[99999] flex flex-col gap-2"></div>
 
     <div id="user-modal" style="display:none;" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[9999] justify-center items-center p-4">
         <div class="bg-[#0f0f0f] border border-white/10 rounded-3xl p-6 w-full max-w-md shadow-2xl">
@@ -21,231 +21,215 @@
             <div class="mb-4">
                 <input id="mng-user" placeholder="User ID" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 mb-2 outline-none text-white">
                 <input type="number" id="mng-credit" placeholder="Credits" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 mb-2 outline-none text-white">
-                <button onclick="saveUser()" id="btn-save-user" class="w-full bg-green-600/20 text-green-400 border border-green-500/50 py-3 rounded-lg font-bold hover:bg-green-600 hover:text-white transition">SAVE</button>
+                <button onclick="saveUser()" id="btn-save-user" class="w-full bg-green-600/20 text-green-400 border border-green-500/50 py-3 rounded-lg font-bold hover:bg-green-600 hover:text-white transition uppercase">Save Changes</button>
             </div>
             <div>
                 <input id="mng-ban-user" placeholder="User to Ban" class="w-full bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-2 outline-none text-white">
-                <button onclick="deleteUser()" id="btn-delete-user" class="w-full bg-red-600/20 text-red-400 border border-red-500/50 py-3 rounded-lg font-bold hover:bg-red-600 hover:text-white transition">BAN</button>
+                <button onclick="deleteUser()" id="btn-delete-user" class="w-full bg-red-600/20 text-red-400 border border-red-500/50 py-3 rounded-lg font-bold hover:bg-red-600 hover:text-white transition uppercase">Ban User</button>
             </div>
         </div>
     </div>
 
     <div id="login-overlay" class="fixed inset-0 bg-black/95 z-[9999] flex justify-center items-center p-4">
         <div class="bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl text-center w-full max-w-sm shadow-[0_0_40px_rgba(0,122,255,0.15)]">
-            <div class="w-14 h-14 bg-blue-600 rounded-full mx-auto flex items-center justify-center mb-5"><i class="fas fa-shield-alt text-white text-xl"></i></div>
-            <h2 class="text-2xl font-black text-white mb-1 italic">SN ULTRA</h2>
-            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-6">Commercial Launch Access</p>
-            <input id="admin-user" placeholder="Username" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 mb-3 text-white outline-none focus:border-blue-500 transition">
-            <input type="password" id="admin-pass" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 mb-4 text-white outline-none focus:border-blue-500 transition">
-            <button id="btn-login" onclick="loginAdmin()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-500 transition">SECURE LOGIN</button>
-            <p id="login-error" class="text-red-500 text-[10px] mt-4 font-bold hidden"></p>
+            <div class="w-16 h-16 bg-blue-600 rounded-full mx-auto flex items-center justify-center mb-6 shadow-[0_0_20px_rgba(37,99,235,0.4)]"><i class="fas fa-shield-alt text-white text-2xl"></i></div>
+            <h2 class="text-3xl font-black text-white mb-1 italic">SN ULTRA</h2>
+            <p class="text-[10px] text-gray-500 uppercase tracking-[0.2em] mb-8 font-bold">Secure Terminal Access</p>
+            <input id="admin-user" type="text" placeholder="Username" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 mb-3 text-white outline-none focus:border-blue-500/50 transition-all font-bold">
+            <input id="admin-pass" type="password" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-xl p-4 mb-6 text-white outline-none focus:border-blue-500/50 transition-all font-bold">
+            <button id="btn-login" onclick="loginAdmin()" class="w-full bg-blue-600 text-white font-black py-4 rounded-xl hover:bg-blue-500 shadow-lg shadow-blue-900/20 transition-all uppercase tracking-widest">Secure Login</button>
+            <p id="login-error" class="text-red-500 text-[10px] mt-6 font-bold hidden bg-red-500/10 py-2 rounded-lg border border-red-500/20"></p>
         </div>
     </div>
 
-    <header class="max-w-[1800px] mx-auto px-4 sm:px-6 pt-8 pb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+    <header class="max-w-[1800px] mx-auto px-4 sm:px-6 pt-10 pb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
         <div>
-            <p class="text-[10px] text-blue-500 font-bold uppercase mb-1">Public Commercial Platform</p>
-            <h1 class="text-4xl font-black italic text-white">SN ULTRA</h1>
+            <p class="text-[10px] text-blue-500 font-black uppercase tracking-[0.3em] mb-2">Commercial Final Launch</p>
+            <h1 class="text-5xl font-black italic text-white tracking-tighter">SN ULTRA</h1>
         </div>
-        <div class="flex gap-2 flex-wrap items-center">
-            <span id="role-badge" class="px-3 py-1 bg-purple-500/20 border border-purple-500/50 text-purple-400 rounded text-[9px] font-bold hidden uppercase"></span>
-            <div id="socket-status" class="px-4 py-2 bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-xl text-[10px] font-black"><i class="fas fa-spinner fa-spin mr-1"></i> CONNECTING...</div>
-            <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500/40 transition"><i class="fas fa-sign-out-alt"></i></button>
+        <div class="flex gap-3 flex-wrap items-center">
+            <span id="role-badge" class="px-4 py-1.5 bg-purple-500/10 border border-purple-500/30 text-purple-400 rounded-lg text-[10px] font-black hidden uppercase tracking-widest"></span>
+            <div id="socket-status" class="px-5 py-2 bg-amber-500/5 border border-amber-500/20 text-amber-500 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center"><i class="fas fa-spinner fa-spin mr-2"></i> Connecting System...</div>
+            <button onclick="logoutAdmin()" class="w-10 h-10 flex items-center justify-center bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition-all"><i class="fas fa-power-off"></i></button>
         </div>
     </header>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 max-w-[1800px] mx-auto px-4 pb-12">
-        <div class="session-box xl:col-span-4 p-4 sm:p-6" style="--glow: rgba(255, 149, 0, 0.15)">
-            <div class="text-orange-400 font-black mb-4 flex items-center text-xs tracking-widest border-b border-orange-500/20 pb-3 uppercase"><i class="fas fa-gamepad mr-2"></i>Game Servers</div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-                <div class="text-center bg-black/60 p-5 rounded-xl border border-white/5 relative overflow-hidden shadow-inner">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-blue-500/50"></div>
-                    <div class="text-sm font-black text-white mb-2"><i class="fab fa-windows text-blue-400 mr-2"></i>WIN ENGINE</div>
-                    <div id="gs-win-status" class="text-gray-400 text-[9px] font-bold tracking-widest bg-gray-800 rounded-full inline-block px-3 py-1 mb-4">OFFLINE</div>
-                    <div class="flex gap-2 justify-center max-w-[200px] mx-auto">
-                        <button onclick="controlServer('win','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
-                        <button onclick="controlServer('win','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
-                    </div>
-                </div>
-                <div class="text-center bg-black/60 p-5 rounded-xl border border-white/5 relative overflow-hidden shadow-inner">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500/50"></div>
-                    <div class="text-sm font-black text-white mb-2"><i class="fab fa-android text-green-400 mr-2"></i>AND ENGINE</div>
-                    <div id="gs-and-status" class="text-gray-400 text-[9px] font-bold tracking-widest bg-gray-800 rounded-full inline-block px-3 py-1 mb-4">OFFLINE</div>
-                    <div class="flex gap-2 justify-center max-w-[200px] mx-auto">
-                        <button onclick="controlServer('android','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
-                        <button onclick="controlServer('android','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
-                    </div>
-                </div>
-                <div class="text-center bg-black/60 p-5 rounded-xl border border-white/5 relative overflow-hidden shadow-inner">
-                    <div class="absolute top-0 left-0 w-full h-1 bg-purple-500/50"></div>
-                    <div class="text-sm font-black text-white mb-2"><i class="fas fa-dragon text-purple-400 mr-2"></i>YG ENGINE</div>
-                    <div id="gs-yg-status" class="text-gray-400 text-[9px] font-bold tracking-widest bg-gray-800 rounded-full inline-block px-3 py-1 mb-4">OFFLINE</div>
-                    <div class="flex gap-2 justify-center max-w-[200px] mx-auto">
-                        <button onclick="controlServer('yulgang','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
-                        <button onclick="controlServer('yulgang','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="session-box p-4 sm:p-5 flex flex-col">
-            <div class="text-blue-400 font-black mb-4 text-xs tracking-widest border-b border-blue-500/20 pb-3 uppercase"><i class="fas fa-users-cog mr-2"></i>User Control</div>
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="bg-black/40 border border-white/5 p-3 rounded-xl text-center shadow-inner"><p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Total DB Jobs</p><p id="db-total-users" class="text-2xl font-black text-white mono">0</p></div>
-                <div class="bg-blue-900/10 border border-blue-500/20 p-3 rounded-xl text-center shadow-inner"><p class="text-[9px] text-blue-400 uppercase tracking-widest mb-1">Active Today</p><p id="db-active-users" class="text-2xl font-black text-blue-400 mono">0</p></div>
-            </div>
-            <button onclick="openUserModal()" class="w-full mt-auto bg-blue-600/20 border border-blue-500/50 text-blue-400 py-3 rounded-xl font-bold text-xs hover:bg-blue-600 hover:text-white transition"><i class="fas fa-database mr-2"></i>MANAGE DB</button>
-        </div>
-
-        <div class="session-box p-4 sm:p-5">
-            <div class="text-purple-400 font-black mb-4 text-xs tracking-widest border-b border-purple-500/20 pb-3 uppercase"><i class="fas fa-robot mr-2"></i>Engine Credits</div>
-            <div class="space-y-3">
-                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">Runway</span><span id="cr-runway" class="text-sm font-black text-purple-400 mono">0</span></div>
-                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">Gemini</span><span id="cr-gemini" class="text-sm font-black text-blue-400 mono">0</span></div>
-                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">ElevenLabs</span><span id="cr-eleven" class="text-sm font-black text-red-400 mono">0</span></div>
-            </div>
-        </div>
-
-        <div class="session-box p-4 sm:p-5 relative">
-            <div class="text-amber-400 font-black mb-3 text-xs tracking-widest border-b border-amber-500/20 pb-3 uppercase"><i class="fas fa-coins mr-2"></i>Faucet Termux</div>
-            <div id="faucet-locked" class="absolute inset-0 bg-black/90 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
-                <i class="fas fa-lock text-3xl text-amber-500 mb-3"></i>
-                <button onclick="registerFaucet()" class="bg-amber-500 text-black px-6 py-2 rounded-xl font-black text-xs hover:bg-amber-400 transition">INIT SCRIPT</button>
-            </div>
-            <div id="faucet-content" class="flex flex-col h-full blur-sm transition duration-300">
-                <div class="flex justify-between items-center mb-3 bg-black/40 border border-white/5 p-2 rounded-lg">
-                    <span id="faucet-dispensed" class="text-lg font-black text-amber-400 mono">0.00000</span>
-                    <span class="text-green-400 text-[9px] font-bold tracking-widest flex items-center"><i class="fas fa-circle text-[6px] pulse-dot mr-1"></i>FARMING</span>
-                </div>
-                <div id="termux-console" class="termux-box flex-1 border-amber-500/30 text-green-400 text-[10px] p-3 shadow-inner overflow-y-auto"></div>
-            </div>
-        </div>
+    <main class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 max-w-[1800px] mx-auto px-4 pb-12">
         
-        <div class="session-box p-4 sm:p-5 flex flex-col">
-            <div class="flex justify-between items-center w-full border-b border-cyan-500/20 pb-3 mb-3">
-                <div class="text-cyan-400 font-black text-xs tracking-widest truncate mr-3 flex-1 min-w-0">
-                    <span class="text-cyan-500 mr-1">>_</span> HAMSTER BOT AUTO
+        <div class="session-box xl:col-span-4 p-6 sm:p-8" style="--glow: rgba(255, 149, 0, 0.1)">
+            <div class="text-orange-400 font-black mb-6 flex items-center text-xs tracking-[0.2em] border-b border-orange-500/20 pb-4 uppercase"><i class="fas fa-microchip mr-3"></i>Engine Management</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="text-center bg-black/40 p-6 rounded-2xl border border-white/5 relative">
+                    <div class="text-xs font-black text-white/60 mb-3 uppercase tracking-widest"><i class="fab fa-windows text-blue-400 mr-2"></i>Windows Engine</div>
+                    <div id="gs-win-status" class="text-gray-500 text-[9px] font-black tracking-widest bg-gray-800/50 rounded-full inline-block px-4 py-1.5 mb-6 uppercase">System Idle</div>
+                    <div class="flex gap-2"><button onclick="controlServer('win','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/20 py-2.5 rounded-xl text-[10px] font-black hover:bg-green-500 transition-all">START</button><button onclick="controlServer('win','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/20 py-2.5 rounded-xl text-[10px] font-black hover:bg-red-500 transition-all">STOP</button></div>
                 </div>
-                <div id="hmState" class="text-[9px] text-gray-400 bg-gray-800 px-2 py-1 rounded font-bold uppercase whitespace-nowrap flex-none">OFFLINE</div>
-            </div>
-            <div class="grid grid-cols-3 gap-2 mb-3">
-                <div class="bg-black/40 p-2 rounded border border-white/5 text-center shadow-inner">
-                    <p class="text-[8px] text-gray-500 uppercase">Diamonds</p>
-                    <p id="hm-diamonds" class="text-[11px] font-black text-blue-400 mono">0</p>
+                <div class="text-center bg-black/40 p-6 rounded-2xl border border-white/5 relative">
+                    <div class="text-xs font-black text-white/60 mb-3 uppercase tracking-widest"><i class="fab fa-android text-green-400 mr-2"></i>Android Engine</div>
+                    <div id="gs-and-status" class="text-gray-500 text-[9px] font-black tracking-widest bg-gray-800/50 rounded-full inline-block px-4 py-1.5 mb-6 uppercase">System Idle</div>
+                    <div class="flex gap-2"><button onclick="controlServer('android','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/20 py-2.5 rounded-xl text-[10px] font-black hover:bg-green-500 transition-all">START</button><button onclick="controlServer('android','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/20 py-2.5 rounded-xl text-[10px] font-black hover:bg-red-500 transition-all">STOP</button></div>
                 </div>
-                <div class="bg-black/40 p-2 rounded border border-white/5 text-center shadow-inner">
-                    <p class="text-[8px] text-gray-500 uppercase">Profit/H</p>
-                    <p id="hm-profit" class="text-[11px] font-black text-green-400 mono">0</p>
+                <div class="text-center bg-black/40 p-6 rounded-2xl border border-white/5 relative">
+                    <div class="text-xs font-black text-white/60 mb-3 uppercase tracking-widest"><i class="fas fa-dragon text-purple-400 mr-2"></i>Yulgang Core</div>
+                    <div id="gs-yg-status" class="text-gray-500 text-[9px] font-black tracking-widest bg-gray-800/50 rounded-full inline-block px-4 py-1.5 mb-6 uppercase">System Idle</div>
+                    <div class="flex gap-2"><button onclick="controlServer('yulgang','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/20 py-2.5 rounded-xl text-[10px] font-black hover:bg-green-500 transition-all">START</button><button onclick="controlServer('yulgang','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/20 py-2.5 rounded-xl text-[10px] font-black hover:bg-red-500 transition-all">STOP</button></div>
                 </div>
-                <div class="bg-black/40 p-2 rounded border border-white/5 text-center shadow-inner">
-                    <p class="text-[8px] text-gray-500 uppercase">S2 Total</p>
-                    <p id="hm-s2" class="text-[11px] font-black text-amber-400 mono">0</p>
-                </div>
-            </div>
-            <div id="hmTerminal" class="termux-box h-[80px] border-cyan-500/30 text-cyan-400 text-[10px] p-3 mb-3 shadow-inner overflow-y-auto font-mono">
-                [SYSTEM] Syncing Unified Database...
-            </div>
-            <div class="flex gap-2 mt-auto">
-                <button onclick="controlHamster('start')" class="flex-1 bg-green-500/10 border border-green-500/30 text-green-400 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
-                <button onclick="controlHamster('stop')" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-400 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
             </div>
         </div>
 
-        <div class="session-box xl:col-span-2 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 relative">
-            <div class="text-cyan-400 font-black text-xs tracking-widest absolute top-4 sm:top-6 left-4 sm:left-6 uppercase"><i class="fab fa-telegram-plane mr-2"></i>Termux Key Bypass</div>
-            <div class="flex-1 video-container mt-10 sm:mt-8 shadow-[0_0_20px_rgba(0,122,255,0.1)] border-cyan-500/20"><div id="yt-player-div"></div></div>
-            <div class="flex-1 flex flex-col justify-end gap-3 mt-4 sm:mt-0">
-                <div>
-                    <div class="text-[9px] text-gray-500 uppercase tracking-widest mb-1 font-bold">API Key (12H Validity)</div>
-                    <input type="text" id="termux-key" readonly value="WATCH VIDEO TO UNLOCK" class="w-full bg-black/60 p-3 rounded-lg text-[11px] text-center text-gray-500 border border-white/10 outline-none mono shadow-inner">
-                </div>
-                <button id="btn-unlock" onclick="playUnlockVideo()" class="bg-red-600 text-white font-bold py-3 rounded-lg text-xs hover:bg-red-500 transition"><i class="fab fa-youtube mr-2"></i>PLAY TO UNLOCK</button>
-                <div class="grid grid-cols-2 gap-2 mt-1">
-                    <button onclick="window.location.href='payment.html?package=99&bank=scb'" class="bg-white/5 border border-white/10 hover:border-cyan-500/50 py-3 rounded-lg text-[10px] font-bold text-gray-300 hover:text-white transition">99 THB / MO</button>
-                    <button onclick="window.location.href='payment.html?package=299&bank=scb'" class="bg-gradient-to-r from-cyan-600 to-blue-600 py-3 rounded-lg text-[10px] font-bold text-white transition">299 THB / MO</button>
-                </div>
-            </div>
-        </div>
-        <div class="session-box xl:col-span-4 p-4 sm:p-6 flex flex-col h-[280px]">
-            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
-                <div class="text-gray-400 font-black tracking-widest text-xs uppercase"><i class="fas fa-shield-alt mr-2"></i>Security Audit</div>
-                <div class="text-[9px] text-green-400 font-bold flex items-center bg-green-900/20 px-2 py-1 rounded border border-green-500/20"><span class="pulse-dot mr-2"></span>LIVE MONITOR</div>
-            </div>
-            <div id="audit-list" class="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
-        </div>
-
-        <div class="session-box xl:col-span-4 p-4 sm:p-6">
-            <div class="flex justify-between items-center mb-5 border-b border-purple-500/20 pb-3">
-                <div class="text-purple-400 font-black tracking-widest text-xs uppercase"><i class="fas fa-server mr-2"></i>Resource Analytics</div>
-                <div class="text-[9px] text-purple-400 font-bold border border-purple-500/30 px-3 py-1 rounded bg-purple-500/10 tracking-widest uppercase">Core Engine</div>
+        <div class="session-box p-5 sm:p-6 flex flex-col h-[400px]">
+            <div class="flex justify-between items-center border-b border-cyan-500/20 pb-4 mb-4">
+                <div class="text-cyan-400 font-black text-xs tracking-widest uppercase"><i class="fas fa-robot mr-2"></i>Hamster Bot S2</div>
+                <div id="hmState" class="text-[9px] text-gray-500 bg-gray-800/50 px-3 py-1 rounded-lg font-black uppercase border border-white/5">Offline</div>
             </div>
             
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6">
-                <div class="bg-black/60 border border-white/5 rounded-xl p-5 text-center shadow-inner">
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">CPU Load</div>
-                    <div class="text-2xl font-black text-white mono" id="sys-cpu">0%</div>
+            <div class="grid grid-cols-1 gap-3 mb-4">
+                <div class="bg-black/40 p-4 rounded-xl border border-white/5 flex justify-between items-center shadow-inner">
+                    <span class="text-[10px] text-gray-500 font-bold uppercase">Balance</span>
+                    <span id="hm-diamonds" class="text-lg font-black text-blue-400 mono">0.00</span>
                 </div>
-                <div class="bg-black/60 border border-white/5 rounded-xl p-5 text-center shadow-inner">
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Memory</div>
-                    <div class="text-2xl font-black text-white mono" id="sys-ram">0%</div>
-                </div>
-                <div class="bg-black/60 border border-white/5 rounded-xl p-5 text-center shadow-inner">
-                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2">Storage</div>
-                    <div class="text-2xl font-black text-white mono" id="sys-disk">0%</div>
+                <div class="flex gap-3">
+                    <div class="flex-1 bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                        <p class="text-[8px] text-gray-600 uppercase mb-1">Profit/H</p>
+                        <p id="hm-profit" class="text-xs font-black text-green-400 mono">0</p>
+                    </div>
+                    <div class="flex-1 bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                        <p class="text-[8px] text-gray-600 uppercase mb-1">S2 Total</p>
+                        <p id="hm-s2" class="text-xs font-black text-amber-500 mono">0</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="h-[220px] w-full mb-6 chart-container">
-                <canvas id="sysChart"></canvas>
+            <div id="hmTerminal" class="termux-box flex-1 border-cyan-500/20 text-cyan-400 text-[10px] p-4 mb-4 shadow-inner overflow-y-auto font-mono custom-scrollbar">
+                <div class="text-cyan-900 italic">[SYSTEM] Initialize Unified Sync...</div>
             </div>
-
-            <div class="bg-[#050505] border border-blue-500/20 rounded-xl p-5 relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500/50"></div>
-                <div class="flex justify-between items-center mb-4">
-                    <div class="text-xs text-blue-400 font-black tracking-widest uppercase"><i class="fas fa-network-wired mr-2"></i>Network Traffic</div>
-                    <div class="text-[9px] text-blue-500/50 uppercase"><i class="fas fa-sync fa-spin mr-1"></i> Syncing</div>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="bg-white/5 rounded-lg p-4 text-center border border-white/5 shadow-inner">
-                        <div class="text-[10px] text-gray-400 mb-2 tracking-widest uppercase"><i class="fas fa-arrow-down text-green-400 mr-1"></i> Inbound</div>
-                        <div class="text-xl font-black text-white mono" id="net-in">0.00 <span class="text-[10px] text-gray-500">Mbps</span></div>
-                    </div>
-                    <div class="bg-white/5 rounded-lg p-4 text-center border border-white/5 shadow-inner">
-                        <div class="text-[10px] text-gray-400 mb-2 tracking-widest uppercase"><i class="fas fa-arrow-up text-blue-400 mr-1"></i> Outbound</div>
-                        <div class="text-xl font-black text-white mono" id="net-out">0.00 <span class="text-[10px] text-gray-500">Mbps</span></div>
-                    </div>
-                </div>
+            
+            <div class="flex gap-2">
+                <button onclick="controlHamster('start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/20 py-3 rounded-xl text-[10px] font-black hover:bg-green-500 transition-all">START</button>
+                <button onclick="controlHamster('stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/20 py-3 rounded-xl text-[10px] font-black hover:bg-red-500 transition-all">STOP</button>
             </div>
         </div>
-    </div>
+
+        <div class="session-box xl:col-span-3 p-6">
+            <div class="flex justify-between items-center mb-6 border-b border-purple-500/20 pb-4">
+                <div class="text-purple-400 font-black text-xs tracking-widest uppercase"><i class="fas fa-chart-line mr-2"></i>Resource Analytics</div>
+                <div class="text-[9px] text-purple-500 font-black bg-purple-500/10 px-4 py-1 rounded-full border border-purple-500/20">Unified Engine</div>
+            </div>
+            <div class="grid grid-cols-3 gap-4 mb-8">
+                <div class="bg-black/40 border border-white/5 rounded-2xl p-5 text-center shadow-inner">
+                    <p class="text-[10px] text-gray-500 uppercase mb-2">CPU</p>
+                    <p id="sys-cpu" class="text-2xl font-black text-white mono">0%</p>
+                </div>
+                <div class="bg-black/40 border border-white/5 rounded-2xl p-5 text-center shadow-inner">
+                    <p class="text-[10px] text-gray-500 uppercase mb-2">RAM</p>
+                    <p id="sys-ram" class="text-2xl font-black text-white mono">0%</p>
+                </div>
+                <div class="bg-black/40 border border-white/5 rounded-2xl p-5 text-center shadow-inner">
+                    <p class="text-[10px] text-gray-500 uppercase mb-2">DISK</p>
+                    <p id="sys-disk" class="text-2xl font-black text-white mono">0%</p>
+                </div>
+            </div>
+            <div class="h-[200px] w-full chart-container"><canvas id="sysChart"></canvas></div>
+        </div>
+        <div class="session-box xl:col-span-4 p-6 flex flex-col h-[300px]">
+            <div class="flex justify-between items-center mb-5 border-b border-white/10 pb-4">
+                <div class="text-gray-400 font-black text-xs tracking-widest uppercase"><i class="fas fa-shield-virus mr-3 text-red-500"></i>Security Audit Timeline</div>
+                <div class="flex items-center text-[9px] text-green-500 font-black bg-green-500/5 px-3 py-1.5 rounded-xl border border-green-500/20"><span class="pulse-dot mr-2"></span>LIVE MONITORING</div>
+            </div>
+            <div id="audit-list" class="flex-1 overflow-y-auto space-y-3 pr-4 custom-scrollbar font-mono text-[11px]"></div>
+        </div>
+    </main>
 
     <script src="assets/js/admin-auth.js"></script>
     <script src="assets/js/socket.js"></script>
     <script>
+        // --- SECURE LOGIN LOGIC REVISED ---
+        async function loginAdmin() {
+            const user = document.getElementById("admin-user").value;
+            const pass = document.getElementById("admin-pass").value;
+            const error = document.getElementById("login-error");
+            const btn = document.getElementById("btn-login");
+
+            error.classList.add("hidden");
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> VERIFYING';
+
+            try {
+                const res = await fetch("/api/admin/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                const data = await res.json();
+                if (data.success) {
+                    localStorage.setItem("sn_token", data.token);
+                    document.getElementById("login-overlay").style.display = "none";
+                    document.getElementById("role-badge").classList.remove("hidden");
+                    document.getElementById("role-badge").innerText = data.role || "ADMIN";
+                    document.getElementById("socket-status").innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i> SYSTEM ACTIVE';
+                    toast("ACCESS GRANTED", "blue");
+                    syncHamsterStats(); // เริ่ม Sync ทันที
+                } else {
+                    error.innerText = data.message || "INVALID CREDENTIALS";
+                    error.classList.remove("hidden");
+                }
+            } catch (e) {
+                error.innerText = "API CONNECTION FAILED / SERVER DOWN";
+                error.classList.remove("hidden");
+            } finally {
+                btn.disabled = false;
+                btn.innerText = "SECURE LOGIN";
+            }
+        }
+
+        function logoutAdmin() {
+            localStorage.removeItem("sn_token");
+            location.reload();
+        }
+
+        function toast(msg, color="blue") {
+            const container = document.getElementById("toast-container");
+            const el = document.createElement("div");
+            el.className = `bg-[#0a0a0a] border border-${color}-500/50 text-${color}-400 px-6 py-4 rounded-2xl text-[10px] font-black shadow-2xl transition-all duration-500 animate-slide-in`;
+            el.innerHTML = `<i class="fas fa-info-circle mr-3"></i> ${msg}`;
+            container.appendChild(el);
+            setTimeout(() => { el.style.opacity = '0'; setTimeout(() => el.remove(), 500); }, 3500);
+        }
+
+        // --- HAMSTER UNIFIED SYNC LOGIC ---
         function syncHamsterStats() {
             fetch('/api/hamster/status')
                 .then(res => res.json())
                 .then(res => {
                     if (res.success && res.data) {
                         const d = res.data;
-                        document.getElementById('hm-diamonds').innerText = d.diamonds.toFixed(2);
+                        document.getElementById('hm-diamonds').innerText = d.diamonds.toFixed(4);
                         document.getElementById('hm-profit').innerText = d.profit_per_hour.toLocaleString();
                         document.getElementById('hm-s2').innerText = d.s2_total.toLocaleString();
+                        
                         document.getElementById('hmState').innerText = 'ACTIVE';
-                        document.getElementById('hmState').className = 'text-[9px] text-green-400 bg-green-900/20 px-2 py-1 rounded font-bold uppercase';
+                        document.getElementById('hmState').className = 'text-[9px] text-green-400 bg-green-900/20 px-3 py-1 rounded-lg font-black uppercase border border-green-500/30';
                         
                         const term = document.getElementById('hmTerminal');
                         const time = new Date().toLocaleTimeString();
-                        term.innerHTML += `<div class="text-cyan-500/70">[${time}] SYNC: ${d.account_name} - OK</div>`;
+                        term.innerHTML += `<div class="mb-1 text-cyan-400/80"><span class="text-gray-600">[${time}]</span> SYNC SUCCESS: ${d.account_name}</div>`;
                         term.scrollTop = term.scrollHeight;
                     }
                 })
                 .catch(err => {
                     document.getElementById('hmState').innerText = 'API OFFLINE';
-                    document.getElementById('hmState').className = 'text-[9px] text-red-500 bg-red-900/20 px-2 py-1 rounded font-bold uppercase';
+                    document.getElementById('hmState').className = 'text-[9px] text-red-500 bg-red-900/20 px-3 py-1 rounded-lg font-black uppercase border border-red-500/30';
                 });
         }
-        setInterval(syncHamsterStats, 15000);
-        syncHamsterStats();
+
+        window.addEventListener("load", () => {
+            if (localStorage.getItem("sn_token")) {
+                document.getElementById("login-overlay").style.display = "none";
+                document.getElementById("socket-status").innerHTML = '<i class="fas fa-check-circle text-green-500 mr-2"></i> SYSTEM ACTIVE';
+                syncHamsterStats();
+            }
+            setInterval(syncHamsterStats, 15000); // Sync ทุก 15 วิ
+        });
     </script>
     <script src="assets/js/modules/youtube.js"></script>
     <script src="assets/js/modules/faucet.js"></script>
