@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SN ULTRA - GOD MATRIX v22.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+        :root { --neon: #00d2ff; --bg: #050505; }
+        body { background: var(--bg); font-family: 'JetBrains Mono', monospace; color: #fff; }
+        .glass { background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(10px); }
+        .neon-glow { text-shadow: 0 0 10px var(--neon); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 8px; }
+        .online { background: #00ff41; box-shadow: 0 0 10px #00ff41; }
+        .offline { background: #ff0055; box-shadow: 0 0 10px #ff0055; }
+        /* ซ่อน Password ตอนพิมพ์ */
+        input[type="password"] { -webkit-text-security: disc; }
+    </style>
+</head>
+<body class="p-6">
+    <div id="toast-container" class="fixed top-5 right-5 z-50"></div>
+
+    <div class="max-w-7xl mx-auto flex justify-between items-end mb-10">
+        <div>
+            <h1 class="text-4xl font-black italic neon-glow">SN ULTRA <span class="text-gray-600">MATRIX</span></h1>
+            <p class="text-[10px] text-blue-400 font-bold uppercase tracking-[0.4em]">Enterprise Service Mesh v22.1</p>
+        </div>
+        <div class="flex gap-4">
+            <div class="glass px-6 py-3 rounded-2xl text-right">
+                <p class="text-[8px] text-gray-500 uppercase">System Uptime</p>
+                <p id="sys-uptime" class="text-xs font-bold">SCANNING...</p>
+            </div>
+            <button onclick="logout()" class="w-12 h-12 glass rounded-2xl flex items-center justify-center hover:bg-red-500/20 transition"><i class="fas fa-power-off text-red-500"></i></button>
+        </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-4 gap-6">
+        
+        <div class="xl:col-span-1 space-y-6">
+            <div class="glass p-6 rounded-3xl">
+                <h3 class="text-[10px] font-black text-gray-500 mb-6 tracking-widest uppercase">Server Resources</h3>
+                <div class="space-y-6">
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-2 font-bold"><span>CPU LOAD</span><span id="cpu-val">0%</span></div>
+                        <div class="w-full bg-white/5 h-1 rounded-full"><div id="cpu-bar" class="bg-blue-500 h-full transition-all" style="width: 0%"></div></div>
+                    </div>
+                    <div>
+                        <div class="flex justify-between text-[10px] mb-2 font-bold"><span>RAM USAGE</span><span id="ram-val">0%</span></div>
+                        <div class="w-full bg-white/5 h-1 rounded-full"><div id="ram-bar" class="bg-purple-500 h-full transition-all" style="width: 0%"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass p-6 rounded-3xl">
+                <h3 class="text-[10px] font-black text-gray-500 mb-4 tracking-widest uppercase">Service Mesh Control</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between items-center p-3 bg-black/40 rounded-xl border border-white/5">
+                        <span class="text-[10px] font-bold">AI RENDER</span>
+                        <div class="flex gap-2">
+                            <button onclick="sendCmd('render','start')" class="text-[8px] font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded hover:bg-green-400 hover:text-black transition">START</button>
+                            <button onclick="sendCmd('render','stop')" class="text-[8px] font-bold text-red-400 bg-red-400/10 px-2 py-1 rounded hover:bg-red-400 hover:text-black transition">KILL</button>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center p-3 bg-black/40 rounded-xl border border-white/5">
+                        <span class="text-[10px] font-bold">YG CORE</span>
+                        <div class="flex gap-2">
+                            <button onclick="sendCmd('yulgang','start')" class="text-[8px] font-bold text-green-400 bg-green-400/10 px-2 py-1 rounded">START</button>
+                            <button onclick="sendCmd('yulgang','stop')" class="text-[8px] font-bold text-red-400 bg-red-400/10 px-2 py-1 rounded">KILL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="xl:col-span-3 glass p-8 rounded-[40px] overflow-hidden flex flex-col">
+            <div class="flex justify-between items-center mb-8">
+                <div>
+                    <h2 class="text-xl font-black italic">USER REGISTRY</h2>
+                    <p class="text-[9px] text-gray-500 uppercase tracking-widest">Advanced Database Management</p>
+                </div>
+                <div class="flex gap-2">
+                    <input id="user-search" placeholder="SEARCH IDENTITY..." class="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[10px] outline-none focus:border-blue-500 w-64">
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead>
+                        <tr class="text-[10px] text-gray-500 uppercase tracking-widest border-b border-white/5">
+                            <th class="pb-4 font-black">Email Identity</th>
+                            <th class="pb-4 font-black">Credits</th>
+                            <th class="pb-4 font-black">Hardware ID</th>
+                            <th class="pb-4 font-black">Role</th>
+                            <th class="pb-4 font-black text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-list" class="text-xs">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const API_BASE = "https://api.sn-designstudio.dev"; // MESH BASE URL
+
+        async function syncData() {
+            const token = localStorage.getItem('sn_token');
+            if (!token) return;
+
+            try {
+                // 1. Sync Health
+                const hRes = await fetch(`${API_BASE}/api/admin/health`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const hData = await hRes.json();
+                if (hData.success) {
+                    document.getElementById('sys-uptime').innerText = hData.uptime;
+                    document.getElementById('cpu-val').innerText = hData.cpu_load + '%';
+                    document.getElementById('cpu-bar').style.width = hData.cpu_load + '%';
+                    document.getElementById('ram-val').innerText = hData.ram_usage + '%';
+                    document.getElementById('ram-bar').style.width = hData.ram_usage + '%';
+                }
+
+                // 2. Sync Users
+                const uRes = await fetch(`${API_BASE}/api/admin/users-matrix`, { headers: { 'Authorization': `Bearer ${token}` } });
+                const uData = await uRes.json();
+                if (uData.success) {
+                    const list = document.getElementById('user-list');
+                    list.innerHTML = uData.data.map(u => `
+                        <tr class="border-b border-white/5 hover:bg-white/[0.02] transition">
+                            <td class="py-4 font-bold text-blue-400">${u.email}</td>
+                            <td class="py-4 mono">${u.credits.toLocaleString()}</td>
+                            <td class="py-4 text-gray-500 text-[10px]">${u.hwid || 'NOT_LINKED'}</td>
+                            <td class="py-4"><span class="px-2 py-0.5 rounded text-[8px] font-black ${u.role === 'admin' ? 'bg-purple-500/20 text-purple-400' : 'bg-blue-500/20 text-blue-400'}">${u.role.toUpperCase()}</span></td>
+                            <td class="py-4 text-right">
+                                <button onclick="editUser('${u.email}')" class="text-gray-400 hover:text-white mr-2"><i class="fas fa-edit"></i></button>
+                                <button onclick="banUser('${u.email}')" class="text-red-900 hover:text-red-500"><i class="fas fa-user-slash"></i></button>
+                            </td>
+                        </tr>
+                    `).join('');
+                }
+            } catch (e) { console.error("Sync Error:", e); }
+        }
+
+        async function sendCmd(service, action) {
+            const token = localStorage.getItem('sn_token');
+            const res = await fetch(`${API_BASE}/api/admin/control`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                body: JSON.stringify({ service, action })
+            });
+            const data = await res.json();
+            toast(data.success ? `SUCCESS: ${service} ${action}` : `FAILED: ${data.out}`, data.success ? 'green' : 'red');
+        }
+
+        function toast(msg, color) {
+            const t = document.createElement('div');
+            t.className = `px-6 py-3 rounded-2xl mb-2 text-[10px] font-black uppercase tracking-widest shadow-2xl ${color === 'green' ? 'bg-green-600' : 'bg-red-600'}`;
+            t.innerText = msg;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        function logout() { localStorage.clear(); window.location.href = "login.html"; }
+
+        setInterval(syncData, 10000);
+        syncData();
+    </script>
+</body>
+</html>
+
