@@ -108,7 +108,6 @@
         const API_BASE = "https://api.sn-designstudio.dev"; // MESH BASE URL
 
         async function syncData() {
-            const token = localStorage.getItem('sn_token');
             if (!token) return;
 
             try {
@@ -145,7 +144,6 @@
         }
 
         async function sendCmd(service, action) {
-            const token = localStorage.getItem('sn_token');
             const res = await fetch(`${API_BASE}/api/admin/control`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
