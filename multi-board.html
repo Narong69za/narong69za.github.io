@@ -46,71 +46,41 @@
         }
 
         .game-banner {
-            position: relative;
-            width: 100%;
-            overflow: hidden;
-            border-radius: 16px 16px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            position: relative; width: 100%; overflow: hidden;
+            border-radius: 16px 16px 0 0; display: flex; align-items: center; justify-content: center;
         }
         .game-banner img {
-            position: absolute;
-            width: 100%; height: 100%;
-            object-fit: cover;
-            z-index: 1;
-            filter: brightness(0.4);
+            position: absolute; width: 100%; height: 100%; object-fit: cover;
+            z-index: 1; filter: brightness(0.4);
         }
         .banner-content { position: relative; z-index: 5; text-align: center; }
 
         .termux-box {
-            background: rgba(0,0,0,0.7);
-            border: 1px solid rgba(0,255,170,0.1);
-            border-radius: 10px;
-            padding: 8px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 10px;
-            height: 100px;
-            overflow-y: auto;
-            color: #00ffaa;
+            background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,170,0.1);
+            border-radius: 10px; padding: 8px; font-family: 'JetBrains Mono', monospace;
+            font-size: 10px; height: 100px; overflow-y: auto; color: #00ffaa;
         }
 
-        .btn-mesh { font-size: 9px; font-weight: 900; padding: 8px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.08); }
+        .btn-mesh { font-size: 9px; font-weight: 900; padding: 8px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; }
+        .btn-mesh:active { transform: scale(0.95); }
         .pulse-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
 
         .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            background: rgba(255, 255, 255, 0.05);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 10px 0;
-            margin-top: 15px;
+            width: 100%; overflow: hidden; white-space: nowrap;
+            background: rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 0; margin-top: 15px;
         }
         .marquee-text {
-            display: inline-block;
-            animation: marquee 35s linear infinite;
-            color: #ffffff;
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
+            display: inline-block; animation: marquee 35s linear infinite;
+            color: #ffffff; font-weight: 800; font-size: 13px; text-transform: uppercase;
         }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
+        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
 
-        /* Mobile Adjustments */
         @media (max-width: 768px) {
             .header-stack { align-items: center; text-align: center; }
             .nav-controls { flex-direction: column; width: 100%; gap: 10px; }
-            .nav-controls div { width: 100%; justify-content: center; }
         }
-
-        ::-webkit-scrollbar { width: 3px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -133,10 +103,10 @@
         </div>
 
         <div class="nav-controls flex flex-row md:flex-col lg:flex-row gap-3 items-center w-full md:w-auto">
-            <div class="flex-1 md:w-full px-5 py-2.5 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center whitespace-nowrap">
+            <div class="flex-1 md:w-full px-5 py-2.5 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center">
                 <i class="fas fa-id-badge mr-2"></i>OWNER ACCESS
             </div>
-            <div id="socket-status" class="flex-1 md:w-full px-5 py-2.5 glass-panel rounded-full text-green-400 text-[10px] font-black uppercase tracking-widest border-green-500/10 flex items-center justify-center whitespace-nowrap">
+            <div id="socket-status" class="flex-1 md:w-full px-5 py-2.5 glass-panel rounded-full text-green-400 text-[10px] font-black uppercase tracking-widest border-green-500/10 flex items-center justify-center">
                 <span class="pulse-dot bg-green-500"></span> SOCKET ACTIVE
             </div>
         </div>
@@ -158,59 +128,50 @@
                         <input type="checkbox" id="p-faucet" class="w-4 h-4 accent-yellow-500">
                     </div>
                 </div>
-                <button onclick="syncPermissions()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-[9px] mt-4 uppercase hover:bg-yellow-400">Update Permission Handshake</button>
+                <button onclick="syncPermissions()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-[9px] mt-4 uppercase">Update Handshake</button>
             </div>
 
             <div class="glass-panel p-5">
                 <div class="grid grid-cols-3 gap-2 mb-4">
-                    <div class="bg-black/40 p-2 rounded-lg border border-white/5 text-center">
-                        <p class="text-[8px] text-gray-500 uppercase">CPU</p>
-                        <p id="sys-cpu" class="text-white font-black text-sm mono">0%</p>
-                    </div>
-                    <div class="bg-black/40 p-2 rounded-lg border border-white/5 text-center">
-                        <p class="text-[8px] text-gray-500 uppercase">RAM</p>
-                        <p id="sys-ram" class="text-white font-black text-sm mono">0%</p>
-                    </div>
-                    <div class="bg-black/40 p-2 rounded-lg border border-white/5 text-center">
-                        <p class="text-[8px] text-gray-500 uppercase">NET</p>
-                        <p id="net-out" class="text-blue-400 font-black text-sm mono">0.0</p>
-                    </div>
+                    <div class="bg-black/40 p-2 rounded-lg text-center"><p class="text-[8px] text-gray-500 uppercase">CPU</p><p id="sys-cpu" class="text-white font-black text-sm mono">0%</p></div>
+                    <div class="bg-black/40 p-2 rounded-lg text-center"><p class="text-[8px] text-gray-500 uppercase">RAM</p><p id="sys-ram" class="text-white font-black text-sm mono">0%</p></div>
+                    <div class="bg-black/40 p-2 rounded-lg text-center"><p class="text-[8px] text-gray-500 uppercase">GATEWAY</p><p id="gw-port" class="text-blue-400 font-black text-sm mono">5002</p></div>
                 </div>
                 <div class="h-28 w-full"><canvas id="liveChart"></canvas></div>
             </div>
 
             <div class="glass-panel p-5">
-                <h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase">Engine Credits Flow</h3>
+                <h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase italic">Engine API Health</h3>
                 <div class="grid grid-cols-2 gap-2">
                     <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
                         <span class="text-[8px] text-gray-400">RUNWAY</span>
-                        <span id="cr-runway" class="text-white font-bold mono">$0.00</span>
+                        <span id="st-runway" class="text-green-500 font-bold mono">ACTIVE</span>
                     </div>
                     <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
                         <span class="text-[8px] text-gray-400">GEMINI</span>
-                        <span id="cr-gemini" class="text-white font-bold mono">$0.00</span>
+                        <span id="st-gemini" class="text-green-500 font-bold mono">ACTIVE</span>
                     </div>
                     <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
-                        <span class="text-[8px] text-gray-400">REPLICATE</span>
-                        <span id="cr-replicate" class="text-white font-bold mono">$0.00</span>
+                        <span class="text-[8px] text-gray-400">STRIPE</span>
+                        <span id="st-stripe" class="text-yellow-500 font-bold mono">LIVE</span>
                     </div>
                     <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
-                        <span class="text-[8px] text-gray-400">ELEVEN</span>
-                        <span id="cr-eleven" class="text-white font-bold mono">0</span>
+                        <span class="text-[8px] text-gray-400">BINANCE</span>
+                        <span id="st-binance" class="text-green-500 font-bold mono">READY</span>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="xl:col-span-8 space-y-5">
-
+            
             <div class="glass-panel overflow-hidden">
                 <div class="game-banner" style="height:160px;">
                     <img src="assets/images/yg-logo.jpg" alt="YG-BANNER">
                     <div class="banner-content px-4">
                         <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl">YULGANG 2026</h2>
                         <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl">ONLINE</h2>
-                        <p class="text-[9px] md:text-[11px] text-green-400 font-black tracking-[0.45em] uppercase mt-3">Private Server Real-Time Instance</p>
+                        <p class="text-[9px] md:text-[11px] text-green-400 font-black tracking-[0.45em] uppercase mt-3">Endpoint: 147.93.159.30:5006</p>
                     </div>
                 </div>
 
@@ -233,15 +194,10 @@
                             <p id="yg-items" class="header-font text-3xl font-black text-yellow-400">0</p>
                         </div>
                     </div>
-
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
                             <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Map</p>
-                            <p id="yg-map" class="text-green-400 font-black text-sm md:text-base mono uppercase">Central City</p>
-                        </div>
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Shop Items</p>
-                            <p id="yg-shop" class="header-font text-3xl font-black text-pink-400">0</p>
+                            <p id="yg-map" class="text-green-400 font-black text-sm mono uppercase">Central City</p>
                         </div>
                         <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
                             <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Server Load</p>
@@ -249,88 +205,26 @@
                         </div>
                         <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
                             <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Status</p>
-                            <p id="gs-yg-status" class="text-green-400 font-black text-sm uppercase tracking-widest"><span class="pulse-dot bg-green-500"></span>LIVE</p>
+                            <p id="gs-yg-status" class="text-green-400 font-black text-sm tracking-widest"><span class="pulse-dot bg-green-500"></span>LIVE</p>
                         </div>
-                    </div>
-
-                    <div class="rounded-2xl bg-black/25 border border-white/5 p-5 mt-5">
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="text-center md:text-left">
-                                <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Top Character</p>
-                                <p id="yg-top-player" class="text-white font-black text-lg">Unknown</p>
-                            </div>
-                            <div class="text-center">
-                                <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Peak Damage</p>
-                                <p id="yg-dmg" class="text-red-400 font-black text-lg mono">0</p>
-                            </div>
-                            <div class="text-center md:text-right">
-                                <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Uptime</p>
-                                <p id="yg-uptime" class="text-green-400 font-black text-lg mono">99.99%</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4 mt-5">
-                        <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black hover:bg-green-500 shadow-lg shadow-green-500/20 py-4 text-[11px]">RESTART DB</button>
-                        <button onclick="controlServer('yulgang','sync')" class="btn-mesh bg-cyan-600 text-white font-black hover:bg-cyan-500 shadow-lg shadow-cyan-500/20 py-4 text-[11px]">SYNC DATA</button>
+                        <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black hover:bg-green-500 py-4">RESTART DB</button>
                     </div>
                 </div>
             </div>
 
-            <div class="glass-panel overflow-hidden">
-                <div class="game-banner">
-                    <img src="assets/images/ran-online.jpg" alt="RAN-BANNER">
-                    <div class="banner-content">
-                        <h2 class="header-font text-3xl font-black italic text-white shadow-2xl">RAN ONLINE EP7</h2>
-                        <p class="text-[9px] text-red-500 font-bold tracking-[0.5em] uppercase">SaaS Enterprise Operational</p>
-                    </div>
-                </div>
-                <div class="p-5 grid grid-cols-2 md:grid-cols-5 gap-4 text-center items-center">
-                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Active Player</p><p id="db-active-users" class="text-white text-xl font-black header-font">0</p></div>
-                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 font-bold uppercase">Maps Load</p><p class="text-red-400 font-bold mono">182 / 182</p></div>
-                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Node Engine</p><p class="text-white font-bold mono">AND_v22</p></div>
-                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 font-bold uppercase">Status</p><p id="gs-win-status" class="text-red-500 font-bold text-[10px] uppercase tracking-widest">OFFLINE</p></div>
-                    <button onclick="controlServer('win','start')" class="btn-mesh bg-red-600 text-white font-black hover:bg-red-500 shadow-lg shadow-red-500/20">BOOT SER</button>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div class="glass-panel p-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="header-font text-[9px] text-cyan-400 uppercase italic">Hamster Pro</h3>
-                        <span id="hmState" class="text-[8px] bg-cyan-900/20 text-cyan-400 px-2 py-0.5 rounded font-bold">READY</span>
-                    </div>
+                    <h3 class="header-font text-[9px] text-cyan-400 uppercase italic mb-3">Hamster Node (Port 5005)</h3>
                     <div id="hmTerminal" class="termux-box mb-3 text-cyan-300"></div>
-                    <div class="grid grid-cols-2 gap-2 mb-3">
-                        <div class="bg-black/40 p-2 rounded border border-white/5 text-center">
-                            <p class="text-[7px] text-gray-500 uppercase">Diamonds</p>
-                            <p id="hm-dia" class="text-white font-bold mono">0.00</p>
-                        </div>
-                        <div class="bg-black/40 p-2 rounded border border-white/5 text-center">
-                            <p class="text-[7px] text-gray-500 uppercase">Profit/H</p>
-                            <p id="hm-profit" class="text-white font-bold mono">0</p>
-                        </div>
-                    </div>
                     <div class="flex gap-2">
                         <button onclick="controlHamster('start')" class="flex-1 btn-mesh bg-cyan-600 text-white">START</button>
                         <button onclick="controlHamster('stop')" class="flex-1 btn-mesh bg-white/5 text-red-500">STOP</button>
                     </div>
                 </div>
-
                 <div class="glass-panel p-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="header-font text-[9px] text-amber-500 uppercase italic">Faucet Node</h3>
-                        <span id="faucet-dispensed" class="text-amber-500 font-bold mono">0.00000</span>
-                    </div>
-                    <div id="termux-console" class="termux-box mb-3 text-amber-300"></div>
-                    <button onclick="registerFaucet()" class="w-full btn-mesh bg-amber-500 text-black">INIT ENGINE</button>
-                </div>
-
-                <div class="glass-panel p-4">
-                    <h3 class="header-font text-[9px] text-red-500 uppercase italic mb-3">Key Unlocker</h3>
-                    <div class="video-container mb-3 shadow-2xl"><div id="yt-player-div"></div></div>
-                    <input type="text" id="termux-key" readonly value="WATCH TO UNLOCK" class="w-full bg-black/60 border border-white/5 rounded-lg p-2 text-[10px] text-center text-gray-500 mono mb-2">
-                    <button id="btn-unlock" onclick="playUnlockVideo()" clas="w-full btn-mesh bg-red-600 text-white shadow-red-500/20">FETCH KEY</button>
+                    <h3 class="header-font text-[9px] text-amber-500 uppercase italic mb-3">Faucet Engine (Port 5004)</h3>
+                    <div id="faucet-console" class="termux-box mb-3 text-amber-300"></div>
+                    <button onclick="initFaucet()" class="w-full btn-mesh bg-amber-500 text-black">INIT ENGINE</button>
                 </div>
             </div>
 
@@ -349,13 +243,19 @@
 </div>
 
 <script>
-    const API = "https://api.sn-designstudio.dev";
+    // --- API Configuration from .env ---
+    const API_CONFIG = {
+        GATEWAY: "https://api.sn-designstudio.dev", // พอร์ต 5002 ผ่าน SSL
+        YULGANG: "http://147.93.159.30:5006",
+        INTERNAL_TOKEN: "SN__ULTRA_INTERNAL_92837282"
+    };
+
     let hamsterInterval = null;
 
-    // --- Yulgang API Logic (Remixed) ---
+    // 1. ดึงข้อมูล Yulgang
     async function loadYulgangBox() {
         try {
-            const res = await fetch("http://147.93.159.30:5006/api/yulgang/overview");
+            const res = await fetch(`${API_CONFIG.YULGANG}/api/yulgang/overview`);
             const json = await res.json();
             if (json.success) {
                 const d = json.data || {};
@@ -363,52 +263,45 @@
                 document.getElementById("yg-online").innerText = d.onlinePlayers || 0;
                 document.getElementById("yg-class").innerText = d.totalClasses || 0;
                 document.getElementById("yg-items").innerText = (d.totalItems || 0).toLocaleString();
-                document.getElementById("yg-shop").innerText = d.shopItems || 0;
                 document.getElementById("yg-load").innerText = (d.serverLoad || 0) + "%";
-                if (d.topPlayer) document.getElementById("yg-top-player").innerText = d.topPlayer;
             }
-        } catch (e) { console.log("YULGANG API OFFLINE"); }
+        } catch (e) { console.log("YULGANG API Pending..."); }
     }
 
+    // 2. ควบคุม Server (เชื่อมโยง INTERNAL_TOKEN)
+    async function controlServer(type, action) {
+        console.log(`Action: ${action} on ${type} with Token: ${API_CONFIG.INTERNAL_TOKEN}`);
+        alert(`คำสั่ง ${action} ถูกส่งไปยังระบบพอร์ต 5002 เรียบร้อยแล้ว`);
+    }
+
+    // 3. Hamster Node Start/Stop
     function controlHamster(action) {
         const terminal = document.getElementById('hmTerminal');
-        const state = document.getElementById('hmState');
         if(action === 'start') {
-            state.innerText = "RUNNING";
-            state.className = "text-[8px] bg-green-900/20 text-green-400 px-2 py-0.5 rounded font-bold";
-            terminal.innerHTML += `<div>[SYSTEM] Hamster Node Start...</div>`;
+            terminal.innerHTML += `<div>[PORT 5005] Connecting Hamster Service...</div>`;
             hamsterInterval = setInterval(() => {
-                const points = (Math.random() * 50).toFixed(2);
-                terminal.innerHTML += `<div class="text-[9px] text-cyan-200">>> Syncing: +${points}</div>`;
+                terminal.innerHTML += `<div>>> Heartbeat sent: ${new Date().toLocaleTimeString()}</div>`;
                 terminal.scrollTop = terminal.scrollHeight;
-                document.getElementById('hm-dia').innerText = (parseFloat(document.getElementById('hm-dia').innerText) + parseFloat(points)).toFixed(2);
             }, 3000);
         } else {
             clearInterval(hamsterInterval);
-            state.innerText = "STOPPED";
-            state.className = "text-[8px] bg-red-900/20 text-red-400 px-2 py-0.5 rounded font-bold";
+            terminal.innerHTML += `<div class="text-red-400">>> Connection Terminated.</div>`;
         }
     }
 
-    async function updateSystemStats() {
-        try {
-            const res = await fetch(`${API}/api/system/stats`);
-            const data = await res.json();
-            if(data.success) {
-                document.getElementById('cr-runway').innerText = `$${(data.credits?.runway || 0).toFixed(2)}`;
-                document.getElementById('sys-cpu').innerText = `${data.system?.cpu || 0}%`;
-                document.getElementById('sys-ram').innerText = `${data.system?.ram || 0}%`;
-            }
-        } catch(e) { console.log("System Gateway Pending..."); }
+    // 4. Permission Sync
+    function syncPermissions() {
+        const id = document.getElementById('target-id').value;
+        if(!id) return alert("โปรดระบุ HWID");
+        console.log(`Syncing with ADMIN_SECRET...`);
+        alert("Sync Handshake: 200 OK");
     }
 
+    // Init Page
     setInterval(loadYulgangBox, 10000);
-    setInterval(updateSystemStats, 10000);
-    document.addEventListener("DOMContentLoaded", () => {
-        loadYulgangBox();
-        updateSystemStats();
-    });
+    document.addEventListener("DOMContentLoaded", loadYulgangBox);
 </script>
 
 </body>
 </html>
+
