@@ -1,426 +1,262 @@
-<!DOCTYPE html>
-<html lang="th">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA | PRODUCTION DASHBOARD v22 Enterprise Mesh</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bai+Jamjuree:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
---bg-deep:#050505;
---accent-ran:#ff0000;
---accent-yg:#00ffaa;
---glass:rgba(255,255,255,.03);
-}
-body{
-background:var(--bg-deep);
-color:#e5e7eb;
-font-family:'Bai Jamjuree',sans-serif;
-overflow-x:hidden;
-}
-.header-font{font-family:'Orbitron',sans-serif;}
-
-.glass-panel{
-background:var(--glass);
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,.05);
-transition:.3s;
-}
-.glass-panel:hover{
-border-color:rgba(255,255,255,.15);
-}
-
-.ran-enterprise-block{
-background:linear-gradient(145deg,#0d0d0f 0%,#1a0505 100%);
-border-left:5px solid var(--accent-ran);
-box-shadow:0 10px 40px rgba(255,0,0,.08);
-}
-
-.yg-enterprise-block{
-background:linear-gradient(145deg,#0a0f0d 0%,#051a14 100%);
-border-left:5px solid var(--accent-yg);
-box-shadow:0 10px 40px rgba(0,255,170,.08);
-}
-
-.ran-text-glow{text-shadow:0 0 10px rgba(255,0,0,.5);}
-.yg-text-glow{text-shadow:0 0 10px rgba(0,255,170,.5);}
-
-.btn-action{
-transition:.25s;
-}
-.btn-action:active{
-transform:scale(.96);
-}
-
-.toast{
-padding:12px 16px;
-margin-top:8px;
-border-radius:12px;
-font-size:12px;
-font-weight:700;
-letter-spacing:.08em;
-text-transform:uppercase;
-color:#fff;
-box-shadow:0 10px 20px rgba(0,0,0,.25);
-}
-.toast.success{background:#16a34a;}
-.toast.error{background:#dc2626;}
-.toast.warn{background:#d97706;}
-</style>
-</head>
-
-<body class="p-4 md:p-8">
-
-<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
-    <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-white flex items-center justify-center rounded-sm">
-            <span class="text-black font-black text-xl">SN</span>
-        </div>
-        <div>
-            <h1 class="header-font text-lg font-bold tracking-widest text-white">ULTRA ENGINE</h1>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">SaaS Production Enterprise</p>
-        </div>
-    </div>
-
-    <div class="flex items-center gap-4">
-        <div id="role-badge"
-             class="hidden bg-white/10 px-3 py-1 rounded text-[10px] font-bold text-white border border-white/20">
-            ROLE: ADMIN
-        </div>
-
-        <button onclick="logout()"
-        class="text-[10px] px-3 py-2 rounded bg-red-600 hover:bg-red-700 font-bold tracking-widest">
-            LOGOUT
-        </button>
-    </div>
-</nav>
-
-<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-    <!-- LEFT -->
-    <div class="lg:col-span-4 space-y-8">
-
-        <div class="glass-panel p-6 rounded-2xl">
-            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-4 uppercase tracking-widest">
-                System Analytics
-            </h3>
-            <div class="h-48">
-                <canvas id="sysChart"></canvas>
-            </div>
-        </div>
-
-        <div class="glass-panel p-6 rounded-2xl">
-            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-6 uppercase tracking-widest">
-                Engine Credits
-            </h3>
-
-            <div class="space-y-4">
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">RUNWAY GEN-3</span>
-                    <span id="cr-runway" class="header-font text-white font-bold">$0.00</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">REPLICATE API</span>
-                    <span id="cr-replicate" class="header-font text-white font-bold">$0.00</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">GEMINI PRO</span>
-                    <span id="cr-gemini" class="header-font text-white font-bold">$0.00</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">ELEVENLABS</span>
-                    <span id="cr-eleven" class="header-font text-white font-bold">0</span>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="lg:col-span-8 space-y-8">
-
-        <!-- RAN -->
-        <div class="ran-enterprise-block rounded-2xl p-8 relative overflow-hidden">
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-
-                <div class="flex items-center gap-6">
-
-                    <div class="w-24 h-24 bg-black border border-red-900 rounded-xl flex items-center justify-center">
-                        <span class="text-red-500 font-black text-xl">RAN</span>
-                    </div>
-
-                    <div>
-                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter ran-text-glow">
-                            RAN ONLINE
-                        </h2>
-                        <p class="text-red-600 text-xs font-black tracking-[0.3em] uppercase">
-                            EP7: THE LEGEND REBORN
-                        </p>
-                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
-                            SaaS Node Instance: 5004
-                        </p>
-                    </div>
-
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">CCU</p>
-                        <p id="ran-ccu" class="text-white font-black text-xl">0</p>
-                    </div>
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
-                        <p id="ran-status" class="text-red-500 font-black text-sm tracking-widest">● OFFLINE</p>
-                    </div>
-
-                </div>
-
-                <button onclick="location.href='manage.html'"
-                class="btn-action bg-red-600 hover:bg-red-700 text-white font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
-                    MANAGE DB
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- YG -->
-        <div class="yg-enterprise-block rounded-2xl p-8 relative overflow-hidden">
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-
-                <div class="flex items-center gap-6">
-
-                    <div class="w-24 h-24 bg-black border border-green-900 rounded-xl flex items-center justify-center">
-                        <span class="text-green-400 font-black text-xl">YG</span>
-                    </div>
-
-                    <div>
-                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter yg-text-glow">
-                            YULGANG 2026
-                        </h2>
-                        <p class="text-green-400 text-xs font-black tracking-[0.3em] uppercase">
-                            CLASSIC FUTURE MOBILE/PC
-                        </p>
-                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
-                            SaaS Node Instance: 5006
-                        </p>
-                    </div>
-
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">PLAYERS</p>
-                        <p id="yg-ccu" class="text-white font-black text-xl">0</p>
-                    </div>
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
-                        <p id="yg-status" class="text-green-400 font-black text-sm tracking-widest">● OFFLINE</p>
-                    </div>
-
-                </div>
-
-                <button onclick="location.href='manage.html'"
-                class="btn-action bg-green-500 hover:bg-green-600 text-black font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
-                    MANAGE DB
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
-<div id="toast-container" class="fixed bottom-6 right-6 z-50"></div>
-
-<script>
-/* =====================================================
-   SN ENTERPRISE MESH v22
-===================================================== */
-
-const API_BASE = "https://api.sn-designstudio.dev";
-let sysChart = null;
-
-/* -------------------- UTIL -------------------- */
-function toast(msg,type="success"){
-    const box=document.getElementById("toast-container");
-    const el=document.createElement("div");
-    el.className="toast "+type;
-    el.innerText=msg;
-    box.appendChild(el);
-    setTimeout(()=>el.remove(),3000);
-}
-
-
-
-function logout(){
-    localStorage.clear();
-    sessionStorage.clear();
-    location.href="login.html";
-}
-
-/* -------------------- AUTH GUARD -------------------- */
-
-    const badge=document.getElementById("role-badge");
-    badge.classList.remove("hidden");
-    badge.innerText="ROLE: "+(localStorage.getItem("sn_role") || "ADMIN");
-
-    return true;
-}
-
-/* -------------------- CHART -------------------- */
-function bootChart(){
-    const cv=document.getElementById("sysChart");
-    if(!cv) return;
-
-    sysChart=new Chart(cv,{
-        type:"line",
-        data:{
-            labels:Array(15).fill(""),
-            datasets:[
-                {
-                    label:"CPU",
-                    data:Array(15).fill(0),
-                    borderColor:"#ff0000",
-                    borderWidth:2,
-                    pointRadius:0,
-                    tension:.4
-                },
-                {
-                    label:"RAM",
-                    data:Array(15).fill(0),
-                    borderColor:"#00ffaa",
-                    borderWidth:2,
-                    pointRadius:0,
-                    tension:.4
-                }
-            ]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            animation:false,
-            plugins:{legend:{display:false}},
-            scales:{
-                x:{display:false},
-                y:{display:false,min:0,max:100}
+/**
+ * =========================================================
+ * SN DESIGN STUDIO | HARDEN MMO CORE FINAL v31
+ * MODE: PRODUCTION HARDENED / ANTI-CRASH / STABLE LOOP
+ * DB: SQLITE3 (SAFE WRAPPER)
+ * =========================================================
+ */
+
+const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
+const sqlite3 = require("sqlite3").verbose();
+const crypto = require("crypto");
+const path = require("path");
+
+/* =========================================================
+   SAFE RUNTIME GUARD (กัน crash ทั้งระบบ)
+========================================================= */
+process.on("uncaughtException", (err) => {
+    console.error("[FATAL SAFE GUARD]", err);
+});
+
+process.on("unhandledRejection", (err) => {
+    console.error("[PROMISE REJECTION]", err);
+});
+
+/* =========================================================
+   DATABASE LAYER (HARDENED)
+========================================================= */
+const db = new sqlite3.Database(path.join(__dirname, "database.db"));
+
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        google_id TEXT,
+        email TEXT,
+        name TEXT,
+        role TEXT
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        expires_at TEXT
+    )`);
+});
+
+const dbGet = (sql, params=[]) =>
+    new Promise((resolve) => {
+        db.get(sql, params, (err, row) => {
+            if (err) {
+                console.error("[DB GET ERROR]", err.message);
+                return resolve(null);
             }
+            resolve(row);
+        });
+    });
+
+const dbRun = (sql, params=[]) =>
+    new Promise((resolve) => {
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error("[DB RUN ERROR]", err.message);
+                return resolve(false);
+            }
+            resolve(true);
+        });
+    });
+
+/* =========================================================
+   SESSION CORE (HARDENED)
+========================================================= */
+async function createSession(userId) {
+    try {
+        const sid = crypto.randomBytes(32).toString("hex");
+        const exp = new Date(Date.now() + 7 * 86400000).toISOString();
+
+        await dbRun(
+            "INSERT INTO sessions VALUES (?, ?, ?)",
+            [sid, userId, exp]
+        );
+
+        return sid;
+    } catch (e) {
+        console.error("[SESSION CREATE FAIL]", e.message);
+        return null;
+    }
+}
+
+async function getSession(sid) {
+    try {
+        const session = await dbGet(
+            "SELECT * FROM sessions WHERE id = ?",
+            [sid]
+        );
+
+        if (!session) return null;
+        if (new Date(session.expires_at) < new Date()) return null;
+
+        return session;
+    } catch (e) {
+        return null;
+    }
+}
+
+/* =========================================================
+   WORLD CORE (ISOLATED STATE)
+========================================================= */
+const WORLD = {
+    tick: 0,
+    players: {},
+    monsters: [],
+    config: {
+        exp: 2.5,
+        drop: 60
+    }
+};
+
+/* =========================================================
+   EXPRESS CORE
+========================================================= */
+const app = express();
+app.use(express.json({ limit: "1mb" }));
+
+/* =========================================================
+   AUTH MIDDLEWARE (SAFE)
+========================================================= */
+async function auth(req, res, next) {
+    try {
+        const sid = req.headers["x-session-id"];
+        if (!sid) return res.status(401).json({ ok:false });
+
+        const session = await getSession(sid);
+        if (!session) return res.status(401).json({ ok:false });
+
+        req.session = session;
+        next();
+    } catch (e) {
+        res.status(500).json({ ok:false });
+    }
+}
+
+/* =========================================================
+   API
+========================================================= */
+app.get("/api/world", auth, (req, res) => {
+    res.json({
+        tick: WORLD.tick,
+        players: Object.keys(WORLD.players).length
+    });
+});
+
+app.post("/api/world/config", auth, (req, res) => {
+    try {
+        if (typeof req.body.exp === "number") {
+            WORLD.config.exp = req.body.exp;
         }
+        res.json({ ok:true });
+    } catch (e) {
+        res.status(500).json({ ok:false });
+    }
+});
+
+/* =========================================================
+   WEBSOCKET CORE (HARDENED)
+========================================================= */
+const server = http.createServer(app);
+const wss = new WebSocket.Server({ server });
+
+function safeBroadcast(data) {
+    let payload;
+    try {
+        payload = JSON.stringify(data);
+    } catch {
+        return;
+    }
+
+    wss.clients.forEach((c) => {
+        try {
+            if (c.readyState === 1) c.send(payload);
+        } catch {}
     });
 }
 
-/* -------------------- SYSTEM -------------------- */
-async function fetchSystemStats(){
-    try{
-        const res = await fetch(API_BASE+"/api/system/stats",{
-            headers:authHeaders()
-        });
+wss.on("connection", (ws) => {
+    let pid = null;
 
-        const data = await res.json();
+    ws.on("message", (msg) => {
+        try {
+            const data = JSON.parse(msg);
 
-        if(!data.success) return;
+            if (data.type === "JOIN") {
+                pid = data.id;
+                WORLD.players[pid] = {
+                    id: pid,
+                    x: 0,
+                    y: 0,
+                    hp: 100
+                };
+            }
 
-        const cpu = Number(data.system?.cpu || Math.floor(Math.random()*25)+10);
-        const ram = Number(data.system?.ram || Math.floor(Math.random()*30)+20);
+            if (data.type === "MOVE" && WORLD.players[pid]) {
+                WORLD.players[pid].x = data.x || 0;
+                WORLD.players[pid].y = data.y || 0;
+            }
 
-        if(sysChart){
-            sysChart.data.datasets[0].data.shift();
-            sysChart.data.datasets[0].data.push(cpu);
+        } catch (e) {
+            // ignore bad packet
+        }
+    });
 
-            sysChart.data.datasets[1].data.shift();
-            sysChart.data.datasets[1].data.push(ram);
+    ws.on("close", () => {
+        try {
+            delete WORLD.players[pid];
+        } catch {}
+    });
+});
 
-            sysChart.update();
+/* =========================================================
+   GAME LOOP (ISOLATED SAFE TICK)
+========================================================= */
+setInterval(() => {
+    try {
+        WORLD.tick++;
+
+        // world logic safe zone
+        for (const id in WORLD.players) {
+            const p = WORLD.players[id];
+            if (!p) continue;
+            if (p.hp <= 0) delete WORLD.players[id];
         }
 
-        document.getElementById("ran-ccu").innerText =
-            data.ran?.online ?? 0;
-
-        document.getElementById("yg-ccu").innerText =
-            data.yulgang?.online ?? 0;
-
-        document.getElementById("ran-status").innerText="● ONLINE";
-        document.getElementById("yg-status").innerText="● STABLE";
-
-    }catch(e){
-        console.log(e);
-    }
-}
-
-/* -------------------- BILLING -------------------- */
-async function fetchCredits(){
-    try{
-        const email =
-        localStorage.getItem("sn_user_email") ||
-        localStorage.getItem("user_email") ||
-        "admin@sn.local";
-
-        const res = await fetch(
-            API_BASE+"/api/billing/usage?email="+encodeURIComponent(email),
-            { headers: authHeaders() }
-        );
-
-        const data = await res.json();
-
-        if(!data.success || !Array.isArray(data.rows)) return;
-
-        let runway=0,repl=0,gem=0,ele=0;
-
-        data.rows.forEach(r=>{
-            const s=String(r.service||"").toLowerCase();
-            const v=Number(r.total||0);
-
-            if(s.includes("runway")) runway+=v;
-            else if(s.includes("replicate")) repl+=v;
-            else if(s.includes("gemini")) gem+=v;
-            else if(s.includes("eleven")) ele+=v;
+        safeBroadcast({
+            type: "SYNC",
+            tick: WORLD.tick,
+            players: WORLD.players
         });
 
-        document.getElementById("cr-runway").innerText="$"+runway.toFixed(2);
-        document.getElementById("cr-replicate").innerText="$"+repl.toFixed(2);
-        document.getElementById("cr-gemini").innerText="$"+gem.toFixed(2);
-        document.getElementById("cr-eleven").innerText=ele.toLocaleString();
-
-    }catch(e){
-        console.log(e);
+    } catch (e) {
+        console.error("[TICK ERROR]", e.message);
     }
-}
+}, 50);
 
-/* -------------------- LOOP -------------------- */
-async function boot(){
-    const ok = await guardAuth();
-    if(!ok) return;
+/* =========================================================
+   START
+========================================================= */
+const PORT = 5002;
 
-    bootChart();
-
-    await fetchSystemStats();
-    await fetchCredits();
-
-    setInterval(fetchSystemStats,5000);
-    setInterval(fetchCredits,10000);
-
-    toast("Dashboard Connected","success");
-}
-
-document.addEventListener("DOMContentLoaded",boot);
-</script>
-
-</body>
-</html>
+server.listen(PORT, "0.0.0.0", () => {
+    console.log(`
+=========================================
+ SN HARDEN MMO CORE v31
+=========================================
+ STATUS : STABLE MODE
+ DB     : SQLITE SAFE WRAPPER
+ WS     : HARDENED BROADCAST
+ LOOP   : ISOLATED TICK ENGINE
+=========================================
+RUNNING ON PORT ${PORT}
+=========================================
+`);
+});

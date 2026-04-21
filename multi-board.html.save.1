@@ -1,0 +1,76 @@
+/**
+ * =========================================================
+ * SN DESIGN STUDIO | HARDEN MMO CORE FINAL v31
+ * MODE: PRODUCTION HARDENED / ANTI-CRASH / STABLE LOOP
+ * DB: SQLITE3 (SAFE WRAPPER)
+ * =========================================================
+ */
+
+const express = require("express");
+const http = require("http");
+const WebSocket = require("ws");
+const sqlite3 = require("sqlite3").verbose();
+const crypto = require("crypto");
+const path = require("path");
+
+/* =========================================================
+   SAFE RUNTIME GUARD (กัน crash ทั้งระบบ)
+========================================================= */
+process.on("uncaughtException", (err) => {
+    console.error("[FATAL SAFE GUARD]", err);
+});
+
+process.on("unhandledRejection", (err) => {
+    console.error("[PROMISE REJECTION]", err);
+});
+
+/* =========================================================
+   DATABASE LAYER (HARDENED)
+========================================================= */
+const db = new sqlite3.Database(path.join(__dirname, "database.db"));
+
+db.serialize(() => {
+    db.run(`CREATE TABLE IF NOT EXISTS users (
+        id TEXT PRIMARY KEY,
+        google_id TEXT,
+        email TEXT,
+        name TEXT,
+        role TEXT
+    )`);
+
+    db.run(`CREATE TABLE IF NOT EXISTS sessions (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        expires_at TEXT
+    )`);
+});
+
+const dbGet = (sql, params=[]) =>
+    new Promise((resolve) => {
+        db.get(sql, params, (err, row) => {
+            if (err) {
+                console.error("[DB GET ERROR]", err.message);
+                return resolve(null);
+            }
+            resolve(row);
+        });
+    });
+
+const dbRun = (sql, params=[]) =>
+    new Promise((resolve) => {
+        db.run(sql, params, function(err) {
+            if (err) {
+                console.error("[DB RUN ERROR]", err.message);
+                return resolve(false);
+            }
+            resolve(true);
+        });
+    });
+
+/* =========================================================
+   SESSION CORE (HARDENED)
+========================================================= */
+async function createSession(userId) {
+    try {
+        const sid = crypto.randomBytes(32).toString("hex");
+   
