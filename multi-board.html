@@ -2,425 +2,229 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA | PRODUCTION DASHBOARD v22 Enterprise Mesh</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>SN ULTRA - COMMERCIAL FINAL LAUNCH</title>
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bai+Jamjuree:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
---bg-deep:#050505;
---accent-ran:#ff0000;
---accent-yg:#00ffaa;
---glass:rgba(255,255,255,.03);
-}
-body{
-background:var(--bg-deep);
-color:#e5e7eb;
-font-family:'Bai Jamjuree',sans-serif;
-overflow-x:hidden;
-}
-.header-font{font-family:'Orbitron',sans-serif;}
-
-.glass-panel{
-background:var(--glass);
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,.05);
-transition:.3s;
-}
-.glass-panel:hover{
-border-color:rgba(255,255,255,.15);
-}
-
-.ran-enterprise-block{
-background:linear-gradient(145deg,#0d0d0f 0%,#1a0505 100%);
-border-left:5px solid var(--accent-ran);
-box-shadow:0 10px 40px rgba(255,0,0,.08);
-}
-
-.yg-enterprise-block{
-background:linear-gradient(145deg,#0a0f0d 0%,#051a14 100%);
-border-left:5px solid var(--accent-yg);
-box-shadow:0 10px 40px rgba(0,255,170,.08);
-}
-
-.ran-text-glow{text-shadow:0 0 10px rgba(255,0,0,.5);}
-.yg-text-glow{text-shadow:0 0 10px rgba(0,255,170,.5);}
-
-.btn-action{
-transition:.25s;
-}
-.btn-action:active{
-transform:scale(.96);
-}
-
-.toast{
-padding:12px 16px;
-margin-top:8px;
-border-radius:12px;
-font-size:12px;
-font-weight:700;
-letter-spacing:.08em;
-text-transform:uppercase;
-color:#fff;
-box-shadow:0 10px 20px rgba(0,0,0,.25);
-}
-.toast.success{background:#16a34a;}
-.toast.error{background:#dc2626;}
-.toast.warn{background:#d97706;}
-</style>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/dashboard.css">
 </head>
+<body class="pb-12 bg-[#030303]">
+    <div id="toast-container"></div>
 
-<body class="p-4 md:p-8">
-
-<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
-    <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-white flex items-center justify-center rounded-sm">
-            <span class="text-black font-black text-xl">SN</span>
+    <div id="user-modal" style="display:none;" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-[9999] justify-center items-center p-4">
+        <div class="bg-[#0f0f0f] border border-white/10 rounded-3xl p-6 w-full max-w-md shadow-2xl">
+            <div class="flex justify-between mb-4"><h3 class="text-blue-400 font-black"><i class="fas fa-database mr-2"></i>MANAGE DB</h3><button onclick="closeUserModal()" class="text-gray-400 hover:text-white"><i class="fas fa-times"></i></button></div>
+            <div class="mb-4"><input id="mng-user" placeholder="User ID" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 mb-2 outline-none text-white"><input type="number" id="mng-credit" placeholder="Credits" class="w-full bg-white/5 border border-white/10 rounded-lg p-3 mb-2 outline-none text-white"><button onclick="saveUser()" id="btn-save-user" class="w-full bg-green-600/20 text-green-400 border border-green-500/50 py-3 rounded-lg font-bold hover:bg-green-600 hover:text-white transition">SAVE</button></div>
+            <div><input id="mng-ban-user" placeholder="User to Ban" class="w-full bg-red-500/10 border border-red-500/30 rounded-lg p-3 mb-2 outline-none text-white"><button onclick="deleteUser()" id="btn-delete-user" class="w-full bg-red-600/20 text-red-400 border border-red-500/50 py-3 rounded-lg font-bold hover:bg-red-600 hover:text-white transition">BAN</button></div>
         </div>
+    </div>
+
+    <div id="login-overlay" class="fixed inset-0 bg-black/95 z-[9999] flex justify-center items-center p-4">
+        <div class="bg-[#0a0a0a] border border-white/10 p-8 rounded-3xl text-center w-full max-w-sm shadow-[0_0_40px_rgba(0,122,255,0.15)]">
+            <div class="w-14 h-14 bg-blue-600 rounded-full mx-auto flex items-center justify-center mb-5"><i class="fas fa-shield-alt text-white text-xl"></i></div>
+            <h2 class="text-2xl font-black text-white mb-1 italic">SN ULTRA</h2>
+            <p class="text-[10px] text-gray-500 uppercase tracking-widest mb-6">Commercial Launch Access</p>
+            <input id="admin-user" placeholder="Username" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 mb-3 text-white outline-none focus:border-blue-500 transition">
+            <input type="password" id="admin-pass" placeholder="Password" class="w-full bg-white/5 border border-white/10 rounded-xl p-3 mb-4 text-white outline-none focus:border-blue-500 transition">
+            <button id="btn-login" onclick="loginAdmin()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-500 transition">SECURE LOGIN</button>
+            <p id="login-error" class="text-red-500 text-[10px] mt-4 font-bold hidden"></p>
+        </div>
+    </div>
+
+    <header class="max-w-[1800px] mx-auto px-4 sm:px-6 pt-8 pb-6 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
         <div>
-            <h1 class="header-font text-lg font-bold tracking-widest text-white">ULTRA ENGINE</h1>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">SaaS Production Enterprise</p>
+            <p class="text-[10px] text-blue-500 font-bold uppercase mb-1">Public Commercial Platform</p>
+            <h1 class="text-4xl font-black italic">SN ULTRA</h1>
         </div>
-    </div>
+        <div class="flex gap-2 flex-wrap items-center">
+            <span id="role-badge" class="px-3 py-1 bg-purple-500/20 border border-purple-500/50 text-purple-400 rounded text-[9px] font-bold hidden uppercase"></span>
+            <div id="socket-status" class="px-4 py-2 bg-amber-500/10 border border-amber-500/30 text-amber-500 rounded-xl text-[10px] font-black"><i class="fas fa-spinner fa-spin"></i> CONNECTING...</div>
+            <button onclick="logoutAdmin()" class="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl hover:bg-red-500/40 transition"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </header>
 
-    <div class="flex items-center gap-4">
-        <div id="role-badge"
-             class="hidden bg-white/10 px-3 py-1 rounded text-[10px] font-bold text-white border border-white/20">
-            ROLE: ADMIN
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6 max-w-[1800px] mx-auto px-4 pb-12">
+        
+        <div class="session-box xl:col-span-4 p-4 sm:p-6" style="--glow: rgba(255, 149, 0, 0.15)">
+            <div class="text-orange-400 font-black mb-4 flex items-center text-xs tracking-widest border-b border-orange-500/20 pb-3"><i class="fas fa-gamepad mr-2"></i>GAME SERVERS</div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+                <div class="text-center bg-black/60 p-5 rounded-xl border border-white/5 relative overflow-hidden shadow-inner">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-blue-500/50"></div>
+                    <div class="text-sm font-black text-white mb-2"><i class="fab fa-windows text-blue-400 mr-2"></i>WIN ENGINE</div>
+                    <div id="gs-win-status" class="text-gray-400 text-[9px] font-bold tracking-widest bg-gray-800 rounded-full inline-block px-3 py-1 mb-4">OFFLINE</div>
+                    <div class="flex gap-2 justify-center max-w-[200px] mx-auto">
+                        <button onclick="controlServer('win','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
+                        <button onclick="controlServer('win','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
+                    </div>
+                </div>
+                <div class="text-center bg-black/60 p-5 rounded-xl border border-white/5 relative overflow-hidden shadow-inner">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-green-500/50"></div>
+                    <div class="text-sm font-black text-white mb-2"><i class="fab fa-android text-green-400 mr-2"></i>AND ENGINE</div>
+                    <div id="gs-and-status" class="text-gray-400 text-[9px] font-bold tracking-widest bg-gray-800 rounded-full inline-block px-3 py-1 mb-4">OFFLINE</div>
+                    <div class="flex gap-2 justify-center max-w-[200px] mx-auto">
+                        <button onclick="controlServer('android','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
+                        <button onclick="controlServer('android','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
+                    </div>
+                </div>
+                <div class="text-center bg-black/60 p-5 rounded-xl border border-white/5 relative overflow-hidden shadow-inner">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-purple-500/50"></div>
+                    <div class="text-sm font-black text-white mb-2"><i class="fas fa-dragon text-purple-400 mr-2"></i>YG ENGINE</div>
+                    <div id="gs-yg-status" class="text-gray-400 text-[9px] font-bold tracking-widest bg-gray-800 rounded-full inline-block px-3 py-1 mb-4">OFFLINE</div>
+                    <div class="flex gap-2 justify-center max-w-[200px] mx-auto">
+                        <button onclick="controlServer('yulgang','start')" class="flex-1 bg-green-500/10 text-green-400 border border-green-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
+                        <button onclick="controlServer('yulgang','stop')" class="flex-1 bg-red-500/10 text-red-400 border border-red-500/30 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="session-box p-4 sm:p-5 flex flex-col">
+            <div class="text-blue-400 font-black mb-4 text-xs tracking-widest border-b border-blue-500/20 pb-3"><i class="fas fa-users-cog mr-2"></i>USER CONTROL</div>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <div class="bg-black/40 border border-white/5 p-3 rounded-xl text-center shadow-inner"><p class="text-[9px] text-gray-500 uppercase tracking-widest mb-1">Total DB Jobs</p><p id="db-total-users" class="text-2xl font-black text-white mono">0</p></div>
+                <div class="bg-blue-900/10 border border-blue-500/20 p-3 rounded-xl text-center shadow-inner"><p class="text-[9px] text-blue-400 uppercase tracking-widest mb-1">Active Today</p><p id="db-active-users" class="text-2xl font-black text-blue-400 mono">0</p></div>
+            </div>
+            <button onclick="openUserModal()" class="w-full mt-auto bg-blue-600/20 border border-blue-500/50 text-blue-400 py-3 rounded-xl font-bold text-xs hover:bg-blue-600 hover:text-white transition"><i class="fas fa-database mr-2"></i>MANAGE DB</button>
         </div>
 
-        <button onclick="logout()"
-        class="text-[10px] px-3 py-2 rounded bg-red-600 hover:bg-red-700 font-bold tracking-widest">
-            LOGOUT
-        </button>
-    </div>
-</nav>
+        <div class="session-box p-4 sm:p-5">
+            <div class="text-purple-400 font-black mb-4 text-xs tracking-widest border-b border-purple-500/20 pb-3"><i class="fas fa-robot mr-2"></i>ENGINE CREDITS</div>
+            <div class="space-y-3">
+                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">Runway</span><span id="cr-runway" class="text-sm font-black text-purple-400 mono">0</span></div>
+                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">Replicate</span><span id="cr-replicate" class="text-sm font-black text-green-400 mono">0</span></div>
+                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">Gemini</span><span id="cr-gemini" class="text-sm font-black text-blue-400 mono">0</span></div>
+                <div class="flex justify-between items-center bg-black/40 border border-white/5 p-2.5 rounded-lg"><span class="text-xs font-bold text-gray-300">ElevenLabs</span><span id="cr-eleven" class="text-sm font-black text-red-400 mono">0</span></div>
+            </div>
+        </div>
 
-<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div class="session-box p-4 sm:p-5 relative">
+            <div class="text-amber-400 font-black mb-3 text-xs tracking-widest border-b border-amber-500/20 pb-3"><i class="fas fa-coins mr-2"></i>FAUCET TERMUX</div>
+            <div id="faucet-locked" class="absolute inset-0 bg-black/90 backdrop-blur-sm flex flex-col justify-center items-center z-10 rounded-2xl">
+                <i class="fas fa-lock text-3xl text-amber-500 mb-3"></i>
+                <button onclick="registerFaucet()" class="bg-amber-500 text-black px-6 py-2 rounded-xl font-black text-xs hover:bg-amber-400 transition shadow-[0_0_15px_rgba(255,204,0,0.3)]">INIT SCRIPT</button>
+            </div>
+            <div id="faucet-content" class="flex flex-col h-full blur-sm transition duration-300">
+                <div class="flex justify-between items-center mb-3 bg-black/40 border border-white/5 p-2 rounded-lg">
+                    <span id="faucet-dispensed" class="text-lg font-black text-amber-400 mono">0.00000</span>
+                    <span class="text-green-400 text-[9px] font-bold tracking-widest flex items-center"><i class="fas fa-circle text-[6px] pulse-dot mr-1"></i>FARMING</span>
+                </div>
+                <div id="termux-console" class="termux-box flex-1 border-amber-500/30 text-green-400 text-[10px] p-3 shadow-inner"></div>
+            </div>
+        </div>
+        <div class="session-box p-4 sm:p-5 flex flex-col">
+            <div class="flex justify-between items-center gap-2 mb-3 border-b border-cyan-500/20 pb-3">
+                <div class="text-cyan-400 font-black text-xs tracking-widest truncate flex-1 min-w-0"><i class="fas fa-terminal mr-2"></i>HAMSTER BOT</div>
+                <div id="hmState" class="text-[9px] text-gray-400 bg-gray-800 px-2 py-1 rounded font-bold whitespace-nowrap flex-shrink-0">OFFLINE</div>
+            </div>
+            <div id="hmTerminal" class="termux-box flex-1 border-cyan-500/30 text-cyan-400 text-[10px] p-3 mb-3 shadow-inner overflow-y-auto"></div>
+            <div class="flex gap-2 mt-auto">
+                <button onclick="controlHamster('start')" class="flex-1 bg-green-500/10 border border-green-500/30 text-green-400 py-2 rounded-lg text-[10px] font-bold hover:bg-green-500/30 transition">START</button>
+                <button onclick="controlHamster('stop')" class="flex-1 bg-red-500/10 border border-red-500/30 text-red-400 py-2 rounded-lg text-[10px] font-bold hover:bg-red-500/30 transition">STOP</button>
+            </div>
+        </div>
 
-    <!-- LEFT -->
-    <div class="lg:col-span-4 space-y-8">
+        <div class="session-box xl:col-span-2 p-4 sm:p-6 flex flex-col sm:flex-row gap-6 relative">
+            <div class="text-cyan-400 font-black text-xs tracking-widest absolute top-4 sm:top-6 left-4 sm:left-6"><i class="fab fa-telegram-plane mr-2"></i>TERMUX KEY BYPASS</div>
+            <div class="flex-1 video-container mt-10 sm:mt-8 shadow-[0_0_20px_rgba(0,122,255,0.1)] border-cyan-500/20"><div id="yt-player-div"></div></div>
+            <div class="flex-1 flex flex-col justify-end gap-3 mt-4 sm:mt-0">
+                <div>
+                    <div class="text-[9px] text-gray-500 uppercase tracking-widest mb-1 font-bold">API Key (12H Validity)</div>
+                    <input type="text" id="termux-key" readonly value="WATCH VIDEO TO UNLOCK" class="w-full bg-black/60 p-3 rounded-lg text-[11px] text-center text-gray-500 border border-white/10 outline-none mono shadow-inner">
+                </div>
+                <button id="btn-unlock" onclick="playUnlockVideo()" class="bg-red-600 text-white font-bold py-3 rounded-lg text-xs shadow-[0_0_15px_rgba(255,59,48,0.3)] hover:bg-red-500 transition"><i class="fab fa-youtube mr-2"></i>PLAY TO UNLOCK</button>
+                <div class="grid grid-cols-2 gap-2 mt-1">
+                    <button onclick="window.location.href='payment.html?package=99&bank=scb'" class="bg-white/5 border border-white/10 hover:border-cyan-500/50 py-3 rounded-lg text-[10px] font-bold text-gray-300 hover:text-white transition">99 THB / MO</button>
+                    <button onclick="window.location.href='payment.html?package=299&bank=scb'" class="bg-gradient-to-r from-cyan-600 to-blue-600 py-3 rounded-lg text-[10px] font-bold text-white shadow-[0_0_15px_rgba(0,122,255,0.3)] transition">299 THB / MO</button>
+                </div>
+            </div>
+        </div>
 
-        <div class="glass-panel p-6 rounded-2xl">
-            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-4 uppercase tracking-widest">
-                System Analytics
-            </h3>
-            <div class="h-48">
+        <div class="session-box xl:col-span-4 p-4 sm:p-6 flex flex-col h-[300px]">
+            <div class="flex justify-between items-center mb-4 border-b border-white/10 pb-3">
+                <div class="text-gray-400 font-black tracking-widest text-xs"><i class="fas fa-shield-alt mr-2"></i>SECURITY AUDIT</div>
+                <div class="text-[9px] text-green-400 font-bold flex items-center bg-green-900/20 px-2 py-1 rounded border border-green-500/20"><span class="pulse-dot mr-2"></span>LIVE MONITOR</div>
+            </div>
+            <div id="audit-list" class="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar"></div>
+        </div>
+
+        <div class="session-box xl:col-span-4 p-4 sm:p-6">
+            <div class="flex justify-between items-center mb-5 border-b border-purple-500/20 pb-3">
+                <div class="text-purple-400 font-black tracking-widest text-xs"><i class="fas fa-server mr-2"></i>RESOURCE ANALYTICS</div>
+                <div class="text-[9px] text-purple-400 font-bold border border-purple-500/30 px-3 py-1 rounded bg-purple-500/10 tracking-widest">CORE ENGINE</div>
+            </div>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6">
+                <div class="bg-black/60 border border-white/5 rounded-xl p-4 sm:p-5 text-center shadow-inner flex sm:flex-col justify-between items-center sm:justify-center">
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2"><i class="fas fa-microchip mr-2"></i>CPU LOAD</div>
+                    <div class="text-xl sm:text-3xl font-black text-white mono" id="sys-cpu">0%</div>
+                </div>
+                <div class="bg-black/60 border border-white/5 rounded-xl p-4 sm:p-5 text-center shadow-inner flex sm:flex-col justify-between items-center sm:justify-center">
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2"><i class="fas fa-memory mr-2"></i>MEMORY</div>
+                    <div class="text-xl sm:text-3xl font-black text-white mono" id="sys-ram">0%</div>
+                </div>
+                <div class="bg-black/60 border border-white/5 rounded-xl p-4 sm:p-5 text-center shadow-inner flex sm:flex-col justify-between items-center sm:justify-center">
+                    <div class="text-[10px] text-gray-500 uppercase tracking-widest mb-2"><i class="fas fa-hdd mr-2"></i>STORAGE</div>
+                    <div class="text-xl sm:text-3xl font-black text-white mono" id="sys-disk">0%</div>
+                </div>
+            </div>
+
+            <div class="h-[150px] sm:h-[220px] w-full mb-6 chart-container">
                 <canvas id="sysChart"></canvas>
             </div>
-        </div>
 
-        <div class="glass-panel p-6 rounded-2xl">
-            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-6 uppercase tracking-widest">
-                Engine Credits
-            </h3>
-
-            <div class="space-y-4">
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">RUNWAY GEN-3</span>
-                    <span id="cr-runway" class="header-font text-white font-bold">$0.00</span>
+            <div class="bg-[#050505] border border-blue-500/20 rounded-xl p-4 sm:p-5 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500/50"></div>
+                <div class="flex justify-between items-center mb-4 pl-2">
+                    <div class="text-[10px] sm:text-xs text-blue-400 font-black tracking-widest"><i class="fas fa-network-wired mr-2"></i>NETWORK TRAFFIC</div>
+                    <div class="text-[9px] text-blue-500/50 uppercase"><i class="fas fa-sync fa-spin mr-1"></i> Syncing</div>
                 </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">REPLICATE API</span>
-                    <span id="cr-replicate" class="header-font text-white font-bold">$0.00</span>
+                <div class="grid grid-cols-2 gap-3 sm:gap-4 pl-2">
+                    <div class="bg-white/5 rounded-lg p-3 sm:p-4 text-center border border-white/5 shadow-inner">
+                        <div class="text-[9px] sm:text-[10px] text-gray-400 mb-1 sm:mb-2 tracking-widest"><i class="fas fa-arrow-down text-green-400 mr-1"></i> INBOUND</div>
+                        <div class="text-sm sm:text-xl font-black text-white mono" id="net-in">0.00 <span class="text-[10px] text-gray-500">Mbps</span></div>
+                    </div>
+                    <div class="bg-white/5 rounded-lg p-3 sm:p-4 text-center border border-white/5 shadow-inner">
+                        <div class="text-[9px] sm:text-[10px] text-gray-400 mb-1 sm:mb-2 tracking-widest"><i class="fas fa-arrow-up text-blue-400 mr-1"></i> OUTBOUND</div>
+                        <div class="text-sm sm:text-xl font-black text-white mono" id="net-out">0.00 <span class="text-[10px] text-gray-500">Mbps</span></div>
+                    </div>
                 </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">GEMINI PRO</span>
-                    <span id="cr-gemini" class="header-font text-white font-bold">$0.00</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">ELEVENLABS</span>
-                    <span id="cr-eleven" class="header-font text-white font-bold">0</span>
-                </div>
-
             </div>
         </div>
 
     </div>
 
-    <!-- RIGHT -->
-    <div class="lg:col-span-8 space-y-8">
-
-        <!-- RAN -->
-        <div class="ran-enterprise-block rounded-2xl p-8 relative overflow-hidden">
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-
-                <div class="flex items-center gap-6">
-
-                    <div class="w-24 h-24 bg-black border border-red-900 rounded-xl flex items-center justify-center">
-                        <span class="text-red-500 font-black text-xl">RAN</span>
-                    </div>
-
-                    <div>
-                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter ran-text-glow">
-                            RAN ONLINE
-                        </h2>
-                        <p class="text-red-600 text-xs font-black tracking-[0.3em] uppercase">
-                            EP7: THE LEGEND REBORN
-                        </p>
-                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
-                            SaaS Node Instance: 5004
-                        </p>
-                    </div>
-
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">CCU</p>
-                        <p id="ran-ccu" class="text-white font-black text-xl">0</p>
-                    </div>
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
-                        <p id="ran-status" class="text-red-500 font-black text-sm tracking-widest">● OFFLINE</p>
-                    </div>
-
-                </div>
-
-                <button onclick="location.href='manage.html'"
-                class="btn-action bg-red-600 hover:bg-red-700 text-white font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
-                    MANAGE DB
-                </button>
-
-            </div>
-
-        </div>
-
-        <!-- YG -->
-        <div class="yg-enterprise-block rounded-2xl p-8 relative overflow-hidden">
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-
-                <div class="flex items-center gap-6">
-
-                    <div class="w-24 h-24 bg-black border border-green-900 rounded-xl flex items-center justify-center">
-                        <span class="text-green-400 font-black text-xl">YG</span>
-                    </div>
-
-                    <div>
-                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter yg-text-glow">
-                            YULGANG 2026
-                        </h2>
-                        <p class="text-green-400 text-xs font-black tracking-[0.3em] uppercase">
-                            CLASSIC FUTURE MOBILE/PC
-                        </p>
-                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
-                            SaaS Node Instance: 5006
-                        </p>
-                    </div>
-
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">PLAYERS</p>
-                        <p id="yg-ccu" class="text-white font-black text-xl">0</p>
-                    </div>
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
-                        <p id="yg-status" class="text-green-400 font-black text-sm tracking-widest">● OFFLINE</p>
-                    </div>
-
-                </div>
-
-                <button onclick="location.href='manage.html'"
-                class="btn-action bg-green-500 hover:bg-green-600 text-black font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
-                    MANAGE DB
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-</div>
-
-<div id="toast-container" class="fixed bottom-6 right-6 z-50"></div>
-
-<script>
-/* =====================================================
-   SN ENTERPRISE MESH v22
-===================================================== */
-
-const API_BASE = "https://api.sn-designstudio.dev";
-let sysChart = null;
-
-/* -------------------- UTIL -------------------- */
-function toast(msg,type="success"){
-    const box=document.getElementById("toast-container");
-    const el=document.createElement("div");
-    el.className="toast "+type;
-    el.innerText=msg;
-    box.appendChild(el);
-    setTimeout(()=>el.remove(),3000);
-}
-
-
-
-function logout(){
-    localStorage.clear();
-    sessionStorage.clear();
-    location.href="login.html";
-}
-
-/* -------------------- AUTH GUARD -------------------- */
-
-    const badge=document.getElementById("role-badge");
-    badge.classList.remove("hidden");
-    badge.innerText="ROLE: "+(localStorage.getItem("sn_role") || "ADMIN");
-
-    return true;
-}
-
-/* -------------------- CHART -------------------- */
-function bootChart(){
-    const cv=document.getElementById("sysChart");
-    if(!cv) return;
-
-    sysChart=new Chart(cv,{
-        type:"line",
-        data:{
-            labels:Array(15).fill(""),
-            datasets:[
-                {
-                    label:"CPU",
-                    data:Array(15).fill(0),
-                    borderColor:"#ff0000",
-                    borderWidth:2,
-                    pointRadius:0,
-                    tension:.4
-                },
-                {
-                    label:"RAM",
-                    data:Array(15).fill(0),
-                    borderColor:"#00ffaa",
-                    borderWidth:2,
-                    pointRadius:0,
-                    tension:.4
+    <script src="assets/js/admin-auth.js"></script>
+    <script src="assets/js/socket.js"></script>
+    <script>
+        // --- LOGIC ดึงสถานะแบบเงียบๆ ไม่กระทบ UI ---
+        function syncHamsterStatus() {
+            fetch('/api/hamster/status').then(res => res.json()).then(res => {
+                if (res.success && res.data) {
+                    const d = res.data;
+                    document.getElementById('hmState').innerText = 'ACTIVE';
+         
+document.getElementById('hmState').className = 'text-[9px] text-green-400 bg-green-900/20 px-2 py-1 rounded font-bold';
+                    
+                    const term = document.getElementById('hmTerminal');
+                    const time = new Date().toLocaleTimeString();
+                    // พ่นข้อมูลลงใน Terminal แทนการสร้างกล่องใหม่
+                    term.innerHTML += `<div class="mb-1 text-cyan-500/80">[${time}] SYNC: ${d.account_name} | Dia: ${d.diamonds.toFixed(2)} | Profit: ${d.profit_per_hour.toLocaleString()} | S2: ${d.s2_total.toLocaleString()}</div>`;
+                    term.scrollTop = term.scrollHeight;
                 }
-            ]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            animation:false,
-            plugins:{legend:{display:false}},
-            scales:{
-                x:{display:false},
-                y:{display:false,min:0,max:100}
-            }
+            }).catch(() => {
+                document.getElementById('hmState').innerText = 'OFFLINE';
+                document.getElementById('hmState').className = 'text-[9px] text-red-500 bg-red-900/20 px-2 py-1 rounded font-bold';
+            });
         }
-    });
-}
-
-/* -------------------- SYSTEM -------------------- */
-async function fetchSystemStats(){
-    try{
-        const res = await fetch(API_BASE+"/api/system/stats",{
-            headers:authHeaders()
-        });
-
-        const data = await res.json();
-
-        if(!data.success) return;
-
-        const cpu = Number(data.system?.cpu || Math.floor(Math.random()*25)+10);
-        const ram = Number(data.system?.ram || Math.floor(Math.random()*30)+20);
-
-        if(sysChart){
-            sysChart.data.datasets[0].data.shift();
-            sysChart.data.datasets[0].data.push(cpu);
-
-            sysChart.data.datasets[1].data.shift();
-            sysChart.data.datasets[1].data.push(ram);
-
-            sysChart.update();
-        }
-
-        document.getElementById("ran-ccu").innerText =
-            data.ran?.online ?? 0;
-
-        document.getElementById("yg-ccu").innerText =
-            data.yulgang?.online ?? 0;
-
-        document.getElementById("ran-status").innerText="● ONLINE";
-        document.getElementById("yg-status").innerText="● STABLE";
-
-    }catch(e){
-        console.log(e);
-    }
-}
-
-/* -------------------- BILLING -------------------- */
-async function fetchCredits(){
-    try{
-        const email =
-        localStorage.getItem("sn_user_email") ||
-        localStorage.getItem("user_email") ||
-        "admin@sn.local";
-
-        const res = await fetch(
-            API_BASE+"/api/billing/usage?email="+encodeURIComponent(email),
-            { headers: authHeaders() }
-        );
-
-        const data = await res.json();
-
-        if(!data.success || !Array.isArray(data.rows)) return;
-
-        let runway=0,repl=0,gem=0,ele=0;
-
-        data.rows.forEach(r=>{
-            const s=String(r.service||"").toLowerCase();
-            const v=Number(r.total||0);
-
-            if(s.includes("runway")) runway+=v;
-            else if(s.includes("replicate")) repl+=v;
-            else if(s.includes("gemini")) gem+=v;
-            else if(s.includes("eleven")) ele+=v;
-        });
-
-        document.getElementById("cr-runway").innerText="$"+runway.toFixed(2);
-        document.getElementById("cr-replicate").innerText="$"+repl.toFixed(2);
-        document.getElementById("cr-gemini").innerText="$"+gem.toFixed(2);
-        document.getElementById("cr-eleven").innerText=ele.toLocaleString();
-
-    }catch(e){
-        console.log(e);
-    }
-}
-
-/* -------------------- LOOP -------------------- */
-async function boot(){
-    const ok = await guardAuth();
-    if(!ok) return;
-
-    bootChart();
-
-    await fetchSystemStats();
-    await fetchCredits();
-
-    setInterval(fetchSystemStats,5000);
-    setInterval(fetchCredits,10000);
-
-    toast("Dashboard Connected","success");
-}
-
-document.addEventListener("DOMContentLoaded",boot);
-</script>
-
+        setInterval(syncHamsterStatus, 30000);
+        syncHamsterStatus();
+    </script>
+    <script src="assets/js/modules/youtube.js"></script>
+    <script src="assets/js/modules/faucet.js"></script>
+    <script src="assets/js/modules/hamster.js"></script>
+    <script src="assets/js/dashboard.js"></script> 
 </body>
 </html>
