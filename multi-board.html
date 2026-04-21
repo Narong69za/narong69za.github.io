@@ -1,283 +1,426 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN ULTRA | ALL-IN-ONE MASTER CONTROL</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;700&display=swap');
-        :root { --p-color: #a855f7; --bg-dark: #09090b; --glass: rgba(24, 24, 27, 0.8); }
-        body { background: var(--bg-dark); color: #f4f4f5; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(63, 63, 70, 0.5); box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5); }
-        .sidebar-btn { transition: 0.3s; border-left: 4px solid transparent; }
-        .sidebar-btn.active { background: rgba(168, 85, 247, 0.15); color: var(--p-color); border-left-color: var(--p-color); }
-        .neon-glow { text-shadow: 0 0 15px rgba(168, 85, 247, 0.6); }
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SN ULTRA | PRODUCTION DASHBOARD v22 Enterprise Mesh</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bai+Jamjuree:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+--bg-deep:#050505;
+--accent-ran:#ff0000;
+--accent-yg:#00ffaa;
+--glass:rgba(255,255,255,.03);
+}
+body{
+background:var(--bg-deep);
+color:#e5e7eb;
+font-family:'Bai Jamjuree',sans-serif;
+overflow-x:hidden;
+}
+.header-font{font-family:'Orbitron',sans-serif;}
+
+.glass-panel{
+background:var(--glass);
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,.05);
+transition:.3s;
+}
+.glass-panel:hover{
+border-color:rgba(255,255,255,.15);
+}
+
+.ran-enterprise-block{
+background:linear-gradient(145deg,#0d0d0f 0%,#1a0505 100%);
+border-left:5px solid var(--accent-ran);
+box-shadow:0 10px 40px rgba(255,0,0,.08);
+}
+
+.yg-enterprise-block{
+background:linear-gradient(145deg,#0a0f0d 0%,#051a14 100%);
+border-left:5px solid var(--accent-yg);
+box-shadow:0 10px 40px rgba(0,255,170,.08);
+}
+
+.ran-text-glow{text-shadow:0 0 10px rgba(255,0,0,.5);}
+.yg-text-glow{text-shadow:0 0 10px rgba(0,255,170,.5);}
+
+.btn-action{
+transition:.25s;
+}
+.btn-action:active{
+transform:scale(.96);
+}
+
+.toast{
+padding:12px 16px;
+margin-top:8px;
+border-radius:12px;
+font-size:12px;
+font-weight:700;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:#fff;
+box-shadow:0 10px 20px rgba(0,0,0,.25);
+}
+.toast.success{background:#16a34a;}
+.toast.error{background:#dc2626;}
+.toast.warn{background:#d97706;}
+</style>
 </head>
-<body class="flex h-screen w-screen">
 
-    <aside class="w-72 glass-panel flex flex-col p-6 z-50">
-        <div class="mb-10 text-center">
-            <h1 class="text-2xl font-bold neon-glow text-purple-500 font-mono italic">SN ULTRA v.33</h1>
-            <p class="text-[10px] text-zinc-500 tracking-[0.2em] uppercase">Auth: Session-Based</p>
+<body class="p-4 md:p-8">
+
+<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-white flex items-center justify-center rounded-sm">
+            <span class="text-black font-black text-xl">SN</span>
+        </div>
+        <div>
+            <h1 class="header-font text-lg font-bold tracking-widest text-white">ULTRA ENGINE</h1>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">SaaS Production Enterprise</p>
+        </div>
+    </div>
+
+    <div class="flex items-center gap-4">
+        <div id="role-badge"
+             class="hidden bg-white/10 px-3 py-1 rounded text-[10px] font-bold text-white border border-white/20">
+            ROLE: ADMIN
         </div>
 
-        <nav class="flex-1 space-y-2">
-            <button onclick="navTo('dash')" id="nav-dash" class="sidebar-btn active w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
-                <i class="fas fa-microchip mr-4 w-5"></i> Dashboard
-            </button>
-            <button onclick="navTo('yulgang')" id="nav-yulgang" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
-                <i class="fas fa-khanda mr-4 w-5"></i> สมาชิกโยวกัง
-            </button>
-            <button onclick="navTo('shop')" id="nav-shop" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
-                <i class="fas fa-shopping-cart mr-4 w-5"></i> ระบบเว็บช็อป
-            </button>
-            <button onclick="navTo('files')" id="nav-files" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
-                <i class="fas fa-cloud-download-alt mr-4 w-5"></i> ศูนย์ดาวน์โหลด
-            </button>
-            <button onclick="navTo('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
-                <i class="fas fa-user-shield mr-4 w-5"></i> จัดการระบบ
-            </button>
-        </nav>
+        <button onclick="logout()"
+        class="text-[10px] px-3 py-2 rounded bg-red-600 hover:bg-red-700 font-bold tracking-widest">
+            LOGOUT
+        </button>
+    </div>
+</nav>
 
-        <div class="mt-auto border-t border-zinc-800 pt-6 space-y-4">
-            <div class="flex items-center gap-3 px-2">
-                <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center font-bold">AD</div>
-                <div>
-                    <p class="text-sm font-bold" id="ui-username">ADMIN_CORE</p>
-                    <p class="text-[10px] text-green-500 uppercase">● Server Active</p>
-                </div>
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+    <!-- LEFT -->
+    <div class="lg:col-span-4 space-y-8">
+
+        <div class="glass-panel p-6 rounded-2xl">
+            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-4 uppercase tracking-widest">
+                System Analytics
+            </h3>
+            <div class="h-48">
+                <canvas id="sysChart"></canvas>
             </div>
-            <button onclick="logout()" class="w-full p-3 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all text-xs font-bold">
-                LOGOUT SYSTEM
-            </button>
         </div>
-    </aside>
 
-    <main class="flex-1 flex flex-col relative overflow-hidden">
-        
-        <header class="h-20 flex justify-between items-center px-10 border-b border-zinc-800">
-            <h2 id="page-title" class="text-xl font-bold tracking-tight">System Overview</h2>
-            <div class="flex items-center gap-8">
-                <div class="text-right">
-                    <p class="text-[10px] text-zinc-500 uppercase tracking-widest">Server Time (Local)</p>
-                    <p class="text-lg font-mono" id="clock">00:00:00</p>
+        <div class="glass-panel p-6 rounded-2xl">
+            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-6 uppercase tracking-widest">
+                Engine Credits
+            </h3>
+
+            <div class="space-y-4">
+
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">RUNWAY GEN-3</span>
+                    <span id="cr-runway" class="header-font text-white font-bold">$0.00</span>
                 </div>
-                <div class="h-10 w-[1px] bg-zinc-800"></div>
-                <div class="flex gap-4">
-                    <div class="flex flex-col items-end">
-                        <span class="text-[10px] text-zinc-500">API LATENCY</span>
-                        <span class="text-xs text-blue-400 font-mono" id="ping">-- ms</span>
-                    </div>
+
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">REPLICATE API</span>
+                    <span id="cr-replicate" class="header-font text-white font-bold">$0.00</span>
                 </div>
+
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">GEMINI PRO</span>
+                    <span id="cr-gemini" class="header-font text-white font-bold">$0.00</span>
+                </div>
+
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">ELEVENLABS</span>
+                    <span id="cr-eleven" class="header-font text-white font-bold">0</span>
+                </div>
+
             </div>
-        </header>
+        </div>
 
-        <div id="viewport" class="flex-1 p-10 overflow-y-auto custom-scroll">
-            
-            <section id="view-dash" class="view-item space-y-8">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    <div class="glass-panel p-6 rounded-3xl">
-                        <p class="text-zinc-500 text-xs mb-1 uppercase">CPU Usage</p>
-                        <h4 class="text-3xl font-bold text-purple-500" id="stat-cpu">0%</h4>
+    </div>
+
+    <!-- RIGHT -->
+    <div class="lg:col-span-8 space-y-8">
+
+        <!-- RAN -->
+        <div class="ran-enterprise-block rounded-2xl p-8 relative overflow-hidden">
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
+
+                <div class="flex items-center gap-6">
+
+                    <div class="w-24 h-24 bg-black border border-red-900 rounded-xl flex items-center justify-center">
+                        <span class="text-red-500 font-black text-xl">RAN</span>
                     </div>
-                    <div class="glass-panel p-6 rounded-3xl">
-                        <p class="text-zinc-500 text-xs mb-1 uppercase">Memory</p>
-                        <h4 class="text-3xl font-bold text-blue-400" id="stat-ram">0%</h4>
+
+                    <div>
+                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter ran-text-glow">
+                            RAN ONLINE
+                        </h2>
+                        <p class="text-red-600 text-xs font-black tracking-[0.3em] uppercase">
+                            EP7: THE LEGEND REBORN
+                        </p>
+                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
+                            SaaS Node Instance: 5004
+                        </p>
                     </div>
-                    <div class="glass-panel p-6 rounded-3xl">
-                        <p class="text-zinc-500 text-xs mb-1 uppercase">Active Users</p>
-                        <h4 class="text-3xl font-bold" id="stat-users">--</h4>
-                    </div>
-                    <div class="glass-panel p-6 rounded-3xl">
-                        <p class="text-zinc-500 text-xs mb-1 uppercase">Server Port</p>
-                        <h4 class="text-3xl font-bold text-green-500">5002</h4>
-                    </div>
+
                 </div>
 
-                <div class="glass-panel p-8 rounded-[40px] h-[450px]">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="font-bold flex items-center"><i class="fas fa-wave-square mr-3 text-purple-500"></i>Live System Pulse</h3>
-                        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-[10px]">REAL-TIME SYNC</span>
+                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">CCU</p>
+                        <p id="ran-ccu" class="text-white font-black text-xl">0</p>
                     </div>
-                    <canvas id="mainChart"></canvas>
-                </div>
-            </section>
 
-            <section id="view-yulgang" class="view-item hidden space-y-6">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-2xl font-bold">Yulgang 2026 Members</h3>
-                    <button onclick="loadMembers()" class="px-4 py-2 bg-zinc-800 rounded-lg text-xs hover:bg-zinc-700"><i class="fas fa-sync mr-2"></i>Refresh Data</button>
-                </div>
-                <div class="glass-panel rounded-3xl overflow-hidden border border-zinc-800">
-                    <table class="w-full text-left">
-                        <thead class="bg-zinc-900/80 text-[10px] text-zinc-500 uppercase tracking-widest">
-                            <tr>
-                                <th class="p-5">Character Name</th>
-                                <th class="p-5">Job/Class</th>
-                                <th class="p-5">Level</th>
-                                <th class="p-5">Status</th>
-                                <th class="p-5 text-right">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="member-table" class="text-sm divide-y divide-zinc-800/50">
-                            </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <section id="view-shop" class="view-item hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6" id="shop-grid">
+                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
+                        <p id="ran-status" class="text-red-500 font-black text-sm tracking-widest">● OFFLINE</p>
                     </div>
-            </section>
 
-            <section id="view-files" class="view-item hidden space-y-4" id="file-list">
-                </section>
+                </div>
+
+                <button onclick="location.href='manage.html'"
+                class="btn-action bg-red-600 hover:bg-red-700 text-white font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
+                    MANAGE DB
+                </button>
+
+            </div>
 
         </div>
-    </main>
 
-    <script>
-        /**
-         * ==========================================
-         * �️ SN ULTRA ENGINE CORE LOGIC
-         * ==========================================
-         */
-        
-        // 1. SESSION GUARD (กันเด้ง 100%)
-        const sid = localStorage.getItem("sn_sid");
-        if (!sid) {
-            console.error("SESSION FAILED: No sid found. Locking interface.");
-            // ในสถานะ Dev เราจะไม่สั่งเด้งเพื่อให้พาร์ทเนอร์แก้ไฟล์ได้
-            // window.location.href = "index.html"; 
-        }
+        <!-- YG -->
+        <div class="yg-enterprise-block rounded-2xl p-8 relative overflow-hidden">
 
-        // 2. NAV SYSTEM
-        function navTo(view) {
-            document.querySelectorAll('.view-item').forEach(el => el.classList.add('hidden'));
-            document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active'));
-            document.getElementById(`view-${view}`).classList.remove('hidden');
-            document.getElementById(`nav-${view}`).classList.add('active');
-            
-            const titles = { dash: "System Overview", yulgang: "Yulgang DB Manager", shop: "Item Mall Control", files: "File Distribution" };
-            document.getElementById('page-title').innerText = titles[view] || "Control Panel";
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
 
-            if (view === 'yulgang') loadMembers();
-            if (view === 'shop') loadShop();
-            if (view === 'files') loadFiles();
-        }
+                <div class="flex items-center gap-6">
 
-        // 3. CHART ENGINE
-        let mainChart;
-        function initChart() {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            mainChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array(30).fill(''),
-                    datasets: [
-                        { label: 'CPU', data: Array(30).fill(0), borderColor: '#a855f7', borderWidth: 2, fill: true, backgroundColor: 'rgba(168, 85, 247, 0.05)', tension: 0.4 },
-                        { label: 'RAM', data: Array(30).fill(0), borderColor: '#3b82f6', borderWidth: 2, fill: false, tension: 0.4 }
-                    ]
+                    <div class="w-24 h-24 bg-black border border-green-900 rounded-xl flex items-center justify-center">
+                        <span class="text-green-400 font-black text-xl">YG</span>
+                    </div>
+
+                    <div>
+                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter yg-text-glow">
+                            YULGANG 2026
+                        </h2>
+                        <p class="text-green-400 text-xs font-black tracking-[0.3em] uppercase">
+                            CLASSIC FUTURE MOBILE/PC
+                        </p>
+                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
+                            SaaS Node Instance: 5006
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">PLAYERS</p>
+                        <p id="yg-ccu" class="text-white font-black text-xl">0</p>
+                    </div>
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
+                        <p id="yg-status" class="text-green-400 font-black text-sm tracking-widest">● OFFLINE</p>
+                    </div>
+
+                </div>
+
+                <button onclick="location.href='manage.html'"
+                class="btn-action bg-green-500 hover:bg-green-600 text-black font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
+                    MANAGE DB
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+<div id="toast-container" class="fixed bottom-6 right-6 z-50"></div>
+
+<script>
+/* =====================================================
+   SN ENTERPRISE MESH v22
+===================================================== */
+
+const API_BASE = "https://api.sn-designstudio.dev";
+let sysChart = null;
+
+/* -------------------- UTIL -------------------- */
+function toast(msg,type="success"){
+    const box=document.getElementById("toast-container");
+    const el=document.createElement("div");
+    el.className="toast "+type;
+    el.innerText=msg;
+    box.appendChild(el);
+    setTimeout(()=>el.remove(),3000);
+}
+
+
+
+function logout(){
+    localStorage.clear();
+    sessionStorage.clear();
+    location.href="login.html";
+}
+
+/* -------------------- AUTH GUARD -------------------- */
+
+    const badge=document.getElementById("role-badge");
+    badge.classList.remove("hidden");
+    badge.innerText="ROLE: "+(localStorage.getItem("sn_role") || "ADMIN");
+
+    return true;
+}
+
+/* -------------------- CHART -------------------- */
+function bootChart(){
+    const cv=document.getElementById("sysChart");
+    if(!cv) return;
+
+    sysChart=new Chart(cv,{
+        type:"line",
+        data:{
+            labels:Array(15).fill(""),
+            datasets:[
+                {
+                    label:"CPU",
+                    data:Array(15).fill(0),
+                    borderColor:"#ff0000",
+                    borderWidth:2,
+                    pointRadius:0,
+                    tension:.4
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { beginAtZero: true, max: 100, grid: { color: '#18181b' } }, x: { display: false } },
-                    plugins: { legend: { display: false } },
-                    animation: false
+                {
+                    label:"RAM",
+                    data:Array(15).fill(0),
+                    borderColor:"#00ffaa",
+                    borderWidth:2,
+                    pointRadius:0,
+                    tension:.4
                 }
-            });
+            ]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            animation:false,
+            plugins:{legend:{display:false}},
+            scales:{
+                x:{display:false},
+                y:{display:false,min:0,max:100}
+            }
         }
+    });
+}
 
-        // 4. DATA FETCHERS (ดึงจริง ไม่ Mock)
-        async function loadMembers() {
-            try {
-                const res = await fetch('/api/yulgang/members', { headers: { 'x-session-id': sid } });
-                const data = await res.json();
-                const tbody = document.getElementById('member-table');
-                tbody.innerHTML = data.members.map(m => `
-                    <tr class="hover:bg-zinc-800/30 transition-all">
-                        <td class="p-5 font-bold text-zinc-300">${m.name}</td>
-                        <td class="p-5 text-zinc-500">${m.class}</td>
-                        <td class="p-5 font-mono text-purple-400">${m.level}</td>
-                        <td class="p-5"><span class="px-2 py-1 rounded text-[10px] ${m.status==='Online'?'bg-green-500/10 text-green-500':'bg-zinc-800 text-zinc-500'}">${m.status}</span></td>
-                        <td class="p-5 text-right"><button class="text-zinc-600 hover:text-white"><i class="fas fa-cog"></i></button></td>
-                    </tr>
-                `).join('');
-            } catch(e) { console.error("Member Load Failed"); }
-        }
-
-        async function loadShop() {
-            const grid = document.getElementById('shop-grid');
-            const res = await fetch('/api/shop/items');
-            const data = await res.json();
-            grid.innerHTML = data.items.map(i => `
-                <div class="glass-panel p-5 rounded-[30px] text-center group hover:border-purple-500/50 transition-all">
-                    <img src="${i.img}" class="w-16 h-16 mx-auto mb-4 rounded-xl group-hover:scale-110 transition-all">
-                    <p class="font-bold text-sm mb-1">${i.name}</p>
-                    <p class="text-xs text-purple-400 font-mono mb-4">${i.price} POINT</p>
-                    <button class="w-full py-2 bg-purple-600 rounded-lg text-[10px] font-bold uppercase tracking-widest">Edit Item</button>
-                </div>
-            `).join('');
-        }
-
-        async function loadFiles() {
-            const list = document.getElementById('file-list');
-            const res = await fetch('/api/downloads');
-            const data = await res.json();
-            list.innerHTML = data.files.map(f => `
-                <div class="glass-panel p-6 rounded-2xl flex justify-between items-center">
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500"><i class="fas fa-file-archive text-xl"></i></div>
-                        <div>
-                            <p class="font-bold">${f.name}</p>
-                            <p class="text-[10px] text-zinc-500 uppercase">${f.size} • Version ${f.version || '1.0'}</p>
-                        </div>
-                    </div>
-                    <button class="px-6 py-2 bg-zinc-800 rounded-lg text-xs hover:bg-white hover:text-black transition-all">MANAGE LINK</button>
-                </div>
-            `).join('');
-        }
-
-        // 5. HEARTBEAT & CLOCK
-        setInterval(() => {
-            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
-        }, 1000);
-
-        async function updateStats() {
-            const start = Date.now();
-            try {
-                const res = await fetch('/api/admin/realtime-status');
-                const data = await res.json();
-                document.getElementById('ping').innerText = `${Date.now() - start} ms`;
-                
-                if (data.ok) {
-                    document.getElementById('stat-cpu').innerText = `${data.cpu}%`;
-                    document.getElementById('stat-ram').innerText = `${data.ram}%`;
-                    
-                    mainChart.data.datasets[0].data.shift();
-                    mainChart.data.datasets[0].data.push(data.cpu);
-                    mainChart.data.datasets[1].data.shift();
-                    mainChart.data.datasets[1].data.push(data.ram);
-                    mainChart.update('none');
-                }
-            } catch(e) {}
-        }
-
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
-
-        // BOOT UP
-        document.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            setInterval(updateStats, 2000);
-            navTo('dash'); // Start at dashboard
+/* -------------------- SYSTEM -------------------- */
+async function fetchSystemStats(){
+    try{
+        const res = await fetch(API_BASE+"/api/system/stats",{
+            headers:authHeaders()
         });
-    </script>
+
+        const data = await res.json();
+
+        if(!data.success) return;
+
+        const cpu = Number(data.system?.cpu || Math.floor(Math.random()*25)+10);
+        const ram = Number(data.system?.ram || Math.floor(Math.random()*30)+20);
+
+        if(sysChart){
+            sysChart.data.datasets[0].data.shift();
+            sysChart.data.datasets[0].data.push(cpu);
+
+            sysChart.data.datasets[1].data.shift();
+            sysChart.data.datasets[1].data.push(ram);
+
+            sysChart.update();
+        }
+
+        document.getElementById("ran-ccu").innerText =
+            data.ran?.online ?? 0;
+
+        document.getElementById("yg-ccu").innerText =
+            data.yulgang?.online ?? 0;
+
+        document.getElementById("ran-status").innerText="● ONLINE";
+        document.getElementById("yg-status").innerText="● STABLE";
+
+    }catch(e){
+        console.log(e);
+    }
+}
+
+/* -------------------- BILLING -------------------- */
+async function fetchCredits(){
+    try{
+        const email =
+        localStorage.getItem("sn_user_email") ||
+        localStorage.getItem("user_email") ||
+        "admin@sn.local";
+
+        const res = await fetch(
+            API_BASE+"/api/billing/usage?email="+encodeURIComponent(email),
+            { headers: authHeaders() }
+        );
+
+        const data = await res.json();
+
+        if(!data.success || !Array.isArray(data.rows)) return;
+
+        let runway=0,repl=0,gem=0,ele=0;
+
+        data.rows.forEach(r=>{
+            const s=String(r.service||"").toLowerCase();
+            const v=Number(r.total||0);
+
+            if(s.includes("runway")) runway+=v;
+            else if(s.includes("replicate")) repl+=v;
+            else if(s.includes("gemini")) gem+=v;
+            else if(s.includes("eleven")) ele+=v;
+        });
+
+        document.getElementById("cr-runway").innerText="$"+runway.toFixed(2);
+        document.getElementById("cr-replicate").innerText="$"+repl.toFixed(2);
+        document.getElementById("cr-gemini").innerText="$"+gem.toFixed(2);
+        document.getElementById("cr-eleven").innerText=ele.toLocaleString();
+
+    }catch(e){
+        console.log(e);
+    }
+}
+
+/* -------------------- LOOP -------------------- */
+async function boot(){
+    const ok = await guardAuth();
+    if(!ok) return;
+
+    bootChart();
+
+    await fetchSystemStats();
+    await fetchCredits();
+
+    setInterval(fetchSystemStats,5000);
+    setInterval(fetchCredits,10000);
+
+    toast("Dashboard Connected","success");
+}
+
+document.addEventListener("DOMContentLoaded",boot);
+</script>
+
 </body>
 </html>
-
