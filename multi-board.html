@@ -268,16 +268,7 @@ function toast(msg,type="success"){
     setTimeout(()=>el.remove(),3000);
 }
 
-function token(){
-    return localStorage.getItem("sn_jwt") || "";
-}
 
-function authHeaders(){
-    return {
-        "Content-Type":"application/json",
-        "Authorization":"Bearer "+token()
-    };
-}
 
 function logout(){
     localStorage.clear();
@@ -286,13 +277,6 @@ function logout(){
 }
 
 /* -------------------- AUTH GUARD -------------------- */
-async function guardAuth(){
-    const tk = token();
-
-    if(!tk){
-        location.href="login.html";
-        return false;
-    }
 
     const badge=document.getElementById("role-badge");
     badge.classList.remove("hidden");
