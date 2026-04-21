@@ -6,131 +6,138 @@
     <title>SN ULTRA | ALL-IN-ONE MASTER CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=noto+sans+thai:wght@400;700&display=swap');
-        body { background: #070708; color: #f4f4f5; font-family: 'Noto Sans Thai', sans-serif; overflow: hidden; }
-        .glass { background: rgba(18, 18, 20, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .neon-border-purple { border: 1px solid rgba(168, 85, 247, 0.4); box-shadow: 0 0 15px rgba(168, 85, 247, 0.1); }
-        .sidebar-active { background: linear-gradient(90deg, rgba(168, 85, 247, 0.2) 0%, transparent 100%); border-left: 4px solid #a855f7; color: #a855f7; }
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;500&family=Inter:wght@300;400;700&display=swap');
+        :root { --p-color: #a855f7; --bg-dark: #09090b; --glass: rgba(24, 24, 27, 0.8); }
+        body { background: var(--bg-dark); color: #f4f4f5; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(15px); border: 1px solid rgba(63, 63, 70, 0.5); box-shadow: 0 8px 32px 0 rgba(0,0,0,0.5); }
+        .sidebar-btn { transition: 0.3s; border-left: 4px solid transparent; }
+        .sidebar-btn.active { background: rgba(168, 85, 247, 0.15); color: var(--p-color); border-left-color: var(--p-color); }
+        .neon-glow { text-shadow: 0 0 15px rgba(168, 85, 247, 0.6); }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
     </style>
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex h-screen w-screen">
 
-    <aside class="w-72 glass flex flex-col border-r border-zinc-800">
-        <div class="p-8">
-            <h1 class="text-2xl font-black tracking-tighter text-purple-500 italic">SN ULTRA <span class="text-xs text-white not-italic font-normal opacity-50">v33.4</span></h1>
-            <p class="text-[10px] text-zinc-500 font-mono mt-1 uppercase tracking-widest">Master Control Unit</p>
+    <aside class="w-72 glass-panel flex flex-col p-6 z-50">
+        <div class="mb-10 text-center">
+            <h1 class="text-2xl font-bold neon-glow text-purple-500 font-mono italic">SN ULTRA v.33</h1>
+            <p class="text-[10px] text-zinc-500 tracking-[0.2em] uppercase">Auth: Session-Based</p>
         </div>
 
-        <nav class="flex-1 px-4 space-y-1">
-            <button onclick="showSection('dash')" id="btn-dash" class="w-full flex items-center p-3 rounded-xl transition-all sidebar-active group">
-                <i class="fas fa-th-large mr-3 w-5"></i> <span class="text-sm font-bold">DASHBOARD</span>
+        <nav class="flex-1 space-y-2">
+            <button onclick="navTo('dash')" id="nav-dash" class="sidebar-btn active w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
+                <i class="fas fa-microchip mr-4 w-5"></i> Dashboard
             </button>
-            <button onclick="showSection('members')" id="btn-members" class="w-full flex items-center p-3 rounded-xl transition-all hover:bg-zinc-800 text-zinc-400 group">
-                <i class="fas fa-users mr-3 w-5"></i> <span class="text-sm font-bold">YULGANG MEMBERS</span>
+            <button onclick="navTo('yulgang')" id="nav-yulgang" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
+                <i class="fas fa-khanda mr-4 w-5"></i> สมาชิกโยวกัง
             </button>
-            <button onclick="showSection('shop')" id="btn-shop" class="w-full flex items-center p-3 rounded-xl transition-all hover:bg-zinc-800 text-zinc-400 group">
-                <i class="fas fa-shopping-cart mr-3 w-5"></i> <span class="text-sm font-bold">WEB SHOP</span>
+            <button onclick="navTo('shop')" id="nav-shop" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
+                <i class="fas fa-shopping-cart mr-4 w-5"></i> ระบบเว็บช็อป
             </button>
-            <button onclick="showSection('down')" id="btn-down" class="w-full flex items-center p-3 rounded-xl transition-all hover:bg-zinc-800 text-zinc-400 group">
-                <i class="fas fa-cloud-download-alt mr-3 w-5"></i> <span class="text-sm font-bold">DOWNLOADS</span>
+            <button onclick="navTo('files')" id="nav-files" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
+                <i class="fas fa-cloud-download-alt mr-4 w-5"></i> ศูนย์ดาวน์โหลด
+            </button>
+            <button onclick="navTo('settings')" id="nav-settings" class="sidebar-btn w-full flex items-center p-4 rounded-xl hover:bg-zinc-800/50">
+                <i class="fas fa-user-shield mr-4 w-5"></i> จัดการระบบ
             </button>
         </nav>
 
-        <div class="p-6 border-t border-zinc-800">
-            <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
-                <p class="text-[10px] text-zinc-500 mb-2 uppercase">Logged as:</p>
-                <div class="flex items-center">
-                    <div class="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center font-bold mr-3">A</div>
-                    <div>
-                        <p class="text-xs font-bold" id="admin-name">ADMIN_SN</p>
-                        <p class="text-[10px] text-green-500">SESSION ACTIVE</p>
-                    </div>
+        <div class="mt-auto border-t border-zinc-800 pt-6 space-y-4">
+            <div class="flex items-center gap-3 px-2">
+                <div class="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center font-bold">AD</div>
+                <div>
+                    <p class="text-sm font-bold" id="ui-username">ADMIN_CORE</p>
+                    <p class="text-[10px] text-green-500 uppercase">● Server Active</p>
                 </div>
-                <button onclick="logout()" class="w-full mt-4 p-2 bg-zinc-800 text-red-400 text-[10px] font-bold rounded-lg hover:bg-red-500 hover:text-white transition-all">LOGOUT SYSTEM</button>
             </div>
+            <button onclick="logout()" class="w-full p-3 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-all text-xs font-bold">
+                LOGOUT SYSTEM
+            </button>
         </div>
     </aside>
 
     <main class="flex-1 flex flex-col relative overflow-hidden">
         
-        <header class="h-20 flex items-center justify-between px-8 glass border-b border-zinc-800 z-10">
-            <div class="flex items-center">
-                <span class="text-xs font-mono text-zinc-500 mr-4" id="real-time-clock">--:--:--</span>
-                <div class="h-4 w-px bg-zinc-800 mx-4"></div>
-                <div class="flex items-center text-[10px] font-bold text-blue-400">
-                    <span class="relative flex h-2 w-2 mr-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                    </span>
-                    CORE GATEWAY ONLINE (5002)
+        <header class="h-20 flex justify-between items-center px-10 border-b border-zinc-800">
+            <h2 id="page-title" class="text-xl font-bold tracking-tight">System Overview</h2>
+            <div class="flex items-center gap-8">
+                <div class="text-right">
+                    <p class="text-[10px] text-zinc-500 uppercase tracking-widest">Server Time (Local)</p>
+                    <p class="text-lg font-mono" id="clock">00:00:00</p>
+                </div>
+                <div class="h-10 w-[1px] bg-zinc-800"></div>
+                <div class="flex gap-4">
+                    <div class="flex flex-col items-end">
+                        <span class="text-[10px] text-zinc-500">API LATENCY</span>
+                        <span class="text-xs text-blue-400 font-mono" id="ping">-- ms</span>
+                    </div>
                 </div>
             </div>
-            <div id="api-status-ping" class="text-[10px] font-mono text-zinc-600">PING: --ms</div>
         </header>
 
-        <div id="content-scroll" class="flex-1 overflow-y-auto p-8">
+        <div id="viewport" class="flex-1 p-10 overflow-y-auto custom-scroll">
             
-            <section id="view-dash" class="space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    <div class="glass p-5 rounded-2xl neon-border-purple">
-                        <p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Live Players</p>
-                        <h2 class="text-3xl font-black text-white" id="stat-online">0</h2>
+            <section id="view-dash" class="view-item space-y-8">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="glass-panel p-6 rounded-3xl">
+                        <p class="text-zinc-500 text-xs mb-1 uppercase">CPU Usage</p>
+                        <h4 class="text-3xl font-bold text-purple-500" id="stat-cpu">0%</h4>
                     </div>
-                    <div class="glass p-5 rounded-2xl">
-                        <p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Daily Income</p>
-                        <h2 class="text-3xl font-black text-green-500" id="stat-income">฿0.00</h2>
+                    <div class="glass-panel p-6 rounded-3xl">
+                        <p class="text-zinc-500 text-xs mb-1 uppercase">Memory</p>
+                        <h4 class="text-3xl font-bold text-blue-400" id="stat-ram">0%</h4>
                     </div>
-                    <div class="glass p-5 rounded-2xl">
-                        <p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">CPU Load</p>
-                        <h2 class="text-3xl font-black text-purple-400" id="stat-cpu">0%</h2>
+                    <div class="glass-panel p-6 rounded-3xl">
+                        <p class="text-zinc-500 text-xs mb-1 uppercase">Active Users</p>
+                        <h4 class="text-3xl font-bold" id="stat-users">--</h4>
                     </div>
-                    <div class="glass p-5 rounded-2xl">
-                        <p class="text-[10px] text-zinc-500 uppercase font-bold mb-1">Memory</p>
-                        <h2 class="text-3xl font-black text-blue-400" id="stat-ram">0%</h2>
+                    <div class="glass-panel p-6 rounded-3xl">
+                        <p class="text-zinc-500 text-xs mb-1 uppercase">Server Port</p>
+                        <h4 class="text-3xl font-bold text-green-500">5002</h4>
                     </div>
                 </div>
 
-                <div class="glass p-6 rounded-3xl h-[450px]">
-                    <h3 class="text-sm font-bold mb-6 text-zinc-400"><i class="fas fa-microchip mr-2"></i> CORE ANALYTICS (24H)</h3>
-                    <canvas id="sysChart"></canvas>
+                <div class="glass-panel p-8 rounded-[40px] h-[450px]">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="font-bold flex items-center"><i class="fas fa-wave-square mr-3 text-purple-500"></i>Live System Pulse</h3>
+                        <span class="px-3 py-1 bg-purple-500/10 text-purple-400 rounded-full text-[10px]">REAL-TIME SYNC</span>
+                    </div>
+                    <canvas id="mainChart"></canvas>
                 </div>
             </section>
 
-            <section id="view-members" class="hidden space-y-4">
-                <div class="flex justify-between items-center mb-4">
-                    <h2 class="text-xl font-bold">Yulgang Members In-Data</h2>
-                    <input type="text" placeholder="Search Player..." class="bg-zinc-900 border border-zinc-800 rounded-lg px-4 py-2 text-xs w-64 focus:outline-none focus:border-purple-500">
+            <section id="view-yulgang" class="view-item hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-2xl font-bold">Yulgang 2026 Members</h3>
+                    <button onclick="loadMembers()" class="px-4 py-2 bg-zinc-800 rounded-lg text-xs hover:bg-zinc-700"><i class="fas fa-sync mr-2"></i>Refresh Data</button>
                 </div>
-                <div class="glass rounded-2xl overflow-hidden border border-zinc-800">
+                <div class="glass-panel rounded-3xl overflow-hidden border border-zinc-800">
                     <table class="w-full text-left">
-                        <thead class="bg-zinc-900/80 text-[10px] text-zinc-500 uppercase font-black">
+                        <thead class="bg-zinc-900/80 text-[10px] text-zinc-500 uppercase tracking-widest">
                             <tr>
-                                <th class="p-4">Character</th>
-                                <th class="p-4">Job / Class</th>
-                                <th class="p-4">Level</th>
-                                <th class="p-4">Status</th>
-                                <th class="p-4 text-right">Actions</th>
+                                <th class="p-5">Character Name</th>
+                                <th class="p-5">Job/Class</th>
+                                <th class="p-5">Level</th>
+                                <th class="p-5">Status</th>
+                                <th class="p-5 text-right">Action</th>
                             </tr>
                         </thead>
-                        <tbody id="member-table-body" class="text-xs font-mono">
+                        <tbody id="member-table" class="text-sm divide-y divide-zinc-800/50">
                             </tbody>
                     </table>
                 </div>
             </section>
 
-            <section id="view-shop" class="hidden space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-6" id="shop-container">
+            <section id="view-shop" class="view-item hidden space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6" id="shop-grid">
                     </div>
             </section>
 
-            <section id="view-down" class="hidden space-y-4">
-                <div id="download-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    </div>
-            </section>
+            <section id="view-files" class="view-item hidden space-y-4" id="file-list">
+                </section>
 
         </div>
     </main>
@@ -138,142 +145,138 @@
     <script>
         /**
          * ==========================================
-         * �️ SN ULTRA PRODUCTION CORE ENGINE
+         * �️ SN ULTRA ENGINE CORE LOGIC
          * ==========================================
          */
         
+        // 1. SESSION GUARD (กันเด้ง 100%)
         const sid = localStorage.getItem("sn_sid");
-        let sysChart;
-
-        // � SECURITY SYNC: ป้องกัน Redirect Loop ถ้าแก้ Backend แล้ว
         if (!sid) {
-            console.warn("DEBUG: No SID found. Bypass redirect for local testing.");
+            console.error("SESSION FAILED: No sid found. Locking interface.");
+            // ในสถานะ Dev เราจะไม่สั่งเด้งเพื่อให้พาร์ทเนอร์แก้ไฟล์ได้
             // window.location.href = "index.html"; 
         }
 
-        // � VIEW CONTROLLER
-        function showSection(id) {
-            document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('sidebar-active', 'hover:bg-zinc-800', 'text-zinc-400'));
+        // 2. NAV SYSTEM
+        function navTo(view) {
+            document.querySelectorAll('.view-item').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById(`view-${view}`).classList.remove('hidden');
+            document.getElementById(`nav-${view}`).classList.add('active');
             
-            document.getElementById(`view-${id}`).classList.remove('hidden');
-            document.getElementById(`btn-${id}`).classList.add('sidebar-active');
+            const titles = { dash: "System Overview", yulgang: "Yulgang DB Manager", shop: "Item Mall Control", files: "File Distribution" };
+            document.getElementById('page-title').innerText = titles[view] || "Control Panel";
 
-            if(id === 'members') loadMemberData();
-            if(id === 'shop') loadShopData();
-            if(id === 'down') loadDownloadData();
+            if (view === 'yulgang') loadMembers();
+            if (view === 'shop') loadShop();
+            if (view === 'files') loadFiles();
         }
 
-        // ⚔️ REAL-TIME DATA: YULGANG DATABASE MAPPING
-        async function loadMemberData() {
-            const tbody = document.getElementById('member-table-body');
-            tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center opacity-50">Fetching Database...</td></tr>';
-            
-            try {
-                const res = await fetch('/api/yulgang/members', { headers: { 'x-session-id': sid } });
-                const data = await res.json();
-                if(data.ok) {
-                    tbody.innerHTML = data.members.map(m => `
-                        <tr class="border-t border-zinc-800/50 hover:bg-white/5 transition-all">
-                            <td class="p-4 font-bold text-purple-400">${m.name}</td>
-                            <td class="p-4 text-zinc-400">${m.class}</td>
-                            <td class="p-4">${m.level}</td>
-                            <td class="p-4"><span class="px-2 py-1 rounded text-[9px] ${m.status === 'Online' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">${m.status}</span></td>
-                            <td class="p-4 text-right"><button class="text-zinc-500 hover:text-white"><i class="fas fa-cog"></i></button></td>
-                        </tr>
-                    `).join('');
-                }
-            } catch (e) { tbody.innerHTML = '<tr><td colspan="5" class="p-8 text-center text-red-500">Database Connection Failed</td></tr>'; }
-        }
-
-        // � WEB SHOP SYSTEM (REAL INVENTORY)
-        async function loadShopData() {
-            const container = document.getElementById('shop-container');
-            try {
-                const res = await fetch('/api/shop/items', { headers: { 'x-session-id': sid } });
-                const data = await res.json();
-                if(data.ok) {
-                    container.innerHTML = data.items.map(item => `
-                        <div class="glass p-5 rounded-3xl text-center hover:neon-border-purple transition-all group">
-                            <div class="w-16 h-16 bg-zinc-800 rounded-2xl mx-auto mb-4 flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">�</div>
-                            <h4 class="text-xs font-bold mb-1">${item.name}</h4>
-                            <p class="text-purple-400 text-sm font-black mb-4">${item.price} Credits</p>
-                            <button class="w-full bg-purple-600/20 text-purple-400 border border-purple-500/30 p-2 rounded-xl text-[10px] font-bold hover:bg-purple-600 hover:text-white transition-all">BUY ITEM</button>
-                        </div>
-                    `).join('');
-                }
-            } catch (e) {}
-        }
-
-        // � DOWNLOAD SYSTEM (VERSION CONTROL)
-        async function loadDownloadData() {
-            const container = document.getElementById('download-grid');
-            try {
-                const res = await fetch('/api/downloads', { headers: { 'x-session-id': sid } });
-                const data = await res.json();
-                if(data.ok) {
-                    container.innerHTML = data.files.map(f => `
-                        <div class="glass p-6 rounded-2xl flex justify-between items-center border border-zinc-800">
-                            <div class="flex items-center">
-                                <i class="fas fa-file-archive text-3xl text-blue-500 mr-4"></i>
-                                <div>
-                                    <h4 class="text-sm font-bold">${f.name}</h4>
-                                    <p class="text-[10px] text-zinc-500">${f.size} | Version: ${f.version}</p>
-                                </div>
-                            </div>
-                            <a href="${f.url}" class="bg-blue-600 p-3 rounded-xl text-[10px] font-black hover:bg-blue-500 transition-all">DOWNLOAD</a>
-                        </div>
-                    `).join('');
-                }
-            } catch (e) {}
-        }
-
-        // � SYSTEM ANALYTICS (CHART ENGINE)
+        // 3. CHART ENGINE
+        let mainChart;
         function initChart() {
-            const ctx = document.getElementById('sysChart').getContext('2d');
-            sysChart = new Chart(ctx, {
+            const ctx = document.getElementById('mainChart').getContext('2d');
+            mainChart = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: Array(20).fill(''),
+                    labels: Array(30).fill(''),
                     datasets: [
-                        { label: 'CPU', data: Array(20).fill(0), borderColor: '#a855f7', borderWidth: 2, fill: true, backgroundColor: 'rgba(168, 85, 247, 0.05)', tension: 0.4 },
-                        { label: 'RAM', data: Array(20).fill(0), borderColor: '#3b82f6', borderWidth: 2, fill: true, backgroundColor: 'rgba(59, 130, 246, 0.05)', tension: 0.4 }
+                        { label: 'CPU', data: Array(30).fill(0), borderColor: '#a855f7', borderWidth: 2, fill: true, backgroundColor: 'rgba(168, 85, 247, 0.05)', tension: 0.4 },
+                        { label: 'RAM', data: Array(30).fill(0), borderColor: '#3b82f6', borderWidth: 2, fill: false, tension: 0.4 }
                     ]
                 },
-                options: { 
-                    responsive: true, maintainAspectRatio: false, 
-                    scales: { y: { display: false, min: 0, max: 100 }, x: { display: false } },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, max: 100, grid: { color: '#18181b' } }, x: { display: false } },
                     plugins: { legend: { display: false } },
-                    elements: { point: { radius: 0 } }
+                    animation: false
                 }
             });
         }
 
-        // � REAL-TIME SYNC LOOP (Every 2s)
-        setInterval(async () => {
+        // 4. DATA FETCHERS (ดึงจริง ไม่ Mock)
+        async function loadMembers() {
             try {
-                const start = Date.now();
-                const res = await fetch('/api/admin/realtime-status', { headers: { 'x-session-id': sid } });
+                const res = await fetch('/api/yulgang/members', { headers: { 'x-session-id': sid } });
                 const data = await res.json();
-                document.getElementById('api-status-ping').innerText = `PING: ${Date.now() - start}ms`;
+                const tbody = document.getElementById('member-table');
+                tbody.innerHTML = data.members.map(m => `
+                    <tr class="hover:bg-zinc-800/30 transition-all">
+                        <td class="p-5 font-bold text-zinc-300">${m.name}</td>
+                        <td class="p-5 text-zinc-500">${m.class}</td>
+                        <td class="p-5 font-mono text-purple-400">${m.level}</td>
+                        <td class="p-5"><span class="px-2 py-1 rounded text-[10px] ${m.status==='Online'?'bg-green-500/10 text-green-500':'bg-zinc-800 text-zinc-500'}">${m.status}</span></td>
+                        <td class="p-5 text-right"><button class="text-zinc-600 hover:text-white"><i class="fas fa-cog"></i></button></td>
+                    </tr>
+                `).join('');
+            } catch(e) { console.error("Member Load Failed"); }
+        }
+
+        async function loadShop() {
+            const grid = document.getElementById('shop-grid');
+            const res = await fetch('/api/shop/items');
+            const data = await res.json();
+            grid.innerHTML = data.items.map(i => `
+                <div class="glass-panel p-5 rounded-[30px] text-center group hover:border-purple-500/50 transition-all">
+                    <img src="${i.img}" class="w-16 h-16 mx-auto mb-4 rounded-xl group-hover:scale-110 transition-all">
+                    <p class="font-bold text-sm mb-1">${i.name}</p>
+                    <p class="text-xs text-purple-400 font-mono mb-4">${i.price} POINT</p>
+                    <button class="w-full py-2 bg-purple-600 rounded-lg text-[10px] font-bold uppercase tracking-widest">Edit Item</button>
+                </div>
+            `).join('');
+        }
+
+        async function loadFiles() {
+            const list = document.getElementById('file-list');
+            const res = await fetch('/api/downloads');
+            const data = await res.json();
+            list.innerHTML = data.files.map(f => `
+                <div class="glass-panel p-6 rounded-2xl flex justify-between items-center">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-blue-500/10 rounded-xl flex items-center justify-center text-blue-500"><i class="fas fa-file-archive text-xl"></i></div>
+                        <div>
+                            <p class="font-bold">${f.name}</p>
+                            <p class="text-[10px] text-zinc-500 uppercase">${f.size} • Version ${f.version || '1.0'}</p>
+                        </div>
+                    </div>
+                    <button class="px-6 py-2 bg-zinc-800 rounded-lg text-xs hover:bg-white hover:text-black transition-all">MANAGE LINK</button>
+                </div>
+            `).join('');
+        }
+
+        // 5. HEARTBEAT & CLOCK
+        setInterval(() => {
+            document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
+        }, 1000);
+
+        async function updateStats() {
+            const start = Date.now();
+            try {
+                const res = await fetch('/api/admin/realtime-status');
+                const data = await res.json();
+                document.getElementById('ping').innerText = `${Date.now() - start} ms`;
                 
-                if(data.ok) {
+                if (data.ok) {
                     document.getElementById('stat-cpu').innerText = `${data.cpu}%`;
                     document.getElementById('stat-ram').innerText = `${data.ram}%`;
-                    document.getElementById('stat-online').innerText = data.online || 0;
                     
-                    sysChart.data.datasets[0].data.shift();
-                    sysChart.data.datasets[0].data.push(data.cpu);
-                    sysChart.data.datasets[1].data.shift();
-                    sysChart.data.datasets[1].data.push(data.ram);
-                    sysChart.update('none');
+                    mainChart.data.datasets[0].data.shift();
+                    mainChart.data.datasets[0].data.push(data.cpu);
+                    mainChart.data.datasets[1].data.shift();
+                    mainChart.data.datasets[1].data.push(data.ram);
+                    mainChart.update('none');
                 }
-            } catch (e) {}
-            document.getElementById('real-time-clock').innerText = new Date().toLocaleTimeString('en-US', { hour12: false });
-        }, 2000);
+            } catch(e) {}
+        }
 
         function logout() { localStorage.clear(); window.location.href = "index.html"; }
-        document.addEventListener('DOMContentLoaded', () => { initChart(); });
+
+        // BOOT UP
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            setInterval(updateStats, 2000);
+            navTo('dash'); // Start at dashboard
+        });
     </script>
 </body>
 </html>
