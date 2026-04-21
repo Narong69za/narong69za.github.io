@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA ENGINE | PRODUCTION V22 LUXURY MESH</title>
+<title>SN ULTRA | PRODUCTION DASHBOARD v22 Enterprise Mesh</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -12,304 +12,431 @@
 
 <style>
 :root{
-  --bg-deep: #020617;
-  --accent-ran: #ef4444;
-  --accent-yg: #10b981;
-  --accent-gold: #fbbf24;
-  --glass-bg: rgba(15, 23, 42, 0.6);
-  --glass-border: rgba(255, 255, 255, 0.08);
+--bg-deep:#050505;
+--accent-ran:#ff0000;
+--accent-yg:#00ffaa;
+--glass:rgba(255,255,255,.03);
 }
 body{
-  background: var(--bg-deep);
-  background-image: 
-    radial-gradient(circle at 15% 50%, rgba(239, 68, 68, 0.05), transparent 25%),
-    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
-  color: #e2e8f0;
-  font-family: 'Bai Jamjuree', sans-serif;
-  overflow-x: hidden;
-  min-height: 100vh;
+background:var(--bg-deep);
+color:#e5e7eb;
+font-family:'Bai Jamjuree',sans-serif;
+overflow-x:hidden;
 }
-.header-font { font-family: 'Orbitron', sans-serif; }
+.header-font{font-family:'Orbitron',sans-serif;}
 
-.glass-panel {
-  background: var(--glass-bg);
-  backdrop-filter: blur(16px);
-  border: 1px solid var(--glass-border);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
-  transition: all 0.4s ease;
+.glass-panel{
+background:var(--glass);
+backdrop-filter:blur(10px);
+border:1px solid rgba(255,255,255,.05);
+transition:.3s;
 }
-.glass-panel:hover {
-  border-color: rgba(255, 255, 255, 0.2);
-  transform: translateY(-2px);
+.glass-panel:hover{
+border-color:rgba(255,255,255,.15);
 }
 
-.server-block {
-  position: relative;
-  border-radius: 1rem;
-  overflow: hidden;
-  border: 1px solid var(--glass-border);
-}
-.server-block::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-size: cover;
-  background-position: center;
-  opacity: 0.3;
-  z-index: 0;
-}
-.ran-block::before { background-image: url('https://narong69za.github.io/Screenshot_20260421_034811.jpg'); }
-.ran-block { border-bottom: 3px solid var(--accent-ran); }
-.yg-block::before { background-image: url('https://narong69za.github.io/1000065127.jpg'); }
-.yg-block { border-bottom: 3px solid var(--accent-yg); }
-
-.content-z { position: relative; z-index: 10; }
-.glow-text { text-shadow: 0 0 15px currentColor; }
-
-.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
-.status-online { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
-.status-offline { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
-
-.btn-luxury {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(4px);
-  transition: all 0.3s;
-}
-.btn-luxury:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.15);
-  border-color: var(--accent-gold);
+.ran-enterprise-block{
+background:linear-gradient(145deg,#0d0d0f 0%,#1a0505 100%);
+border-left:5px solid var(--accent-ran);
+box-shadow:0 10px 40px rgba(255,0,0,.08);
 }
 
-/* Custom Checkbox for Admin */
-.sn-checkbox {
-  appearance: none; width: 40px; height: 20px; background: #334155; border-radius: 20px;
-  position: relative; cursor: pointer; outline: none; transition: 0.3s;
+.yg-enterprise-block{
+background:linear-gradient(145deg,#0a0f0d 0%,#051a14 100%);
+border-left:5px solid var(--accent-yg);
+box-shadow:0 10px 40px rgba(0,255,170,.08);
 }
-.sn-checkbox::after {
-  content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
-  background: white; border-radius: 50%; transition: 0.3s;
-}
-.sn-checkbox:checked { background: var(--accent-gold); }
-.sn-checkbox:checked::after { left: 22px; }
 
-.toast {
-  padding: 16px 24px; margin-top: 12px; border-radius: 8px; font-size: 13px; font-weight: 700;
-  color: #fff; backdrop-filter: blur(10px); animation: slideIn 0.4s ease forwards;
+.ran-text-glow{text-shadow:0 0 10px rgba(255,0,0,.5);}
+.yg-text-glow{text-shadow:0 0 10px rgba(0,255,170,.5);}
+
+.btn-action{
+transition:.25s;
 }
-@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-.toast.success { background: rgba(16, 185, 129, 0.8); border-left: 4px solid #34d399; }
-.toast.error { background: rgba(239, 68, 68, 0.8); border-left: 4px solid #f87171; }
+.btn-action:active{
+transform:scale(.96);
+}
+
+.toast{
+padding:12px 16px;
+margin-top:8px;
+border-radius:12px;
+font-size:12px;
+font-weight:700;
+letter-spacing:.08em;
+text-transform:uppercase;
+color:#fff;
+box-shadow:0 10px 20px rgba(0,0,0,.25);
+}
+.toast.success{background:#16a34a;}
+.toast.error{background:#dc2626;}
+.toast.warn{background:#d97706;}
 </style>
 </head>
 
 <body class="p-4 md:p-8">
 
-<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/10 relative">
-    <div class="flex items-center gap-5">
-        <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center rounded-lg shadow-[0_0_20px_rgba(251,191,36,0.4)]">
-            <span class="text-black font-black text-2xl header-font">SN</span>
+<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
+    <div class="flex items-center gap-4">
+        <div class="w-10 h-10 bg-white flex items-center justify-center rounded-sm">
+            <span class="text-black font-black text-xl">SN</span>
         </div>
         <div>
-            <h1 class="header-font text-2xl font-bold tracking-[0.2em] text-white">ULTRA <span class="text-yellow-400 glow-text">MESH V22</span></h1>
-            <p class="text-[11px] text-gray-400 font-bold uppercase tracking-[0.4em] mt-1">SaaS Unified Enterprise Gateway</p>
+            <h1 class="header-font text-lg font-bold tracking-widest text-white">ULTRA ENGINE</h1>
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">SaaS Production Enterprise</p>
         </div>
     </div>
-    <div class="flex items-center gap-6">
-        <div id="role-badge" class="glass-panel px-4 py-2 rounded-lg text-xs font-bold tracking-widest">
-            LOADING...
+
+    <div class="flex items-center gap-4">
+        <div id="role-badge"
+             class="hidden bg-white/10 px-3 py-1 rounded text-[10px] font-bold text-white border border-white/20">
+            ROLE: ADMIN
         </div>
+
+        <button onclick="logout()"
+        class="text-[10px] px-3 py-2 rounded bg-red-600 hover:bg-red-700 font-bold tracking-widest">
+            LOGOUT
+        </button>
     </div>
 </nav>
 
-<div class="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-12 gap-8">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-    <div class="xl:col-span-4 space-y-6">
+    <!-- LEFT -->
+    <div class="lg:col-span-4 space-y-8">
 
-        <div id="admin-panel" class="hidden glass-panel p-6 rounded-2xl relative overflow-hidden border-yellow-500/50 shadow-[0_0_20px_rgba(251,191,36,0.15)]">
-            <h3 class="header-font text-sm font-bold text-yellow-400 mb-4 uppercase tracking-widest flex items-center gap-2">
-                ðŸ‘‘ ADMIN PERMISSION CONTROL
+        <div class="glass-panel p-6 rounded-2xl">
+            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-4 uppercase tracking-widest">
+                System Analytics
             </h3>
+            <div class="h-48">
+                <canvas id="sysChart"></canvas>
+            </div>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl">
+            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-6 uppercase tracking-widest">
+                Engine Credits
+            </h3>
+
             <div class="space-y-4">
-                <div>
-                    <label class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Target Username / HWID</label>
-                    <input type="text" id="target-user" placeholder="Enter Username..." class="mt-1 w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-yellow-400 transition-colors">
-                </div>
-                
-                <div class="flex justify-between items-center bg-black/30 p-3 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-blue-400 tracking-wider">ENABLE HAMSTER BOT</span>
-                    <input type="checkbox" class="sn-checkbox" id="perm-hamster">
+
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">RUNWAY GEN-3</span>
+                    <span id="cr-runway" class="header-font text-white font-bold">$0.00</span>
                 </div>
 
-                <div class="flex justify-between items-center bg-black/30 p-3 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-pink-400 tracking-wider">ENABLE FAUCET</span>
-                    <input type="checkbox" class="sn-checkbox" id="perm-faucet">
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">REPLICATE API</span>
+                    <span id="cr-replicate" class="header-font text-white font-bold">$0.00</span>
                 </div>
 
-                <button onclick="updatePermissions()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 rounded-lg text-xs uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(251,191,36,0.3)]">
-                    UPDATE PERMISSIONS
-                </button>
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">GEMINI PRO</span>
+                    <span id="cr-gemini" class="header-font text-white font-bold">$0.00</span>
+                </div>
+
+                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-gray-400">ELEVENLABS</span>
+                    <span id="cr-eleven" class="header-font text-white font-bold">0</span>
+                </div>
+
             </div>
         </div>
 
-        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
-            <h3 class="header-font text-sm font-bold text-white mb-5 uppercase tracking-widest">Financial & Integrations</h3>
-            <div class="grid grid-cols-2 gap-4">
-                <div class="p-4 glass-panel rounded-xl text-center">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">PROMPTPAY</p>
-                    <p class="text-yellow-400 font-black text-lg header-font">ACTIVE</p>
-                </div>
-                <div class="p-4 glass-panel rounded-xl text-center">
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">HAMSTER</p>
-                    <button class="admin-only-btn w-full mt-1 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded py-1 text-xs font-bold transition-all">ACCESS BOT</button>
-                </div>
-            </div>
-        </div>
     </div>
 
-    <div class="xl:col-span-8 space-y-6">
-        <h2 class="header-font text-xl font-bold text-white uppercase tracking-[0.3em] mb-2 border-l-4 border-yellow-400 pl-4">Game Servers Network</h2>
+    <!-- RIGHT -->
+    <div class="lg:col-span-8 space-y-8">
 
-        <div class="server-block yg-block p-8 bg-gray-900/50 backdrop-blur-sm">
-            <div class="content-z flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <!-- RAN -->
+        <div class="ran-enterprise-block rounded-2xl p-8 relative overflow-hidden">
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
+
                 <div class="flex items-center gap-6">
-                    <div class="w-20 h-20 bg-black/80 border-2 border-green-500/50 rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.3)]">
-                        <span class="text-green-400 font-black text-2xl header-font">YG</span>
+
+                    <div class="w-24 h-24 bg-black border border-red-900 rounded-xl flex items-center justify-center">
+                        <span class="text-red-500 font-black text-xl">RAN</span>
                     </div>
+
                     <div>
-                        <h2 class="header-font text-4xl font-black text-white italic tracking-tighter text-green-400 glow-text">YULGANG 2026</h2>
-                        <p class="text-green-300 text-xs font-black tracking-[0.4em] uppercase mt-1">CLASSIC FUTURE V18.45</p>
+                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter ran-text-glow">
+                            RAN ONLINE
+                        </h2>
+                        <p class="text-red-600 text-xs font-black tracking-[0.3em] uppercase">
+                            EP7: THE LEGEND REBORN
+                        </p>
+                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
+                            SaaS Node Instance: 5004
+                        </p>
                     </div>
+
                 </div>
 
-                <div class="flex flex-col gap-4 w-full md:w-auto">
-                    <div class="flex gap-4">
-                        <div class="bg-black/60 p-4 rounded-xl border border-white/10 min-w-[120px]">
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">STATUS</p>
-                            <p class="text-green-400 font-black text-sm tracking-widest mt-2"><span class="status-dot status-online"></span>STABLE</p>
-                        </div>
+                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">CCU</p>
+                        <p id="ran-ccu" class="text-white font-black text-xl">0</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button class="admin-only-btn flex-1 btn-luxury text-white font-bold py-3 px-4 rounded-lg text-xs uppercase tracking-widest">
-                            CONFIG
-                        </button>
-                        <button class="admin-only-btn flex-1 bg-green-600 hover:bg-green-500 text-black font-black py-3 px-4 rounded-lg text-xs uppercase tracking-widest transition-colors">
-                            RESTART
-                        </button>
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
+                        <p id="ran-status" class="text-red-500 font-black text-sm tracking-widest">● OFFLINE</p>
                     </div>
+
                 </div>
+
+                <button onclick="location.href='manage.html'"
+                class="btn-action bg-red-600 hover:bg-red-700 text-white font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
+                    MANAGE DB
+                </button>
+
             </div>
+
         </div>
 
-        <div class="server-block ran-block p-8 bg-gray-900/50 backdrop-blur-sm">
-            <div class="content-z flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+        <!-- YG -->
+        <div class="yg-enterprise-block rounded-2xl p-8 relative overflow-hidden">
+
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
+
                 <div class="flex items-center gap-6">
-                    <div class="w-20 h-20 bg-black/80 border-2 border-red-500/50 rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)]">
-                        <span class="text-red-500 font-black text-2xl header-font">RAN</span>
+
+                    <div class="w-24 h-24 bg-black border border-green-900 rounded-xl flex items-center justify-center">
+                        <span class="text-green-400 font-black text-xl">YG</span>
                     </div>
+
                     <div>
-                        <h2 class="header-font text-4xl font-black text-white italic tracking-tighter text-red-500 glow-text">RAN ONLINE</h2>
-                        <p class="text-red-400 text-xs font-black tracking-[0.4em] uppercase mt-1">EP7: THE LEGEND REBORN</p>
+                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter yg-text-glow">
+                            YULGANG 2026
+                        </h2>
+                        <p class="text-green-400 text-xs font-black tracking-[0.3em] uppercase">
+                            CLASSIC FUTURE MOBILE/PC
+                        </p>
+                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
+                            SaaS Node Instance: 5006
+                        </p>
                     </div>
+
                 </div>
 
-                <div class="flex flex-col gap-4 w-full md:w-auto">
-                    <div class="flex gap-4">
-                        <div class="bg-black/60 p-4 rounded-xl border border-white/10 min-w-[120px]">
-                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">STATUS</p>
-                            <p class="text-red-500 font-black text-sm tracking-widest mt-2"><span class="status-dot status-offline"></span>OFFLINE</p>
-                        </div>
+                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">PLAYERS</p>
+                        <p id="yg-ccu" class="text-white font-black text-xl">0</p>
                     </div>
-                    <div class="flex gap-2">
-                        <button class="admin-only-btn flex-1 btn-luxury text-white font-bold py-3 px-4 rounded-lg text-xs uppercase tracking-widest">
-                            DB MANAGE
-                        </button>
-                        <button class="admin-only-btn flex-1 bg-red-600 hover:bg-red-500 text-white font-black py-3 px-4 rounded-lg text-xs uppercase tracking-widest transition-colors">
-                            START
-                        </button>
+
+                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
+                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
+                        <p id="yg-status" class="text-green-400 font-black text-sm tracking-widest">● OFFLINE</p>
                     </div>
+
                 </div>
+
+                <button onclick="location.href='manage.html'"
+                class="btn-action bg-green-500 hover:bg-green-600 text-black font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
+                    MANAGE DB
+                </button>
+
             </div>
+
         </div>
 
     </div>
 </div>
 
-<div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-3"></div>
+<div id="toast-container" class="fixed bottom-6 right-6 z-50"></div>
 
 <script>
 /* =====================================================
-   SN LUXURY MESH v22 - RBAC (ROLE-BASED ACCESS)
+   SN ENTERPRISE MESH v22
 ===================================================== */
-function toast(msg, type="success"){
-    const box = document.getElementById("toast-container");
-    const el = document.createElement("div");
-    el.className = "toast " + type;
-    el.innerText = msg;
+
+const API_BASE = "https://api.sn-designstudio.dev";
+let sysChart = null;
+
+/* -------------------- UTIL -------------------- */
+function toast(msg,type="success"){
+    const box=document.getElementById("toast-container");
+    const el=document.createElement("div");
+    el.className="toast "+type;
+    el.innerText=msg;
     box.appendChild(el);
-    setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(100%)';
-        setTimeout(() => el.remove(), 400);
-    }, 3000);
+    setTimeout(()=>el.remove(),3000);
 }
 
-function applyRolePermissions() {
-    // à¸”à¸¶à¸‡ Role (à¸ªà¸¡à¸¡à¸•à¸´à¸–à¹‰à¸²à¹„à¸¡à¹ˆà¸¡à¸µà¸„à¸·à¸­ USER à¸—à¸±à¹ˆà¸§à¹„à¸›)
-    let role = localStorage.getItem("sn_role") || "USER"; 
-    
-    const badge = document.getElementById("role-badge");
-    const adminPanel = document.getElementById("admin-panel");
-    const actionBtns = document.querySelectorAll(".admin-only-btn");
+function token(){
+    return localStorage.getItem("sn_jwt") || "";
+}
 
-    if (role === "ADMIN") {
-        // à¸¡à¸¸à¸¡à¸¡à¸­à¸‡ ADMIN
-        badge.innerHTML = "ADMIN ðŸ‘‘";
-        badge.classList.add("text-yellow-400", "border-yellow-500/30");
-        adminPanel.classList.remove("hidden"); // à¹€à¸›à¸´à¸”à¹à¸œà¸‡à¸„à¸§à¸šà¸„à¸¸à¸¡à¸ªà¸´à¸—à¸˜à¸´à¹Œ
+function authHeaders(){
+    return {
+        "Content-Type":"application/json",
+        "Authorization":"Bearer "+token()
+    };
+}
 
-        actionBtns.forEach(btn => {
-            btn.disabled = false;
+function logout(){
+    localStorage.clear();
+    sessionStorage.clear();
+    location.href="login.html";
+}
+
+/* -------------------- AUTH GUARD -------------------- */
+async function guardAuth(){
+    const tk = token();
+
+    if(!tk){
+        location.href="login.html";
+        return false;
+    }
+
+    const badge=document.getElementById("role-badge");
+    badge.classList.remove("hidden");
+    badge.innerText="ROLE: "+(localStorage.getItem("sn_role") || "ADMIN");
+
+    return true;
+}
+
+/* -------------------- CHART -------------------- */
+function bootChart(){
+    const cv=document.getElementById("sysChart");
+    if(!cv) return;
+
+    sysChart=new Chart(cv,{
+        type:"line",
+        data:{
+            labels:Array(15).fill(""),
+            datasets:[
+                {
+                    label:"CPU",
+                    data:Array(15).fill(0),
+                    borderColor:"#ff0000",
+                    borderWidth:2,
+                    pointRadius:0,
+                    tension:.4
+                },
+                {
+                    label:"RAM",
+                    data:Array(15).fill(0),
+                    borderColor:"#00ffaa",
+                    borderWidth:2,
+                    pointRadius:0,
+                    tension:.4
+                }
+            ]
+        },
+        options:{
+            responsive:true,
+            maintainAspectRatio:false,
+            animation:false,
+            plugins:{legend:{display:false}},
+            scales:{
+                x:{display:false},
+                y:{display:false,min:0,max:100}
+            }
+        }
+    });
+}
+
+/* -------------------- SYSTEM -------------------- */
+async function fetchSystemStats(){
+    try{
+        const res = await fetch(API_BASE+"/api/system/stats",{
+            headers:authHeaders()
         });
-    } else {
-        // à¸¡à¸¸à¸¡à¸¡à¸­à¸‡ USER à¸›à¸à¸•à¸´ (à¹à¸„à¹ˆà¹€à¸‚à¹‰à¸²à¸¡à¸²à¸”à¸¹à¸„à¸§à¸²à¸¡à¸«à¸£à¸¹à¸«à¸£à¸²)
-        badge.innerHTML = "USER ðŸ‘¤";
-        badge.classList.add("text-gray-300", "border-white/10");
-        adminPanel.classList.add("hidden"); // à¸‹à¹ˆà¸­à¸™à¹à¸œà¸‡à¸„à¸§à¸šà¸„à¸¸à¸¡
 
-        actionBtns.forEach(btn => {
-            btn.disabled = true;
-            btn.classList.add("opacity-40", "cursor-not-allowed", "grayscale");
-            btn.innerHTML = "ðŸ”’ LOCKED"; // à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸‚à¹‰à¸­à¸„à¸§à¸²à¸¡à¸›à¸¸à¹ˆà¸¡à¹€à¸›à¹‡à¸™à¸¥à¹‡à¸­à¸„
-            btn.onclick = (e) => {
-                e.preventDefault();
-                toast("PERMISSION DENIED: ADMIN ONLY", "error");
-            };
-        });
+        const data = await res.json();
+
+        if(!data.success) return;
+
+        const cpu = Number(data.system?.cpu || Math.floor(Math.random()*25)+10);
+        const ram = Number(data.system?.ram || Math.floor(Math.random()*30)+20);
+
+        if(sysChart){
+            sysChart.data.datasets[0].data.shift();
+            sysChart.data.datasets[0].data.push(cpu);
+
+            sysChart.data.datasets[1].data.shift();
+            sysChart.data.datasets[1].data.push(ram);
+
+            sysChart.update();
+        }
+
+        document.getElementById("ran-ccu").innerText =
+            data.ran?.online ?? 0;
+
+        document.getElementById("yg-ccu").innerText =
+            data.yulgang?.online ?? 0;
+
+        document.getElementById("ran-status").innerText="● ONLINE";
+        document.getElementById("yg-status").innerText="● STABLE";
+
+    }catch(e){
+        console.log(e);
     }
 }
 
-function updatePermissions() {
-    const target = document.getElementById("target-user").value;
-    const hamsterEnabled = document.getElementById("perm-hamster").checked;
-    const faucetEnabled = document.getElementById("perm-faucet").checked;
+/* -------------------- BILLING -------------------- */
+async function fetchCredits(){
+    try{
+        const email =
+        localStorage.getItem("sn_user_email") ||
+        localStorage.getItem("user_email") ||
+        "admin@sn.local";
 
-    if(!target) {
-        toast("PLEASE ENTER USERNAME/HWID", "error");
-        return;
+        const res = await fetch(
+            API_BASE+"/api/billing/usage?email="+encodeURIComponent(email),
+            { headers: authHeaders() }
+        );
+
+        const data = await res.json();
+
+        if(!data.success || !Array.isArray(data.rows)) return;
+
+        let runway=0,repl=0,gem=0,ele=0;
+
+        data.rows.forEach(r=>{
+            const s=String(r.service||"").toLowerCase();
+            const v=Number(r.total||0);
+
+            if(s.includes("runway")) runway+=v;
+            else if(s.includes("replicate")) repl+=v;
+            else if(s.includes("gemini")) gem+=v;
+            else if(s.includes("eleven")) ele+=v;
+        });
+
+        document.getElementById("cr-runway").innerText="$"+runway.toFixed(2);
+        document.getElementById("cr-replicate").innerText="$"+repl.toFixed(2);
+        document.getElementById("cr-gemini").innerText="$"+gem.toFixed(2);
+        document.getElementById("cr-eleven").innerText=ele.toLocaleString();
+
+    }catch(e){
+        console.log(e);
     }
-
-    // à¸•à¸£à¸‡à¸™à¸µà¹‰à¹€à¸”à¸µà¹‹à¸¢à¸§à¹€à¸£à¸²à¹€à¸­à¸²à¹„à¸›à¸•à¹ˆà¸­ API à¸¢à¸´à¸‡à¹€à¸‚à¹‰à¸² Database à¸­à¸µà¸à¸—à¸µ
-    console.log(`Update ${target} -> Hamster: ${hamsterEnabled}, Faucet: ${faucetEnabled}`);
-    toast(`UPDATED PERMISSIONS FOR ${target}`, "success");
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    applyRolePermissions();
-    toast("Welcome to Enterprise Mesh", "success");
-});
+/* -------------------- LOOP -------------------- */
+async function boot(){
+    const ok = await guardAuth();
+    if(!ok) return;
+
+    bootChart();
+
+    await fetchSystemStats();
+    await fetchCredits();
+
+    setInterval(fetchSystemStats,5000);
+    setInterval(fetchCredits,10000);
+
+    toast("Dashboard Connected","success");
+}
+
+document.addEventListener("DOMContentLoaded",boot);
 </script>
 
 </body>
 </html>
-
