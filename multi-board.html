@@ -1,237 +1,315 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>SN ULTRA ENGINE | V22 LIVE MESH</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bai+Jamjuree:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --bg: #020203; --gold: #c5a059; --glass: rgba(15, 15, 20, 0.85); --border: rgba(255, 255, 255, 0.05); }
-        body { background: var(--bg); color: #e2e8f0; font-family: 'Bai Jamjuree', sans-serif; font-size: 12px; min-height: 100vh; overflow-x: hidden; }
-        .header-font { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        .master-container { max-width: 1300px; margin: 0 auto; padding: 40px 20px; }
-        
-        /* Luxury Panel */
-        .glass-panel { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 20px; transition: 0.3s; }
-        .session-box { overflow: hidden; display: flex; flex-direction: column; text-align: center; }
-        
-        /* Game Banner Control */
-        .game-banner { position: relative; height: 150px; display: flex; align-items: center; justify-content: center; }
-        .game-banner img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: brightness(0.3); z-index: 0; }
-        .banner-content { position: relative; z-index: 1; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SN ULTRA ENGINE | PRODUCTION V22 LUXURY MESH</title>
 
-        /* Admin Matrix */
-        .admin-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 12px; background: rgba(255,255,255,0.02); border-radius: 10px; margin-bottom: 5px; }
-        .sn-checkbox { appearance: none; width: 34px; height: 18px; background: #334155; border-radius: 10px; position: relative; cursor: pointer; outline: none; }
-        .sn-checkbox::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; background: white; border-radius: 50%; transition: 0.3s; }
-        .sn-checkbox:checked { background: var(--gold); }
-        .sn-checkbox:checked::after { left: 18px; }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        .btn-action { font-size: 10px; font-weight: 900; padding: 10px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; }
-        .pulse { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 5px; animation: blink 2s infinite; }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        ::-webkit-scrollbar { width: 0px; }
-    </style>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bai+Jamjuree:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+  --bg-deep: #020617;
+  --accent-ran: #ef4444;
+  --accent-yg: #10b981;
+  --accent-gold: #fbbf24;
+  --glass-bg: rgba(15, 23, 42, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.08);
+}
+body{
+  background: var(--bg-deep);
+  background-image: 
+    radial-gradient(circle at 15% 50%, rgba(239, 68, 68, 0.05), transparent 25%),
+    radial-gradient(circle at 85% 30%, rgba(16, 185, 129, 0.05), transparent 25%);
+  color: #e2e8f0;
+  font-family: 'Bai Jamjuree', sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+.header-font { font-family: 'Orbitron', sans-serif; }
+
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  transition: all 0.4s ease;
+}
+.glass-panel:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
+}
+
+.server-block {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1px solid var(--glass-border);
+}
+.server-block::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.3;
+  z-index: 0;
+}
+.ran-block::before { background-image: url('https://narong69za.github.io/Screenshot_20260421_034811.jpg'); }
+.ran-block { border-bottom: 3px solid var(--accent-ran); }
+.yg-block::before { background-image: url('https://narong69za.github.io/1000065127.jpg'); }
+.yg-block { border-bottom: 3px solid var(--accent-yg); }
+
+.content-z { position: relative; z-index: 10; }
+.glow-text { text-shadow: 0 0 15px currentColor; }
+
+.status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.status-online { background-color: #10b981; box-shadow: 0 0 8px #10b981; }
+.status-offline { background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
+
+.btn-luxury {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
+  transition: all 0.3s;
+}
+.btn-luxury:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent-gold);
+}
+
+/* Custom Checkbox for Admin */
+.sn-checkbox {
+  appearance: none; width: 40px; height: 20px; background: #334155; border-radius: 20px;
+  position: relative; cursor: pointer; outline: none; transition: 0.3s;
+}
+.sn-checkbox::after {
+  content: ''; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+  background: white; border-radius: 50%; transition: 0.3s;
+}
+.sn-checkbox:checked { background: var(--accent-gold); }
+.sn-checkbox:checked::after { left: 22px; }
+
+.toast {
+  padding: 16px 24px; margin-top: 12px; border-radius: 8px; font-size: 13px; font-weight: 700;
+  color: #fff; backdrop-filter: blur(10px); animation: slideIn 0.4s ease forwards;
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+.toast.success { background: rgba(16, 185, 129, 0.8); border-left: 4px solid #34d399; }
+.toast.error { background: rgba(239, 68, 68, 0.8); border-left: 4px solid #f87171; }
+</style>
 </head>
-<body>
 
-<div class="master-container">
-    <nav class="flex justify-between items-center mb-12">
-        <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-lg"><span class="text-black font-black text-xl">SN</span></div>
-            <div>
-                <h1 class="header-font text-lg font-black">ULTRA <span class="text-yellow-500">V22 LIVE</span></h1>
-                <p class="text-[8px] text-gray-500 font-bold uppercase tracking-[0.4em]">Unified Production Mesh</p>
-            </div>
+<body class="p-4 md:p-8">
+
+<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/10 relative">
+    <div class="flex items-center gap-5">
+        <div class="w-12 h-12 bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center rounded-lg shadow-[0_0_20px_rgba(251,191,36,0.4)]">
+            <span class="text-black font-black text-2xl header-font">SN</span>
         </div>
-        <div id="status-node" class="text-right">
-            <span class="text-[9px] text-gray-500 font-bold">NODE: api.sn-designstudio.dev</span><br>
-            <span id="role-badge" class="text-yellow-500 font-black text-[9px]">OWNER ACCESS</span>
+        <div>
+            <h1 class="header-font text-2xl font-bold tracking-[0.2em] text-white">ULTRA <span class="text-yellow-400 glow-text">MESH V22</span></h1>
+            <p class="text-[11px] text-gray-400 font-bold uppercase tracking-[0.4em] mt-1">SaaS Unified Enterprise Gateway</p>
         </div>
-    </nav>
+    </div>
+    <div class="flex items-center gap-6">
+        <div id="role-badge" class="glass-panel px-4 py-2 rounded-lg text-xs font-bold tracking-widest">
+            LOADING...
+        </div>
+    </div>
+</nav>
 
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div class="lg:col-span-4 space-y-6">
-            
-            <div class="glass-panel p-6">
-                <h3 class="header-font text-[9px] text-gray-400 mb-4 uppercase">Infrastructure Load</h3>
-                <div class="h-32"><canvas id="liveChart"></canvas></div>
-            </div>
+<div class="max-w-[1400px] mx-auto grid grid-cols-1 xl:grid-cols-12 gap-8">
 
-            <div id="admin-panel" class="glass-panel p-6 border-yellow-500/20 bg-yellow-500/5">
-                <h3 class="header-font text-[10px] text-yellow-500 mb-5 uppercase tracking-widest text-center">Master Access Key</h3>
-                <input type="text" id="target-id" placeholder="TARGET USERNAME..." 
-                       class="w-full bg-black/60 border border-white/5 rounded-xl p-3 text-[10px] mb-4 focus:border-yellow-500 outline-none text-center">
+    <div class="xl:col-span-4 space-y-6">
+
+        <div id="admin-panel" class="hidden glass-panel p-6 rounded-2xl relative overflow-hidden border-yellow-500/50 shadow-[0_0_20px_rgba(251,191,36,0.15)]">
+            <h3 class="header-font text-sm font-bold text-yellow-400 mb-4 uppercase tracking-widest flex items-center gap-2">
+                ðŸ‘‘ ADMIN PERMISSION CONTROL
+            </h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Target Username / HWID</label>
+                    <input type="text" id="target-user" placeholder="Enter Username..." class="mt-1 w-full bg-black/50 border border-white/10 rounded-lg p-3 text-white text-sm focus:outline-none focus:border-yellow-400 transition-colors">
+                </div>
                 
-                <div class="space-y-1">
-                    <div class="admin-row">
-                        <span class="text-[9px] font-bold text-gray-400">HAMSTER ENGINE</span>
-                        <input type="checkbox" id="p-hamster" class="sn-checkbox">
+                <div class="flex justify-between items-center bg-black/30 p-3 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-blue-400 tracking-wider">ENABLE HAMSTER BOT</span>
+                    <input type="checkbox" class="sn-checkbox" id="perm-hamster">
+                </div>
+
+                <div class="flex justify-between items-center bg-black/30 p-3 rounded-lg border border-white/5">
+                    <span class="text-xs font-bold text-pink-400 tracking-wider">ENABLE FAUCET</span>
+                    <input type="checkbox" class="sn-checkbox" id="perm-faucet">
+                </div>
+
+                <button onclick="updatePermissions()" class="w-full bg-yellow-500 hover:bg-yellow-400 text-black font-black py-3 rounded-lg text-xs uppercase tracking-widest transition-colors shadow-[0_0_15px_rgba(251,191,36,0.3)]">
+                    UPDATE PERMISSIONS
+                </button>
+            </div>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl relative overflow-hidden">
+            <h3 class="header-font text-sm font-bold text-white mb-5 uppercase tracking-widest">Financial & Integrations</h3>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 glass-panel rounded-xl text-center">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">PROMPTPAY</p>
+                    <p class="text-yellow-400 font-black text-lg header-font">ACTIVE</p>
+                </div>
+                <div class="p-4 glass-panel rounded-xl text-center">
+                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">HAMSTER</p>
+                    <button class="admin-only-btn w-full mt-1 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded py-1 text-xs font-bold transition-all">ACCESS BOT</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="xl:col-span-8 space-y-6">
+        <h2 class="header-font text-xl font-bold text-white uppercase tracking-[0.3em] mb-2 border-l-4 border-yellow-400 pl-4">Game Servers Network</h2>
+
+        <div class="server-block yg-block p-8 bg-gray-900/50 backdrop-blur-sm">
+            <div class="content-z flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 bg-black/80 border-2 border-green-500/50 rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(16,185,129,0.3)]">
+                        <span class="text-green-400 font-black text-2xl header-font">YG</span>
                     </div>
-                    <div class="admin-row">
-                        <span class="text-[9px] font-bold text-gray-400">FAUCET PROTOCOL</span>
-                        <input type="checkbox" id="p-faucet" class="sn-checkbox">
+                    <div>
+                        <h2 class="header-font text-4xl font-black text-white italic tracking-tighter text-green-400 glow-text">YULGANG 2026</h2>
+                        <p class="text-green-300 text-xs font-black tracking-[0.4em] uppercase mt-1">CLASSIC FUTURE V18.45</p>
                     </div>
                 </div>
-                <button onclick="syncPermissions()" class="w-full btn-action bg-yellow-500 text-black mt-4 hover:scale-105 active:scale-95">Update Cloud Access</button>
-            </div>
 
-            <div class="glass-panel p-5">
-                <h3 class="header-font text-[9px] text-gray-500 mb-4 uppercase">Engine Credits</h3>
-                <div class="space-y-2">
-                    <div class="flex justify-between border-b border-white/5 pb-2">
-                        <span class="text-gray-400">RUNWAY GEN-3</span>
-                        <span id="c-runway" class="font-bold text-white">$0.00</span>
+                <div class="flex flex-col gap-4 w-full md:w-auto">
+                    <div class="flex gap-4">
+                        <div class="bg-black/60 p-4 rounded-xl border border-white/10 min-w-[120px]">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">STATUS</p>
+                            <p class="text-green-400 font-black text-sm tracking-widest mt-2"><span class="status-dot status-online"></span>STABLE</p>
+                        </div>
                     </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-400">GEMINI PRO 1.5</span>
-                        <span id="c-gemini" class="font-bold text-white">$0.00</span>
+                    <div class="flex gap-2">
+                        <button class="admin-only-btn flex-1 btn-luxury text-white font-bold py-3 px-4 rounded-lg text-xs uppercase tracking-widest">
+                            CONFIG
+                        </button>
+                        <button class="admin-only-btn flex-1 bg-green-600 hover:bg-green-500 text-black font-black py-3 px-4 rounded-lg text-xs uppercase tracking-widest transition-colors">
+                            RESTART
+                        </button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="lg:col-span-8 space-y-6">
-
-            <div class="glass-panel session-box">
-                <div class="game-banner">
-                    <img src="assets/images/yg-logo.jpg" alt="YG">
-                    <div class="banner-content">
-                        <h2 class="header-font text-3xl font-black italic text-white">YULGANG 2026</h2>
-                        <p class="text-[9px] text-green-400 font-bold tracking-[0.5em] uppercase">Enterprise SaaS Mode</p>
+        <div class="server-block ran-block p-8 bg-gray-900/50 backdrop-blur-sm">
+            <div class="content-z flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 bg-black/80 border-2 border-red-500/50 rounded-2xl flex items-center justify-center shadow-[0_0_15px_rgba(239,68,68,0.3)]">
+                        <span class="text-red-500 font-black text-2xl header-font">RAN</span>
+                    </div>
+                    <div>
+                        <h2 class="header-font text-4xl font-black text-white italic tracking-tighter text-red-500 glow-text">RAN ONLINE</h2>
+                        <p class="text-red-400 text-xs font-black tracking-[0.4em] uppercase mt-1">EP7: THE LEGEND REBORN</p>
                     </div>
                 </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-t border-white/5">
-                    <div>
-                        <p class="text-[9px] text-gray-500 uppercase font-bold">Live CCU</p>
-                        <p id="yg-ccu" class="text-white text-2xl font-black header-font">0</p>
+
+                <div class="flex flex-col gap-4 w-full md:w-auto">
+                    <div class="flex gap-4">
+                        <div class="bg-black/60 p-4 rounded-xl border border-white/10 min-w-[120px]">
+                            <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-1">STATUS</p>
+                            <p class="text-red-500 font-black text-sm tracking-widest mt-2"><span class="status-dot status-offline"></span>OFFLINE</p>
+                        </div>
                     </div>
-                    <div class="md:border-x border-white/5">
-                        <p class="text-[9px] text-gray-500 uppercase font-bold">Engine Status</p>
-                        <p class="text-green-400 font-bold uppercase"><span class="pulse bg-green-500"></span>Operational</p>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <button onclick="ygRestart()" class="admin-only btn-action bg-green-600 text-white">Restart API</button>
-                        <button class="btn-action bg-white/5 border border-white/10 text-gray-600">Locked System</button>
+                    <div class="flex gap-2">
+                        <button class="admin-only-btn flex-1 btn-luxury text-white font-bold py-3 px-4 rounded-lg text-xs uppercase tracking-widest">
+                            DB MANAGE
+                        </button>
+                        <button class="admin-only-btn flex-1 bg-red-600 hover:bg-red-500 text-white font-black py-3 px-4 rounded-lg text-xs uppercase tracking-widest transition-colors">
+                            START
+                        </button>
                     </div>
                 </div>
             </div>
-
-            <div class="glass-panel session-box">
-                <div class="game-banner">
-                    <img src="assets/images/ran-online.jpg" alt="RAN">
-                    <div class="banner-content">
-                        <h2 class="header-font text-3xl font-black italic text-white">RAN ONLINE</h2>
-                        <p class="text-[9px] text-red-500 font-bold tracking-[0.5em] uppercase">Production EP7</p>
-                    </div>
-                </div>
-                <div class="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-center border-t border-white/5">
-                    <div>
-                        <p class="text-[9px] text-gray-500 uppercase font-bold">Active Player</p>
-                        <p id="ran-ccu" class="text-white text-2xl font-black header-font">0</p>
-                    </div>
-                    <div class="md:border-x border-white/5">
-                        <p class="text-[9px] text-gray-500 uppercase font-bold">Network</p>
-                        <p class="text-red-500 font-bold uppercase"><span class="pulse bg-red-500"></span>Offline Mode</p>
-                    </div>
-                    <div class="flex flex-col gap-2">
-                        <button onclick="ranStart()" class="admin-only btn-action bg-red-600 text-white">Start Server</button>
-                        <button class="btn-action bg-white/5 border border-white/10 text-gray-600">Locked System</button>
-                    </div>
-                </div>
-            </div>
-
         </div>
+
     </div>
 </div>
 
-<div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-2"></div>
+<div id="toast-container" class="fixed bottom-8 right-8 z-50 flex flex-col gap-3"></div>
 
 <script>
-    const API = "https://api.sn-designstudio.dev";
-    let liveChart = null;
+/* =====================================================
+   SN LUXURY MESH v22 - RBAC (ROLE-BASED ACCESS)
+===================================================== */
+function toast(msg, type="success"){
+    const box = document.getElementById("toast-container");
+    const el = document.createElement("div");
+    el.className = "toast " + type;
+    el.innerText = msg;
+    box.appendChild(el);
+    setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(100%)';
+        setTimeout(() => el.remove(), 400);
+    }, 3000);
+}
 
-    function toast(msg, type="success") {
-        const box = document.getElementById("toast-container");
-        const el = document.createElement("div");
-        el.style.cssText = "padding:12px 20px; border-radius:10px; font-size:10px; font-weight:900; text-transform:uppercase; color:white; border:1px solid rgba(255,255,255,0.1); backdrop-filter:blur(10px); transition: 0.3s; opacity:0; transform:translateX(20px);";
-        el.style.background = type === 'success' ? 'rgba(16, 185, 129, 0.8)' : 'rgba(239, 68, 68, 0.8)';
-        el.innerText = msg;
-        box.appendChild(el);
-        setTimeout(() => { el.style.opacity='1'; el.style.transform='translateX(0)'; }, 100);
-        setTimeout(() => { el.style.opacity='0'; setTimeout(()=>el.remove(), 300); }, 3000);
-    }
+function applyRolePermissions() {
+    // à¸”à¸¶à¸‡ Role (à¸ªà¸¡à¸¡à¸•à¸´à¸–à¹‰à¸²à¹„à¸¡à¹ˆà¸¡à¸µà¸„à¸·à¸­ USER à¸—à¸±à¹ˆà¸§à¹„à¸›)
+    let role = localStorage.getItem("sn_role") || "USER"; 
+    
+    const badge = document.getElementById("role-badge");
+    const adminPanel = document.getElementById("admin-panel");
+    const actionBtns = document.querySelectorAll(".admin-only-btn");
 
-    /* -------------------- DATA FETCHING (OF THE REAL SYSTEM) -------------------- */
-    async function updateSystemStats() {
-        try {
-            const res = await fetch(`${API}/api/system/stats`, { 
-                headers: { "Authorization": `Bearer ${localStorage.getItem("sn_jwt")}` }
-            });
-            const data = await res.json();
-            
-            // อัปเดต CCU จาก DB โยวกังจริง
-            document.getElementById("yg-ccu").innerText = data.yg_online || 0;
-            document.getElementById("ran-ccu").innerText = data.ran_online || 0;
-            
-            // อัปเดต Credit
-            document.getElementById("c-runway").innerText = `$${(data.runway_balance || 0).toFixed(2)}`;
-            document.getElementById("c-gemini").innerText = `$${(data.gemini_balance || 0).toFixed(2)}`;
+    if (role === "ADMIN") {
+        // à¸¡à¸¸à¸¡à¸¡à¸­à¸‡ ADMIN
+        badge.innerHTML = "ADMIN ðŸ‘‘";
+        badge.classList.add("text-yellow-400", "border-yellow-500/30");
+        adminPanel.classList.remove("hidden"); // à¹€à¸›à¸´à¸”à¹à¸œà¸‡à¸„à¸§à¸šà¸„à¸¸à¸¡à¸ªà¸´à¸—à¸˜à¸´à¹Œ
 
-            if(liveChart) {
-                liveChart.data.datasets[0].data.shift();
-                liveChart.data.datasets[0].data.push(data.cpu_load || 0);
-                liveChart.update();
-            }
-        } catch(e) { console.error("API Link Failed"); }
-    }
-
-    async function syncPermissions() {
-        const target = document.getElementById("target-id").value;
-        const hamster = document.getElementById("p-hamster").checked;
-        const faucet = document.getElementById("p-faucet").checked;
-
-        if(!target) return toast("Target ID Required", "error");
-
-        try {
-            const res = await fetch(`${API}/api/admin/update-permissions`, {
-                method: "POST",
-                headers: { 
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("sn_jwt")}`
-                },
-                body: JSON.stringify({ target_id: target, hamster_enabled: hamster, faucet_enabled: faucet })
-            });
-            const result = await res.json();
-            if(result.success) toast(`Permissions Updated for ${target}`, "success");
-        } catch(e) { toast("Sync Failed", "error"); }
-    }
-
-    function boot() {
-        // Silent Check Role
-        const role = localStorage.getItem("sn_role") || "USER";
-        if(role !== "ADMIN") {
-            document.getElementById("admin-panel").classList.add("hidden");
-            document.querySelectorAll(".admin-only").forEach(b => b.remove());
-            document.getElementById("role-badge").innerText = "CLIENT ACCESS";
-        }
-
-        const ctx = document.getElementById('liveChart').getContext('2d');
-        liveChart = new Chart(ctx, {
-            type: 'line',
-            data: { labels: Array(10).fill(''), datasets: [{ data: Array(10).fill(0), borderColor: '#c5a059', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true, backgroundColor: 'rgba(197, 160, 89, 0.05)' }] },
-            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false, min: 0, max: 100 } } }
+        actionBtns.forEach(btn => {
+            btn.disabled = false;
         });
+    } else {
+        // à¸¡à¸¸à¸¡à¸¡à¸­à¸‡ USER à¸›à¸à¸•à¸´ (à¹à¸„à¹ˆà¹€à¸‚à¹‰à¸²à¸¡à¸²à¸”à¸¹à¸„à¸§à¸²à¸¡à¸«à¸£à¸¹à¸«à¸£à¸²)
+        badge.innerHTML = "USER ðŸ‘¤";
+        badge.classList.add("text-gray-300", "border-white/10");
+        adminPanel.classList.add("hidden"); // à¸‹à¹ˆà¸­à¸™à¹à¸œà¸‡à¸„à¸§à¸šà¸„à¸¸à¸¡
 
-        updateSystemStats();
-        setInterval(updateSystemStats, 5000);
-        toast("MESH CONNECTED", "success");
+        actionBtns.forEach(btn => {
+            btn.disabled = true;
+            btn.classList.add("opacity-40", "cursor-not-allowed", "grayscale");
+            btn.innerHTML = "ðŸ”’ LOCKED"; // à¹€à¸›à¸¥à¸µà¹ˆà¸¢à¸™à¸‚à¹‰à¸­à¸„à¸§à¸²à¸¡à¸›à¸¸à¹ˆà¸¡à¹€à¸›à¹‡à¸™à¸¥à¹‡à¸­à¸„
+            btn.onclick = (e) => {
+                e.preventDefault();
+                toast("PERMISSION DENIED: ADMIN ONLY", "error");
+            };
+        });
+    }
+}
+
+function updatePermissions() {
+    const target = document.getElementById("target-user").value;
+    const hamsterEnabled = document.getElementById("perm-hamster").checked;
+    const faucetEnabled = document.getElementById("perm-faucet").checked;
+
+    if(!target) {
+        toast("PLEASE ENTER USERNAME/HWID", "error");
+        return;
     }
 
-    document.addEventListener("DOMContentLoaded", boot);
+    // à¸•à¸£à¸‡à¸™à¸µà¹‰à¹€à¸”à¸µà¹‹à¸¢à¸§à¹€à¸£à¸²à¹€à¸­à¸²à¹„à¸›à¸•à¹ˆà¸­ API à¸¢à¸´à¸‡à¹€à¸‚à¹‰à¸² Database à¸­à¸µà¸à¸—à¸µ
+    console.log(`Update ${target} -> Hamster: ${hamsterEnabled}, Faucet: ${faucetEnabled}`);
+    toast(`UPDATED PERMISSIONS FOR ${target}`, "success");
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    applyRolePermissions();
+    toast("Welcome to Enterprise Mesh", "success");
+});
 </script>
+
 </body>
 </html>
 
