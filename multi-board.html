@@ -1,426 +1,153 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA | PRODUCTION DASHBOARD v22 Enterprise Mesh</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Bai+Jamjuree:wght@300;400;600;700&display=swap" rel="stylesheet">
-
-<style>
-:root{
---bg-deep:#050505;
---accent-ran:#ff0000;
---accent-yg:#00ffaa;
---glass:rgba(255,255,255,.03);
-}
-body{
-background:var(--bg-deep);
-color:#e5e7eb;
-font-family:'Bai Jamjuree',sans-serif;
-overflow-x:hidden;
-}
-.header-font{font-family:'Orbitron',sans-serif;}
-
-.glass-panel{
-background:var(--glass);
-backdrop-filter:blur(10px);
-border:1px solid rgba(255,255,255,.05);
-transition:.3s;
-}
-.glass-panel:hover{
-border-color:rgba(255,255,255,.15);
-}
-
-.ran-enterprise-block{
-background:linear-gradient(145deg,#0d0d0f 0%,#1a0505 100%);
-border-left:5px solid var(--accent-ran);
-box-shadow:0 10px 40px rgba(255,0,0,.08);
-}
-
-.yg-enterprise-block{
-background:linear-gradient(145deg,#0a0f0d 0%,#051a14 100%);
-border-left:5px solid var(--accent-yg);
-box-shadow:0 10px 40px rgba(0,255,170,.08);
-}
-
-.ran-text-glow{text-shadow:0 0 10px rgba(255,0,0,.5);}
-.yg-text-glow{text-shadow:0 0 10px rgba(0,255,170,.5);}
-
-.btn-action{
-transition:.25s;
-}
-.btn-action:active{
-transform:scale(.96);
-}
-
-.toast{
-padding:12px 16px;
-margin-top:8px;
-border-radius:12px;
-font-size:12px;
-font-weight:700;
-letter-spacing:.08em;
-text-transform:uppercase;
-color:#fff;
-box-shadow:0 10px 20px rgba(0,0,0,.25);
-}
-.toast.success{background:#16a34a;}
-.toast.error{background:#dc2626;}
-.toast.warn{background:#d97706;}
-</style>
+    <meta charset="UTF-8">
+    <title>SN ULTRA | REAL-TIME INTEGRATED PLATFORM</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        :root { --neon: #f59e0b; --bg: #050505; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .sn-font { font-family: 'Orbitron', sans-serif; }
+        .neon-border { border: 1px solid rgba(245, 158, 11, 0.3); box-shadow: 0 0 15px rgba(245, 158, 11, 0.1); }
+        .glass { background: rgba(15, 15, 15, 0.9); backdrop-filter: blur(20px); }
+        .sidebar-item:hover, .active-tab { background: linear-gradient(90deg, rgba(245, 158, 11, 0.1) 0%, transparent 100%); border-left: 3px solid var(--neon); color: var(--neon); }
+        /* Particle Background Simulator */
+        #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; opacity: 0.3; }
+    </style>
 </head>
+<body class="flex h-screen">
+    <canvas id="bg-canvas"></canvas>
 
-<body class="p-4 md:p-8">
-
-<nav class="flex justify-between items-center mb-10 pb-6 border-b border-white/5">
-    <div class="flex items-center gap-4">
-        <div class="w-10 h-10 bg-white flex items-center justify-center rounded-sm">
-            <span class="text-black font-black text-xl">SN</span>
+    <aside class="w-72 glass border-r border-zinc-800 flex flex-col p-6">
+        <div class="mb-10">
+            <h1 class="text-2xl font-bold sn-font text-yellow-500 italic">SN ULTRA</h1>
+            <p class="text-[9px] tracking-[0.3em] text-zinc-500 uppercase">Real-Time Ecosystem</p>
         </div>
-        <div>
-            <h1 class="header-font text-lg font-bold tracking-widest text-white">ULTRA ENGINE</h1>
-            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.3em]">SaaS Production Enterprise</p>
+        <nav class="flex-1 space-y-1">
+            <button onclick="showTab('dash')" class="sidebar-item active-tab w-full flex items-center p-4 transition-all"><i class="fas fa-th-large mr-4"></i> DASHBOARD</button>
+            <button onclick="showTab('class')" class="sidebar-item w-full flex items-center p-4 transition-all"><i class="fas fa-shield-alt mr-4"></i> 14 CLASSES</button>
+            <button onclick="showTab('world')" class="sidebar-item w-full flex items-center p-4 transition-all"><i class="fas fa-map-marked-alt mr-4"></i> WORLD MAP</button>
+            <button onclick="showTab('shop')" class="sidebar-item w-full flex items-center p-4 transition-all"><i class="fas fa-shopping-cart mr-4"></i> WEB SHOP</button>
+            <button onclick="showTab('econ')" class="sidebar-item w-full flex items-center p-4 transition-all"><i class="fas fa-chart-line mr-4"></i> ECONOMY</button>
+            <button onclick="showTab('admin')" class="sidebar-item w-full flex items-center p-4 transition-all text-red-500"><i class="fas fa-user-crown mr-4"></i> ADMIN PANEL</button>
+        </nav>
+        <div class="mt-auto pt-6 border-t border-zinc-800 flex items-center gap-4">
+            <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span class="text-xs font-mono" id="online-count">PLAYERS: 158</span>
         </div>
-    </div>
+    </aside>
 
-    <div class="flex items-center gap-4">
-        <div id="role-badge"
-             class="hidden bg-white/10 px-3 py-1 rounded text-[10px] font-bold text-white border border-white/20">
-            ROLE: ADMIN
-        </div>
-
-        <button onclick="logout()"
-        class="text-[10px] px-3 py-2 rounded bg-red-600 hover:bg-red-700 font-bold tracking-widest">
-            LOGOUT
-        </button>
-    </div>
-</nav>
-
-<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-    <!-- LEFT -->
-    <div class="lg:col-span-4 space-y-8">
-
-        <div class="glass-panel p-6 rounded-2xl">
-            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-4 uppercase tracking-widest">
-                System Analytics
-            </h3>
-            <div class="h-48">
-                <canvas id="sysChart"></canvas>
+    <main class="flex-1 overflow-y-auto p-10">
+        
+        <div class="grid grid-cols-4 gap-6 mb-10">
+            <div class="glass neon-border p-6 rounded-3xl">
+                <p class="text-[10px] text-zinc-500 uppercase">CPU Load</p>
+                <h3 class="text-2xl font-bold sn-font" id="cpu-val">0%</h3>
+            </div>
+            <div class="glass neon-border p-6 rounded-3xl">
+                <p class="text-[10px] text-zinc-500 uppercase">Memory</p>
+                <h3 class="text-2xl font-bold sn-font" id="ram-val">0%</h3>
+            </div>
+            <div class="glass neon-border p-6 rounded-3xl">
+                <p class="text-[10px] text-zinc-500 uppercase">Tick Rate</p>
+                <h3 class="text-2xl font-bold sn-font text-green-500">20.0</h3>
+            </div>
+            <div class="glass neon-border p-6 rounded-3xl">
+                <p class="text-[10px] text-zinc-500 uppercase">Ping</p>
+                <h3 class="text-2xl font-bold sn-font text-blue-500">12ms</h3>
             </div>
         </div>
 
-        <div class="glass-panel p-6 rounded-2xl">
-            <h3 class="header-font text-[12px] font-bold text-gray-400 mb-6 uppercase tracking-widest">
-                Engine Credits
-            </h3>
-
-            <div class="space-y-4">
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">RUNWAY GEN-3</span>
-                    <span id="cr-runway" class="header-font text-white font-bold">$0.00</span>
+        <section id="view-dash" class="tab-view space-y-10">
+            <div class="relative h-64 rounded-[40px] overflow-hidden group">
+                <img src="/assets/images/hero.png" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-10">
+                    <h2 class="text-4xl font-bold sn-font mb-2">RAN ONLINE & YULGANG 2026</h2>
+                    <p class="text-zinc-400">สัมผัสประสบการณ์ MMO ที่มีชีวิตที่สุดในเอเชีย</p>
                 </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">REPLICATE API</span>
-                    <span id="cr-replicate" class="header-font text-white font-bold">$0.00</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">GEMINI PRO</span>
-                    <span id="cr-gemini" class="header-font text-white font-bold">$0.00</span>
-                </div>
-
-                <div class="flex justify-between items-center p-3 bg-white/5 rounded-lg border border-white/5">
-                    <span class="text-xs font-bold text-gray-400">ELEVENLABS</span>
-                    <span id="cr-eleven" class="header-font text-white font-bold">0</span>
-                </div>
-
             </div>
-        </div>
-
-    </div>
-
-    <!-- RIGHT -->
-    <div class="lg:col-span-8 space-y-8">
-
-        <!-- RAN -->
-        <div class="ran-enterprise-block rounded-2xl p-8 relative overflow-hidden">
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-
-                <div class="flex items-center gap-6">
-
-                    <div class="w-24 h-24 bg-black border border-red-900 rounded-xl flex items-center justify-center">
-                        <span class="text-red-500 font-black text-xl">RAN</span>
-                    </div>
-
-                    <div>
-                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter ran-text-glow">
-                            RAN ONLINE
-                        </h2>
-                        <p class="text-red-600 text-xs font-black tracking-[0.3em] uppercase">
-                            EP7: THE LEGEND REBORN
-                        </p>
-                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
-                            SaaS Node Instance: 5004
-                        </p>
-                    </div>
-
-                </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">CCU</p>
-                        <p id="ran-ccu" class="text-white font-black text-xl">0</p>
-                    </div>
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-red-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
-                        <p id="ran-status" class="text-red-500 font-black text-sm tracking-widest">● OFFLINE</p>
-                    </div>
-
-                </div>
-
-                <button onclick="location.href='manage.html'"
-                class="btn-action bg-red-600 hover:bg-red-700 text-white font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
-                    MANAGE DB
-                </button>
-
+            <div class="glass p-8 rounded-[40px]">
+                <canvas id="liveChart" height="100"></canvas>
             </div>
+        </section>
 
-        </div>
-
-        <!-- YG -->
-        <div class="yg-enterprise-block rounded-2xl p-8 relative overflow-hidden">
-
-            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 relative z-10">
-
-                <div class="flex items-center gap-6">
-
-                    <div class="w-24 h-24 bg-black border border-green-900 rounded-xl flex items-center justify-center">
-                        <span class="text-green-400 font-black text-xl">YG</span>
+        <section id="view-world" class="tab-view hidden">
+            <div class="grid grid-cols-3 gap-6">
+                <div class="col-span-2 glass rounded-[40px] h-[500px] relative border border-zinc-800 p-4">
+                    <div class="absolute top-4 left-4 z-10 bg-black/60 p-3 rounded-xl text-[10px] font-mono">
+                        MAP: CENTRAL CITY [X: 142, Y: 084]<br>
+                        BOSS STATUS: <span class="text-green-500">ALIVE (02:41:00)</span>
                     </div>
-
-                    <div>
-                        <h2 class="header-font text-3xl font-black text-white italic tracking-tighter yg-text-glow">
-                            YULGANG 2026
-                        </h2>
-                        <p class="text-green-400 text-xs font-black tracking-[0.3em] uppercase">
-                            CLASSIC FUTURE MOBILE/PC
-                        </p>
-                        <p class="text-gray-500 text-[10px] mt-2 font-bold uppercase tracking-widest">
-                            SaaS Node Instance: 5006
-                        </p>
+                    <div class="w-full h-full bg-zinc-900 rounded-[30px] flex items-center justify-center border border-dashed border-zinc-700">
+                        <span class="text-zinc-500 font-mono italic uppercase">Rendering World Matrix...</span>
                     </div>
-
                 </div>
-
-                <div class="grid grid-cols-2 gap-4 w-full md:w-48">
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">PLAYERS</p>
-                        <p id="yg-ccu" class="text-white font-black text-xl">0</p>
-                    </div>
-
-                    <div class="bg-black/60 p-4 rounded-xl border border-green-900/30">
-                        <p class="text-[9px] text-gray-500 font-bold uppercase">STATUS</p>
-                        <p id="yg-status" class="text-green-400 font-black text-sm tracking-widest">● OFFLINE</p>
-                    </div>
-
+                <div class="glass rounded-[40px] p-6 border border-zinc-800">
+                    <h3 class="font-bold mb-4 uppercase text-xs">Player Density</h3>
+                    <div id="map-list" class="space-y-4">
+                        </div>
                 </div>
-
-                <button onclick="location.href='manage.html'"
-                class="btn-action bg-green-500 hover:bg-green-600 text-black font-black px-10 py-4 rounded-lg text-xs uppercase tracking-widest">
-                    MANAGE DB
-                </button>
-
             </div>
+        </section>
 
-        </div>
+        <section id="view-class" class="tab-view hidden grid grid-cols-1 md:grid-cols-4 gap-4">
+            </section>
 
-    </div>
-</div>
+    </main>
 
-<div id="toast-container" class="fixed bottom-6 right-6 z-50"></div>
-
-<script>
-/* =====================================================
-   SN ENTERPRISE MESH v22
-===================================================== */
-
-const API_BASE = "https://api.sn-designstudio.dev";
-let sysChart = null;
-
-/* -------------------- UTIL -------------------- */
-function toast(msg,type="success"){
-    const box=document.getElementById("toast-container");
-    const el=document.createElement("div");
-    el.className="toast "+type;
-    el.innerText=msg;
-    box.appendChild(el);
-    setTimeout(()=>el.remove(),3000);
-}
-
-
-
-function logout(){
-    localStorage.clear();
-    sessionStorage.clear();
-    location.href="login.html";
-}
-
-/* -------------------- AUTH GUARD -------------------- */
-
-    const badge=document.getElementById("role-badge");
-    badge.classList.remove("hidden");
-    badge.innerText="ROLE: "+(localStorage.getItem("sn_role") || "ADMIN");
-
-    return true;
-}
-
-/* -------------------- CHART -------------------- */
-function bootChart(){
-    const cv=document.getElementById("sysChart");
-    if(!cv) return;
-
-    sysChart=new Chart(cv,{
-        type:"line",
-        data:{
-            labels:Array(15).fill(""),
-            datasets:[
-                {
-                    label:"CPU",
-                    data:Array(15).fill(0),
-                    borderColor:"#ff0000",
-                    borderWidth:2,
-                    pointRadius:0,
-                    tension:.4
+    <script>
+        // � REAL-TIME SYNC ENGINE
+        let mainChart;
+        function initDashboard() {
+            const ctx = document.getElementById('liveChart').getContext('2d');
+            mainChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(20).fill(''),
+                    datasets: [{
+                        label: 'Server Load',
+                        data: Array(20).fill(0),
+                        borderColor: '#f59e0b',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(245, 158, 11, 0.05)'
+                    }]
                 },
-                {
-                    label:"RAM",
-                    data:Array(15).fill(0),
-                    borderColor:"#00ffaa",
-                    borderWidth:2,
-                    pointRadius:0,
-                    tension:.4
-                }
-            ]
-        },
-        options:{
-            responsive:true,
-            maintainAspectRatio:false,
-            animation:false,
-            plugins:{legend:{display:false}},
-            scales:{
-                x:{display:false},
-                y:{display:false,min:0,max:100}
-            }
-        }
-    });
-}
-
-/* -------------------- SYSTEM -------------------- */
-async function fetchSystemStats(){
-    try{
-        const res = await fetch(API_BASE+"/api/system/stats",{
-            headers:authHeaders()
-        });
-
-        const data = await res.json();
-
-        if(!data.success) return;
-
-        const cpu = Number(data.system?.cpu || Math.floor(Math.random()*25)+10);
-        const ram = Number(data.system?.ram || Math.floor(Math.random()*30)+20);
-
-        if(sysChart){
-            sysChart.data.datasets[0].data.shift();
-            sysChart.data.datasets[0].data.push(cpu);
-
-            sysChart.data.datasets[1].data.shift();
-            sysChart.data.datasets[1].data.push(ram);
-
-            sysChart.update();
+                options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false } } }
+            });
         }
 
-        document.getElementById("ran-ccu").innerText =
-            data.ran?.online ?? 0;
+        async function updateEcosystem() {
+            try {
+                const res = await fetch('/api/world/meta');
+                const data = await res.json();
+                
+                // Update UI Stats
+                document.getElementById('cpu-val').innerText = data.state.cpu + '%';
+                document.getElementById('ram-val').innerText = data.state.ram + '%';
+                
+                // Update Chart
+                mainChart.data.datasets[0].data.shift();
+                mainChart.data.datasets[0].data.push(data.state.cpu);
+                mainChart.update('none');
+            } catch(e) {}
+        }
 
-        document.getElementById("yg-ccu").innerText =
-            data.yulgang?.online ?? 0;
+        function showTab(tab) {
+            document.querySelectorAll('.tab-view').forEach(v => v.classList.add('hidden'));
+            document.querySelectorAll('.sidebar-item').forEach(b => b.classList.remove('active-tab'));
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+            event.currentTarget.classList.add('active-tab');
+        }
 
-        document.getElementById("ran-status").innerText="● ONLINE";
-        document.getElementById("yg-status").innerText="● STABLE";
-
-    }catch(e){
-        console.log(e);
-    }
-}
-
-/* -------------------- BILLING -------------------- */
-async function fetchCredits(){
-    try{
-        const email =
-        localStorage.getItem("sn_user_email") ||
-        localStorage.getItem("user_email") ||
-        "admin@sn.local";
-
-        const res = await fetch(
-            API_BASE+"/api/billing/usage?email="+encodeURIComponent(email),
-            { headers: authHeaders() }
-        );
-
-        const data = await res.json();
-
-        if(!data.success || !Array.isArray(data.rows)) return;
-
-        let runway=0,repl=0,gem=0,ele=0;
-
-        data.rows.forEach(r=>{
-            const s=String(r.service||"").toLowerCase();
-            const v=Number(r.total||0);
-
-            if(s.includes("runway")) runway+=v;
-            else if(s.includes("replicate")) repl+=v;
-            else if(s.includes("gemini")) gem+=v;
-            else if(s.includes("eleven")) ele+=v;
+        document.addEventListener('DOMContentLoaded', () => {
+            initDashboard();
+            setInterval(updateEcosystem, 2000);
         });
-
-        document.getElementById("cr-runway").innerText="$"+runway.toFixed(2);
-        document.getElementById("cr-replicate").innerText="$"+repl.toFixed(2);
-        document.getElementById("cr-gemini").innerText="$"+gem.toFixed(2);
-        document.getElementById("cr-eleven").innerText=ele.toLocaleString();
-
-    }catch(e){
-        console.log(e);
-    }
-}
-
-/* -------------------- LOOP -------------------- */
-async function boot(){
-    const ok = await guardAuth();
-    if(!ok) return;
-
-    bootChart();
-
-    await fetchSystemStats();
-    await fetchCredits();
-
-    setInterval(fetchSystemStats,5000);
-    setInterval(fetchCredits,10000);
-
-    toast("Dashboard Connected","success");
-}
-
-document.addEventListener("DOMContentLoaded",boot);
-</script>
-
+    </script>
 </body>
 </html>
+
