@@ -30,7 +30,7 @@ const engineManager = {
                 return;
             }
 
-            if(data.success){
+            if(data.ok){
                 alert(`[DONE] COST: ${data.cost || 0}`);
                 return;
             }

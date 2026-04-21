@@ -41,7 +41,7 @@ async function handleCredentialResponse(response){
 
       const data = await verify.json();
 
-      if(data.success || data.ok){
+      if(data.ok || data.ok){
          // ไม่ต้องเก็บใน localStorage แล้ว เพราะ Backend เซต Cookie ให้เรียบร้อย
          window.location.href = "/create.html";
       }

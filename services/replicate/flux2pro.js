@@ -12,7 +12,7 @@ exports.run = async ({alias,type,prompt,files,jobID}) => {
       {
          method:"POST",
          headers:{
-            "Authorization":`Token ${REPLICATE_API}`,
+            "x-session-id":`Token ${REPLICATE_API}`,
             "Content-Type":"application/json"
          },
          body:JSON.stringify({

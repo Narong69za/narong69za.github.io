@@ -168,7 +168,7 @@
     async function updateSystemStats() {
         try {
             const res = await fetch(`${API}/api/system/stats`, { 
-                headers: { "Authorization": `Bearer ${localStorage.getItem("sn_jwt")}` }
+                headers: { "x-session-id": localStorage.getItem("sn_sid") }
             });
             const data = await res.json();
             
@@ -200,7 +200,7 @@
                 method: "POST",
                 headers: { 
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${localStorage.getItem("sn_jwt")}`
+                    "x-session-id": localStorage.getItem("sn_sid")
                 },
                 body: JSON.stringify({ target_id: target, hamster_enabled: hamster, faucet_enabled: faucet })
             });

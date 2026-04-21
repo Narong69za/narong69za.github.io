@@ -32,7 +32,7 @@ async function controlServer(engine, action) {
     try {
         showToast(`Sending ${action} to ${engine}...`, "warning");
         const data = await apiFetch('/api/system/control', 'POST', { engine, action });
-        if(data.success) {
+        if(data.ok) {
             showToast("Command success", "success");
         } else {
             showToast("Command failed", "error");
@@ -78,7 +78,7 @@ async function fetchEngineCredits() {
 // 4. ตัวปลุกระบบทั้งหมดตอนหน้าเว็บโหลดเสร็จ (Main Initialization)
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    const token = localStorage.getItem("sn_jwt");
+    const token = localStorage.getItem("sn_sid");
     
     // ถ้ามี Token (ล็อคอินแล้ว)
     if (token) {

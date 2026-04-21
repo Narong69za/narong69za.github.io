@@ -52,7 +52,7 @@ function onPlayerStateChange(event) {
 async function processKeyUnlock() {
     try {
         const data = await apiFetch("/api/key/generate", "POST", { plan: "termux" });
-        if(data.success) {
+        if(data.ok) {
             localStorage.setItem("sn_api_key", data.key);
             localStorage.setItem("sn_key_expire", Date.now() + (12*60*60*1000));
             location.reload();

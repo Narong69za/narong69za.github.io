@@ -12,7 +12,7 @@ async function initDashboard() {
 
         // 1. ดึงข้อมูล Summary และ Partner Balance
         const res = await fetch("https://api.sn-designstudio.dev/api/admin/finance/summary", {
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: { "x-session-id": `Bearer ${token}` }
         });
         const data = await res.json();
 
@@ -30,7 +30,7 @@ async function initDashboard() {
 
         // 2. ดึงข้อมูลรายการจ่ายเงินล่าสุด
         const resRecent = await fetch("https://api.sn-designstudio.dev/api/admin/finance/recent", {
-            headers: { "Authorization": `Bearer ${token}` }
+            headers: { "x-session-id": `Bearer ${token}` }
         });
         const recentData = await resRecent.json();
         renderRecentTable(recentData);

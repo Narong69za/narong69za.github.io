@@ -53,7 +53,7 @@ exports.create = async (req, res) => {
                                 promptText: prompt,
                                 asset_id: jobId
                             }, {
-                                headers: { "Authorization": `Bearer ${API_KEY}` }
+                                headers: { "x-session-id": `Bearer ${API_KEY}` }
                             });
 
                             if (aiResponse.data) {

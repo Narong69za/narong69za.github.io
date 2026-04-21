@@ -17,7 +17,7 @@ const response=await fetch(`${RUNWAY_API}/uploads`,{
 method:"POST",
 
 headers:{
-Authorization:`Bearer ${RUNWAY_KEY}`,
+x-session-id:`Bearer ${RUNWAY_KEY}`,
 "X-Runway-Version":"2024-11-06",
 "Content-Type":"application/json"
 },
@@ -46,7 +46,7 @@ const response=await fetch(`${RUNWAY_API}${endpoint}`,{
 method:"POST",
 
 headers:{
-Authorization:`Bearer ${RUNWAY_KEY}`,
+x-session-id:`Bearer ${RUNWAY_KEY}`,
 "X-Runway-Version":"2024-11-06",
 "Content-Type":"application/json"
 },
@@ -64,7 +64,7 @@ async function getTask(id){
 const response=await fetch(`${RUNWAY_API}/tasks/${id}`,{
 
 headers:{
-Authorization:`Bearer ${RUNWAY_KEY}`,
+x-session-id:`Bearer ${RUNWAY_KEY}`,
 "X-Runway-Version":"2024-11-06"
 }
 

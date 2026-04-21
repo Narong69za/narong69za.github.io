@@ -10,7 +10,7 @@ const res = await fetch(
 "https://api.dev.runwayml.com/v1/tasks/"+taskId,
 {
 headers:{
-"Authorization":"Bearer "+RUNWAY_API_KEY,
+"x-session-id":"Bearer "+RUNWAY_API_KEY,
 "X-Runway-Version":"2024-11-06"
 }
 }

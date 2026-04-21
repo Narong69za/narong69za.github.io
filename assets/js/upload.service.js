@@ -9,7 +9,7 @@ const res = await fetch(
 {
 method:"POST",
 headers:{
-"Authorization":"Bearer "+RUNWAY_API_KEY,
+"x-session-id":"Bearer "+RUNWAY_API_KEY,
 "X-Runway-Version":"2024-11-06",
 "Content-Type":"application/json"
 },

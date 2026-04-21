@@ -27,7 +27,7 @@ async function setMethod(method) {
             })
         });
         const data = await res.json();
-        if (data.success) {
+        if (data.ok) {
             if (data.qrImage) {
                 openPremiumQR(data.qrImage, amount);
                 startPolling(email); // ระบบเช็คยอดเงินเพื่อดีดไปหน้า create.html

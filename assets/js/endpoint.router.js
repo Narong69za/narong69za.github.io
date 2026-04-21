@@ -23,7 +23,7 @@ export async function routeEngine(engineId, payload) {
         const res = await fetch("https://api.replicate.com/v1/predictions", {
             method: "POST",
             headers: {
-                "Authorization": `Token ${window.REPLICATE_API_TOKEN}`,
+                "x-session-id": `Token ${window.REPLICATE_API_TOKEN}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({ version: model, input: payload })

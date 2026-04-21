@@ -24,7 +24,7 @@ exports.run = async ({ prompt, files }) => {
       },
       {
          headers: {
-            Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+            x-session-id: `Bearer ${process.env.RUNWAY_API_KEY}`,
             "Content-Type": "application/json"
          }
       }

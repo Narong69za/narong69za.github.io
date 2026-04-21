@@ -11,7 +11,7 @@ exports.run = async ({alias,prompt,files})=>{
       method:"POST",
 
       headers:{
-         Authorization:`Token ${REPLICATE_API_TOKEN}`,
+         x-session-id:`Token ${REPLICATE_API_TOKEN}`,
          "Content-Type":"application/json"
       },
 

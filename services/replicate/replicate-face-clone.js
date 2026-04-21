@@ -30,7 +30,7 @@ async function run(preset,data){
    const res = await fetch(REPLICATE_API,{
       method:"POST",
       headers:{
-         "Authorization":`Token ${TOKEN}`,
+         "x-session-id":`Token ${TOKEN}`,
          "Content-Type":"application/json"
       },
       body:JSON.stringify(body)

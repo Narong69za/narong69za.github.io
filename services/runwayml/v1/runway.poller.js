@@ -11,7 +11,7 @@ const RUNWAY_STATUS_ENDPOINT =
 
 const HEADERS = {
 
-   Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+   x-session-id: `Bearer ${process.env.RUNWAY_API_KEY}`,
    "X-Runway-Version": "2024-11-06",
    "Content-Type": "application/json"
 

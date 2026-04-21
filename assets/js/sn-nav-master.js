@@ -17,7 +17,7 @@
         try {
             const res = await fetch('https://api.sn-designstudio.dev/auth/me', {
                 method: 'GET',
-                headers: { 'Authorization': `Bearer ${token}` }
+                headers: { 'x-session-id': `Bearer ${token}` }
             });
             const data = await res.json();
 

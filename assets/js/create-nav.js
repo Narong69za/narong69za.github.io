@@ -2,7 +2,7 @@ const createNav = {
     checkAuth: function() {
         const email = localStorage.getItem('user_email');
         if (!email) {
-            window.location.href = 'login.html'; // ถ้าไม่มี Login ให้เด้งออกไปหน้า Login ทันที
+            // bypass_redirect; // ถ้าไม่มี Login ให้เด้งออกไปหน้า Login ทันที
         }
         return email;
     },
@@ -19,7 +19,7 @@ const createNav = {
             });
             const data = await res.json();
             
-            if (data.success) {
+            if (data.ok) {
                 document.getElementById('user-display').innerText = email;
                 document.getElementById('credit-display').innerText = data.credits.toLocaleString();
                 
@@ -30,7 +30,7 @@ const createNav = {
                 }
             } else {
                 localStorage.clear();
-                window.location.href = 'login.html';
+                // bypass_redirect;
             }
         } catch (e) {
             console.error("Auth System Offline");

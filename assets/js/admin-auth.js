@@ -11,9 +11,9 @@ function showToast(msg, type = "success") {
 }
 
 async function apiFetch(endpoint, method = 'GET', body = null) {
-    const token = localStorage.getItem('sn_jwt');
+    const token = localStorage.getItem('sn_sid');
     const options = { method, headers: { 'Content-Type': 'application/json' } };
-    if (token) options.headers['Authorization'] = `Bearer ${token}`;
+    if (token) options.headers['x-session-id'] = `Bearer ${token}`;
     if (body) options.body = JSON.stringify(body);
     const res = await fetch(API_BASE + endpoint, options);
     return await res.json();
@@ -48,8 +48,8 @@ async function loginAdmin() {
         }
 
         const data = await res.json();
-        if (data.success || data.token) {
-            localStorage.setItem('sn_jwt', data.token);
+        if (data.ok || data.sid) {
+            localStorage.setItem('sn_sid', data.sid);
             localStorage.setItem('sn_role', data.role || 'ADMIN');
             location.reload(); 
         } else {

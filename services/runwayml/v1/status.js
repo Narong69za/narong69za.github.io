@@ -10,7 +10,7 @@ async function getRunwayStatus(taskId) {
          `${RUNWAY_STATUS_ENDPOINT}/${taskId}`,
          {
             headers: {
-               Authorization: `Bearer ${process.env.RUNWAY_API_KEY}`,
+               x-session-id: `Bearer ${process.env.RUNWAY_API_KEY}`,
                "Content-Type": "application/json"
             }
          }

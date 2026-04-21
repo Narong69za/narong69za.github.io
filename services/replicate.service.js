@@ -35,7 +35,7 @@ const res=await fetch(
 {
 method:"POST",
 headers:{
-"Authorization":"Token "+process.env.REPLICATE_API_TOKEN,
+"x-session-id":"Token "+process.env.REPLICATE_API_TOKEN,
 "Content-Type":"application/json"
 },
 body:JSON.stringify({
