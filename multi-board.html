@@ -1,307 +1,524 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA | PRODUCT REAL-TIME</title>
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-    <style>
-        :root {
-            --bg: #020203;
-            --glass: rgba(15, 15, 22, 0.9);
-            --border: rgba(255, 255, 255, 0.05);
-            --gold: #c5a059;
-            --silver: #B8B8B8;
-            --blue: #3b82f6;
-            --green: #10b981;
-        }
+<title>SN ULTRA | PRODUCT REAL-TIME</title>
 
-        body {
-            background: var(--bg);
-            background-image: radial-gradient(circle at 50% -20%, #1a1a2e 0%, transparent 80%);
-            color: #e2e8f0;
-            font-family: 'Inter', sans-serif;
-            font-size: 11px;
-            line-height: 1.4;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-        .header-font { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
-        .mono { font-family: 'JetBrains Mono', monospace; }
-        .master-container { max-width: 1750px; margin: 0 auto; padding: 15px; }
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(25px);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            transition: 0.3s ease;
-        }
+<style>
+:root{
+--bg:#020203;
+--glass:rgba(15,15,22,.90);
+--border:rgba(255,255,255,.05);
+--gold:#c5a059;
+--green:#10b981;
+--blue:#3b82f6;
+}
 
-        .game-banner {
-            position: relative; width: 100%; overflow: hidden;
-            border-radius: 16px 16px 0 0; display: flex; align-items: center; justify-content: center;
-        }
-        .game-banner img {
-            position: absolute; width: 100%; height: 100%; object-fit: cover;
-            z-index: 1; filter: brightness(0.4);
-        }
-        .banner-content { position: relative; z-index: 5; text-align: center; }
+body{
+background:var(--bg);
+background-image:radial-gradient(circle at 50% -20%, #1a1a2e 0%, transparent 80%);
+color:#e2e8f0;
+font-family:'Inter',sans-serif;
+font-size:11px;
+line-height:1.4;
+min-height:100vh;
+overflow-x:hidden;
+}
 
-        .termux-box {
-            background: rgba(0,0,0,0.7); border: 1px solid rgba(0,255,170,0.1);
-            border-radius: 10px; padding: 8px; font-family: 'JetBrains Mono', monospace;
-            font-size: 10px; height: 100px; overflow-y: auto; color: #00ffaa;
-        }
+.header-font{font-family:'Orbitron',sans-serif;letter-spacing:1px;}
+.mono{font-family:'JetBrains Mono',monospace;}
+.master-container{max-width:1750px;margin:0 auto;padding:15px;}
 
-        .btn-mesh { font-size: 9px; font-weight: 900; padding: 8px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.08); cursor: pointer; }
-        .btn-mesh:active { transform: scale(0.95); }
-        .pulse-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
+.glass-panel{
+background:var(--glass);
+backdrop-filter:blur(25px);
+border:1px solid var(--border);
+border-radius:16px;
+transition:.3s ease;
+}
 
-        .marquee-container {
-            width: 100%; overflow: hidden; white-space: nowrap;
-            background: rgba(255, 255, 255, 0.05); border-top: 1px solid rgba(255, 255, 255, 0.1);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding: 10px 0; margin-top: 15px;
-        }
-        .marquee-text {
-            display: inline-block; animation: marquee 35s linear infinite;
-            color: #ffffff; font-weight: 800; font-size: 13px; text-transform: uppercase;
-        }
-        @keyframes marquee { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+.game-banner{
+position:relative;
+width:100%;
+overflow:hidden;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:16px 16px 0 0;
+}
 
-        @media (max-width: 768px) {
-            .header-stack { align-items: center; text-align: center; }
-            .nav-controls { flex-direction: column; width: 100%; gap: 10px; }
-        }
-    </style>
+.game-banner img{
+position:absolute;
+width:100%;
+height:100%;
+object-fit:cover;
+filter:brightness(.4);
+z-index:1;
+}
+
+.banner-content{
+position:relative;
+z-index:5;
+text-align:center;
+}
+
+.termux-box{
+background:rgba(0,0,0,.7);
+border:1px solid rgba(0,255,170,.1);
+border-radius:10px;
+padding:8px;
+font-family:'JetBrains Mono',monospace;
+font-size:10px;
+height:110px;
+overflow-y:auto;
+color:#00ffaa;
+}
+
+.btn-mesh{
+font-size:9px;
+font-weight:900;
+padding:10px;
+border-radius:50px;
+text-transform:uppercase;
+letter-spacing:1px;
+transition:.2s;
+border:1px solid rgba(255,255,255,.08);
+cursor:pointer;
+}
+
+.btn-mesh:hover{transform:translateY(-1px);}
+.btn-mesh:active{transform:scale(.97);}
+
+.pulse-dot{
+width:6px;
+height:6px;
+border-radius:50%;
+display:inline-block;
+margin-right:4px;
+animation:pulse 2s infinite;
+}
+
+@keyframes pulse{
+0%,100%{opacity:1;transform:scale(1);}
+50%{opacity:.3;transform:scale(1.2);}
+}
+
+.marquee-container{
+width:100%;
+overflow:hidden;
+white-space:nowrap;
+background:rgba(255,255,255,.05);
+border-top:1px solid rgba(255,255,255,.1);
+border-bottom:1px solid rgba(255,255,255,.1);
+padding:10px 0;
+margin-top:12px;
+}
+
+.marquee-text{
+display:inline-block;
+animation:marquee 35s linear infinite;
+color:#fff;
+font-weight:800;
+font-size:13px;
+text-transform:uppercase;
+}
+
+@keyframes marquee{
+0%{transform:translateX(100%);}
+100%{transform:translateX(-100%);}
+}
+
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);}
+
+@media(max-width:768px){
+.header-stack{text-align:center;align-items:center;}
+.nav-controls{flex-direction:column;width:100%;gap:10px;}
+}
+</style>
 </head>
+
 <body>
 
 <div class="master-container">
-    
-    <nav class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 px-2 gap-5">
-        <div class="header-stack flex flex-col w-full">
-            <h1 class="header-font text-4xl md:text-5xl font-black text-white italic leading-none">SN ULTRA</h1>
-            <h2 class="header-font text-2xl md:text-3xl font-black text-yellow-500 italic leading-none mt-1">PRODUCT REAL-TIME</h2>
-            <p class="text-[16px] text-[#B8B8B8] font-bold mt-3 tracking-wide uppercase">
-                พัฒนาโดย <span class="italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
-            </p>
-            
-            <div class="marquee-container">
-                <div class="marquee-text">
-                    ศูนย์รวม บอท ช่วยเล่น อัตโนมัติ แพลตฟอร์ม สร้าง ภาพ วีดีโอ ศูนย์รวม เกมส์ ออนไลน์ 2 ระบบ ให้บริการ ระบบชำระเงิน รับทำระบบ เซิฟเวอร์ AI รับเปิด เซิร์ฟเวอร์ เกมส์ ออนไลน์ ครบวงจร
-                </div>
-            </div>
-        </div>
 
-        <div class="nav-controls flex flex-row md:flex-col lg:flex-row gap-3 items-center w-full md:w-auto">
-            <div class="flex-1 md:w-full px-5 py-2.5 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center">
-                <i class="fas fa-id-badge mr-2"></i>OWNER ACCESS
-            </div>
-            <div id="socket-status" class="flex-1 md:w-full px-5 py-2.5 glass-panel rounded-full text-green-400 text-[10px] font-black uppercase tracking-widest border-green-500/10 flex items-center justify-center">
-                <span class="pulse-dot bg-green-500"></span> SOCKET ACTIVE
-            </div>
-        </div>
-    </nav>
+<!-- HEADER -->
+<nav class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 px-2 gap-5">
 
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
-        
-        <div class="xl:col-span-4 space-y-5">
-            <div class="glass-panel p-5 border-yellow-500/10 bg-yellow-500/5">
-                <h3 class="header-font text-[9px] text-yellow-500 mb-4 uppercase tracking-widest text-center">Cloud Mesh Permission</h3>
-                <input type="text" id="target-id" placeholder="USERNAME / HWID..." class="w-full bg-black/60 border border-white/5 rounded-xl p-3 text-[10px] mb-4 outline-none text-center font-bold text-white mono">
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                        <span class="text-[9px] font-bold text-gray-400">HAMSTER BOT</span>
-                        <input type="checkbox" id="p-hamster" class="w-4 h-4 accent-yellow-500">
-                    </div>
-                    <div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                        <span class="text-[9px] font-bold text-gray-400">FAUCET NODE</span>
-                        <input type="checkbox" id="p-faucet" class="w-4 h-4 accent-yellow-500">
-                    </div>
-                </div>
-                <button onclick="syncPermissions()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-[9px] mt-4 uppercase">Update Handshake</button>
-            </div>
+<div class="header-stack flex flex-col w-full">
+<h1 class="header-font text-4xl md:text-5xl font-black text-white italic leading-none">SN ULTRA</h1>
+<h2 class="header-font text-2xl md:text-3xl font-black text-yellow-500 italic leading-none mt-1">PRODUCT REAL-TIME</h2>
 
-            <div class="glass-panel p-5">
-                <div class="grid grid-cols-3 gap-2 mb-4">
-                    <div class="bg-black/40 p-2 rounded-lg text-center"><p class="text-[8px] text-gray-500 uppercase">CPU</p><p id="sys-cpu" class="text-white font-black text-sm mono">0%</p></div>
-                    <div class="bg-black/40 p-2 rounded-lg text-center"><p class="text-[8px] text-gray-500 uppercase">RAM</p><p id="sys-ram" class="text-white font-black text-sm mono">0%</p></div>
-                    <div class="bg-black/40 p-2 rounded-lg text-center"><p class="text-[8px] text-gray-500 uppercase">GATEWAY</p><p id="gw-port" class="text-blue-400 font-black text-sm mono">5002</p></div>
-                </div>
-                <div class="h-28 w-full"><canvas id="liveChart"></canvas></div>
-            </div>
+<p class="text-[15px] text-[#B8B8B8] font-bold mt-3 tracking-wide uppercase">
+พัฒนาโดย <span class="italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
+</p>
 
-            <div class="glass-panel p-5">
-                <h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase italic">Engine API Health</h3>
-                <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
-                        <span class="text-[8px] text-gray-400">RUNWAY</span>
-                        <span id="st-runway" class="text-green-500 font-bold mono">ACTIVE</span>
-                    </div>
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
-                        <span class="text-[8px] text-gray-400">GEMINI</span>
-                        <span id="st-gemini" class="text-green-500 font-bold mono">ACTIVE</span>
-                    </div>
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
-                        <span class="text-[8px] text-gray-400">STRIPE</span>
-                        <span id="st-stripe" class="text-yellow-500 font-bold mono">LIVE</span>
-                    </div>
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
-                        <span class="text-[8px] text-gray-400">BINANCE</span>
-                        <span id="st-binance" class="text-green-500 font-bold mono">READY</span>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="marquee-container">
+<div class="marquee-text">
+ศูนย์รวม บอท ช่วยเล่น อัตโนมัติ แพลตฟอร์ม สร้างภาพ วีดีโอ เกมส์ออนไลน์ ระบบชำระเงิน รับทำระบบ AI เปิดเซิร์ฟเวอร์เกมส์ออนไลน์ ครบวงจร
+</div>
+</div>
+</div>
 
-        <div class="xl:col-span-8 space-y-5">
-            
-            <div class="glass-panel overflow-hidden">
-                <div class="game-banner" style="height:160px;">
-                    <img src="assets/images/yg-logo.jpg" alt="YG-BANNER">
-                    <div class="banner-content px-4">
-                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl">YULGANG 2026</h2>
-                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl">ONLINE</h2>
-                        <p class="text-[9px] md:text-[11px] text-green-400 font-black tracking-[0.45em] uppercase mt-3">Endpoint: 147.93.159.30:5006</p>
-                    </div>
-                </div>
+<div class="nav-controls flex flex-row md:flex-col lg:flex-row gap-3 items-center w-full md:w-auto">
 
-                <div class="p-5 md:p-7">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Players</p>
-                            <p id="db-total-users" class="header-font text-3xl font-black text-white">0</p>
-                        </div>
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Online Now</p>
-                            <p id="yg-online" class="header-font text-3xl font-black text-green-400">0</p>
-                        </div>
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Classes</p>
-                            <p id="yg-class" class="header-font text-3xl font-black text-cyan-400">0</p>
-                        </div>
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">DB Items</p>
-                            <p id="yg-items" class="header-font text-3xl font-black text-yellow-400">0</p>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Map</p>
-                            <p id="yg-map" class="text-green-400 font-black text-sm mono uppercase">Central City</p>
-                        </div>
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Server Load</p>
-                            <p id="yg-load" class="header-font text-3xl font-black text-orange-400">0%</p>
-                        </div>
-                        <div class="rounded-2xl bg-black/30 border border-white/5 p-4 text-center">
-                            <p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Status</p>
-                            <p id="gs-yg-status" class="text-green-400 font-black text-sm tracking-widest"><span class="pulse-dot bg-green-500"></span>LIVE</p>
-                        </div>
-                        <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black hover:bg-green-500 py-4">RESTART DB</button>
-                    </div>
-                </div>
-            </div>
+<div class="flex-1 md:w-full px-5 py-2 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center">
+<i class="fas fa-id-badge mr-2"></i>OWNER ACCESS
+</div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div class="glass-panel p-4">
-                    <h3 class="header-font text-[9px] text-cyan-400 uppercase italic mb-3">Hamster Node (Port 5005)</h3>
-                    <div id="hmTerminal" class="termux-box mb-3 text-cyan-300"></div>
-                    <div class="flex gap-2">
-                        <button onclick="controlHamster('start')" class="flex-1 btn-mesh bg-cyan-600 text-white">START</button>
-                        <button onclick="controlHamster('stop')" class="flex-1 btn-mesh bg-white/5 text-red-500">STOP</button>
-                    </div>
-                </div>
-                <div class="glass-panel p-4">
-                    <h3 class="header-font text-[9px] text-amber-500 uppercase italic mb-3">Faucet Engine (Port 5004)</h3>
-                    <div id="faucet-console" class="termux-box mb-3 text-amber-300"></div>
-                    <button onclick="initFaucet()" class="w-full btn-mesh bg-amber-500 text-black">INIT ENGINE</button>
-                </div>
-            </div>
+<div id="socket-status" class="flex-1 md:w-full px-5 py-2 glass-panel rounded-full text-green-400 text-[10px] font-black uppercase tracking-widest border-green-500/10 flex items-center justify-center">
+<span class="pulse-dot bg-green-500"></span> API ACTIVE
+</div>
 
-            <div class="glass-panel p-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="header-font text-[9px] text-gray-400 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Security Audit Live</h3>
-                    <div class="flex items-center gap-2">
-                        <span class="pulse-dot bg-green-500"></span>
-                        <span class="text-[10px] text-green-400 font-black uppercase tracking-tighter">ACTIVE</span>
-                    </div>
-                </div>
-            </div>
+</div>
+</nav>
 
-        </div>
-    </div>
+<!-- GRID -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
+
+<!-- LEFT -->
+<div class="xl:col-span-4 space-y-5">
+
+<div class="glass-panel p-5 border-yellow-500/10 bg-yellow-500/5">
+<h3 class="header-font text-[9px] text-yellow-500 mb-4 uppercase tracking-widest text-center">Cloud Mesh Permission</h3>
+
+<input id="target-id" type="text" placeholder="USERNAME / HWID..."
+class="w-full bg-black/60 border border-white/5 rounded-xl p-3 text-[10px] mb-4 outline-none text-center font-bold text-white mono">
+
+<div class="grid grid-cols-2 gap-2">
+
+<div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
+<span class="text-[9px] font-bold text-gray-400">HAMSTER BOT</span>
+<input type="checkbox" class="w-4 h-4 accent-yellow-500">
+</div>
+
+<div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
+<span class="text-[9px] font-bold text-gray-400">FAUCET NODE</span>
+<input type="checkbox" class="w-4 h-4 accent-yellow-500">
+</div>
+
+</div>
+
+<button onclick="syncPermissions()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-[9px] mt-4 uppercase">
+Update Handshake
+</button>
+</div>
+
+<div class="glass-panel p-5">
+
+<div class="grid grid-cols-3 gap-2 mb-4">
+
+<div class="bg-black/40 p-2 rounded-lg text-center">
+<p class="text-[8px] text-gray-500 uppercase">CPU</p>
+<p id="sys-cpu" class="text-white font-black text-sm mono">0%</p>
+</div>
+
+<div class="bg-black/40 p-2 rounded-lg text-center">
+<p class="text-[8px] text-gray-500 uppercase">RAM</p>
+<p id="sys-ram" class="text-white font-black text-sm mono">0%</p>
+</div>
+
+<div class="bg-black/40 p-2 rounded-lg text-center">
+<p class="text-[8px] text-gray-500 uppercase">PORT</p>
+<p class="text-blue-400 font-black text-sm mono">5002</p>
+</div>
+
+</div>
+
+<div class="h-28 w-full">
+<canvas id="liveChart"></canvas>
+</div>
+
+</div>
+
+<div class="glass-panel p-5">
+<h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase italic">Engine API Health</h3>
+
+<div class="grid grid-cols-2 gap-2">
+
+<div class="p-2 bg-white/5 rounded-lg flex justify-between">
+<span class="text-[8px] text-gray-400">RUNWAY</span>
+<span class="text-green-500 font-bold mono">ACTIVE</span>
+</div>
+
+<div class="p-2 bg-white/5 rounded-lg flex justify-between">
+<span class="text-[8px] text-gray-400">GEMINI</span>
+<span class="text-green-500 font-bold mono">ACTIVE</span>
+</div>
+
+<div class="p-2 bg-white/5 rounded-lg flex justify-between">
+<span class="text-[8px] text-gray-400">STRIPE</span>
+<span class="text-yellow-500 font-bold mono">LIVE</span>
+</div>
+
+<div class="p-2 bg-white/5 rounded-lg flex justify-between">
+<span class="text-[8px] text-gray-400">BINANCE</span>
+<span class="text-green-500 font-bold mono">READY</span>
+</div>
+
+</div>
+</div>
+
+</div>
+
+<!-- RIGHT -->
+<div class="xl:col-span-8 space-y-5">
+
+<!-- YULGANG -->
+<div class="glass-panel overflow-hidden">
+
+<div class="game-banner" style="height:170px;">
+<img src="assets/images/yg-logo.jpg">
+
+<div class="banner-content px-4">
+<h2 class="header-font text-4xl md:text-5xl font-black italic text-white leading-none">YULGANG 2026</h2>
+<h2 class="header-font text-4xl md:text-5xl font-black italic text-white leading-none">ONLINE</h2>
+<p class="text-[10px] text-green-400 font-black tracking-[0.35em] uppercase mt-3">
+Gateway Routed / Port 5006
+</p>
+</div>
+</div>
+
+<div class="p-5 md:p-7">
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Players</p>
+<p id="db-total-users" class="header-font text-3xl font-black text-white">0</p>
+</div>
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Online</p>
+<p id="yg-online" class="header-font text-3xl font-black text-green-400">0</p>
+</div>
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Classes</p>
+<p id="yg-class" class="header-font text-3xl font-black text-cyan-400">0</p>
+</div>
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Items</p>
+<p id="yg-items" class="header-font text-3xl font-black text-yellow-400">0</p>
+</div>
+
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Map</p>
+<p id="yg-map" class="text-green-400 font-black mono uppercase">Central City</p>
+</div>
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Load</p>
+<p id="yg-load" class="header-font text-3xl font-black text-orange-400">0%</p>
+</div>
+
+<div class="rounded-2xl bg-black/30 p-4 text-center">
+<p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Status</p>
+<p id="gs-yg-status" class="text-green-400 font-black text-sm tracking-widest">
+<span class="pulse-dot bg-green-500"></span>LIVE
+</p>
+</div>
+
+<button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black py-4">
+RESTART DB
+</button>
+
+</div>
+
+</div>
+</div>
+
+<!-- NODE BOX -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+<div class="glass-panel p-4">
+<h3 class="header-font text-[9px] text-cyan-400 uppercase italic mb-3">Hamster Node (5005)</h3>
+<div id="hmTerminal" class="termux-box mb-3"></div>
+
+<div class="flex gap-2">
+<button onclick="controlHamster('start')" class="flex-1 btn-mesh bg-cyan-600 text-white">START</button>
+<button onclick="controlHamster('stop')" class="flex-1 btn-mesh bg-white/5 text-red-500">STOP</button>
+</div>
+</div>
+
+<div class="glass-panel p-4">
+<h3 class="header-font text-[9px] text-amber-500 uppercase italic mb-3">Faucet Node (5004)</h3>
+<div id="faucet-console" class="termux-box mb-3 text-amber-300"></div>
+
+<button onclick="initFaucet()" class="w-full btn-mesh bg-amber-500 text-black">
+INIT ENGINE
+</button>
+</div>
+
+</div>
+
+</div>
+</div>
+
 </div>
 
 <script>
-    // --- API Configuration from .env ---
-    const API_CONFIG = {
-        GATEWAY: "https://api.sn-designstudio.dev", // พอร์ต 5002 ผ่าน SSL
-        YULGANG: "http://147.93.159.30:5006",
-        INTERNAL_TOKEN: "SN__ULTRA_INTERNAL_92837282"
-    };
+/* =======================================================
+   REAL ENV PATCHED FROM YOUR .ENV
+======================================================= */
 
-    let hamsterInterval = null;
+const API = {
+BASE: "https://api.sn-designstudio.dev",
+TOKEN: "SN_ULTRA_INTERNAL_92837282"
+};
 
-    // 1. ดึงข้อมูล Yulgang
-    async function loadYulgangBox() {
-        try {
-            const res = await fetch(`${API_CONFIG.YULGANG}/api/yulgang/overview`);
-            const json = await res.json();
-            if (json.success) {
-                const d = json.data || {};
-                document.getElementById("db-total-users").innerText = d.totalCharacters || 0;
-                document.getElementById("yg-online").innerText = d.onlinePlayers || 0;
-                document.getElementById("yg-class").innerText = d.totalClasses || 0;
-                document.getElementById("yg-items").innerText = (d.totalItems || 0).toLocaleString();
-                document.getElementById("yg-load").innerText = (d.serverLoad || 0) + "%";
-            }
-        } catch (e) { console.log("YULGANG API Pending..."); }
-    }
+/* ===========================
+   YULGANG DATA LOAD
+=========================== */
+async function loadYulgangBox(){
+try{
+const res = await fetch(`${API.BASE}/api/yulgang/overview`,{
+headers:{
+"Authorization":"Bearer " + API.TOKEN
+}
+});
 
-    // 2. ควบคุม Server (เชื่อมโยง INTERNAL_TOKEN)
-    async function controlServer(type, action) {
-        console.log(`Action: ${action} on ${type} with Token: ${API_CONFIG.INTERNAL_TOKEN}`);
-        alert(`คำสั่ง ${action} ถูกส่งไปยังระบบพอร์ต 5002 เรียบร้อยแล้ว`);
-    }
+const json = await res.json();
 
-    // 3. Hamster Node Start/Stop
-    function controlHamster(action) {
-        const terminal = document.getElementById('hmTerminal');
-        if(action === 'start') {
-            terminal.innerHTML += `<div>[PORT 5005] Connecting Hamster Service...</div>`;
-            hamsterInterval = setInterval(() => {
-                terminal.innerHTML += `<div>>> Heartbeat sent: ${new Date().toLocaleTimeString()}</div>`;
-                terminal.scrollTop = terminal.scrollHeight;
-            }, 3000);
-        } else {
-            clearInterval(hamsterInterval);
-            terminal.innerHTML += `<div class="text-red-400">>> Connection Terminated.</div>`;
-        }
-    }
+if(json.success){
 
-    // 4. Permission Sync
-    function syncPermissions() {
-        const id = document.getElementById('target-id').value;
-        if(!id) return alert("โปรดระบุ HWID");
-        console.log(`Syncing with ADMIN_SECRET...`);
-        alert("Sync Handshake: 200 OK");
-    }
+const d = json.data || {};
 
-    // Init Page
-    setInterval(loadYulgangBox, 10000);
-    document.addEventListener("DOMContentLoaded", loadYulgangBox);
+document.getElementById("db-total-users").innerText = d.totalCharacters || 0;
+document.getElementById("yg-online").innerText = d.onlinePlayers || 0;
+document.getElementById("yg-class").innerText = d.totalClasses || 0;
+document.getElementById("yg-items").innerText = Number(d.totalItems || 0).toLocaleString();
+document.getElementById("yg-load").innerText = (d.serverLoad || 0) + "%";
+
+if(d.mapName){
+document.getElementById("yg-map").innerText = d.mapName;
+}
+
+}
+
+}catch(e){
+console.log("YULGANG ERROR",e);
+}
+}
+
+/* ===========================
+   SYSTEM STATS
+=========================== */
+async function loadSystemStats(){
+try{
+const res = await fetch(`${API.BASE}/api/system/stats`);
+const json = await res.json();
+
+if(json.success){
+
+document.getElementById("sys-cpu").innerText = (json.system?.cpu || 0) + "%";
+document.getElementById("sys-ram").innerText = (json.system?.ram || 0) + "%";
+
+}
+
+}catch(e){
+console.log("STATS ERROR");
+}
+}
+
+/* ===========================
+   ACTIONS
+=========================== */
+async function controlServer(type,action){
+
+try{
+await fetch(`${API.BASE}/api/admin/control`,{
+method:"POST",
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer " + API.TOKEN
+},
+body:JSON.stringify({type,action})
+});
+
+alert("Command Sent: " + type + " / " + action);
+
+}catch(e){
+alert("Command Failed");
+}
+}
+
+function syncPermissions(){
+alert("Handshake Complete");
+}
+
+/* ===========================
+   HAMSTER DEMO
+=========================== */
+let hamsterInterval=null;
+
+function controlHamster(action){
+
+const box = document.getElementById("hmTerminal");
+
+if(action==="start"){
+box.innerHTML += "<div>[5005] Hamster Connected</div>";
+
+hamsterInterval=setInterval(()=>{
+box.innerHTML += "<div>>> ping " + new Date().toLocaleTimeString() + "</div>";
+box.scrollTop = box.scrollHeight;
+},3000);
+
+}else{
+clearInterval(hamsterInterval);
+box.innerHTML += "<div class='text-red-400'>>> stopped</div>";
+}
+}
+
+/* ===========================
+   CHART
+=========================== */
+const ctx = document.getElementById("liveChart");
+
+new Chart(ctx,{
+type:"line",
+data:{
+labels:["1","2","3","4","5","6"],
+datasets:[{
+data:[20,30,22,45,35,50],
+borderColor:"#10b981",
+tension:.35
+}]
+},
+options:{
+responsive:true,
+plugins:{legend:{display:false}},
+scales:{
+x:{display:false},
+y:{display:false}
+}
+}
+});
+
+/* ===========================
+   AUTO LOAD
+=========================== */
+loadYulgangBox();
+loadSystemStats();
+
+setInterval(loadYulgangBox,10000);
+setInterval(loadSystemStats,10000);
+
 </script>
 
 </body>
 </html>
-
