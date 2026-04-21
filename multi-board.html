@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA | MESH V22 COMMERCIAL FINAL PRO</title>
+    <title>SN ULTRA | V22 REAL-TIME PRODUCTION MESH</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
@@ -14,264 +14,249 @@
     <style>
         :root {
             --bg: #020203;
-            --glass: rgba(15, 15, 22, 0.85);
+            --glass: rgba(15, 15, 22, 0.9);
             --border: rgba(255, 255, 255, 0.05);
             --gold: #c5a059;
             --blue: #3b82f6;
             --green: #10b981;
-            --red: #ef4444;
         }
 
         body {
             background: var(--bg);
-            background-image: radial-gradient(circle at 50% -20%, #1e1e2e 0%, transparent 80%);
+            background-image: radial-gradient(circle at 50% -20%, #1a1a2e 0%, transparent 80%);
             color: #e2e8f0;
             font-family: 'Inter', sans-serif;
-            font-size: 11px; /* ปรับเล็กลงเพื่อความสมดุล */
-            line-height: 1.5;
+            font-size: 11px; /* สมดุล ไม่ใหญ่ ไม่ล้น */
+            line-height: 1.4;
             min-height: 100vh;
             overflow-x: hidden;
         }
 
         .header-font { font-family: 'Orbitron', sans-serif; letter-spacing: 1px; }
         .mono { font-family: 'JetBrains Mono', monospace; }
-        
-        .master-container { max-width: 1750px; margin: 0 auto; padding: 20px; }
+        .master-container { max-width: 1750px; margin: 0 auto; padding: 15px; }
 
-        /* Luxury Glassmorphism */
+        /* Glassmorphism V22 */
         .glass-panel {
             background: var(--glass);
             backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
             border: 1px solid var(--border);
-            border-radius: 18px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
+            border-radius: 16px;
+            transition: 0.3s ease;
         }
-        .glass-panel:hover { border-color: rgba(255, 255, 255, 0.15); }
 
-        /* Game Header Banner */
+        /* Game Banner - บังคับภาพแสดงผล */
         .game-banner {
             position: relative;
-            height: 120px;
+            height: 110px;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 16px 16px 0 0;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 18px 18px 0 0;
-            overflow: hidden;
-            border-bottom: 1px solid var(--border);
         }
         .game-banner img {
             position: absolute;
-            inset: 0; width: 100%; height: 100%;
+            width: 100%; height: 100%;
             object-fit: cover;
-            filter: brightness(0.35);
-            z-index: 0;
+            z-index: 1; /* บังคับอยู่ล่างสุดใน Banner */
+            filter: brightness(0.4);
         }
-        .banner-title { position: relative; z-index: 1; text-align: center; }
+        .banner-content { position: relative; z-index: 5; text-align: center; }
 
-        /* Console Style */
+        /* Terminal - ขยายให้อ่านง่าย */
         .termux-box {
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.03);
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(0,255,170,0.1);
             border-radius: 10px;
-            padding: 10px;
+            padding: 8px;
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
-            height: 110px;
+            height: 100px;
             overflow-y: auto;
-            color: #10b981;
+            color: #00ffaa;
         }
 
-        /* Buttons & Badges */
-        .btn-mesh {
-            font-size: 9px; font-weight: 900; padding: 8px 15px;
-            border-radius: 50px; text-transform: uppercase;
-            letter-spacing: 1px; transition: 0.2s;
-            border: 1px solid rgba(255,255,255,0.08);
-        }
-        .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; }
-        .pulse-dot { animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        /* Buttons & Interaction */
+        .btn-mesh { font-size: 9px; font-weight: 900; padding: 8px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; border: 1px solid rgba(255,255,255,0.08); }
+        .pulse-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
 
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 12px; background: #000; }
-        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
-
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 10px; overflow: hidden; }
+        .video-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
+        ::-webkit-scrollbar { width: 3px; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
-<body class="pb-10">
+<body>
 
 <div class="master-container">
     
-    <nav class="flex justify-between items-center mb-8 px-4">
+    <nav class="flex justify-between items-center mb-6 px-2">
         <div class="flex items-center gap-4">
-            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-[0_0_20px_rgba(255,255,255,0.15)]">
-                <span class="text-black font-black text-xl header-font">SN</span>
-            </div>
+            <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center shadow-2xl"><span class="text-black font-black text-xl header-font">SN</span></div>
             <div>
-                <h1 class="header-font text-xl font-black text-white italic">ULTRA <span class="text-yellow-500">V22 PRO</span></h1>
-                <p class="text-[8px] text-gray-500 font-bold uppercase tracking-[0.4em]">Commercial Full-Operational Mesh</p>
+                <h1 class="header-font text-lg font-black text-white italic">SN ULTRA <span class="text-yellow-500">V22 REAL-TIME</span></h1>
+                <p class="text-[8px] text-gray-500 font-bold uppercase tracking-[0.4em]">Unified Commercial Hub</p>
             </div>
         </div>
-        <div class="flex gap-4 items-center">
-            <div id="socket-status" class="px-4 py-2 glass-panel rounded-full border-green-500/20 text-green-400 text-[9px] font-black uppercase">
-                <span class="status-dot bg-green-500 pulse-dot"></span> Socket Connected
+        <div class="flex gap-3 items-center">
+            <div class="px-4 py-1.5 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-id-badge mr-2"></i>OWNER ACCESS</div>
+            <div id="socket-status" class="px-4 py-1.5 glass-panel rounded-full text-green-400 text-[9px] font-black uppercase tracking-widest border-green-500/10">
+                <span class="pulse-dot bg-green-500"></span> SOCKET ACTIVE
             </div>
-            <button onclick="logoutAdmin()" class="w-8 h-8 flex items-center justify-center rounded-full bg-red-500/10 border border-red-500/20 text-red-500 hover:bg-red-500/30 transition">
-                <i class="fas fa-power-off text-xs"></i>
-            </button>
         </div>
     </nav>
 
-    <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
         
-        <div class="xl:col-span-4 space-y-6">
+        <div class="xl:col-span-4 space-y-5">
             
-            <div id="admin-panel" class="glass-panel p-5 border-yellow-500/20 bg-yellow-500/5">
-                <h3 class="header-font text-[9px] text-yellow-500 mb-4 uppercase tracking-widest text-center">Cloud Permission Matrix</h3>
-                <input type="text" id="target-user" placeholder="TARGET USERNAME / HWID..." 
-                       class="w-full bg-black/60 border border-white/5 rounded-xl p-3 text-[10px] mb-4 focus:border-yellow-500 outline-none text-center font-bold text-white mono">
-                
-                <div class="grid grid-cols-2 gap-2 mb-4">
+            <div class="glass-panel p-5 border-yellow-500/10 bg-yellow-500/5">
+                <h3 class="header-font text-[9px] text-yellow-500 mb-4 uppercase tracking-widest text-center">Cloud Mesh Permission</h3>
+                <input type="text" id="target-id" placeholder="USERNAME / HWID..." class="w-full bg-black/60 border border-white/5 rounded-xl p-3 text-[10px] mb-4 outline-none text-center font-bold text-white mono">
+                <div class="grid grid-cols-2 gap-2">
                     <div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                        <span class="text-[9px] font-bold text-gray-400">HAMSTER</span>
-                        <input type="checkbox" id="perm-hamster" class="w-4 h-4 accent-yellow-500">
+                        <span class="text-[9px] font-bold text-gray-400">HAMSTER BOT</span>
+                        <input type="checkbox" id="p-hamster" class="w-4 h-4 accent-yellow-500">
                     </div>
                     <div class="flex justify-between items-center bg-black/40 p-3 rounded-xl border border-white/5">
-                        <span class="text-[9px] font-bold text-gray-400">FAUCET</span>
-                        <input type="checkbox" id="perm-faucet" class="w-4 h-4 accent-yellow-500">
+                        <span class="text-[9px] font-bold text-gray-400">FAUCET NODE</span>
+                        <input type="checkbox" id="p-faucet" class="w-4 h-4 accent-yellow-500">
                     </div>
                 </div>
-                <button onclick="updatePermissions()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-[10px] uppercase hover:bg-yellow-400 transition shadow-lg">Push Sync Access</button>
+                <button onclick="syncPermissions()" class="w-full bg-yellow-500 text-black font-black py-3 rounded-xl text-[9px] mt-4 uppercase hover:bg-yellow-400">Update Permission Handshake</button>
             </div>
 
             <div class="glass-panel p-5">
-                <h3 class="header-font text-[9px] text-gray-400 mb-4 uppercase">System Realtime Load</h3>
-                <div class="grid grid-cols-3 gap-3 mb-6">
-                    <div class="text-center">
-                        <p class="text-[8px] text-gray-500 uppercase font-bold">CPU</p>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <div class="bg-black/40 p-2 rounded-lg border border-white/5 text-center">
+                        <p class="text-[8px] text-gray-500 uppercase">CPU</p>
                         <p id="sys-cpu" class="text-white font-black text-sm mono">0%</p>
                     </div>
-                    <div class="text-center border-x border-white/5">
-                        <p class="text-[8px] text-gray-500 uppercase font-bold">RAM</p>
+                    <div class="bg-black/40 p-2 rounded-lg border border-white/5 text-center">
+                        <p class="text-[8px] text-gray-500 uppercase">RAM</p>
                         <p id="sys-ram" class="text-white font-black text-sm mono">0%</p>
                     </div>
-                    <div class="text-center">
-                        <p class="text-[8px] text-gray-500 uppercase font-bold">DISK</p>
-                        <p id="sys-disk" class="text-white font-black text-sm mono">0%</p>
+                    <div class="bg-black/40 p-2 rounded-lg border border-white/5 text-center">
+                        <p class="text-[8px] text-gray-500 uppercase">NET</p>
+                        <p id="net-out" class="text-blue-400 font-black text-sm mono">0.0</p>
                     </div>
                 </div>
-                <div class="h-32 w-full"><canvas id="sysChart"></canvas></div>
+                <div class="h-28 w-full"><canvas id="liveChart"></canvas></div>
             </div>
 
             <div class="glass-panel p-5">
-                <h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase">API Engine Credits</h3>
-                <div class="space-y-2">
-                    <div class="flex justify-between p-2 bg-white/5 rounded-lg border-l-2 border-purple-500">
-                        <span class="text-gray-400">Runway Gen-3</span>
-                        <span id="cr-runway" class="text-white font-bold mono">0</span>
+                <h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase">Engine Credits Flow</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
+                        <span class="text-[8px] text-gray-400">RUNWAY</span>
+                        <span id="cr-runway" class="text-white font-bold mono">$0.00</span>
                     </div>
-                    <div class="flex justify-between p-2 bg-white/5 rounded-lg border-l-2 border-blue-500">
-                        <span class="text-gray-400">Gemini Pro</span>
-                        <span id="cr-gemini" class="text-white font-bold mono">0</span>
+                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
+                        <span class="text-[8px] text-gray-400">GEMINI</span>
+                        <span id="cr-gemini" class="text-white font-bold mono">$0.00</span>
+                    </div>
+                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
+                        <span class="text-[8px] text-gray-400">REPLICATE</span>
+                        <span id="cr-replicate" class="text-white font-bold mono">$0.00</span>
+                    </div>
+                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between">
+                        <span class="text-[8px] text-gray-400">ELEVEN</span>
+                        <span id="cr-eleven" class="text-white font-bold mono">0</span>
                     </div>
                 </div>
             </div>
 
         </div>
 
-        <div class="xl:col-span-8 space-y-6">
+        <div class="xl:col-span-8 space-y-5">
 
-            <div class="glass-panel">
+            <div class="glass-panel overflow-hidden">
                 <div class="game-banner">
-                    <img src="assets/images/yg-logo.jpg" alt="YG">
-                    <div class="banner-title">
-                        <h2 class="header-font text-3xl font-black italic text-white glow-text">PRIVATE SERVER: YULGANG 2026</h2>
-                        <p class="text-[9px] text-green-400 font-bold tracking-[0.4em] uppercase">V18.45 Live Instance</p>
+                    <img src="assets/images/yg-logo.jpg" alt="YG-BANNER"> <div class="banner-content">
+                        <h2 class="header-font text-3xl font-black italic text-white shadow-2xl">YULGANG 2026 ONLINE</h2>
+                        <p class="text-[9px] text-green-400 font-bold tracking-[0.5em] uppercase">Private Server Real-Time Instance</p>
                     </div>
                 </div>
-                <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                    <div><p class="text-[8px] text-gray-500 uppercase font-bold">Live Players</p><p id="db-total-users" class="text-white text-2xl font-black header-font">0</p></div>
-                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 uppercase font-bold">DB Items</p><p class="text-white text-2xl font-black header-font">24,501</p></div>
-                    <div class="border-r border-white/5"><p class="text-[8px] text-gray-500 uppercase font-bold">Status</p><p id="gs-yg-status" class="text-green-400 font-bold uppercase tracking-widest mt-1"><span class="status-dot bg-green-500 pulse-dot"></span>Stable</p></div>
-                    <div class="flex flex-col gap-1">
-                        <button onclick="controlServer('yulgang','start')" class="btn-mesh bg-green-600 text-white shadow-lg shadow-green-900/20">RESTART</button>
-                        <button class="btn-mesh bg-white/5 text-gray-500 cursor-not-allowed">� LOGS</button>
-                    </div>
+                <div class="p-5 grid grid-cols-2 md:grid-cols-5 gap-4 text-center items-center">
+                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Players</p><p id="db-total-users" class="text-white text-xl font-black header-font">0</p></div>
+                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 font-bold uppercase">Game Map</p><p id="yg-map" class="text-green-400 font-bold mono uppercase">Central City</p></div>
+                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">DB Items</p><p id="yg-items" class="text-white font-bold mono">24,501</p></div>
+                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 font-bold uppercase">Status</p><p id="gs-yg-status" class="text-green-400 font-bold text-[10px] uppercase tracking-widest"><span class="pulse-dot bg-green-500"></span>Live</p></div>
+                    <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black hover:bg-green-500 shadow-lg shadow-green-500/20">RESTART DB</button>
                 </div>
             </div>
 
-            <div class="glass-panel">
+            <div class="glass-panel overflow-hidden">
                 <div class="game-banner">
-                    <img src="assets/images/ran-online.jpg" alt="RAN">
-                    <div class="banner-content">
-                        <h2 class="header-font text-3xl font-black italic text-white glow-text">PRIVATE SERVER: RAN ONLINE</h2>
-                        <p class="text-[9px] text-red-500 font-bold tracking-[0.4em] uppercase">EP7 Legendary Reborn</p>
+                    <img src="assets/images/ran-online.jpg" alt="RAN-BANNER"> <div class="banner-content">
+                        <h2 class="header-font text-3xl font-black italic text-white shadow-2xl">RAN ONLINE EP7</h2>
+                        <p class="text-[9px] text-red-500 font-bold tracking-[0.5em] uppercase">SaaS Enterprise Operational</p>
                     </div>
                 </div>
-                <div class="p-6 grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-                    <div><p class="text-[8px] text-gray-500 uppercase font-bold">Active Player</p><p id="db-active-users" class="text-white text-2xl font-black header-font">0</p></div>
-                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 uppercase font-bold">Active Maps</p><p class="text-white text-2xl font-black header-font">182</p></div>
-                    <div class="border-r border-white/5"><p class="text-[8px] text-gray-500 uppercase font-bold">Instance</p><p id="gs-win-status" class="text-red-500 font-bold uppercase tracking-widest mt-1"><span class="status-dot bg-red-500"></span>Offline</p></div>
-                    <div class="flex flex-col gap-1">
-                        <button onclick="controlServer('win','start')" class="btn-mesh bg-red-600 text-white shadow-lg shadow-red-900/20">BOOT</button>
-                        <button class="btn-mesh bg-white/5 text-gray-500 cursor-not-allowed">� LOGS</button>
-                    </div>
+                <div class="p-5 grid grid-cols-2 md:grid-cols-5 gap-4 text-center items-center">
+                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Active Player</p><p id="db-active-users" class="text-white text-xl font-black header-font">0</p></div>
+                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 font-bold uppercase">Maps Load</p><p class="text-red-400 font-bold mono">182 / 182</p></div>
+                    <div><p class="text-[8px] text-gray-500 font-bold uppercase">Node Engine</p><p class="text-white font-bold mono">AND_v22</p></div>
+                    <div class="border-x border-white/5"><p class="text-[8px] text-gray-500 font-bold uppercase">Status</p><p id="gs-win-status" class="text-red-500 font-bold text-[10px] uppercase tracking-widest"><span class="status-dot bg-red-500"></span>Offline</p></div>
+                    <button onclick="controlServer('win','start')" class="btn-mesh bg-red-600 text-white font-black hover:bg-red-500 shadow-lg shadow-red-500/20">BOOT SER</button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div class="glass-panel p-5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                
+                <div class="glass-panel p-4">
                     <div class="flex justify-between items-center mb-3">
-                        <h3 class="header-font text-[9px] text-cyan-400 uppercase tracking-widest italic">Hamster Bot</h3>
-                        <span id="hmState" class="text-[8px] bg-cyan-900/20 text-cyan-400 px-2 py-0.5 rounded font-bold">STANDBY</span>
+                        <h3 class="header-font text-[9px] text-cyan-400 uppercase italic">Hamster Pro</h3>
+                        <span id="hmState" class="text-[8px] bg-cyan-900/20 text-cyan-400 px-2 py-0.5 rounded font-bold">READY</span>
                     </div>
-                    <div id="hmTerminal" class="termux-box mb-4"></div>
+                    <div id="hmTerminal" class="termux-box mb-3 text-cyan-300"></div>
+                    <div class="grid grid-cols-2 gap-2 mb-3">
+                        <div class="bg-black/40 p-2 rounded border border-white/5 text-center">
+                            <p class="text-[7px] text-gray-500 uppercase">Diamonds</p>
+                            <p id="hm-dia" class="text-white font-bold mono">0.00</p>
+                        </div>
+                        <div class="bg-black/40 p-2 rounded border border-white/5 text-center">
+                            <p class="text-[7px] text-gray-500 uppercase">Profit/H</p>
+                            <p id="hm-profit" class="text-white font-bold mono">0</p>
+                        </div>
+                    </div>
                     <div class="flex gap-2">
                         <button onclick="controlHamster('start')" class="flex-1 btn-mesh bg-cyan-600 text-white">START</button>
                         <button onclick="controlHamster('stop')" class="flex-1 btn-mesh bg-white/5 text-red-500">STOP</button>
                     </div>
                 </div>
 
-                <div class="glass-panel p-5">
+                <div class="glass-panel p-4">
                     <div class="flex justify-between items-center mb-3">
-                        <h3 class="header-font text-[9px] text-amber-500 uppercase tracking-widest italic">Faucet Node</h3>
+                        <h3 class="header-font text-[9px] text-amber-500 uppercase italic">Faucet Node</h3>
                         <span id="faucet-dispensed" class="text-amber-500 font-bold mono">0.00000</span>
                     </div>
-                    <div id="termux-console" class="termux-box mb-4" style="color: #fbbf24;"></div>
-                    <button onclick="registerFaucet()" class="w-full btn-mesh bg-amber-500 text-black font-black">INIT PROTOCOL</button>
+                    <div id="termux-console" class="termux-box mb-3 text-amber-300"></div>
+                    <button onclick="registerFaucet()" class="w-full btn-mesh bg-amber-500 text-black">INIT ENGINE</button>
                 </div>
 
-                <div class="glass-panel p-5">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="header-font text-[9px] text-red-500 uppercase tracking-widest italic">Key Unlocker</h3>
-                        <span class="text-[8px] text-gray-500 font-bold uppercase">12H Valid</span>
-                    </div>
+                <div class="glass-panel p-4">
+                    <h3 class="header-font text-[9px] text-red-500 uppercase italic mb-3">Key Unlocker</h3>
                     <div class="video-container mb-3 shadow-2xl"><div id="yt-player-div"></div></div>
-                    <input type="text" id="termux-key" readonly value="WATCH TO UNLOCK" class="w-full bg-black/60 border border-white/5 rounded-lg p-2 text-[10px] text-center text-gray-400 mono mb-2">
-                    <button id="btn-unlock" onclick="playUnlockVideo()" class="w-full btn-mesh bg-red-600 text-white">UNLOCK NOW</button>
+                    <input type="text" id="termux-key" readonly value="WATCH TO UNLOCK" class="w-full bg-black/60 border border-white/5 rounded-lg p-2 text-[10px] text-center text-gray-500 mono mb-2">
+                    <button id="btn-unlock" onclick="playUnlockVideo()" class="w-full btn-mesh bg-red-600 text-white shadow-red-500/20">FETCH KEY</button>
                 </div>
+
             </div>
 
-            <div class="glass-panel p-5">
-                <div class="flex justify-between items-center mb-4 border-b border-white/5 pb-2">
-                    <h3 class="header-font text-[10px] text-gray-400 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Security Audit Live Feed</h3>
-                    <div class="flex items-center gap-2">
-                        <span class="text-[8px] text-green-400 font-bold bg-green-900/20 px-2 py-0.5 rounded">DeepSense Active</span>
-                    </div>
+            <div class="glass-panel p-4">
+                <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+                    <h3 class="header-font text-[9px] text-gray-400 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Security Audit Live</h3>
+                    <span class="text-[8px] text-green-400 font-bold bg-green-900/20 px-2 py-0.5 rounded tracking-tighter">DEEP-SENSE PROTECTION ACTIVE</span>
                 </div>
-                <div id="audit-list" class="space-y-1 h-32 overflow-y-auto pr-2 mono text-[10px] text-gray-500">
-                    <div class="flex gap-4 border-b border-white/5 py-1">
-                        <span class="text-blue-500">[08:45:22]</span>
-                        <span class="text-gray-300">SYSTEM: Kernel Integrity Checked</span>
-                        <span class="ml-auto text-green-500 font-bold">SECURE</span>
-                    </div>
-                    <div class="flex gap-4 border-b border-white/5 py-1">
-                        <span class="text-blue-500">[08:45:25]</span>
-                        <span class="text-gray-300">API: Proxy Gateway V22 Handshake</span>
-                        <span class="ml-auto text-yellow-500 font-bold">READY</span>
+                <div id="audit-list" class="h-28 overflow-y-auto pr-2 mono text-[10px] space-y-1">
+                    <div class="flex gap-4 border-b border-white/5 py-0.5">
+                        <span class="text-blue-500">[SYSTEM]</span>
+                        <span class="text-gray-400 italic">V22 Gateway handshaking with api.sn-designstudio.dev...</span>
+                        <span class="ml-auto text-green-500 font-bold uppercase">Connected</span>
                     </div>
                 </div>
             </div>
@@ -289,32 +274,47 @@
 <script src="assets/js/dashboard.js"></script> 
 
 <script>
-    // --- V22 LIVE SYSTEM SYNC ---
-    function updatePermissions() {
-        const target = document.getElementById('target-user').value;
-        const h = document.getElementById('perm-hamster').checked;
-        const f = document.getElementById('perm-faucet').checked;
-        if(!target) return alert("Enter Target Username");
+    // --- LIVE DATA FETCH LOGIC (FINAL) ---
+    const API = "https://api.sn-designstudio.dev";
 
-        fetch('/api/admin/update-permissions', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ target: target, hamster: h, faucet: f })
-        }).then(r => r.json()).then(res => {
-            if(res.success) alert(`Synced: ${target}`);
-        });
+    async function updateRealData() {
+        try {
+            // 1. ดึงสถิติระบบและ Credits ทั้งหมด
+            const res = await fetch(`${API}/api/system/stats`, {
+                headers: { "Authorization": `Bearer ${localStorage.getItem("sn_jwt")}` }
+            });
+            const data = await res.json();
+            
+            if(data.success) {
+                // อัปเดต Credit ครบทุกแพลตฟอร์ม
+                document.getElementById('cr-runway').innerText = `$${(data.credits?.runway || 0).toFixed(2)}`;
+                document.getElementById('cr-gemini').innerText = `$${(data.credits?.gemini || 0).toFixed(2)}`;
+                document.getElementById('cr-replicate').innerText = `$${(data.credits?.replicate || 0).toFixed(2)}`;
+                document.getElementById('cr-eleven').innerText = (data.credits?.eleven || 0).toLocaleString();
+
+                // อัปเดตโยวกัง (Real DB)
+                document.getElementById('db-total-users').innerText = data.yg?.total_online || "0";
+                document.getElementById('yg-map').innerText = data.yg?.current_map || "Market Hall";
+                
+                // อัปเดตสถานะ Resource
+                document.getElementById('sys-cpu').innerText = `${data.system?.cpu || 0}%`;
+                document.getElementById('sys-ram').innerText = `${data.system?.ram || 0}%`;
+                document.getElementById('sys-disk').innerText = `${data.system?.disk || 0}%`;
+            }
+
+            // 2. ดึงข้อมูล Hamster จริง
+            const hmRes = await fetch(`${API}/api/hamster/status`);
+            const hmData = await hmRes.json();
+            if(hmData.success && hmData.data) {
+                document.getElementById('hm-dia').innerText = hmData.data.diamonds.toFixed(2);
+                document.getElementById('hm-profit').innerText = hmData.data.profit_per_hour.toLocaleString();
+            }
+
+        } catch(e) { console.log("Live Sync Pending..."); }
     }
 
-    // ฟังก์ชันเพิ่มข้อมูล Security Audit แบบสุ่มเพื่อทดสอบ UI
-    function addAuditLog(msg, status="SECURE") {
-        const list = document.getElementById('audit-list');
-        const time = new Date().toLocaleTimeString();
-        const entry = document.createElement('div');
-        entry.className = "flex gap-4 border-b border-white/5 py-1";
-        entry.innerHTML = `<span class="text-blue-500">[${time}]</span><span class="text-gray-300">${msg}</span><span class="ml-auto ${status === 'SECURE' ? 'text-green-500' : 'text-red-500'} font-bold">${status}</span>`;
-        list.prepend(entry);
-        if(list.children.length > 20) list.lastChild.remove();
-    }
+    setInterval(updateRealData, 10000); // อัปเดตทุก 10 วินาที
+    document.addEventListener("DOMContentLoaded", updateRealData);
 </script>
 
 </body>
