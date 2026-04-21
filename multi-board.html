@@ -18,6 +18,8 @@
             --border: rgba(255, 255, 255, 0.05);
             --gold: #c5a059;
             --silver: #B8B8B8;
+            --blue: #3b82f6;
+            --green: #10b981;
         }
 
         body {
@@ -137,27 +139,26 @@
                 </div>
                 <div class="h-28 w-full"><canvas id="liveChart"></canvas></div>
             </div>
-
+            
             <div class="glass-panel p-5">
                 <h3 class="header-font text-[9px] text-purple-400 mb-4 uppercase italic">Engine API Health</h3>
                 <div class="grid grid-cols-2 gap-2">
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between"><span class="text-[8px] text-gray-400">RUNWAY</span><span class="text-green-500 font-bold mono">ACTIVE</span></div>
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between"><span class="text-[8px] text-gray-400">GEMINI</span><span class="text-green-500 font-bold mono">ACTIVE</span></div>
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between"><span class="text-[8px] text-gray-400">STRIPE</span><span class="text-yellow-500 font-bold mono">LIVE</span></div>
-                    <div class="p-2 bg-white/5 rounded-lg border border-white/5 flex justify-between"><span class="text-[8px] text-gray-400">BINANCE</span><span class="text-green-500 font-bold mono">READY</span></div>
+                    <div class="p-2 bg-white/5 rounded-lg flex justify-between"><span class="text-[8px] text-gray-400">RUNWAY</span><span class="text-green-500 font-bold mono">ACTIVE</span></div>
+                    <div class="p-2 bg-white/5 rounded-lg flex justify-between"><span class="text-[8px] text-gray-400">GEMINI</span><span class="text-green-500 font-bold mono">ACTIVE</span></div>
+                    <div class="p-2 bg-white/5 rounded-lg flex justify-between"><span class="text-[8px] text-gray-400">STRIPE</span><span class="text-yellow-500 font-bold mono">LIVE</span></div>
+                    <div class="p-2 bg-white/5 rounded-lg flex justify-between"><span class="text-[8px] text-gray-400">BINANCE</span><span class="text-green-500 font-bold mono">READY</span></div>
                 </div>
             </div>
         </div>
 
         <div class="xl:col-span-8 space-y-5">
-            
             <div class="glass-panel overflow-hidden">
                 <div class="game-banner" style="height:170px;">
                     <img src="assets/images/yg-logo.jpg" alt="YG-BANNER">
                     <div class="banner-content px-4">
-                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl">YULGANG 2026</h2>
-                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl">ONLINE</h2>
-                        <p class="text-[10px] text-green-400 font-black tracking-[0.45em] uppercase mt-3">Gateway Routed / Port 5006</p>
+                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl uppercase">Yulgang 2026</h2>
+                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl uppercase">Online</h2>
+                        <p class="text-[10px] text-green-400 font-black tracking-[0.35em] uppercase mt-3">Gateway Routed / Port 5006</p>
                     </div>
                 </div>
                 <div class="p-5 md:p-7">
@@ -168,10 +169,10 @@
                         <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Items</p><p id="yg-items" class="header-font text-3xl font-black text-yellow-400">0</p></div>
                     </div>
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
-                        <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Map</p><p id="yg-map" class="text-green-400 font-black mono">CENTRAL CITY</p></div>
+                        <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Map</p><p id="yg-map" class="text-green-400 font-black mono uppercase">CENTRAL CITY</p></div>
                         <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Load</p><p id="yg-load" class="header-font text-3xl font-black text-orange-400">0%</p></div>
                         <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Status</p><p class="text-green-400 font-black text-sm tracking-widest"><span class="pulse-dot bg-green-500"></span>LIVE</p></div>
-                        <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black">RESTART DB</button>
+                        <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black py-4">RESTART DB</button>
                     </div>
                 </div>
             </div>
@@ -180,7 +181,7 @@
                 <div class="game-banner" style="height:120px;">
                     <img src="assets/images/ran-online.jpg" alt="RAN-BANNER">
                     <div class="banner-content">
-                        <h2 class="header-font text-3xl font-black italic text-white">RAN ONLINE EP7</h2>
+                        <h2 class="header-font text-3xl font-black italic text-white uppercase">Ran Online EP7</h2>
                         <p class="text-[9px] text-red-500 font-bold tracking-[0.5em] uppercase mt-1">SaaS Enterprise / Real-Time Sync</p>
                     </div>
                 </div>
@@ -192,6 +193,34 @@
                     <button onclick="controlServer('ran','start')" class="btn-mesh bg-red-600 text-white">BOOT SER</button>
                 </div>
             </div>
+            <div class="glass-panel p-5 md:p-6 border border-green-500/10 bg-green-500/5">
+                <div class="flex items-center justify-between mb-5">
+                    <div>
+                        <h3 class="header-font text-xl md:text-2xl text-white font-black italic uppercase">Yulgang Online</h3>
+                        <p class="text-[10px] text-green-400 font-bold uppercase tracking-[0.35em] mt-1">Register / Download / Login Gateway</p>
+                    </div>
+                    <div class="text-[10px] text-green-400 font-black uppercase"><span class="pulse-dot bg-green-500"></span>LIVE</div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
+                    <input id="reg-user" type="text" placeholder="Username" class="bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none">
+                    <input id="reg-pass" type="password" placeholder="Password" class="bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none">
+                    <input id="reg-email" type="email" placeholder="Email" class="bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none">
+                </div>
+                <button onclick="registerYulgang()" class="w-full btn-mesh bg-green-600 hover:bg-green-500 text-white py-4 mb-4">สมัครสมาชิก</button>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                    <a href="https://sn-designstudio.dev/download/YulgangSetup.exe" class="btn-mesh bg-blue-600 hover:bg-blue-500 text-white text-center py-4 block">ดาวน์โหลด Windows EXE</a>
+                    <a href="https://sn-designstudio.dev/download/YulgangMobile.apk" class="btn-mesh bg-orange-500 hover:bg-orange-400 text-black text-center py-4 block">ดาวน์โหลด Android APK</a>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+                    <input id="login-user" type="text" placeholder="Username" class="bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none">
+                    <input id="login-pass" type="password" placeholder="Password" class="bg-black/50 border border-white/10 rounded-xl p-3 text-sm text-white outline-none">
+                </div>
+                <button onclick="loginYulgang()" class="w-full btn-mesh bg-yellow-500 hover:bg-yellow-400 text-black py-4">เข้าเกม</button>
+                <div id="yg-auth-status" class="mt-4 text-center text-[11px] text-gray-400 font-bold uppercase">System Ready</div>
+            </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
                 <div class="glass-panel p-4">
@@ -202,17 +231,15 @@
                         <button onclick="controlHamster('stop')" class="flex-1 btn-mesh bg-white/5 text-red-500">STOP</button>
                     </div>
                 </div>
-
                 <div class="glass-panel p-4">
                     <h3 class="header-font text-[9px] text-amber-500 uppercase italic mb-3">Faucet Node (5004)</h3>
                     <div id="faucet-console" class="termux-box mb-3 text-amber-300"></div>
                     <button onclick="initFaucet()" class="w-full btn-mesh bg-amber-500 text-black">INIT ENGINE</button>
                 </div>
-
                 <div class="glass-panel p-4">
                     <h3 class="header-font text-[9px] text-red-500 uppercase italic mb-3">Key Unlocker</h3>
                     <div class="video-container mb-3 shadow-2xl">
-                        <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                        <iframe id="yt-player" src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
                     </div>
                     <button class="w-full btn-mesh bg-red-600 text-white shadow-red-500/20">FETCH KEY</button>
                 </div>
@@ -221,80 +248,94 @@
             <div class="glass-panel p-4">
                 <div class="flex justify-between items-center">
                     <h3 class="header-font text-[9px] text-gray-400 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Security Audit Live</h3>
-                    <div class="flex items-center gap-2">
-                        <span class="pulse-dot bg-green-500"></span>
-                        <span class="text-[10px] text-green-400 font-black uppercase tracking-tighter">ACTIVE</span>
-                    </div>
+                    <div class="flex items-center gap-2"><span class="pulse-dot bg-green-500"></span><span class="text-[10px] text-green-400 font-black uppercase tracking-tighter">ACTIVE</span></div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
 
 <script>
-    const API = {
-        BASE: "https://api.sn-designstudio.dev",
-        TOKEN: "SN_ULTRA_INTERNAL_92837282"
-    };
+/* =========================================
+   CORE CONFIG & AUTH
+========================================= */
+const API_BASE = "https://api.sn-designstudio.dev";
+const INTERNAL_TOKEN = "SN_ULTRA_INTERNAL_92837282";
 
-    // Load Yulgang Data
-    async function loadYulgangBox(){
-        try {
-            const res = await fetch(`${API.BASE}/api/yulgang/overview`, { headers: { "Authorization": `Bearer ${API.TOKEN}` } });
-            const json = await res.json();
-            if(json.success){
-                const d = json.data || {};
-                document.getElementById("db-total-users").innerText = d.totalCharacters || 0;
-                document.getElementById("yg-online").innerText = d.onlinePlayers || 0;
-                document.getElementById("yg-class").innerText = d.totalClasses || 0;
-                document.getElementById("yg-items").innerText = Number(d.totalItems || 0).toLocaleString();
-                document.getElementById("yg-load").innerText = (d.serverLoad || 0) + "%";
-            }
-        } catch(e) { console.log("YULGANG SYNC PENDING..."); }
-    }
+/* YULGANG REGISTER */
+async function registerYulgang() {
+    const username = document.getElementById("reg-user").value.trim();
+    const password = document.getElementById("reg-pass").value.trim();
+    const email    = document.getElementById("reg-email").value.trim();
+    const status   = document.getElementById("yg-auth-status");
+    if(!username || !password || !email){ status.innerHTML = "<span class='text-red-400'>กรอกข้อมูลให้ครบ</span>"; return; }
+    status.innerHTML = "กำลังสมัครสมาชิก...";
+    try{
+        const res = await fetch(`${API_BASE}/api/yulgang/register`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":"Bearer " + INTERNAL_TOKEN},
+            body: JSON.stringify({username, password, email})
+        });
+        const json = await res.json();
+        status.innerHTML = json.success ? "<span class='text-green-400'>สมัครสมาชิกสำเร็จ</span>" : `<span class='text-red-400'>${json.message || 'สมัครไม่สำเร็จ'}</span>`;
+    }catch(err){ status.innerHTML = "<span class='text-red-400'>API ERROR</span>"; }
+}
 
-    // Load Stats
-    async function loadSystemStats(){
-        try {
-            const res = await fetch(`${API.BASE}/api/system/stats`);
-            const json = await res.json();
-            if(json.success){
-                document.getElementById("sys-cpu").innerText = (json.system?.cpu || 0) + "%";
-                document.getElementById("sys-ram").innerText = (json.system?.ram || 0) + "%";
-            }
-        } catch(e) { console.log("STATS OFFLINE"); }
-    }
+/* YULGANG LOGIN */
+async function loginYulgang(){
+    const username = document.getElementById("login-user").value.trim();
+    const password = document.getElementById("login-pass").value.trim();
+    const status   = document.getElementById("yg-auth-status");
+    if(!username || !password){ status.innerHTML = "<span class='text-red-400'>กรอก Username / Password</span>"; return; }
+    status.innerHTML = "กำลังเข้าสู่ระบบ...";
+    try{
+        const res = await fetch(`${API_BASE}/api/yulgang/login`,{
+            method:"POST",
+            headers:{"Content-Type":"application/json","Authorization":"Bearer " + INTERNAL_TOKEN},
+            body: JSON.stringify({username, password})
+        });
+        const json = await res.json();
+        if(json.success){
+            localStorage.setItem("yg_token", json.token || "");
+            status.innerHTML = "<span class='text-green-400'>เข้าสู่ระบบสำเร็จ กำลังเปิดเกม...</span>";
+            window.location.href = "yulgang://launch";
+        }else{ status.innerHTML = `<span class='text-red-400'>${json.message || 'Login Failed'}</span>`; }
+    }catch(err){ status.innerHTML = "<span class='text-red-400'>SERVER OFFLINE</span>"; }
+}
 
-    // Controls
-    async function controlServer(type, action){
-        alert(`Command Sent: ${type} -> ${action}`);
-        // Logic for backend call here
-    }
+/* DASHBOARD LOGIC */
+async function updateRealData() {
+    try {
+        const res = await fetch(`${API_BASE}/api/system/stats`);
+        const data = await res.json();
+        if(data.success) {
+            document.getElementById('sys-cpu').innerText = `${data.system?.cpu || 0}%`;
+            document.getElementById('sys-ram').innerText = `${data.system?.ram || 0}%`;
+        }
+    } catch(e) { console.log("Stats sync pending..."); }
+}
 
-    let hmInt = null;
-    function controlHamster(act){
-        const term = document.getElementById("hmTerminal");
-        if(act==='start'){
-            term.innerHTML += "<div>[5005] Hamster Node Live</div>";
-            hmInt = setInterval(()=> {
-                term.innerHTML += `<div>>> heartbeat ${new Date().toLocaleTimeString()}</div>`;
-                term.scrollTop = term.scrollHeight;
-            }, 3000);
-        } else { clearInterval(hmInt); term.innerHTML += "<div class='text-red-400'>>> process stopped</div>"; }
-    }
+let hmInt = null;
+function controlHamster(act) {
+    const term = document.getElementById("hmTerminal");
+    if(act==='start'){
+        term.innerHTML += "<div>[5005] Hamster Node Live</div>";
+        hmInt = setInterval(()=> {
+            term.innerHTML += `<div>>> heartbeat ${new Date().toLocaleTimeString()}</div>`;
+            term.scrollTop = term.scrollHeight;
+        }, 3000);
+    } else { clearInterval(hmInt); term.innerHTML += "<div class='text-red-400'>>> stopped</div>"; }
+}
 
-    // Chart Init
-    const ctx = document.getElementById("liveChart");
-    new Chart(ctx, {
-        type: "line",
-        data: { labels: ["1","2","3","4","5"], datasets: [{ data: [10,25,15,40,30], borderColor: "#10b981", tension: 0.4 }] },
-        options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
-    });
+const ctx = document.getElementById("liveChart");
+new Chart(ctx, {
+    type: "line",
+    data: { labels: ["1","2","3","4","5"], datasets: [{ data: [10,25,15,40,30], borderColor: "#10b981", tension: 0.4 }] },
+    options: { plugins: { legend: { display: false } }, scales: { x: { display: false }, y: { display: false } } }
+});
 
-    loadYulgangBox(); loadSystemStats();
-    setInterval(loadYulgangBox, 10000);
-    setInterval(loadSystemStats, 10000);
+setInterval(updateRealData, 10000);
+document.addEventListener("DOMContentLoaded", updateRealData);
 </script>
 </body>
 </html>
