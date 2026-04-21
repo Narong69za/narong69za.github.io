@@ -151,16 +151,56 @@
             </div>
         </div>
 
-        <div class="xl:col-span-8 space-y-5">
-            <div class="glass-panel overflow-hidden">
-                <div class="game-banner" style="height:170px;">
-                    <img src="assets/images/yg-logo.jpg" alt="YG-BANNER">
-                    <div class="banner-content px-4">
-                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl uppercase">Yulgang 2026</h2>
-                        <h2 class="header-font text-3xl md:text-5xl font-black italic text-white leading-none drop-shadow-2xl uppercase">Online</h2>
-                        <p class="text-[10px] text-green-400 font-black tracking-[0.35em] uppercase mt-3">Gateway Routed / Port 5006</p>
-                    </div>
-                </div>
+      <div class="xl:col-span-8 space-y-5">
+    
+    <div class="glass-panel overflow-hidden border border-cyan-500/10">
+        <div class="game-banner" style="height:140px;">
+            <img src="assets/images/yg-map-preview.jpg" alt="MAP-PREVIEW">
+            <div class="banner-content">
+                <h3 class="header-font text-2xl font-black italic text-white uppercase">World Map & Monsters</h3>
+                <p id="current-map-status" class="text-[10px] text-cyan-400 font-bold uppercase tracking-widest mt-1">
+                    Central City: 14 Bosses / 241 Monsters Active
+                </p>
+            </div>
+        </div>
+        <div class="p-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                <p class="text-[8px] text-gray-500 uppercase">Current Map</p>
+                <p id="yg-map-name" class="text-white font-bold mono">Loading...</p>
+            </div>
+            <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                <p class="text-[8px] text-gray-500 uppercase">Coordinates</p>
+                <p id="yg-coords" class="text-cyan-400 font-bold mono">0 / 0 / 0</p>
+            </div>
+            <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                <p class="text-[8px] text-gray-500 uppercase">World Boss</p>
+                <p class="text-red-500 font-bold mono uppercase">Live</p>
+            </div>
+            <div class="bg-black/40 p-3 rounded-xl border border-white/5 text-center">
+                <p class="text-[8px] text-gray-500 uppercase">Uptime</p>
+                <p class="text-green-500 font-bold mono uppercase">99.9%</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="glass-panel p-5 border border-yellow-500/10">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="header-font text-lg text-white font-black italic">ITEM SHOWCASE (14 CLASSES)</h3>
+            <span class="text-[9px] text-yellow-500 font-bold uppercase">Inventory Scan Active</span>
+        </div>
+        <div id="item-grid" class="grid grid-cols-4 md:grid-cols-8 gap-2">
+            <div class="aspect-square bg-white/5 rounded-lg border border-white/10 animate-pulse"></div>
+            <div class="aspect-square bg-white/5 rounded-lg border border-white/10 animate-pulse"></div>
+        </div>
+    </div>
+
+    <div class="glass-panel p-5 border border-pink-500/10">
+        <h3 class="header-font text-lg text-pink-400 font-black italic mb-4">PREMIUM CASH SHOP</h3>
+        <div id="shop-container" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            </div>
+    </div>
+</div>
+
                 <div class="p-5 md:p-7">
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                         <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Players</p><p id="db-total-users" class="header-font text-3xl font-black text-white">0</p></div>
@@ -171,11 +211,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
                         <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Map</p><p id="yg-map" class="text-green-400 font-black mono uppercase">CENTRAL CITY</p></div>
                         <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Load</p><p id="yg-load" class="header-font text-3xl font-black text-orange-400">0%</p></div>
-                        <div class="rounded-2xl bg-black/30 p-4 text-center"><p class="text-[9px] text-gray-500 uppercase font-bold mb-2">Status</p><p class="text-green-400 font-black text-sm tracking-widest"><span class="pulse-dot bg-green-500"></span>LIVE</p></div>
-                        <button onclick="controlServer('yulgang','restart')" class="btn-mesh bg-green-600 text-white font-black py-4">RESTART DB</button>
-                    </div>
-                </div>
-            </div>
+                 
 
             <div class="glass-panel overflow-hidden">
                 <div class="game-banner" style="height:120px;">
