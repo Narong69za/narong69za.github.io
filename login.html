@@ -1,160 +1,119 @@
 <!DOCTYPE html>
-<html lang="th">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SN ULTRA - SECURE ACCESS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        :root { --neon: #00ff41; --bg: #000; }
-        body { margin: 0; background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; overflow: hidden; }
-        
-        .login-card { 
-            background: #0a0a0a; 
-            padding: 50px; 
-            border-radius: 24px; 
-            border: 1px solid rgba(0, 255, 65, 0.15); 
-            text-align: center; 
-            box-shadow: 0 0 50px rgba(0, 255, 65, 0.05);
-            width: 100%;
-            max-width: 400px;
-        }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SN DESIGN LOGIN</title>
 
-        h1 { 
-            font-weight: 900; 
-            italic: true; 
-            letter-spacing: -1px; 
-            margin-bottom: 10px; 
-            font-size: 2rem;
-            text-shadow: 0 0 15px var(--neon);
-        }
-
-        .btn-google {
-            background: var(--neon);
-            color: #000;
-            padding: 16px 32px;
-            border-radius: 12px;
-            font-weight: 900;
-            text-transform: uppercase;
-            font-size: 14px;
-            transition: all 0.3s;
-            width: 100%;
-            margin-top: 30px;
-        }
-
-        .btn-google:hover {
-            background: #fff;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.2);
-        }
-
-        .status-box {
-            margin-top: 25px;
-            font-size: 11px;
-            font-weight: 700;
-            color: #444;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .neon-text { color: var(--neon); }
-
-        /* Scanning Animation */
-        .scan-line {
-            width: 100%;
-            height: 2px;
-            background: var(--neon);
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0.2;
-            animation: scanning 3s linear infinite;
-        }
-        @keyframes scanning {
-            0% { top: 0; }
-            100% { top: 100%; }
-        }
-    </style>
+<style>
+body{
+  margin:0;
+  background:#000;
+  color:#fff;
+  font-family:Arial,Helvetica,sans-serif;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  flex-direction:column;
+}
+h1{
+  letter-spacing:2px;
+  margin-bottom:30px;
+  text-shadow: 0 0 15px rgba(0, 255, 213, 0.4);
+}
+button{
+  padding:16px 32px;
+  font-size:16px;
+  border:none;
+  cursor:pointer;
+  background:#fff;
+  color:#000;
+  border-radius:30px; /* ปรับให้โค้งมนเข้ากับธีมใหม่ */
+  font-weight:bold;
+  transition: 0.3s;
+  box-shadow: 0 4px 15px rgba(255,255,255,0.2);
+}
+button:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 0 20px rgba(0, 255, 213, 0.6);
+  background: #00ffd5;
+}
+.status{
+  margin-top:20px;
+  font-size:14px;
+  opacity:.7;
+  color: #00ffd5;
+}
+</style>
 </head>
+
 <body>
 
-<div class="login-card relative overflow-hidden">
-    <div class="scan-line"></div>
-    <p class="text-[10px] font-bold text-gray-600 uppercase tracking-widest mb-2">Security Layer v3.0</p>
-    <h1>SN <span class="neon-text">ULTRA</span></h1>
-    <p class="text-xs text-gray-500 font-medium">ยืนยันตัวตนเพื่อเข้าสู่ระบบ AI Production</p>
+<h1>SN DESIGN LOGIN</h1>
 
-    <button id="login-btn" class="btn-google" onclick="loginWithGoogle()">
-        Login with Google
-    </button>
+<button onclick="loginWithGoogle()">
+  LOGIN WITH GOOGLE
+</button>
 
-    <div class="status-box" id="status">Ready to Authenticate</div>
-</div>
+<div class="status" id="status"></div>
+
+<script src="assets/js/config.js"></script>
 
 <script>
-// ดึง API Base จาก Port 5003 ที่เราใช้คุม Database
-const API_BASE = "http://147.93.159.30:5003"; 
+// ดึงค่า URL จาก CONFIG ที่เราตั้งไว้
+const API_BASE = window.CONFIG ? window.CONFIG.API_BASE_URL : "https://api.sn-designstudio.dev";
 
-// สร้าง Hardware ID (หัวใจสำคัญของ 3-Layer Security)
-function getHWID() {
-    return btoa(navigator.userAgent).substring(0, 16);
-}
+// =====================================================
+// AUTO CHECK IF ALREADY LOGGED IN
+// =====================================================
+async function checkAuth(){
+  const statusEl = document.getElementById("status");
+  const token = localStorage.getItem("token");
 
-// ================= [1] AUTO CHECK SYSTEM =================
-async function checkAuth() {
-    const statusElem = document.getElementById("status");
-    const email = localStorage.getItem('user_email');
-    
-    if (!email) {
-        statusElem.innerText = "กรุณาเข้าสู่ระบบ";
-        return;
+  // ถ้าไม่มี Token ในเครื่องเลย ให้รอ User กด Login
+  if(!token) return;
+
+  statusEl.innerText = "Checking session...";
+
+  try{
+    // เปลี่ยนไปเช็คที่ Backend API โดยตรง
+    const res = await fetch(`${API_BASE}/auth/me`,{
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      cache:"no-store"
+    });
+
+    if(res.status === 200){
+      statusEl.innerText = "Redirecting...";
+      window.location.replace("/create.html");
     }
-
-    try {
-        statusElem.innerHTML = "กำลังตรวจสอบ <span class='neon-text'>HARDWARE ID...</span>";
-        
-        const res = await fetch(`${API_BASE}/api/verify-access`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-                'email': email,
-                'hwid': getHWID()
-            })
-        });
-
-        const data = await res.json();
-
-        if (data.success) {
-            statusElem.innerHTML = "<span class='neon-text'>ACCESS GRANTED</span>";
-            setTimeout(() => {
-                window.location.replace("create.html");
-            }, 1000);
-        } else {
-            statusElem.innerText = "Session หมดอายุ หรือเครื่องไม่ตรง";
-            localStorage.clear();
-        }
-    } catch (e) {
-        statusElem.innerText = "Offline Mode";
-    }
+  }catch(e){
+    console.log("Not logged in or token expired");
+    statusEl.innerText = "";
+  }
 }
 
-// ================= [2] LOGIN REDIRECT =================
-function loginWithGoogle() {
-    const statusElem = document.getElementById("status");
-    statusElem.innerHTML = "Redirecting to <span class='neon-text'>Google...</span>";
-    
-    // ใน Production จริง พี่จะลิ้งค์ไปที่ Google Auth ของ Backend
-    // แต่ตอนนี้เราทำระบบแบบ Simple: ให้จำลองการเก็บ Email หลัง Auth สำเร็จ
-    // window.location.href = `https://api.sn-designstudio.dev/auth/google`;
-    
-    // จำลองการเข้าสู่ระบบ (สำหรับทดสอบ)
-    localStorage.setItem('user_email', 'narongsack.69@gmail.com');
-    checkAuth();
+// เริ่มเช็คทันทีที่เปิดหน้า
+checkAuth();
+
+// =====================================================
+// REDIRECT TO BACKEND OAUTH
+// =====================================================
+function loginWithGoogle(){
+  const statusEl = document.getElementById("status");
+  statusEl.innerText = "Redirecting to Google...";
+  
+  // ส่งไปที่ Backend OAuth เป๊ะๆ ตาม CONFIG
+  window.location.href = `${API_BASE}/auth/google`;
 }
 
-window.onload = checkAuth;
 </script>
 
 </body>
 </html>
+
 
