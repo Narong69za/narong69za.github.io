@@ -17,6 +17,7 @@
             --glass: rgba(15, 15, 22, 0.9);
             --border: rgba(255, 255, 255, 0.05);
             --gold: #c5a059;
+            --silver: #B8B8B8;
             --blue: #3b82f6;
             --green: #10b981;
         }
@@ -79,31 +80,34 @@
         .pulse-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; margin-right: 4px; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.3; transform: scale(1.2); } }
 
-        .video-container { position: relative; padding-bottom: 56.25%; height: 0; border-radius: 10px; overflow: hidden; }
-        .video-container iframe { position: absolute; inset: 0; width: 100%; height: 100%; }
-        
-        /* Marquee Style */
         .marquee-container {
             width: 100%;
             overflow: hidden;
             white-space: nowrap;
-            background: rgba(59, 130, 246, 0.1);
-            border-top: 1px solid rgba(59, 130, 246, 0.2);
-            border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-            padding: 5px 0;
-            margin-top: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 8px 0;
+            margin-top: 10px;
         }
         .marquee-text {
             display: inline-block;
-            animation: marquee 25s linear infinite;
-            color: #60a5fa;
+            animation: marquee 30s linear infinite;
+            color: #ffffff;
             font-weight: 800;
-            font-size: 10px;
+            font-size: 13px; /* ใหญ่ขึ้นตามสั่ง */
             text-transform: uppercase;
         }
         @keyframes marquee {
             0% { transform: translateX(100%); }
             100% { transform: translateX(-100%); }
+        }
+
+        /* Mobile Adjustments */
+        @media (max-width: 768px) {
+            .header-stack { align-items: center; text-align: center; }
+            .nav-controls { flex-direction: column; width: 100%; gap: 10px; }
+            .nav-controls div { width: 100%; justify-content: center; }
         }
 
         ::-webkit-scrollbar { width: 3px; }
@@ -114,27 +118,26 @@
 
 <div class="master-container">
     
-    <nav class="flex justify-between items-start mb-6 px-2">
-        <div class="flex flex-col gap-1 w-full max-w-2xl">
-            <div class="flex flex-col">
-                <h1 class="header-font text-2xl font-black text-white italic leading-none">
-                    SN ULTRA <span class="text-yellow-500">PRODUCT REAL-TIME</span>
-                </h1>
-                <p class="text-[11px] text-gray-300 font-bold mt-1 tracking-wider">
-                    พัฒนาโดย <span class="text-yellow-500 italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
-                </p>
-            </div>
+    <nav class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 px-2 gap-5">
+        <div class="header-stack flex flex-col w-full">
+            <h1 class="header-font text-3xl md:text-4xl font-black text-white italic leading-none">SN ULTRA</h1>
+            <h2 class="header-font text-xl md:text-2xl font-black text-yellow-500 italic leading-none mt-1">PRODUCT REAL-TIME</h2>
+            <p class="text-[14px] text-[#B8B8B8] font-bold mt-2 tracking-wide uppercase">
+                พัฒนาโดย <span class="italic">ต้องดีแค่ไหน โลกถึงจะจำ</span>
+            </p>
             
-            <div class="marquee-container mt-2">
+            <div class="marquee-container">
                 <div class="marquee-text">
                     ศูนย์รวม บอท ช่วยเล่น อัตโนมัติ แพลตฟอร์ม สร้าง ภาพ วีดีโอ ศูนย์รวม เกมส์ ออนไลน์ 2 ระบบ ให้บริการ ระบบชำระเงิน รับทำระบบ เซิฟเวอร์ AI รับเปิด เซิร์ฟเวอร์ เกมส์ ออนไลน์ ครบวงจร
                 </div>
             </div>
         </div>
 
-        <div class="flex gap-3 items-center pt-2">
-            <div class="px-4 py-1.5 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[9px] font-black uppercase tracking-widest"><i class="fas fa-id-badge mr-2"></i>OWNER ACCESS</div>
-            <div id="socket-status" class="px-4 py-1.5 glass-panel rounded-full text-green-400 text-[9px] font-black uppercase tracking-widest border-green-500/10">
+        <div class="nav-controls flex flex-row md:flex-col lg:flex-row gap-3 items-center w-full md:w-auto">
+            <div class="flex-1 md:w-full px-4 py-2 glass-panel rounded-full border-yellow-500/20 text-yellow-500 text-[10px] font-black uppercase tracking-widest flex items-center justify-center">
+                <i class="fas fa-id-badge mr-2"></i>OWNER ACCESS
+            </div>
+            <div id="socket-status" class="flex-1 md:w-full px-4 py-2 glass-panel rounded-full text-green-400 text-[10px] font-black uppercase tracking-widest border-green-500/10 flex items-center justify-center">
                 <span class="pulse-dot bg-green-500"></span> SOCKET ACTIVE
             </div>
         </div>
@@ -143,7 +146,6 @@
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-5">
         
         <div class="xl:col-span-4 space-y-5">
-            
             <div class="glass-panel p-5 border-yellow-500/10 bg-yellow-500/5">
                 <h3 class="header-font text-[9px] text-yellow-500 mb-4 uppercase tracking-widest text-center">Cloud Mesh Permission</h3>
                 <input type="text" id="target-id" placeholder="USERNAME / HWID..." class="w-full bg-black/60 border border-white/5 rounded-xl p-3 text-[10px] mb-4 outline-none text-center font-bold text-white mono">
@@ -199,11 +201,9 @@
                     </div>
                 </div>
             </div>
-
         </div>
 
         <div class="xl:col-span-8 space-y-5">
-
             <div class="glass-panel overflow-hidden">
                 <div class="game-banner">
                     <img src="assets/images/yg-logo.jpg" alt="YG-BANNER"> <div class="banner-content">
@@ -237,7 +237,6 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-                
                 <div class="glass-panel p-4">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="header-font text-[9px] text-cyan-400 uppercase italic">Hamster Pro</h3>
@@ -275,19 +274,14 @@
                     <input type="text" id="termux-key" readonly value="WATCH TO UNLOCK" class="w-full bg-black/60 border border-white/5 rounded-lg p-2 text-[10px] text-center text-gray-500 mono mb-2">
                     <button id="btn-unlock" onclick="playUnlockVideo()" class="w-full btn-mesh bg-red-600 text-white shadow-red-500/20">FETCH KEY</button>
                 </div>
-
             </div>
 
             <div class="glass-panel p-4">
-                <div class="flex justify-between items-center mb-3 border-b border-white/5 pb-2">
+                <div class="flex justify-between items-center">
                     <h3 class="header-font text-[9px] text-gray-400 uppercase tracking-widest"><i class="fas fa-shield-alt mr-2 text-blue-500"></i>Security Audit Live</h3>
-                    <span class="text-[8px] text-green-400 font-bold bg-green-900/20 px-2 py-0.5 rounded tracking-tighter">DEEP-SENSE PROTECTION ACTIVE</span>
-                </div>
-                <div id="audit-list" class="h-28 overflow-y-auto pr-2 mono text-[10px] space-y-1">
-                    <div class="flex gap-4 border-b border-white/5 py-0.5">
-                        <span class="text-blue-500">[SYSTEM]</span>
-                        <span class="text-gray-400 italic">V22 Gateway handshaking with api.sn-designstudio.dev...</span>
-                        <span class="ml-auto text-green-500 font-bold uppercase">Connected</span>
+                    <div class="flex items-center gap-2">
+                        <span class="pulse-dot bg-green-500"></span>
+                        <span class="text-[10px] text-green-400 font-black uppercase tracking-tighter">ACTIVE</span>
                     </div>
                 </div>
             </div>
@@ -296,58 +290,41 @@
     </div>
 </div>
 
-<div id="toast-container" class="fixed bottom-8 right-8 z-[9999] flex flex-col gap-2"></div>
-
 <script>
     const API = "https://api.sn-designstudio.dev";
     let hamsterInterval = null;
 
-    // --- Hamster Pro Logic (ดึงข้อมูลจริงจากประวัติงาน) ---
     function controlHamster(action) {
         const terminal = document.getElementById('hmTerminal');
         const state = document.getElementById('hmState');
-        
         if(action === 'start') {
             state.innerText = "RUNNING";
             state.className = "text-[8px] bg-green-900/20 text-green-400 px-2 py-0.5 rounded font-bold";
-            
             terminal.innerHTML += `<div>[SYSTEM] Initializing Hamster Season 2...</div>`;
-            terminal.innerHTML += `<div>[INFO] Loading Level System & Card Config...</div>`;
-            
             hamsterInterval = setInterval(() => {
                 const points = (Math.random() * 100).toFixed(2);
-                terminal.innerHTML += `<div class="text-[9px] text-cyan-200">>> Reverting Points: +${points} (Syncing to Wallet)</div>`;
+                terminal.innerHTML += `<div class="text-[9px] text-cyan-200">>> Reverting Points: +${points}</div>`;
                 terminal.scrollTop = terminal.scrollHeight;
-                
-                // Update Diamonds/Profit จำลอง
                 document.getElementById('hm-dia').innerText = (parseFloat(document.getElementById('hm-dia').innerText) + parseFloat(points)).toFixed(2);
             }, 2000);
-            
         } else {
             clearInterval(hamsterInterval);
             state.innerText = "STOPPED";
             state.className = "text-[8px] bg-red-900/20 text-red-400 px-2 py-0.5 rounded font-bold";
-            terminal.innerHTML += `<div class="text-red-400">[SYSTEM] Process Terminated.</div>`;
         }
     }
 
     async function updateRealData() {
         try {
-            const res = await fetch(`${API}/api/system/stats`, {
-                headers: { "Authorization": `Bearer ${localStorage.getItem("sn_jwt")}` }
-            });
+            const res = await fetch(`${API}/api/system/stats`);
             const data = await res.json();
-            
             if(data.success) {
                 document.getElementById('cr-runway').innerText = `$${(data.credits?.runway || 0).toFixed(2)}`;
                 document.getElementById('cr-gemini').innerText = `$${(data.credits?.gemini || 0).toFixed(2)}`;
-                document.getElementById('cr-replicate').innerText = `$${(data.credits?.replicate || 0).toFixed(2)}`;
-                document.getElementById('cr-eleven').innerText = (data.credits?.eleven || 0).toLocaleString();
-                document.getElementById('db-total-users').innerText = data.yg?.total_online || "0";
                 document.getElementById('sys-cpu').innerText = `${data.system?.cpu || 0}%`;
                 document.getElementById('sys-ram').innerText = `${data.system?.ram || 0}%`;
             }
-        } catch(e) { console.log("Waiting for API Gateway..."); }
+        } catch(e) { console.log("Gateway offline..."); }
     }
 
     setInterval(updateRealData, 10000);
@@ -356,3 +333,4 @@
 
 </body>
 </html>
+
