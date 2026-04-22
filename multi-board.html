@@ -3,100 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
-    <title>SN ULTRA | v36 IMMORTAL CORE</title>
+    <title>SN ULTRA | TITAN INTEGRATED CORE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap');
-        :root { --gold: #f59e0b; --bg: #030303; }
-        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; }
+        :root { --gold: #f59e0b; --bg: #030303; --ran-red: #ef4444; --yg-green: #22c55e; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .sn { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(18, 18, 18, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 28px; }
+        .glass { background: rgba(18, 18, 18, 0.9); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); border-radius: 32px; }
         .neon-gold { color: var(--gold); text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+        .btn-action { font-weight: 800; border-radius: 20px; transition: 0.3s; text-transform: uppercase; font-size: 11px; letter-spacing: 1px; }
+        .input-dark { background: #0a0a0a !important; border: 1px solid #262626 !important; color: white !important; padding: 16px; border-radius: 20px; width: 100%; font-size: 13px; outline: none; }
+        .input-dark:focus { border-color: var(--gold) !important; }
         .progress-bar { height: 6px; border-radius: 10px; background: #1a1a1a; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--gold); transition: width 1s ease-in-out; }
-        @keyframes bounce-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
-        .animate-bounce-in { animation: bounce-in 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+        .terminal { background: #000; border-radius: 24px; font-family: 'Courier New', monospace; font-size: 10px; color: #10b981; border: 1px solid #1f1f23; }
+        @keyframes pulse-ring { 0% { transform: scale(.33); opacity: 1; } 80%, 100% { opacity: 0; } }
+        .online-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; position: relative; }
+        .online-dot::after { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border: 2px solid #22c55e; border-radius: 50%; animation: pulse-ring 1.25s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
     </style>
 </head>
-<body class="p-4 pb-12">
+<body class="p-4 pb-20 space-y-6">
 
-    <header class="text-center mb-6 pt-4" onclick="SN_CORE.ui.triggerAdmin()">
-        <h1 class="sn text-4xl font-black italic tracking-tighter">SN ULTRA</h1>
-        <p id="online-count" class="text-[10px] font-bold text-green-500 uppercase mt-2 tracking-widest">Players Online: 184</p>
+    <header class="text-center py-6" onclick="SN_CORE.ui.triggerAdmin()">
+        <h1 class="sn text-5xl font-black italic tracking-tighter uppercase">SN ULTRA</h1>
+        <div class="flex justify-center items-center gap-3 mt-3">
+            <div class="online-dot"></div>
+            <p id="online-count" class="text-xs font-black text-green-500 uppercase tracking-widest">Players Online: 184</p>
+        </div>
     </header>
 
-    <div class="glass p-4 mb-5 border-yellow-500/20 bg-gradient-to-r from-yellow-500/5 to-transparent">
-        <div class="flex items-center gap-3">
-            <i class="fas fa-calendar-star text-yellow-500"></i>
-            <marquee class="text-xs font-bold uppercase tracking-widest">
-                EXP x3 วันนี้ !! | BOSS SPAWN 20:00 น. ณ หุบเขาไร้รัก | กิจกรรมเติมเงินรับพอยท์ x2 เริ่มแล้ว
+    <div class="glass p-4 border-yellow-500/20 bg-gradient-to-r from-yellow-500/10 to-transparent">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-bolt text-yellow-500 animate-pulse"></i>
+            <marquee class="text-xs font-bold uppercase tracking-widest text-yellow-500">
+                EXP x3 วันนี้ !! | BOSS SPAWN 20:00 น. | โปรโมชั่นเติมเงิน x2 อัตโนมัติทุกยอด
             </marquee>
         </div>
     </div>
 
-    <div class="grid grid-cols-2 gap-3 mb-5">
-        <div class="glass p-5 text-center">
-            <p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">CPU LOAD</p>
-            <h3 id="cpu-val" class="text-2xl font-black neon-gold">12%</h3>
-        </div>
-        <div class="glass p-5 text-center">
-            <p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">RAM USAGE</p>
-            <h3 id="ram-val" class="text-2xl font-black neon-gold">45%</h3>
-        </div>
+    <div class="grid grid-cols-2 gap-3">
+        <div class="glass p-5 text-center"><p class="text-[9px] text-zinc-500 font-bold mb-1 uppercase">CPU LOAD</p><h3 id="cpu-val" class="text-2xl font-black neon-gold">12%</h3></div>
+        <div class="glass p-5 text-center"><p class="text-[9px] text-zinc-500 font-bold mb-1 uppercase">RAM USAGE</p><h3 id="ram-val" class="text-2xl font-black neon-gold">45%</h3></div>
     </div>
 
-    <div class="glass p-6 mb-5">
-        <h3 class="text-[10px] font-black uppercase text-zinc-500 mb-4 tracking-widest">AI Engine Usage Meter</h3>
+    <div class="glass p-6">
+        <h3 class="text-[10px] font-black uppercase text-zinc-500 mb-5 tracking-widest flex justify-between">AI Engine Usage Meter <span>REAL-TIME</span></h3>
         <div class="space-y-4">
-            <div>
-                <div class="flex justify-between text-[10px] mb-1"><span>Gemini Pro 1.5</span><span>65%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width: 65%"></div></div>
-            </div>
-            <div>
-                <div class="flex justify-between text-[10px] mb-1"><span>Runway Gen-3</span><span>22%</span></div>
-                <div class="progress-bar"><div class="progress-fill" style="width: 22%"></div></div>
-            </div>
-            <div>
-                <div class="flex justify-between text-[10px] mb-1"><span>ElevenLabs AI</span><span class="text-red-500">90%</span></div>
-                <div class="progress-bar"><div class="progress-fill bg-red-600" style="width: 90%"></div></div>
-            </div>
+            <div><div class="flex justify-between text-[10px] mb-1"><span>Gemini Pro 1.5</span><span>65%</span></div><div class="progress-bar"><div class="progress-fill bg-orange-500" style="width: 65%"></div></div></div>
+            <div><div class="flex justify-between text-[10px] mb-1"><span>Runway Gen-3</span><span>22%</span></div><div class="progress-bar"><div class="progress-fill bg-purple-500" style="width: 22%"></div></div></div>
+            <div><div class="flex justify-between text-[10px] mb-1"><span>ElevenLabs AI</span><span class="text-red-500 font-bold">90%</span></div><div class="progress-bar"><div class="progress-fill bg-red-600" style="width: 90%"></div></div></div>
         </div>
     </div>
 
-    <div class="glass p-8 mb-5 border-white/5">
-        <div class="text-center mb-6">
-            <h3 class="sn text-xl font-bold italic neon-gold uppercase">Membership Center</h3>
+    <div class="glass p-8 border-yg-green/20 shadow-2xl shadow-green-500/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fas fa-khanda text-6xl text-green-500"></i></div>
+        <div class="text-center mb-8">
+            <h3 class="text-2xl font-black sn italic text-yg-green">YULGANG ONLINE</h3>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-[0.4em]">Integrated Private Server</p>
         </div>
+
+        <div class="grid grid-cols-2 gap-2 mb-6 text-[10px] font-mono text-zinc-400">
+            <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>Network:</span><span class="text-yg-green">84 MB/s</span></div>
+            <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>Disk IO:</span><span class="text-yg-green">Fast</span></div>
+        </div>
+
         <div class="space-y-3">
-            <input id="user" class="w-full bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl text-sm" placeholder="Username">
-            <input id="pass" type="password" class="w-full bg-zinc-900/50 border border-zinc-800 p-4 rounded-2xl text-sm" placeholder="Password">
-            <div class="grid grid-cols-2 gap-3 mt-4">
-                <button onclick="SN_CORE.auth.login()" class="p-4 bg-white text-black font-black rounded-2xl text-xs uppercase">LOGIN</button>
-                <button onclick="SN_CORE.auth.register()" class="p-4 border border-white/10 font-black rounded-2xl text-xs uppercase">REGISTER</button>
+            <div class="grid grid-cols-2 gap-3">
+                <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[10px] font-bold text-white"><i class="fab fa-google text-red-500 mr-1"></i> GOOGLE</button>
+                <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[10px] font-bold text-white"><i class="fab fa-discord text-blue-500 mr-1"></i> DISCORD</button>
+            </div>
+            <input type="email" placeholder="Email Address" class="input-dark">
+            <input type="text" placeholder="Username (ID)" class="input-dark">
+            <input type="password" placeholder="Password" class="input-dark">
+            <button class="w-full btn-action bg-yg-green text-black py-5 text-sm">Create Yulgang Account</button>
+            <button class="w-full text-[10px] text-zinc-500 font-bold uppercase py-2">Forget Password?</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-6">
+            <button class="bg-gradient-to-br from-zinc-800 to-black p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5">
+                <i class="fas fa-desktop text-yg-green"></i> <span class="text-[10px] font-bold">.EXE PC</span>
+            </button>
+            <button class="bg-gradient-to-br from-zinc-800 to-black p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5">
+                <i class="fab fa-android text-yg-green"></i> <span class="text-[10px] font-bold">.APK MOBILE</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="glass p-8 border-ran-red/20 shadow-2xl shadow-red-500/5 relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fas fa-skull text-6xl text-red-500"></i></div>
+        <div class="text-center mb-8">
+            <h3 class="text-2xl font-black sn italic text-ran-red">RAN ONLINE EP7</h3>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-[0.4em]">Hardcore SaaS Enterprise</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mb-6 text-[10px] font-mono text-zinc-400">
+            <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>RAM:</span><span class="text-ran-red">32GB</span></div>
+            <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>Traffic:</span><span class="text-ran-red">High</span></div>
+        </div>
+
+        <div class="space-y-3">
+            <input type="email" placeholder="Email Address" class="input-dark">
+            <input type="text" placeholder="Username (ID)" class="input-dark">
+            <input type="password" placeholder="Password" class="input-dark">
+            <button class="w-full btn-action bg-ran-red text-white py-5 text-sm">Join Ran Battle</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2 mt-6">
+            <button class="bg-zinc-900/80 p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5">
+                <i class="fas fa-desktop text-ran-red"></i> <span class="text-[10px] font-bold">.EXE PC</span>
+            </button>
+            <button class="bg-zinc-900/80 p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5">
+                <i class="fab fa-android text-ran-red"></i> <span class="text-[10px] font-bold">.APK MOBILE</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="glass p-6">
+        <h3 class="text-xs font-black sn italic neon-gold mb-4 uppercase">YouTube API Unlocker</h3>
+        <div class="aspect-video bg-black rounded-2xl mb-4 overflow-hidden" id="player"></div>
+        <div id="unlock-box" class="hidden space-y-4">
+            <p class="text-xs text-green-500 font-bold text-center">� VIDEO FINISHED! API KEY UNLOCKED:</p>
+            <div class="terminal p-4 flex justify-between items-center">
+                <span id="api-key" class="font-bold">SN-ULTRA-8X2J-K992</span>
+                <button class="bg-green-500 text-black px-3 py-1 rounded-lg text-[9px] font-bold">COPY</button>
             </div>
         </div>
-    </div>
-
-    <div id="admin-panel" class="hidden glass p-6 mb-5 border-red-500/30 bg-red-500/5">
-        <h3 class="text-xs font-black text-red-500 mb-4 uppercase italic"><i class="fas fa-user-crown mr-2"></i>Admin Dashboard</h3>
-        <div class="grid grid-cols-2 gap-2">
-            <button class="bg-zinc-900 p-3 rounded-xl text-[10px] font-bold">RESTART SERVER</button>
-            <button class="bg-zinc-900 p-3 rounded-xl text-[10px] font-bold">BAN USER</button>
-            <button class="bg-zinc-900 p-3 rounded-xl text-[10px] font-bold">SEND ITEM</button>
-            <button class="bg-zinc-900 p-3 rounded-xl text-[10px] font-bold">ADJUST EXP</button>
+        <div class="flex justify-between items-center px-2">
+            <span class="text-[9px] text-zinc-500 uppercase">Subscribe to unlock more</span>
+            <button class="bg-red-600 text-white px-4 py-2 rounded-xl text-[10px] font-bold"><i class="fab fa-youtube mr-1"></i> SUBSCRIBE</button>
         </div>
     </div>
 
-    <div class="space-y-3">
-        <button class="w-full p-6 bg-gradient-to-r from-zinc-800 to-black rounded-[35px] flex justify-between items-center shadow-2xl active:scale-95 transition-all">
-            <div class="text-left"><p class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest">Client Edition</p><p class="text-xl font-black italic sn">DOWNLOAD .EXE</p></div>
-            <i class="fas fa-desktop text-2xl opacity-10"></i>
-        </button>
+    <div class="grid grid-cols-1 gap-4">
+        <div class="glass p-5">
+            <p class="text-[10px] font-bold text-orange-400 mb-3 italic">HAMSTER TERMINAL (5005)</p>
+            <div id="hamster-log" class="terminal p-4 h-24 overflow-hidden">>> Ready...</div>
+            <button class="w-full bg-orange-500 text-black py-3 rounded-2xl text-[10px] font-black mt-3">INIT HAMSTER BOT</button>
+        </div>
+        <div class="glass p-5">
+            <p class="text-[10px] font-bold text-blue-400 mb-3 italic">FAUCET CRYPTO (5004)</p>
+            <button class="w-full btn-action bg-blue-600 text-white py-4">Collect Faucet Node</button>
+        </div>
+    </div>
+
+    <div class="glass p-6 border-dashed border-red-500/30">
+        <h3 class="text-[10px] font-black text-red-500 mb-4 tracking-widest uppercase">Security Audit Live Preview</h3>
+        <div class="grid grid-cols-2 gap-4 text-[10px] font-mono text-zinc-500">
+            <div>XSS Shield: <span class="text-green-500">ON</span></div>
+            <div>SQL Injection: <span class="text-green-500">ON</span></div>
+            <div>DDoS Protection: <span class="text-yellow-500">STABLE</span></div>
+            <div>Auth Session: <span class="text-green-500">SECURE</span></div>
+        </div>
+    </div>
+
+    <footer class="text-center py-8">
+        <p class="text-[9px] text-zinc-700 font-black uppercase tracking-[0.4em]">SN ULTRA TITAN v36.5 | PROTECTED SYSTEM</p>
+    </footer>
+
+    <div id="admin-panel" class="hidden fixed inset-x-4 top-20 z-[999] glass p-8 border-red-500/50 bg-red-500/10">
+        <h3 class="text-xs font-black text-red-500 mb-6 uppercase italic"><i class="fas fa-user-crown mr-2"></i>Admin Dashboard</h3>
+        <div class="grid grid-cols-2 gap-3">
+            <button class="bg-zinc-900 p-4 rounded-2xl text-[10px] font-bold border border-white/5">RESTART SERVER</button>
+            <button class="bg-zinc-900 p-4 rounded-2xl text-[10px] font-bold border border-white/5">BAN ACCOUNT</button>
+            <button class="bg-zinc-900 p-4 rounded-2xl text-[10px] font-bold border border-white/5">INJECT ITEM</button>
+            <button class="bg-zinc-900 p-4 rounded-2xl text-[10px] font-bold border border-white/5">BROADCAST</button>
+        </div>
+        <button onclick="SN_CORE.ui.triggerAdmin()" class="w-full mt-6 py-3 text-zinc-500 text-[10px]">CLOSE PANEL</button>
     </div>
 
     <script src="main.js"></script>
+    <script>
+        // WebSocket Handshake [Rule 6, 10]
+        const SN_CORE = {
+            adminTaps: 0,
+            init() {
+                this.connect();
+                this.ui.initToast();
+                this.youtube.loadRandom();
+            },
+            connect() {
+                const ws = new WebSocket('ws://' + window.location.host);
+                ws.onmessage = (e) => {
+                    const d = JSON.parse(e.data);
+                    if(d.type==='STATUS_UPDATE') {
+                        document.getElementById('cpu-val').innerText = d.cpu + '%';
+                        document.getElementById('ram-val').innerText = d.ram + '%';
+                    }
+                    if(d.type==='TOAST') this.ui.toast(d.msg, d.status);
+                };
+            },
+            youtube: {
+                loadRandom() {
+                    document.getElementById('player').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/NI7WALIXStU?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                }
+            },
+            ui: {
+                initToast() {
+                    const c = document.createElement('div'); c.id="toast-c"; c.className="fixed top-5 right-5 z-[9999] flex flex-col gap-2";
+                    document.body.appendChild(c);
+                },
+                toast(m, s) {
+                    const e = document.createElement('div');
+                    e.className = `p-4 rounded-2xl glass border ${s==='success'?'border-green-500/50':'border-red-500/50'} text-[10px] font-black animate-bounce-in bg-black`;
+                    e.innerText = `[LOG] ${m}`; document.getElementById('toast-c').appendChild(e);
+                    setTimeout(() => e.remove(), 3000);
+                },
+                triggerAdmin() {
+                    this.adminTaps++;
+                    if(this.adminTaps >= 5) {
+                        document.getElementById('admin-panel').classList.toggle('hidden');
+                        this.toast("GOD MODE ACTIVATED", "success");
+                        this.adminTaps = 0;
+                    }
+                }
+            }
+        };
+        SN_CORE.init();
+    </script>
 </body>
 </html>
 
