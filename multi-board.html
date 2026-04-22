@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA REAL-TIME</title>
+    <title>SN ULTRA | REAL-TIME INTEGRATED</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -12,137 +12,215 @@
         :root { --gold: #f59e0b; --bg: #050505; }
         body { background: var(--bg); color: #e4e4e7; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .sn-font { font-family: 'Orbitron', sans-serif; }
-        .glass-card { background: #121214; border: 1px solid #27272a; border-radius: 28px; }
+        .glass-card { background: #121214; border: 1px solid #27272a; border-radius: 28px; margin-bottom: 1.5rem; }
         .neon-gold { color: var(--gold); text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
-        .btn-gold { background: #f59e0b; color: #000; font-weight: 800; border-radius: 16px; transition: 0.2s; }
-        .input-dark { background: #18181b !important; border: 1px solid #27272a !important; color: white !important; padding: 12px; border-radius: 14px; width: 100%; font-size: 13px; outline: none; }
+        .btn-gold { background: #f59e0b; color: #000; font-weight: 800; border-radius: 16px; text-transform: uppercase; transition: 0.2s; cursor: pointer; }
+        .input-dark { background: #18181b !important; border: 1px solid #27272a !important; color: white !important; padding: 14px; border-radius: 16px; width: 100%; font-size: 14px; outline: none; }
         .input-dark:focus { border-color: var(--gold) !important; }
-        .btn-social { background: #1c1c1f; border: 1px solid #27272a; padding: 10px; border-radius: 12px; font-size: 12px; font-weight: bold; width: 100%; transition: 0.2s; }
-        .btn-social:hover { background: #27272a; }
+        .terminal-box { background: #000; border-radius: 18px; font-family: 'Courier New', monospace; font-size: 10px; color: #10b981; border: 1px solid #1f1f23; }
+        .scroll-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-4 space-y-6 pb-12">
+<body class="p-4 scroll-hide">
 
-    <div class="text-center py-6">
+    <header class="text-center py-6">
         <h1 class="text-4xl font-black sn-font tracking-tighter italic">SN ULTRA</h1>
         <h2 class="text-2xl font-bold sn-font neon-gold italic">REAL-TIME</h2>
-        <div class="flex justify-center gap-2 mt-3">
-            <span class="text-[9px] bg-green-500/10 text-green-500 px-3 py-1 rounded-full font-bold border border-green-500/20">API ACTIVE</span>
-            <span class="text-[9px] bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full font-bold border border-yellow-500/20">OWNER ACCESS</span>
+        <div class="flex justify-center gap-3 mt-4">
+            <span class="text-[9px] bg-green-500/10 text-green-500 px-3 py-1 rounded-full font-bold border border-green-500/20 uppercase tracking-widest">API Active</span>
+            <span class="text-[9px] bg-blue-500/10 text-blue-500 px-3 py-1 rounded-full font-bold border border-blue-500/20 uppercase tracking-widest">Standard Mode</span>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-3 gap-3 mb-4">
+        <div class="glass-card p-4 text-center mb-0">
+            <p class="text-[9px] text-zinc-500 font-bold uppercase mb-1 tracking-tighter">CPU LOAD</p>
+            <p class="text-xl font-black neon-gold" id="cpu-val">0%</p>
+        </div>
+        <div class="glass-card p-4 text-center mb-0">
+            <p class="text-[9px] text-zinc-500 font-bold uppercase mb-1 tracking-tighter">RAM USAGE</p>
+            <p class="text-xl font-black neon-gold" id="ram-val">0%</p>
+        </div>
+        <div class="glass-card p-4 text-center mb-0">
+            <p class="text-[9px] text-zinc-500 font-bold uppercase mb-1 tracking-tighter">LATENCY</p>
+            <p class="text-xl font-black text-blue-400" id="ping-val">12ms</p>
         </div>
     </div>
+    <div class="glass-card p-4 h-44 overflow-hidden shadow-2xl">
+        <canvas id="liveChart"></canvas>
+    </div>
 
-    <div class="glass-card p-6 border-l-4 border-l-blue-500 shadow-xl">
+    <div class="glass-card p-6 border-l-4 border-l-blue-600">
         <div class="flex justify-between items-center mb-4">
-            <h3 class="text-sm font-bold sn-font italic uppercase">Private Server RAN EP7</h3>
-            <span class="text-[10px] text-blue-400 font-bold">STABLE PORT 5100</span>
+            <h3 class="text-sm font-black sn-font italic uppercase">Ran Online EP7 (Private)</h3>
+            <span class="text-[10px] font-mono text-zinc-500 tracking-tighter">PORT: 5100</span>
         </div>
         <div class="grid grid-cols-2 gap-4">
-            <div class="bg-black/40 p-4 rounded-2xl border border-zinc-800">
-                <p class="text-[9px] text-zinc-500 uppercase mb-1">Active Player</p>
-                <p class="text-sm font-bold">142 <span class="text-zinc-600 text-[10px]">PEOPLE</span></p>
+            <div class="bg-black/40 p-3 rounded-xl border border-zinc-800">
+                <p class="text-[8px] text-zinc-500 uppercase font-bold">Maps Loaded</p>
+                <p class="text-xs font-bold text-blue-400">182 / 182</p>
             </div>
-            <div class="bg-black/40 p-4 rounded-2xl border border-zinc-800">
-                <p class="text-[9px] text-zinc-500 uppercase mb-1">Maps Loaded</p>
-                <p class="text-sm font-bold text-blue-400">182 / 182</p>
+            <div class="bg-black/40 p-3 rounded-xl border border-zinc-800">
+                <p class="text-[8px] text-zinc-500 uppercase font-bold">Online Session</p>
+                <p class="text-xs font-bold text-green-500">STABLE</p>
             </div>
         </div>
     </div>
 
     <div class="glass-card p-6">
-        <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-5 font-bold text-center">Credit Policy 4 Engine AI</p>
+        <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-5 font-bold text-center">Credit Policy - 4 Engine AI</p>
         <div class="grid grid-cols-2 gap-3">
             <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
                 <p class="text-[9px] text-purple-400 font-bold mb-1">RUNWAY GEN-3</p>
-                <p class="text-xs">$15.20 <span class="text-[8px] text-zinc-600">USED</span></p>
+                <p class="text-sm font-bold">$15.20</p>
             </div>
             <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
                 <p class="text-[9px] text-blue-400 font-bold mb-1">GEMINI PRO</p>
-                <p class="text-xs">$8.45 <span class="text-[8px] text-zinc-600">USED</span></p>
+                <p class="text-sm font-bold">$8.45</p>
             </div>
             <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
                 <p class="text-[9px] text-yellow-400 font-bold mb-1">REPLICATE AI</p>
-                <p class="text-xs">$12.10 <span class="text-[8px] text-zinc-600">USED</span></p>
+                <p class="text-sm font-bold">$12.10</p>
             </div>
             <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
                 <p class="text-[9px] text-pink-400 font-bold mb-1">ELEVEN LABS</p>
-                <p class="text-xs">3,200 <span class="text-[8px] text-zinc-600">CHARS</span></p>
+                <p class="text-sm font-bold">3,200 <span class="text-[8px] text-zinc-600">CH</span></p>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4">
-        <div class="glass-card p-5 bg-gradient-to-br from-zinc-900 to-black">
-            <p class="text-[10px] font-bold text-orange-400 mb-3 italic">TELEGRAM HAMSTER BOT (PORT 5005)</p>
-            <div class="bg-black p-3 rounded-xl font-mono text-[9px] text-green-500 mb-3 h-16 overflow-hidden">
-                >> Handshake Protocol: OK<br>
-                >> Bot Instance: Active
-            </div>
-            <button class="w-full py-2 bg-zinc-800 rounded-lg text-[10px] font-bold">MANAGE BOT</button>
+    <div class="glass-card p-5">
+        <div class="flex justify-between items-center mb-3">
+            <p class="text-[10px] font-bold text-orange-400 italic uppercase">Hamster Bot (5005) & Faucet Node</p>
+            <span class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
         </div>
-        <div class="glass-card p-5 bg-gradient-to-br from-zinc-900 to-black">
-            <p class="text-[10px] font-bold text-blue-400 mb-3 italic">FAUCET CRYPTO NODE (PORT 5004)</p>
-            <div class="flex justify-between items-end">
-                <div><p class="text-xs font-bold">Status: <span class="text-green-500">READY</span></p><p class="text-[9px] text-zinc-500">Hashrate: 1.2 TH/s</p></div>
-                <button class="bg-blue-600 px-6 py-2 rounded-lg text-[10px] font-bold">INIT NODE</button>
-            </div>
+        <div class="terminal-box p-4 h-32 mb-4 scroll-hide" id="node-logs">
+            >> Connecting Hamster Node... [OK]<br>
+            >> Listening on Faucet Crypto... [READY]<br>
+            >> Port 5005/5004 Secured.
+        </div>
+        <button class="w-full btn-gold py-4 text-xs">INITIATE ALL NODES</button>
+    </div>
+
+    <div class="glass-card p-6 border-dashed border-red-500/40">
+        <div class="flex items-center gap-3 mb-4">
+            <i class="fas fa-fingerprint text-red-500"></i>
+            <p class="text-xs font-black uppercase tracking-widest">Security Audit Data Season</p>
+        </div>
+        <div class="space-y-2 text-[10px] font-mono text-zinc-500">
+            <div class="flex justify-between"><span>XSS Guard</span><span class="text-green-500 font-bold">ON</span></div>
+            <div class="flex justify-between"><span>SQL Injection Shield</span><span class="text-green-500 font-bold">ON</span></div>
+            <div class="flex justify-between"><span>DDoS Rate Limit</span><span class="text-yellow-500 font-bold">100 Req/s</span></div>
         </div>
     </div>
 
-    <div class="glass-card p-5 border-dashed border-red-500/30">
-        <p class="text-[10px] font-bold text-red-500 mb-3 uppercase tracking-widest"><i class="fas fa-user-secret mr-2"></i>Security Audit Season</p>
-        <div class="space-y-2">
-            <div class="flex justify-between text-[10px] p-2 bg-zinc-900 rounded-lg"><span>SQL Injection Shield</span><span class="text-green-500 font-bold">ACTIVE</span></div>
-            <div class="flex justify-between text-[10px] p-2 bg-zinc-900 rounded-lg"><span>DDoS Rate Limit</span><span class="text-green-500 font-bold">ACTIVE</span></div>
-        </div>
-    </div>
-
-    <div class="glass-card p-8 border border-yellow-500/20 shadow-2xl shadow-yellow-500/5">
-        <div class="text-center mb-6">
+    <div class="glass-card p-8 border border-yellow-500/20 shadow-2xl">
+        <div class="text-center mb-8">
             <h3 class="text-2xl font-black sn-font italic neon-gold">YULGANG ONLINE</h3>
-            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Membership Control Center</p>
+            <p class="text-[10px] text-zinc-500 uppercase tracking-widest mt-1">Season 2 : Membership Control</p>
         </div>
 
-        <div class="grid grid-cols-2 gap-3 mb-6">
-            <button class="btn-social text-white"><i class="fab fa-google mr-2 text-red-500"></i> Google</button>
-            <button class="btn-social text-white"><i class="fab fa-discord mr-2 text-blue-500"></i> Discord</button>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[11px] font-bold text-white flex items-center justify-center gap-2">
+                <i class="fab fa-google text-red-500"></i> GOOGLE
+            </button>
+            <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[11px] font-bold text-white flex items-center justify-center gap-2">
+                <i class="fab fa-discord text-blue-500"></i> DISCORD
+            </button>
         </div>
 
-        <div class="relative flex py-2 items-center mb-6">
+        <div class="relative flex py-4 items-center mb-4">
             <div class="flex-grow border-t border-zinc-800"></div>
-            <span class="flex-shrink mx-4 text-zinc-600 text-[10px] uppercase font-bold">Or Manual Access</span>
+            <span class="flex-shrink mx-4 text-zinc-600 text-[10px] uppercase font-black">Account Access</span>
             <div class="flex-grow border-t border-zinc-800"></div>
         </div>
 
         <div class="space-y-4">
-            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold uppercase">E-Mail Address</p><input type="email" placeholder="example@mail.com" class="input-dark"></div>
-            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold uppercase">Username</p><input type="text" placeholder="Character ID" class="input-dark"></div>
-            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold uppercase">Password</p><input type="password" placeholder="••••••••" class="input-dark"></div>
+            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold">EMAIL ADDRESS</p><input type="email" placeholder="mail@example.com" class="input-dark"></div>
+            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold">USERNAME</p><input type="text" placeholder="Account ID" class="input-dark"></div>
+            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold">PASSWORD</p><input type="password" placeholder="••••••••" class="input-dark"></div>
             
-            <button class="w-full btn-gold py-4 shadow-lg shadow-yellow-500/20 text-sm mt-4">JOIN ADVENTURE (สมัครสมาชิก)</button>
+            <button class="w-full btn-gold py-5 shadow-lg shadow-yellow-500/10 text-sm mt-4">JOIN ADVENTURE (สมัครสมาชิก)</button>
             
             <div class="flex justify-between px-2 mt-4">
-                <button class="text-[10px] text-zinc-500 font-bold hover:text-white transition-all uppercase">Forgot Password?</button>
-                <button class="text-[10px] text-zinc-500 font-bold hover:text-white transition-all uppercase">Check Rules</button>
+                <button class="text-[10px] text-zinc-600 font-bold uppercase">Forgot Password?</button>
+                <button class="text-[10px] text-zinc-600 font-bold uppercase">Game Rules</button>
             </div>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 gap-4 pt-4">
-        <button class="w-full p-5 bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl flex justify-between items-center shadow-lg shadow-blue-900/20 active:scale-95 transition-all">
-            <div class="text-left"><p class="text-[10px] font-bold text-white/70 uppercase">PC Platform</p><p class="text-lg font-black italic sn-font">DOWNLOAD .EXE</p></div>
-            <i class="fas fa-desktop text-3xl opacity-30"></i>
+    <div class="space-y-3">
+        <button class="w-full p-6 bg-gradient-to-r from-blue-700 to-blue-900 rounded-[32px] flex justify-between items-center shadow-xl active:scale-95 transition-all">
+            <div class="text-left"><p class="text-[10px] font-bold text-white/50 uppercase tracking-widest">Client PC</p><p class="text-xl font-black italic sn-font">DOWNLOAD .EXE</p></div>
+            <i class="fas fa-desktop text-3xl opacity-20"></i>
         </button>
-        <button class="w-full p-5 bg-gradient-to-r from-green-600 to-green-800 rounded-3xl flex justify-between items-center shadow-lg shadow-green-900/20 active:scale-95 transition-all">
-            <div class="text-left"><p class="text-[10px] font-bold text-white/70 uppercase">Mobile Platform</p><p class="text-lg font-black italic sn-font">DOWNLOAD .APK</p></div>
-            <i class="fab fa-android text-3xl opacity-30"></i>
+        <button class="w-full p-6 bg-gradient-to-r from-green-700 to-green-900 rounded-[32px] flex justify-between items-center shadow-xl active:scale-95 transition-all">
+            <div class="text-left"><p class="text-[10px] font-bold text-white/50 uppercase tracking-widest">Client Android</p><p class="text-xl font-black italic sn-font">DOWNLOAD .APK</p></div>
+            <i class="fab fa-android text-3xl opacity-20"></i>
         </button>
     </div>
 
-    <div class="text-center py-6">
-        <p class="text-[9px] text-zinc-600 uppercase font-bold">SN ULTRA ECOSYSTEM v35.2 | PROTECTED BY SECURITY AUDIT</p>
-    </div>
+    <footer class="text-center py-10">
+        <p class="text-[9px] text-zinc-700 font-black uppercase tracking-[0.4em]">SN ULTRA ECOSYSTEM v35.5 | FULL CYCLE STANDARDIZED</p>
+    </footer>
 
+    <script>
+        /**
+         * ==========================================
+         * �️ SN ULTRA DYNAMIC ENGINE (V35.5)
+         * ==========================================
+         */
+        let chart;
+        function initChart() {
+            const ctx = document.getElementById('liveChart').getContext('2d');
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(20).fill(''),
+                    datasets: [{
+                        data: Array(20).fill(0),
+                        borderColor: '#f59e0b',
+                        borderWidth: 2,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        fill: true,
+                        backgroundColor: 'rgba(245, 158, 11, 0.03)'
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: { y: { display: false, min: 0, max: 100 }, x: { display: false } },
+                    plugins: { legend: { display: false } },
+                    animation: false
+                }
+            });
+        }
+
+        async function updateCycle() {
+            try {
+                const res = await fetch('/api/admin/realtime-status');
+                const data = await res.json();
+                if(data.ok) {
+                    document.getElementById('cpu-val').innerText = data.cpu + '%';
+                    document.getElementById('ram-val').innerText = data.ram + '%';
+                    chart.data.datasets[0].data.shift();
+                    chart.data.datasets[0].data.push(data.cpu);
+                    chart.update('none');
+                }
+            } catch(e) {}
+
+            // Node Log Simulation
+            const logBox = document.getElementById('node-logs');
+            const now = new Date().toLocaleTimeString();
+            logBox.innerHTML += `<br>>> [${now}] Pulse: Handshake Active...`;
+            if(logBox.innerHTML.split('<br>').length > 10) logBox.innerHTML = logBox.innerHTML.split('<br>').slice(1).join('<br>');
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            setInterval(updateCycle, 2000);
+        });
+    </script>
 </body>
 </html>
 
