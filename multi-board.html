@@ -22,6 +22,8 @@
         @keyframes pulse-ring { 0% { transform: scale(.33); opacity: 1; } 80%, 100% { opacity: 0; } }
         .online-dot { width: 8px; height: 8px; background: #22c55e; border-radius: 50%; position: relative; }
         .online-dot::after { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border: 2px solid #22c55e; border-radius: 50%; animation: pulse-ring 1.25s cubic-bezier(0.45, 0, 0.55, 1) infinite; }
+        @keyframes bounce-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+        .animate-bounce-in { animation: bounce-in 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
     </style>
 </head>
 <body class="p-4 pb-20 space-y-6">
@@ -39,6 +41,15 @@
             <i class="fas fa-bolt text-yellow-500 animate-pulse"></i>
             <marquee class="text-xs font-bold uppercase tracking-widest text-yellow-500">
                 EXP x3 วันนี้ !! | BOSS SPAWN 20:00 น. | โปรโมชั่นเติมเงิน x2 อัตโนมัติทุกยอด
+            </marquee>
+        </div>
+    </div>
+
+    <div class="glass p-4 border-blue-500/20 bg-gradient-to-r from-blue-500/10 to-transparent">
+        <div class="flex items-center gap-4">
+            <i class="fas fa-info-circle text-blue-400"></i>
+            <marquee class="text-[10px] font-bold uppercase tracking-widest text-blue-100">
+                ระบบเพื่อ การศึกษา และเชิงพาณิชย์ พัฒนา โดย ต้องดีแค่ไหน โลกถึงจะจำ รับทำระบบ เกมส์ ออนไลน์ 2ระบบ เล่นได้ทั้ง PC และ MOBILE บริการ ระบบ เติมเงิน เว็บช็อป เติมเงิน ครบวงจร ทุกรูปแบบ รับออกแบบ เว็บไซต์ ทุกชนิด รับ เซ็ตระบบ DDOS รับทำระบบ Fiwall กันยิงระบบ ทุกชนิด
             </marquee>
         </div>
     </div>
@@ -63,12 +74,10 @@
             <h3 class="text-2xl font-black sn italic text-yg-green">YULGANG ONLINE</h3>
             <p class="text-[9px] text-zinc-500 uppercase tracking-[0.4em]">Integrated Private Server</p>
         </div>
-
         <div class="grid grid-cols-2 gap-2 mb-6 text-[10px] font-mono text-zinc-400">
             <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>Network:</span><span class="text-yg-green">84 MB/s</span></div>
             <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>Disk IO:</span><span class="text-yg-green">Fast</span></div>
         </div>
-
         <div class="space-y-3">
             <div class="grid grid-cols-2 gap-3">
                 <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[10px] font-bold text-white"><i class="fab fa-google text-red-500 mr-1"></i> GOOGLE</button>
@@ -80,7 +89,6 @@
             <button class="w-full btn-action bg-yg-green text-black py-5 text-sm">Create Yulgang Account</button>
             <button class="w-full text-[10px] text-zinc-500 font-bold uppercase py-2">Forget Password?</button>
         </div>
-
         <div class="grid grid-cols-2 gap-2 mt-6">
             <button class="bg-gradient-to-br from-zinc-800 to-black p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5">
                 <i class="fas fa-desktop text-yg-green"></i> <span class="text-[10px] font-bold">.EXE PC</span>
@@ -90,26 +98,27 @@
             </button>
         </div>
     </div>
-
     <div class="glass p-8 border-ran-red/20 shadow-2xl shadow-red-500/5 relative overflow-hidden">
         <div class="absolute top-0 right-0 p-4 opacity-10"><i class="fas fa-skull text-6xl text-red-500"></i></div>
         <div class="text-center mb-8">
             <h3 class="text-2xl font-black sn italic text-ran-red">RAN ONLINE EP7</h3>
             <p class="text-[9px] text-zinc-500 uppercase tracking-[0.4em]">Hardcore SaaS Enterprise</p>
         </div>
-
         <div class="grid grid-cols-2 gap-2 mb-6 text-[10px] font-mono text-zinc-400">
             <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>RAM:</span><span class="text-ran-red">32GB</span></div>
             <div class="bg-black/50 p-2 rounded-xl border border-white/5 flex justify-between"><span>Traffic:</span><span class="text-ran-red">High</span></div>
         </div>
-
         <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+                <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[10px] font-bold text-white"><i class="fab fa-google text-red-500 mr-1"></i> GOOGLE</button>
+                <button class="bg-zinc-900 border border-zinc-800 p-3 rounded-2xl text-[10px] font-bold text-white"><i class="fab fa-discord text-blue-500 mr-1"></i> DISCORD</button>
+            </div>
             <input type="email" placeholder="Email Address" class="input-dark">
             <input type="text" placeholder="Username (ID)" class="input-dark">
             <input type="password" placeholder="Password" class="input-dark">
             <button class="w-full btn-action bg-ran-red text-white py-5 text-sm">Join Ran Battle</button>
+            <button class="w-full text-[10px] text-zinc-500 font-bold uppercase py-2">Forget Password?</button>
         </div>
-
         <div class="grid grid-cols-2 gap-2 mt-6">
             <button class="bg-zinc-900/80 p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5">
                 <i class="fas fa-desktop text-ran-red"></i> <span class="text-[10px] font-bold">.EXE PC</span>
@@ -140,7 +149,7 @@
         <div class="glass p-5">
             <p class="text-[10px] font-bold text-orange-400 mb-3 italic">HAMSTER TERMINAL (5005)</p>
             <div id="hamster-log" class="terminal p-4 h-24 overflow-hidden">>> Ready...</div>
-            <button class="w-full bg-orange-500 text-black py-3 rounded-2xl text-[10px] font-black mt-3">INIT HAMSTER BOT</button>
+            <button class="w-full bg-orange-500 text-black py-3 rounded-2xl text-[10px] font-black mt-3 uppercase">Init Hamster Bot</button>
         </div>
         <div class="glass p-5">
             <p class="text-[10px] font-bold text-blue-400 mb-3 italic">FAUCET CRYPTO (5004)</p>
@@ -159,7 +168,8 @@
     </div>
 
     <footer class="text-center py-8">
-        <p class="text-[9px] text-zinc-700 font-black uppercase tracking-[0.4em]">SN ULTRA TITAN v36.5 | PROTECTED SYSTEM</p>
+        <p class="text-[10px] text-zinc-500 font-bold uppercase tracking-[0.2em] mb-1">Powered By ต้องดีแค่ไหน โลกถึงจะจำ</p>
+        <p class="text-[9px] text-zinc-700 font-black uppercase tracking-[0.4em]">© SN DESIGN STUDIO 2026.</p>
     </footer>
 
     <div id="admin-panel" class="hidden fixed inset-x-4 top-20 z-[999] glass p-8 border-red-500/50 bg-red-500/10">
@@ -173,9 +183,7 @@
         <button onclick="SN_CORE.ui.triggerAdmin()" class="w-full mt-6 py-3 text-zinc-500 text-[10px]">CLOSE PANEL</button>
     </div>
 
-    <script src="main.js"></script>
     <script>
-        // WebSocket Handshake [Rule 6, 10]
         const SN_CORE = {
             adminTaps: 0,
             init() {
@@ -196,7 +204,9 @@
             },
             youtube: {
                 loadRandom() {
-                    document.getElementById('player').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/NI7WALIXStU?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                    const vids = ['NI7WALIXStU','-somevid1','-somevid2','-somevid3','-somevid4'];
+                    const r = vids[Math.floor(Math.random()*vids.length)];
+                    document.getElementById('player').innerHTML = `<iframe width="100%" height="100%" src="https://www.youtube.com/embed/${r}?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 }
             },
             ui: {
