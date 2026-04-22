@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>SN ULTRA vNEXT | EMPIRE MASTER CONTROL</title>
+<title>SN ULTRA | TECH EMPIRE PRODUCTION v36.8</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -14,38 +14,32 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        sn: "#d4af37",
-        bg: "#050505",
-        card: "#0e0e0e",
-        line: "#1f1f1f",
-        yg: "#10b981",
-        ran: "#ef4444",
-        ok: "#10b981"
+        sn: "#d4af37", bg: "#030303", card: "#0a0a0a", line: "#1a1a1a",
+        ok: "#10b981", warn: "#f59e0b", danger: "#ef4444",
+        yg: "#22c55e", ran: "#ef4444", blue: "#3b82f6"
       },
       fontFamily: { orbitron: ["Orbitron", "sans-serif"], sans: ["Inter", "sans-serif"] },
-      animation: { 'ticker': 'ticker 30s linear infinite', 'glow': 'glow 2s ease-in-out infinite' },
-      keyframes: { 
-        ticker: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } },
-        glow: { '0%, 100%': { opacity: 1 }, '50%': { opacity: 0.5 } }
-      }
+      animation: { 'ticker': 'ticker 35s linear infinite', 'pulse-fast': 'pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite' },
+      keyframes: { ticker: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } } }
     }
   }
 }
 </script>
 
 <style>
-body { background: #050505; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-.glass { background: rgba(14, 14, 14, .95); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, .05); }
-.panel { border-radius: 35px; box-shadow: 0 10px 40px rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.03); overflow: hidden; }
-/* ปุ่มกดแล้วสว่างเจิดจ้า */
-.btn-premium { transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; position: relative; overflow: hidden; }
-.btn-premium:active { transform: scale(0.96); filter: brightness(1.8) saturate(1.2); box-shadow: 0 0 30px currentColor; }
-.input-premium { background: #080808 !important; border: 1px solid #1a1a1a !important; color: white !important; padding: 18px; border-radius: 20px; width: 100%; font-size: 14px; outline: none; text-align: center; }
-.input-premium:focus { border-color: #d4af37 !important; background: #0c0c0c !important; }
-.ticker-wrap { overflow: hidden; white-space: nowrap; width: 100%; display: flex; }
-.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 80px; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-top: 1px solid #1a1a1a; z-index: 9999; display: flex; justify-content: space-around; align-items: center; padding-bottom: 10px; }
-.nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; font-weight: 800; color: #444; transition: 0.3s; }
-.nav-item.active { color: #d4af37; }
+body { background: #030303; color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+.glass { background: rgba(10, 10, 10, 0.96); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.04); }
+.panel { border-radius: 35px; box-shadow: 0 15px 50px rgba(0,0,0,.6); border: 1px solid rgba(212,175,55,0.05); overflow: hidden; }
+/* Premium High-Light Button Effect */
+.btn-shimmer { transition: all 0.2s ease; cursor: pointer; position: relative; }
+.btn-shimmer:active { transform: scale(0.97); filter: brightness(2) saturate(1.5); box-shadow: 0 0 40px currentColor; }
+.input-titan { background: #070707 !important; border: 1px solid #1a1a1a !important; color: white !important; padding: 20px; border-radius: 22px; width: 100%; font-size: 15px; outline: none; text-align: center; }
+.input-titan:focus { border-color: #d4af37 !important; background: #0b0b0b !important; box-shadow: 0 0 20px rgba(212,175,55,0.1); }
+.center-box { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 85px; background: rgba(3,3,3,0.98); backdrop-filter: blur(25px); border-top: 1px solid #111; z-index: 9999; display: flex; justify-content: space-around; align-items: center; padding-bottom: 12px; }
+.nav-item { display: flex; flex-direction: column; align-items: center; font-size: 10px; font-weight: 900; color: #333; transition: 0.3s; text-transform: uppercase; }
+.nav-item.active { color: #d4af37; text-shadow: 0 0 10px rgba(212,175,55,0.3); }
+.metric-card { background: linear-gradient(145deg, #0d0d0d, #050505); border: 1px solid #111; border-radius: 24px; }
 .scrollbar::-webkit-scrollbar { width: 0px; }
 </style>
 </head>
@@ -54,171 +48,192 @@ body { background: #050505; color: #fff; font-family: 'Inter', sans-serif; overf
 <div class="flex h-full">
 
     <aside class="w-80 hidden lg:flex flex-col glass border-r border-line p-10 z-50">
-        <div class="mb-12" onclick="SN_CORE.owner.trigger()">
+        <div class="mb-12 cursor-pointer" onclick="SN_CORE.owner.trigger()">
             <h1 class="text-3xl font-black font-orbitron tracking-tighter text-sn italic">SN ULTRA</h1>
-            <p class="text-[9px] text-zinc-500 uppercase tracking-[0.5em] mt-1 font-bold">Empire Infrastructure</p>
+            <p class="text-[9px] text-zinc-600 uppercase tracking-[0.5em] mt-2 font-black">Tech Empire Production</p>
         </div>
         <nav class="flex-1 space-y-3">
-            <button onclick="showView('dash')" class="navbtn w-full text-left p-5 rounded-2xl bg-sn text-black font-black text-xs uppercase"><i class="fa-solid fa-chart-line mr-3"></i>Dashboard</button>
-            <button onclick="showView('games')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-900 font-black text-xs uppercase"><i class="fa-solid fa-gamepad mr-3"></i>Game Systems</button>
-            <button onclick="showView('ai')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-900 font-black text-xs uppercase"><i class="fa-solid fa-brain mr-3"></i>AI Grid</button>
-            <button onclick="showView('finance')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-900 font-black text-xs uppercase"><i class="fa-solid fa-wallet mr-3"></i>Finance Core</button>
-            <button onclick="showView('security')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-900 font-black text-xs uppercase"><i class="fa-solid fa-shield-halved mr-3"></i>Security</button>
+            <button onclick="showView('dash')" class="navbtn w-full text-left p-5 rounded-2xl bg-sn text-black font-black text-xs uppercase shadow-lg shadow-sn/10"><i class="fa-solid fa-chart-pie mr-4"></i>Dashboard</button>
+            <button onclick="showView('infra')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-950 text-zinc-500 font-black text-xs uppercase hover:bg-zinc-900"><i class="fa-solid fa-server mr-4"></i>Infrastructure</button>
+            <button onclick="showView('games')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-950 text-zinc-500 font-black text-xs uppercase hover:bg-zinc-900"><i class="fa-solid fa-gamepad mr-4"></i>Game Seasons</button>
+            <button onclick="showView('ai')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-950 text-zinc-500 font-black text-xs uppercase hover:bg-zinc-900"><i class="fa-solid fa-microchip mr-4"></i>AI Center</button>
+            <button onclick="showView('analytics')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-950 text-zinc-500 font-black text-xs uppercase hover:bg-zinc-900"><i class="fa-solid fa-magnifying-glass-chart mr-4"></i>Analytics</button>
+            <button onclick="showView('security')" class="navbtn w-full text-left p-5 rounded-2xl bg-zinc-950 text-zinc-500 font-black text-xs uppercase hover:bg-zinc-900"><i class="fa-solid fa-shield-virus mr-4"></i>Security</button>
         </nav>
-        <div class="mt-auto pt-6 border-t border-line text-center">
-            <p class="text-[10px] text-zinc-600 font-bold uppercase mb-2">Powered By ต้องดีแค่ไหน โลกถึงจะจำ</p>
-            <p class="text-[8px] text-zinc-800 font-black">© SN DESIGN STUDIO 2026.</p>
+        <div class="mt-auto pt-8 border-t border-line center-box">
+            <p class="text-[10px] text-zinc-500 font-bold uppercase mb-2 italic">Powered By ต้องดีแค่ไหน โลกถึงจะจำ</p>
+            <p class="text-[8px] text-zinc-800 font-black tracking-widest uppercase">© SN DESIGN STUDIO 2026.</p>
         </div>
     </aside>
 
     <main class="flex-1 flex flex-col relative overflow-hidden bg-bg">
         
-        <header class="h-24 border-b border-line glass flex items-center justify-between px-6 md:px-10">
-            <div><h2 class="text-lg md:text-xl font-black font-orbitron uppercase">Empire Center</h2><p class="text-[10px] text-zinc-500 font-bold tracking-widest">Realtime Private Infrastructure</p></div>
-            <div class="flex items-center gap-3">
-                <button class="px-5 py-3 rounded-2xl bg-sn text-black font-black text-xs shadow-lg shadow-sn/10">฿ 4,822,100</button>
+        <header class="h-28 border-b border-line glass flex items-center justify-between px-6 md:px-12">
+            <div class="hidden md:block">
+                <h2 class="text-xl font-black font-orbitron uppercase tracking-tight italic">Global Command Center</h2>
+                <div class="flex items-center gap-2 mt-1">
+                    <div class="w-2 h-2 rounded-full bg-ok animate-pulse"></div>
+                    <p class="text-[9px] text-zinc-500 font-bold tracking-widest uppercase">Realtime Engine v36.8 Linked</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6 overflow-x-auto scrollbar">
+                <div class="text-right px-4"><p class="text-[9px] text-zinc-600 font-black">REVENUE</p><h3 class="text-lg font-black text-sn italic">฿48,920</h3></div>
+                <div class="text-right px-4 border-l border-line"><p class="text-[9px] text-zinc-600 font-black">USERS</p><h3 class="text-lg font-black text-yg">18,422</h3></div>
+                <div class="text-right px-4 border-l border-line"><p class="text-[9px] text-zinc-600 font-black">LATENCY</p><h3 class="text-lg font-black text-blue">12ms</h3></div>
             </div>
         </header>
 
-        <section class="flex-1 overflow-y-auto p-4 md:p-10 space-y-10 scrollbar pb-40" id="content">
+        <section class="flex-1 overflow-y-auto p-4 md:p-10 space-y-8 scrollbar pb-48" id="content">
             
-            <div class="glass p-3 border-sn/10 rounded-2xl overflow-hidden relative">
-                <div class="ticker-wrap"><div class="animate-ticker flex gap-10 text-[10px] font-bold uppercase tracking-widest text-sn">
-                    <span>EXP x3 วันนี้ !! | BOSS SPAWN 20:00 น. | ระบบเพื่อการศึกษาและเชิงพาณิชย์ พัฒนาโดย ต้องดีแค่ไหน โลกถึงจะจำ | กันยิงระบบ ทุกชนิด</span>
+            <div class="glass p-3 border-sn/5 rounded-[22px] overflow-hidden">
+                <div class="ticker-wrap"><div class="animate-ticker flex gap-16 text-[10px] font-black uppercase tracking-widest text-sn italic">
+                    <span>EXP x3 TODAY !!</span> <span>BOSS SPAWN 20:00</span> <span>AUTO-BACKUP SUCCESSFUL</span> <span>ZERO DOWNTIME DEPLOYMENT ENABLED</span>
                 </div></div>
             </div>
 
             <div id="view-dash" class="view space-y-8">
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <div class="metric panel p-6"><p class="text-[9px] text-zinc-500 font-bold uppercase">Revenue</p><h3 class="text-xl font-black text-sn mt-1 italic font-orbitron">฿48,920</h3></div>
-                    <div class="metric panel p-6"><p class="text-[9px] text-zinc-500 font-bold uppercase">Online</p><h3 class="text-xl font-black mt-1 font-orbitron text-yg">18,422</h3></div>
-                    <div class="metric panel p-6"><p class="text-[9px] text-zinc-500 font-bold uppercase">AI Requests</p><h3 class="text-xl font-black mt-1 font-orbitron">1.2M</h3></div>
-                    <div class="metric panel p-6"><p class="text-[9px] text-zinc-500 font-bold uppercase">Uptime</p><h3 class="text-xl font-black text-ok mt-1 font-orbitron">99.9%</h3></div>
+                    <div class="metric-card p-6 center-box border-l-2 border-l-sn">
+                        <p class="text-[9px] text-zinc-500 font-black uppercase mb-1">CPU Load</p>
+                        <h3 class="text-2xl font-black font-orbitron text-sn italic" id="cpu-val">12%</h3>
+                    </div>
+                    <div class="metric-card p-6 center-box border-l-2 border-l-yg">
+                        <p class="text-[9px] text-zinc-500 font-black uppercase mb-1">RAM Usage</p>
+                        <h3 class="text-2xl font-black font-orbitron text-yg italic" id="ram-val">45%</h3>
+                    </div>
+                    <div class="metric-card p-6 center-box border-l-2 border-l-blue">
+                        <p class="text-[9px] text-zinc-500 font-black uppercase mb-1">API Requests</p>
+                        <h3 class="text-2xl font-black font-orbitron text-blue italic">1.2M</h3>
+                    </div>
+                    <div class="metric-card p-6 center-box border-l-2 border-l-danger">
+                        <p class="text-[9px] text-zinc-500 font-black uppercase mb-1">Error Rate</p>
+                        <h3 class="text-2xl font-black font-orbitron text-danger italic">0.02%</h3>
+                    </div>
                 </div>
 
-                <div class="lg:col-span-2 glass panel p-8">
-                    <div class="flex justify-between mb-6"><h3 class="font-black font-orbitron text-[10px] uppercase text-zinc-500">Empire Feed</h3><div class="w-2 h-2 rounded-full bg-ok animate-pulse shadow-[0_0_10px_#10b981]"></div></div>
-                    <div id="feed" class="space-y-4 text-[11px] h-[250px] overflow-y-auto scrollbar font-mono pr-2">
+                <div class="grid lg:grid-cols-3 gap-8">
+                    <div class="lg:col-span-2 glass panel p-10">
+                        <div class="flex justify-between items-center mb-8">
+                            <h3 class="font-black font-orbitron text-[10px] uppercase text-zinc-500 tracking-[0.3em]">Empire Activity Stream</h3>
+                            <span class="text-[9px] font-bold text-ok uppercase"><i class="fa-solid fa-bolt-lightning mr-2"></i>Live</span>
                         </div>
+                        <div id="feed" class="space-y-4 text-[11px] h-[350px] overflow-y-auto scrollbar font-mono pr-4">
+                            </div>
+                    </div>
+                    <div class="glass panel p-10">
+                        <h3 class="font-black font-orbitron text-[10px] uppercase text-danger tracking-[0.3em] mb-8 italic">Incident Logbook</h3>
+                        <div class="space-y-4">
+                            <div class="p-4 bg-zinc-900/50 rounded-2xl border-l-4 border-l-danger">
+                                <p class="text-[9px] text-zinc-500 font-bold">2026-04-21 14:00</p>
+                                <p class="text-xs font-black mt-1">DB Connection Timeout</p>
+                                <p class="text-[10px] text-zinc-400 mt-2">SOLVED: Incremental Node Restart</p>
+                            </div>
+                            <div class="p-4 bg-zinc-900/50 rounded-2xl border-l-4 border-l-ok">
+                                <p class="text-[9px] text-zinc-500 font-bold">2026-04-20 09:30</p>
+                                <p class="text-xs font-black mt-1">Stripe Gateway Latency</p>
+                                <p class="text-[10px] text-zinc-400 mt-2">SOLVED: API Standardization</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div id="view-games" class="view hidden space-y-12">
-                
-                <div class="panel p-8 md:p-12 glass border-yg/20 relative">
-                    <div class="absolute top-0 right-0 p-8 opacity-5 text-yg"><i class="fa-solid fa-khanda text-9xl"></i></div>
-                    <div class="text-center mb-10">
-                        <h2 class="text-4xl font-black font-orbitron italic text-yg tracking-tighter uppercase">YULGANG ONLINE</h2>
-                        <p class="text-[10px] text-zinc-500 font-bold tracking-[0.4em] mt-2">Professional Private Node</p>
+            <div id="view-yulgang" class="view hidden space-y-12">
+                <div class="panel glass border-yg/20 p-8 md:p-14 relative center-box">
+                    <div class="absolute top-10 right-10 opacity-5 text-yg"><i class="fa-solid fa-khanda text-9xl"></i></div>
+                    <div class="mb-14">
+                        <h2 class="text-5xl font-black font-orbitron italic text-yg tracking-tighter uppercase">YULGANG ONLINE</h2>
+                        <p class="text-[10px] text-zinc-600 font-black tracking-[0.5em] mt-3">PROMETHEUS INTEGRATED PRIVATE NODE</p>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        <div class="bg-black/40 p-8 rounded-[35px] border border-white/5 space-y-6">
-                            <p class="text-[10px] font-black text-yg uppercase tracking-widest text-center italic">Character Authorization</p>
-                            <div class="grid grid-cols-2 gap-3">
-                                <button class="btn-premium bg-zinc-900 p-4 rounded-2xl text-[10px] font-black border border-white/5 text-white"><i class="fab fa-google text-ran mr-2"></i>GOOGLE</button>
-                                <button class="btn-premium bg-zinc-900 p-4 rounded-2xl text-[10px] font-black border border-white/5 text-white"><i class="fab fa-discord text-blue-500 mr-2"></i>DISCORD</button>
+                    <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div class="bg-black/60 p-10 rounded-[45px] border border-white/5 space-y-8 center-box w-full shadow-2xl">
+                            <div class="center-box"><p class="text-[10px] font-black text-yg uppercase tracking-widest italic underline mb-2">Empire Authorization</p><p class="text-[9px] text-zinc-600 font-bold uppercase">Yulgang Section : Season 3</p></div>
+                            <div class="grid grid-cols-2 gap-4 w-full">
+                                <button class="btn-shimmer bg-zinc-900 p-4 rounded-2xl text-[10px] font-black border border-white/5 text-white flex items-center justify-center gap-2"><i class="fab fa-google text-ran"></i> GOOGLE</button>
+                                <button class="btn-shimmer bg-zinc-900 p-4 rounded-2xl text-[10px] font-black border border-white/5 text-white flex items-center justify-center gap-2"><i class="fab fa-discord text-blue-400"></i> DISCORD</button>
                             </div>
-                            <div class="space-y-3">
-                                <input type="text" id="yg_user" placeholder="Account ID" class="input-premium">
-                                <input type="password" id="yg_pass" placeholder="Password" class="input-premium">
-                                <button onclick="SN_CORE.game.login('yg')" class="btn-premium w-full py-5 bg-yg text-black rounded-[25px] font-black text-xs uppercase shadow-xl shadow-yg/10">Authorize Yulgang</button>
-                                <div class="flex justify-between px-4 text-[9px] text-zinc-500 font-bold uppercase"><button>สมัครใหม่</button><button>ลืมรหัสผ่าน</button></div>
+                            <div class="space-y-4 w-full">
+                                <input type="text" placeholder="Identity UID" class="input-titan">
+                                <input type="password" placeholder="Passphrase" class="input-titan">
+                                <button class="btn-shimmer w-full py-6 bg-yg text-black rounded-[28px] font-black text-xs uppercase shadow-xl shadow-yg/20">Authorize Battle Node</button>
+                                <div class="flex justify-between px-6 text-[9px] text-zinc-600 font-black uppercase"><button>New Identity</button><button>Reset Key</button></div>
                             </div>
                         </div>
-
-                        <div class="space-y-6">
-                            <div class="grid grid-cols-3 gap-2">
-                                <button onclick="SN_CORE.game.preview('map')" class="btn-premium bg-zinc-900/80 p-4 rounded-xl text-[9px] font-black border border-yg/20">MAP DATA</button>
-                                <button onclick="SN_CORE.game.preview('mob')" class="btn-premium bg-zinc-900/80 p-4 rounded-xl text-[9px] font-black border border-yg/20">MONSTERS</button>
-                                <button onclick="SN_CORE.game.preview('shop')" class="btn-premium bg-zinc-900/80 p-4 rounded-xl text-[9px] font-black border border-yg/20">ITEM SHOP</button>
+                        <div class="space-y-8 w-full">
+                            <div class="grid grid-cols-3 gap-3">
+                                <button class="btn-shimmer bg-zinc-900 p-4 rounded-2xl text-[9px] font-black border border-yg/20">MAP MATRIX</button>
+                                <button class="btn-shimmer bg-zinc-900 p-4 rounded-2xl text-[9px] font-black border border-yg/20">SQL INV</button>
+                                <button class="btn-shimmer bg-zinc-900 p-4 rounded-2xl text-[9px] font-black border border-yg/20">BOSS ALERT</button>
                             </div>
-                            <div id="yg_preview_box" class="h-56 bg-zinc-950 rounded-[35px] border border-white/5 flex items-center justify-center relative overflow-hidden group">
-                                <img src="/assets/images/yg-preview.jpg" class="w-full h-full object-cover opacity-20 group-hover:scale-110 transition-all duration-700">
-                                <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-60"></div>
-                                <span class="absolute text-[10px] font-black font-orbitron text-yg animate-pulse uppercase tracking-widest">Diving into SQL Data...</span>
+                            <div class="h-64 bg-zinc-950 rounded-[40px] border border-white/5 flex items-center justify-center relative overflow-hidden shadow-inner group">
+                                <img src="/assets/images/yg-live.jpg" class="w-full h-full object-cover opacity-20 group-hover:scale-125 transition-all duration-1000">
+                                <span class="absolute text-[10px] font-black font-orbitron text-yg animate-pulse uppercase tracking-[0.4em]">Handshaking with SQL Database...</span>
                             </div>
-                            <div class="space-y-3">
-                                <button class="btn-premium w-full p-6 bg-gradient-to-r from-yg to-black rounded-[30px] flex items-center justify-between px-10 border border-yg/10">
-                                    <div class="text-left"><p class="text-[8px] font-bold text-black/50 uppercase">Client PC</p><p class="text-lg font-black italic font-orbitron uppercase text-black">DOWNLOAD .EXE</p></div>
-                                    <i class="fas fa-desktop text-2xl text-black/40"></i>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <button class="btn-shimmer p-6 bg-gradient-to-br from-yg to-black rounded-[35px] border border-yg/20 flex items-center justify-center gap-4">
+                                    <i class="fas fa-desktop text-black text-3xl"></i>
+                                    <div class="text-left"><p class="text-[9px] font-black text-black uppercase">Core PC</p><p class="text-sm font-black text-black uppercase">DOWNLOAD</p></div>
                                 </button>
-                                <button class="btn-premium w-full p-6 bg-zinc-900 rounded-[30px] flex items-center justify-between px-10 border border-yg/20">
-                                    <div class="text-left"><p class="text-[8px] font-bold text-zinc-500 uppercase">Mobile Edition</p><p class="text-lg font-black italic font-orbitron uppercase text-yg">DOWNLOAD .APK</p></div>
-                                    <i class="fab fa-android text-2xl text-yg/40"></i>
+                                <button class="btn-shimmer p-6 bg-zinc-900 rounded-[35px] border border-yg/20 flex items-center justify-center gap-4">
+                                    <i class="fab fa-android text-yg text-3xl"></i>
+                                    <div class="text-left"><p class="text-[9px] font-black text-zinc-500 uppercase">Titan Mobile</p><p class="text-sm font-black text-yg uppercase">DOWNLOAD</p></div>
                                 </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="panel p-8 md:p-12 glass border-ran/20 relative">
-                    <div class="absolute top-0 right-0 p-8 opacity-5 text-ran"><i class="fa-solid fa-skull text-9xl"></i></div>
-                    <div class="text-center mb-10">
-                        <h2 class="text-4xl font-black font-orbitron italic text-ran tracking-tighter uppercase">RAN ONLINE EP7</h2>
-                        <p class="text-[10px] text-zinc-500 font-bold tracking-[0.4em] mt-2 text-center">High-Performance Battle Node</p>
+            </div>
+            <div id="view-ran" class="view hidden space-y-12">
+                <div class="panel glass border-ran/20 p-8 md:p-14 relative center-box">
+                    <div class="absolute top-10 right-10 opacity-5 text-ran"><i class="fa-solid fa-skull text-9xl"></i></div>
+                    <div class="text-center mb-14">
+                        <h2 class="text-5xl font-black font-orbitron italic text-ran tracking-tighter uppercase">RAN ONLINE EP7</h2>
+                        <p class="text-[10px] text-zinc-600 font-black tracking-[0.5em] mt-3 uppercase">Hardcore Cluster Monitoring</p>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-                        <div class="bg-black/40 p-8 rounded-[35px] border border-white/5 space-y-6">
-                            <p class="text-[10px] font-black text-ran uppercase tracking-widest text-center italic">Warrior Entry</p>
-                            <div class="space-y-3">
-                                <input type="text" id="ran_user" placeholder="Account ID" class="input-premium">
-                                <input type="password" id="ran_pass" placeholder="Warrior Password" class="input-premium">
-                                <button onclick="SN_CORE.game.login('ran')" class="btn-premium w-full py-5 bg-ran text-white rounded-[25px] font-black text-xs uppercase shadow-xl shadow-ran/20">Join Battle Engine</button>
-                                <div class="flex justify-between px-4 text-[9px] text-zinc-500 font-bold uppercase"><button>สมัครบัญชีใหม่</button><button>Support Ticket</button></div>
-                            </div>
+                    <div class="w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+                        <div class="bg-black/60 p-10 rounded-[45px] border border-white/5 space-y-8 center-box w-full">
+                            <p class="text-[10px] font-black text-ran uppercase tracking-widest italic underline mb-2 italic">Warrior Synchronization</p>
+                            <input type="text" placeholder="Identity UID" class="input-titan !border-ran/20">
+                            <input type="password" placeholder="Passphrase" class="input-titan !border-ran/20">
+                            <button class="btn-shimmer w-full py-6 bg-ran text-white rounded-[28px] font-black text-xs uppercase shadow-xl shadow-ran/20">Engage Battle Node</button>
                         </div>
-
-                        <div class="space-y-6">
+                        <div class="space-y-8 w-full">
                             <div class="grid grid-cols-2 gap-4">
-                                <div class="bg-zinc-950 p-6 rounded-3xl border border-white/5 text-center">
-                                    <p class="text-[8px] text-zinc-600 font-bold uppercase mb-2">RAM Allocated</p>
-                                    <span class="text-sm font-black text-ran">32GB DDR4</span>
-                                </div>
-                                <div class="bg-zinc-950 p-6 rounded-3xl border border-white/5 text-center">
-                                    <p class="text-[8px] text-zinc-600 font-bold uppercase mb-2">Maps Loaded</p>
-                                    <span class="text-sm font-black text-ok">182 / 182</span>
-                                </div>
+                                <div class="metric-card p-6 center-box"><p class="text-[9px] text-zinc-600 font-black mb-2 uppercase">Node Allocated</p><span class="text-lg font-black text-ran italic">32GB DDR4</span></div>
+                                <div class="metric-card p-6 center-box"><p class="text-[9px] text-zinc-600 font-black mb-2 uppercase">Maps Ready</p><span class="text-lg font-black text-ok italic">182 / 182</span></div>
                             </div>
-                            <div class="space-y-3">
-                                <button class="btn-premium w-full p-6 bg-gradient-to-r from-ran to-black rounded-[30px] flex items-center justify-between px-10 border border-ran/10 shadow-2xl">
-                                    <div class="text-left"><p class="text-[8px] font-bold text-white/50 uppercase">Master Edition</p><p class="text-lg font-black italic font-orbitron uppercase text-white">DOWNLOAD .EXE</p></div>
-                                    <i class="fas fa-desktop text-2xl text-white/30"></i>
-                                </button>
-                                <button class="btn-premium w-full p-6 bg-zinc-900 rounded-[30px] flex items-center justify-between px-10 border border-ran/20">
-                                    <div class="text-left"><p class="text-[8px] font-bold text-zinc-500 uppercase">Android Mobile</p><p class="text-lg font-black italic font-orbitron uppercase text-ran">DOWNLOAD .APK</p></div>
-                                    <i class="fab fa-android text-2xl text-ran/40"></i>
-                                </button>
-                            </div>
+                            <button class="btn-shimmer w-full p-8 bg-gradient-to-r from-ran/20 to-black rounded-[40px] border border-ran/20 flex items-center justify-between px-12">
+                                <div class="text-left"><p class="text-[9px] font-black text-zinc-500 uppercase tracking-widest">Universal Edition</p><p class="text-xl font-black italic font-orbitron uppercase text-white">DOWNLOAD FULL CLIENT</p></div>
+                                <i class="fas fa-cloud-arrow-down text-4xl text-ran opacity-50"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="view-ai" class="view hidden space-y-8">
-                <div class="glass panel">
-                    <table class="w-full text-left text-xs font-bold divide-y divide-white/5">
-                        <thead class="bg-zinc-950 text-[9px] text-zinc-600 uppercase font-black tracking-widest"><tr class="p-6"><th class="p-6">Model ID</th><th class="p-6">Usage</th><th class="p-6">Cost</th><th class="p-6 text-right">Action</th></tr></thead>
-                        <tbody>
-                            <tr class="hover:bg-zinc-900/30 transition-all"><td class="p-6 font-orbitron text-sn">GPT-4.0 Turbo</td><td class="p-6">42% <div class="h-1 bg-zinc-800 rounded-full mt-2 w-24"><div class="h-1 bg-sn w-[42%]"></div></div></td><td class="p-6 text-zinc-500">฿1,240/d</td><td class="p-6 text-right"><button class="btn-premium text-zinc-600 hover:text-ran"><i class="fa-solid fa-power-off"></i></button></td></tr>
-                            <tr class="hover:bg-zinc-900/30 transition-all"><td class="p-6 font-orbitron text-sn">Gemini Pro 1.5</td><td class="p-6">14% <div class="h-1 bg-zinc-800 rounded-full mt-2 w-24"><div class="h-1 bg-ok w-[14%]"></div></div></td><td class="p-6 text-zinc-500">฿450/d</td><td class="p-6 text-right"><button class="btn-premium text-zinc-600 hover:text-ran"><i class="fa-solid fa-power-off"></i></button></td></tr>
-                        </tbody>
-                    </table>
+            <div id="view-infra" class="view hidden space-y-10">
+                <div class="grid md:grid-cols-3 gap-6">
+                    <div class="metric-card p-8"><p class="text-[10px] text-zinc-500 font-black uppercase">Disk Health</p><h3 class="text-3xl font-black text-ok mt-2 italic">98%</h3><div class="h-1 bg-zinc-900 rounded-full mt-4"><div class="h-1 bg-ok w-[98%]"></div></div></div>
+                    <div class="metric-card p-8"><p class="text-[10px] text-zinc-500 font-black uppercase">Backup Status (Rule 3)</p><h3 class="text-2xl font-black text-sn mt-2 italic uppercase tracking-tighter text-center">DAILY SUCCESS</h3></div>
+                    <div class="metric-card p-8"><p class="text-[10px] text-zinc-500 font-black uppercase">Smart Alert (Rule 2)</p><h3 class="text-3xl font-black text-ok mt-2 italic">ACTIVE</h3></div>
+                </div>
+                <div class="glass panel p-12">
+                    <h3 class="text-xs font-black font-orbitron uppercase text-zinc-500 mb-8 tracking-widest">API Latency Monitoring (P99)</h3>
+                    <canvas id="latencyChart" height="150"></canvas>
                 </div>
             </div>
 
             <div id="view-security" class="view hidden space-y-8">
-                <div class="glass panel p-10 border-ran/20 bg-ran/5">
-                    <h3 class="text-xs font-black text-ran uppercase mb-8 tracking-[0.3em] italic">Threat Intelligence & Firewall</h3>
-                    <div class="space-y-4 text-[11px] font-mono">
-                        <div class="p-5 bg-zinc-950/80 border border-white/5 rounded-3xl flex justify-between items-center">
-                            <span>DDoS Attack Blocked — 185.22.x.x</span>
-                            <span class="font-black text-ran uppercase px-3 py-1 bg-ran/10 rounded-lg">3.2 Gbps Rejected</span>
-                        </div>
-                        <div class="p-5 bg-zinc-950/80 border border-white/5 rounded-3xl flex justify-between items-center">
-                            <span>API Abuse Filter: User #8229</span>
-                            <span class="text-sn font-black uppercase italic animate-glow">Rate Limited</span>
-                        </div>
+                <div class="glass panel p-12 border-ran/20 bg-ran/5">
+                    <div class="flex justify-between items-center mb-10">
+                        <h3 class="text-xl font-black text-ran uppercase tracking-[0.4em] italic underline">Threat Intelligence Firewall</h3>
+                        <div class="px-4 py-2 bg-ran/10 rounded-full text-[9px] font-black text-ran border border-ran/20">DDoS BLOCKER : ON</div>
+                    </div>
+                    <div class="grid grid-cols-1 gap-4 font-mono text-[11px]">
+                        <div class="p-6 bg-zinc-950/80 border border-white/5 rounded-[30px] flex justify-between items-center"><span class="text-zinc-400">Rejected Packet from 185.x.x.x</span><span class="text-ran font-black italic">4.2 Gbps Drop</span></div>
+                        <div class="p-6 bg-zinc-950/80 border border-white/5 rounded-[30px] flex justify-between items-center"><span class="text-zinc-400">SQL Injection Shield (API v3)</span><span class="text-ok font-black italic">ACTIVE</span></div>
                     </div>
                 </div>
             </div>
@@ -226,11 +241,11 @@ body { background: #050505; color: #fff; font-family: 'Inter', sans-serif; overf
         </section>
 
         <nav class="lg:hidden bottom-nav">
-            <button onclick="showView('dash')" id="m-dash" class="nav-item active"><i class="fa-solid fa-house-chimney text-xl mb-1"></i>HOME</button>
-            <button onclick="showView('games')" id="m-games" class="nav-item"><i class="fa-solid fa-gamepad text-xl mb-1"></i>GAMES</button>
-            <button onclick="showView('ai')" id="m-ai" class="nav-item"><i class="fa-solid fa-brain text-xl mb-1"></i>AI</button>
-            <button onclick="showView('finance')" id="m-finance" class="nav-item"><i class="fa-solid fa-wallet text-xl mb-1"></i>MONEY</button>
-            <button onclick="showView('security')" id="m-security" class="nav-item"><i class="fa-solid fa-shield-halved text-xl mb-1"></i>SECURITY</button>
+            <button onclick="showView('dash')" id="m-dash" class="nav-item active"><i class="fa-solid fa-chart-line text-2xl mb-1"></i>HOME</button>
+            <button onclick="showView('games')" id="m-games" class="nav-item"><i class="fa-solid fa-gamepad text-2xl mb-1"></i>GAMES</button>
+            <button onclick="showView('infra')" id="m-infra" class="nav-item"><i class="fa-solid fa-server text-2xl mb-1"></i>INFRA</button>
+            <button onclick="showView('analytics')" id="m-analytics" class="nav-item"><i class="fa-solid fa-magnifying-glass-chart text-2xl mb-1"></i>DATA</button>
+            <button onclick="showView('security')" id="m-security" class="nav-item"><i class="fa-solid fa-shield-halved text-2xl mb-1"></i>SYSTEM</button>
         </nav>
     </main>
 </div>
@@ -239,47 +254,44 @@ body { background: #050505; color: #fff; font-family: 'Inter', sans-serif; overf
 const SN_CORE = {
     taps: 0,
     init() {
-        this.socket.connect();
+        this.charts.init();
         this.ui.feedLoop();
-    },
-    game: {
-        async login(type) {
-            const user = document.getElementById(`${type}_user`).value;
-            if(!user) return alert("Please enter ID");
-            // API Call: /api/auth/game-login
-            console.log(`Authenticating ${type} account: ${user}`);
-            alert(`HANDSHAKE SUCCESS: Welcome to ${type.toUpperCase()}`);
-        },
-        preview(cat) {
-            const box = document.getElementById('yg_preview_box');
-            box.innerHTML = `<span class="text-[10px] font-black font-orbitron text-yg animate-pulse uppercase tracking-widest">LOADING ${cat.toUpperCase()} DATA...</span>`;
-            // API Call: /api/world/preview?cat=cat
-        }
-    },
-    socket: {
-        connect() {
-            console.log(">> SYSTEM READY: CORE API vNEXT CONNECTED");
-        }
+        console.log(">> SN TECH EMPIRE v36.8 OPERATIONAL");
     },
     ui: {
         feedLoop() {
             const feed = document.getElementById('feed');
             const logs = [
-                '[PAYMENT] User #411 เติมเงิน ฿500 SUCCESS','[AI GRID] Gemini Pro traffic peak','[SERVER] Yulgang Node restart success','[SECURITY] XSS Injection Blocked'
+                '[MONITORING] CPU Load increased +2%', '[ALERT] RAM Usage > 80% แจ้งเตือน Telegram สำเร็จ', '[BACKUP] Snapshot Incremental Completed (DBv12)', '[SECURITY] Brute-force attempt blocked (IP: 103.x.x.x)'
             ];
             setInterval(() => {
                 const div = document.createElement('div');
-                div.className = 'p-5 rounded-[25px] bg-zinc-900/50 border border-white/5 flex justify-between animate-pulse';
-                div.innerHTML = `<span class="text-sn font-black uppercase text-[10px]">${logs[Math.floor(Math.random()*logs.length)]}</span><span class="text-zinc-600 text-[9px]">${new Date().toLocaleTimeString()}</span>`;
+                div.className = 'p-6 rounded-[30px] bg-zinc-950 border border-white/5 flex justify-between items-center italic';
+                div.innerHTML = `<span class="text-sn font-black uppercase text-[10px] underline tracking-widest">${logs[Math.floor(Math.random()*logs.length)]}</span><span class="text-zinc-700 text-[9px] font-bold">${new Date().toLocaleTimeString()}</span>`;
                 feed.prepend(div);
-                if(feed.children.length > 8) feed.lastChild.remove();
+                if(feed.children.length > 10) feed.lastChild.remove();
             }, 5000);
+        }
+    },
+    charts: {
+        init() {
+            const ctxLat = document.getElementById('latencyChart').getContext('2d');
+            new Chart(ctxLat, {
+                type:'line',
+                data:{
+                    labels:['00:00','04:00','08:00','12:00','16:00','20:00'],
+                    datasets:[{
+                        data:[12, 14, 28, 15, 12, 11], borderColor:'#3b82f6', backgroundColor:'rgba(59, 130, 246, 0.05)', fill:true, tension:.4, pointRadius: 0
+                    }]
+                },
+                options:{ plugins:{legend:{display:false}}, scales:{ x:{grid:{display:false}}, y:{display:false} } }
+            });
         }
     },
     owner: {
         trigger() {
             this.taps++;
-            if(this.taps >= 5) { alert("PRIVATE OWNER MODE: ACCESSED"); this.taps = 0; }
+            if(this.taps >= 5) { alert("GOD MODE: TITAN PRODUCTION OVERRIDE UNLOCKED"); this.taps = 0; }
         }
     }
 };
@@ -287,13 +299,12 @@ const SN_CORE = {
 function showView(name){
     document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden'));
     document.getElementById('view-'+name).classList.remove('hidden');
-    
-    document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.remove('active','bg-sn','text-black'));
-    document.querySelectorAll('.sidebar-btn').forEach(b=>b.classList.add('bg-zinc-900','text-zinc-500'));
-    document.getElementById('nav-'+name)?.classList.replace('bg-zinc-900','bg-sn');
-    document.getElementById('nav-'+name)?.classList.replace('text-zinc-500','text-black');
-    document.getElementById('nav-'+name)?.classList.add('active');
-
+    // Desktop Nav
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.remove('bg-sn','text-black'));
+    document.querySelectorAll('.navbtn').forEach(b=>b.classList.add('bg-zinc-950','text-zinc-500'));
+    event.target.classList.replace('bg-zinc-950','bg-sn');
+    event.target.classList.replace('text-zinc-500','text-black');
+    // Mobile Nav
     document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
     document.getElementById('m-'+name)?.classList.add('active');
 }
