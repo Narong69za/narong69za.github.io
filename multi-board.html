@@ -3,132 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SN ULTRA MOBILE</title>
+    <title>SN ULTRA REAL-TIME</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap');
-        :root { --neon-gold: #f59e0b; --bg-black: #050505; }
-        body { background: var(--bg-black); color: #f4f4f5; font-family: 'Inter', sans-serif; }
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;700&display=swap');
+        :root { --gold: #f59e0b; --bg: #09090b; }
+        body { background: var(--bg); color: #e4e4e7; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .sn-font { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(20, 20, 22, 0.9); backdrop-filter: blur(15px); border: 1px solid rgba(63, 63, 70, 0.3); }
-        .neon-text { color: var(--neon-gold); text-shadow: 0 0 10px rgba(245, 158, 11, 0.3); }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; height: 70px; border-top: 1px solid #27272a; }
-        .content-section { padding-bottom: 90px; } /* เผื่อที่ให้ Bottom Nav */
-        .card-stack { width: 100%; margin-bottom: 1rem; border-radius: 24px; overflow: hidden; }
+        .glass-card { background: #121214; border: 1px solid #27272a; border-radius: 24px; }
+        .btn-gold { background: #f59e0b; color: #000; font-weight: 800; border-radius: 14px; text-transform: uppercase; transition: 0.2s; }
+        .btn-gold:active { transform: scale(0.95); }
+        .neon-gold { color: var(--gold); text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
+        .status-badge { font-size: 9px; font-weight: bold; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
+        .terminal-box { background: #000; border-radius: 16px; font-family: 'Courier New', monospace; font-size: 10px; color: #10b981; overflow: hidden; }
+        input { background: #18181b !important; border: 1px solid #27272a !important; color: white !important; text-align: center; }
         .scroll-hide::-webkit-scrollbar { display: none; }
     </style>
 </head>
-<body class="p-4 scroll-hide">
+<body class="p-4 space-y-6 scroll-hide pb-20">
 
-    <header class="flex justify-between items-center mb-6">
-        <div>
-            <h1 class="text-xl font-bold sn-font neon-text italic">SN ULTRA</h1>
-            <p class="text-[9px] uppercase tracking-widest text-zinc-500">Real-Time Mobile Node</p>
+    <div class="text-center py-4">
+        <h1 class="text-4xl font-black sn-font tracking-tighter italic">SN ULTRA</h1>
+        <h2 class="text-2xl font-bold sn-font neon-gold italic">REAL-TIME</h2>
+        <p class="text-[10px] text-zinc-500 mt-1 uppercase tracking-widest font-bold">พัฒนาโดย : ต้องดีแค่ไหน โลกถึงจะจำ</p>
+    </div>
+
+    <div class="flex justify-center gap-3">
+        <div class="status-badge text-yellow-500 border-yellow-500/30 flex items-center bg-zinc-900/50">
+            <i class="fas fa-id-badge mr-2"></i> OWNER ACCESS
         </div>
-        <div class="flex items-center gap-3">
-            <div class="text-right">
-                <span class="block text-[10px] text-zinc-500 font-mono" id="ping-val">12ms</span>
-                <span class="block text-[10px] text-green-500 font-bold uppercase">Active</span>
-            </div>
-            <div class="w-10 h-10 rounded-full glass flex items-center justify-center border-yellow-500/30">
-                <i class="fas fa-user-shield text-yellow-500"></i>
-            </div>
+        <div class="status-badge text-green-500 border-green-500/30 flex items-center bg-zinc-900/50">
+            <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div> API ACTIVE
         </div>
-    </header>
+    </div>
 
-    <main class="content-section">
-
-        <div class="grid grid-cols-2 gap-3 mb-4">
-            <div class="glass p-4 rounded-3xl text-center">
-                <p class="text-[10px] text-zinc-500 uppercase mb-1">CPU LOAD</p>
-                <p class="text-xl font-bold neon-text" id="cpu-val">0%</p>
-            </div>
-            <div class="glass p-4 rounded-3xl text-center">
-                <p class="text-[10px] text-zinc-500 uppercase mb-1">MEM USAGE</p>
-                <p class="text-xl font-bold neon-text" id="ram-val">0%</p>
-            </div>
+    <div class="glass-card p-6 border-zinc-800 shadow-2xl">
+        <p class="text-center text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-4 font-bold">Cloud Mesh Permission</p>
+        <input type="text" placeholder="USERNAME / HWID ..." class="w-full p-4 rounded-xl mb-4 text-xs font-mono">
+        
+        <div class="flex justify-center gap-10 mb-6">
+            <label class="flex items-center gap-2 text-xs font-bold text-zinc-400">
+                <input type="checkbox" checked class="w-4 h-4 accent-yellow-500"> HAMSTER BOT
+            </label>
+            <label class="flex items-center gap-2 text-xs font-bold text-zinc-400">
+                <input type="checkbox" checked class="w-4 h-4 accent-yellow-500"> FAUCET NODE
+            </label>
         </div>
+        <button class="w-full btn-gold py-4 shadow-lg shadow-yellow-500/10">Update Handshake</button>
+    </div>
 
-        <div id="main-viewport">
-            
-            <div id="view-dash" class="tab-content space-y-4">
-                <div class="card-stack glass p-5">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-sm font-bold uppercase italic"><i class="fas fa-chart-area mr-2 text-yellow-500"></i>Pulse Monitor</h3>
-                        <span class="text-[10px] text-zinc-500">2.0 TPS</span>
-                    </div>
-                    <canvas id="mobileChart" height="150"></canvas>
-                </div>
-
-                <div class="card-stack glass p-5">
-                    <h3 class="text-sm font-bold uppercase italic mb-3">Boss & Map Status</h3>
-                    <div class="space-y-2">
-                        <div class="flex justify-between items-center bg-black/40 p-3 rounded-2xl border border-zinc-800">
-                            <span class="text-xs">Central Boss (Volcano)</span>
-                            <span class="text-[10px] bg-green-500/10 text-green-500 px-2 py-1 rounded">ALIVE</span>
-                        </div>
-                        <div class="flex justify-between items-center bg-black/40 p-3 rounded-2xl border border-zinc-800">
-                            <span class="text-xs">Dungeon Floor 14</span>
-                            <span class="text-[10px] text-zinc-400">45 PLAYERS</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="view-game" class="tab-content hidden space-y-4">
-                <div class="card-stack glass p-5">
-                    <h3 class="text-sm font-bold uppercase italic mb-4">สมาชิกโยวกังออนไลน์</h3>
-                    <div id="member-list" class="space-y-3">
-                        </div>
-                </div>
-            </div>
-
-            <div id="view-shop" class="tab-content hidden grid grid-cols-1 gap-3">
-                </div>
-
+    <div class="grid grid-cols-3 gap-3">
+        <div class="glass-card p-4 text-center">
+            <p class="text-[9px] text-zinc-500 font-bold uppercase">CPU</p>
+            <p class="text-xl font-black neon-gold" id="stat-cpu">0%</p>
         </div>
-    </main>
+        <div class="glass-card p-4 text-center">
+            <p class="text-[9px] text-zinc-500 font-bold uppercase">RAM</p>
+            <p class="text-xl font-black neon-gold" id="stat-ram">0%</p>
+        </div>
+        <div class="glass-card p-4 text-center">
+            <p class="text-[9px] text-zinc-500 font-bold uppercase">PORT</p>
+            <p class="text-xl font-black text-blue-500">5002</p>
+        </div>
+    </div>
 
-    <nav class="bottom-nav glass flex justify-around items-center px-4">
-        <button onclick="switchTab('dash')" id="btn-dash" class="flex flex-col items-center text-yellow-500">
-            <i class="fas fa-tachometer-alt text-xl mb-1"></i>
-            <span class="text-[9px] font-bold uppercase">Monitor</span>
-        </button>
-        <button onclick="switchTab('game')" id="btn-game" class="flex flex-col items-center text-zinc-500">
-            <i class="fas fa-ghost text-xl mb-1"></i>
-            <span class="text-[9px] font-bold uppercase">Players</span>
-        </button>
-        <button onclick="switchTab('shop')" id="btn-shop" class="flex flex-col items-center text-zinc-500">
-            <i class="fas fa-shopping-bag text-xl mb-1"></i>
-            <span class="text-[9px] font-bold uppercase">Shop</span>
-        </button>
-        <button onclick="logout()" class="flex flex-col items-center text-red-500">
-            <i class="fas fa-power-off text-xl mb-1"></i>
-            <span class="text-[9px] font-bold uppercase">Exit</span>
-        </button>
-    </nav>
+    <div class="glass-card p-4 h-48 overflow-hidden">
+        <canvas id="mainChart"></canvas>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="glass-card p-3 flex justify-between px-5 items-center">
+            <span class="text-[10px] font-bold text-zinc-400">RUNWAY</span>
+            <span class="text-[10px] font-bold text-green-500">ACTIVE</span>
+        </div>
+        <div class="glass-card p-3 flex justify-between px-5 items-center">
+            <span class="text-[10px] font-bold text-zinc-400">GEMINI</span>
+            <span class="text-[10px] font-bold text-green-500">ACTIVE</span>
+        </div>
+        <div class="glass-card p-3 flex justify-between px-5 items-center">
+            <span class="text-[10px] font-bold text-zinc-400">STRIPE</span>
+            <span class="text-[10px] font-bold text-yellow-500">LIVE</span>
+        </div>
+        <div class="glass-card p-3 flex justify-between px-5 items-center">
+            <span class="text-[10px] font-bold text-zinc-400">BINANCE</span>
+            <span class="text-[10px] font-bold text-blue-400">READY</span>
+        </div>
+    </div>
+
+    <div class="text-center pt-4">
+        <h3 class="text-xl font-black sn-font uppercase italic">World Map & Monsters</h3>
+        <p class="text-[9px] text-blue-400 uppercase tracking-widest mt-1">Central City: 14 Bosses / 241 Monsters Active</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">Current Map</p><p class="text-sm font-bold">Central City</p></div>
+        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">Coordinates</p><p class="text-sm font-bold">142 / 084 / 21</p></div>
+        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">World Boss</p><p class="text-sm font-bold text-green-500">● LIVE</p></div>
+        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">Uptime</p><p class="text-sm font-bold text-blue-500">99.9%</p></div>
+    </div>
+
+    <div class="glass-card p-6 space-y-4">
+        <div class="flex justify-between items-center">
+            <p class="text-xs font-bold sn-font italic uppercase">Item Showcase (14 Classes)</p>
+            <span class="text-[9px] text-yellow-500 font-bold">INVENTORY SCAN ACTIVE</span>
+        </div>
+        <div class="grid grid-cols-4 gap-2">
+            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
+            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
+            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
+            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
+        </div>
+        <button class="w-full py-4 rounded-2xl border border-pink-500/20 text-pink-500 font-bold text-[10px] uppercase tracking-widest hover:bg-pink-500/5">Premium Cash Shop</button>
+    </div>
+
+    <div class="text-center pt-4">
+        <h3 class="text-3xl font-black sn-font italic tracking-tighter">YULGANG 2026</h3>
+        <h3 class="text-2xl font-black sn-font italic tracking-tighter">ONLINE</h3>
+        <p class="text-[9px] text-green-500 font-bold uppercase tracking-[0.3em] mt-1">Gateway Routed / Port 5006</p>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Players</p><i class="fas fa-user-friends text-xl"></i></div>
+        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Online</p><i class="fas fa-check-square text-xl text-green-500"></i></div>
+        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Classes</p><i class="fas fa-shield-alt text-xl text-blue-400"></i></div>
+        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Items</p><i class="fas fa-box-open text-xl text-yellow-500"></i></div>
+    </div>
+
+    <div class="glass-card p-6 flex justify-between items-center bg-gradient-to-r from-zinc-900 to-zinc-950">
+        <div class="text-left">
+            <p class="text-[9px] text-zinc-500 uppercase font-bold">Server Load</p>
+            <p class="text-2xl font-black neon-gold">0%</p>
+        </div>
+        <button class="btn-gold px-10 py-4 rounded-full bg-green-500 text-black">Restart DB</button>
+    </div>
+
+    <div class="glass-card p-6">
+        <p class="text-[9px] font-bold text-blue-400 uppercase italic mb-3">Hamster Node (Port 5005)</p>
+        <div class="terminal-box p-4 h-32 mb-4 scroll-hide" id="logs-hamster">
+            >> [PORT 5005] Connecting Hamster Service...<br>
+            >> Heartbeat sent: --:--:--
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+            <button class="bg-cyan-600/20 text-cyan-400 py-3 rounded-xl text-[10px] font-bold border border-cyan-400/30">START</button>
+            <button class="bg-zinc-800 text-zinc-500 py-3 rounded-xl text-[10px] font-bold">STOP</button>
+        </div>
+    </div>
 
     <script>
-        const sid = localStorage.getItem("sn_sid");
+        /**
+         * ==========================================
+         * �️ SN ULTRA ENGINE CORE (v34)
+         * ==========================================
+         */
         let chart;
-
-        // 1. CHART INITIALIZE
         function initChart() {
-            const ctx = document.getElementById('mobileChart').getContext('2d');
+            const ctx = document.getElementById('mainChart').getContext('2d');
             chart = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: Array(15).fill(''),
                     datasets: [{
                         data: Array(15).fill(0),
-                        borderColor: '#f59e0b',
+                        borderColor: '#10b981',
                         borderWidth: 2,
                         tension: 0.4,
                         pointRadius: 0,
                         fill: true,
-                        backgroundColor: 'rgba(245, 158, 11, 0.05)'
+                        backgroundColor: 'rgba(16, 185, 129, 0.05)'
                     }]
                 },
                 options: {
@@ -139,73 +182,31 @@
             });
         }
 
-        // 2. TAB SWITCHER
-        function switchTab(tab) {
-            document.querySelectorAll('.tab-content').forEach(v => v.classList.add('hidden'));
-            document.getElementById(`view-${tab}`).classList.remove('hidden');
-            
-            document.querySelectorAll('.bottom-nav button').forEach(b => b.classList.replace('text-yellow-500', 'text-zinc-500'));
-            document.getElementById(`btn-${tab}`).classList.replace('text-zinc-500', 'text-yellow-500');
-
-            if(tab === 'game') loadMembers();
-            if(tab === 'shop') loadShop();
-        }
-
-        // 3. REAL-TIME DATA (Sync with Backend v33+)
-        async function updateStats() {
+        async function sync() {
             try {
                 const res = await fetch('/api/admin/realtime-status');
                 const data = await res.json();
                 if(data.ok) {
-                    document.getElementById('cpu-val').innerText = data.cpu + '%';
-                    document.getElementById('ram-val').innerText = data.ram + '%';
-                    
+                    document.getElementById('stat-cpu').innerText = data.cpu + '%';
+                    document.getElementById('stat-ram').innerText = data.ram + '%';
                     chart.data.datasets[0].data.shift();
                     chart.data.datasets[0].data.push(data.cpu);
                     chart.update('none');
                 }
             } catch(e) {}
-        }
-
-        // 4. LOAD MEMBERS (Stacked View)
-        async function loadMembers() {
-            const res = await fetch('/api/yulgang/members');
-            const data = await res.json();
-            const list = document.getElementById('member-list');
-            list.innerHTML = data.members.map(m => `
-                <div class="flex justify-between items-center p-4 bg-zinc-900 rounded-2xl border border-zinc-800">
-                    <div>
-                        <p class="text-sm font-bold text-zinc-300">${m.name}</p>
-                        <p class="text-[10px] text-zinc-500 uppercase">${m.class} | LV.${m.level}</p>
-                    </div>
-                    <span class="text-[10px] font-bold ${m.status==='Online'?'text-green-500':'text-zinc-600'}">${m.status}</span>
-                </div>
-            `).join('');
-        }
-
-        // 5. LOAD SHOP (Full Width Cards)
-        async function loadShop() {
-            const res = await fetch('/api/shop/items');
-            const data = await res.json();
-            const list = document.getElementById('view-shop');
-            list.innerHTML = data.items.map(i => `
-                <div class="glass p-4 rounded-3xl flex items-center gap-4">
-                    <img src="${i.img}" class="w-16 h-16 rounded-2xl bg-black">
-                    <div class="flex-1">
-                        <p class="text-sm font-bold">${i.name}</p>
-                        <p class="text-xs text-yellow-500">${i.price} CREDITS</p>
-                    </div>
-                    <button class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-[10px] font-bold">BUY</button>
-                </div>
-            `).join('');
+            
+            // Terminal Pulse
+            const logBox = document.getElementById('logs-hamster');
+            const now = new Date().toLocaleTimeString();
+            logBox.innerHTML += `<br>>> Heartbeat sent: ${now}`;
+            if(logBox.innerHTML.split('<br>').length > 10) logBox.innerHTML = logBox.innerHTML.split('<br>').slice(1).join('<br>');
+            logBox.scrollTop = logBox.scrollHeight;
         }
 
         document.addEventListener('DOMContentLoaded', () => {
             initChart();
-            setInterval(updateStats, 2000);
+            setInterval(sync, 2000);
         });
-
-        function logout() { localStorage.clear(); window.location.href = "index.html"; }
     </script>
 </body>
 </html>
