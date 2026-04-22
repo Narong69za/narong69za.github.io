@@ -9,205 +9,140 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;700&display=swap');
-        :root { --gold: #f59e0b; --bg: #09090b; }
+        :root { --gold: #f59e0b; --bg: #050505; }
         body { background: var(--bg); color: #e4e4e7; font-family: 'Inter', sans-serif; overflow-x: hidden; }
         .sn-font { font-family: 'Orbitron', sans-serif; }
-        .glass-card { background: #121214; border: 1px solid #27272a; border-radius: 24px; }
-        .btn-gold { background: #f59e0b; color: #000; font-weight: 800; border-radius: 14px; text-transform: uppercase; transition: 0.2s; }
-        .btn-gold:active { transform: scale(0.95); }
+        .glass-card { background: #121214; border: 1px solid #27272a; border-radius: 28px; }
         .neon-gold { color: var(--gold); text-shadow: 0 0 10px rgba(245, 158, 11, 0.4); }
-        .status-badge { font-size: 9px; font-weight: bold; padding: 4px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); }
-        .terminal-box { background: #000; border-radius: 16px; font-family: 'Courier New', monospace; font-size: 10px; color: #10b981; overflow: hidden; }
-        input { background: #18181b !important; border: 1px solid #27272a !important; color: white !important; text-align: center; }
-        .scroll-hide::-webkit-scrollbar { display: none; }
+        .btn-gold { background: #f59e0b; color: #000; font-weight: 800; border-radius: 16px; transition: 0.2s; }
+        .input-dark { background: #18181b !important; border: 1px solid #27272a !important; color: white !important; padding: 12px; border-radius: 14px; width: 100%; font-size: 13px; outline: none; }
+        .input-dark:focus { border-color: var(--gold) !important; }
+        .btn-social { background: #1c1c1f; border: 1px solid #27272a; padding: 10px; border-radius: 12px; font-size: 12px; font-weight: bold; width: 100%; transition: 0.2s; }
+        .btn-social:hover { background: #27272a; }
     </style>
 </head>
-<body class="p-4 space-y-6 scroll-hide pb-20">
+<body class="p-4 space-y-6 pb-12">
 
-    <div class="text-center py-4">
+    <div class="text-center py-6">
         <h1 class="text-4xl font-black sn-font tracking-tighter italic">SN ULTRA</h1>
         <h2 class="text-2xl font-bold sn-font neon-gold italic">REAL-TIME</h2>
-        <p class="text-[10px] text-zinc-500 mt-1 uppercase tracking-widest font-bold">พัฒนาโดย : ต้องดีแค่ไหน โลกถึงจะจำ</p>
-    </div>
-
-    <div class="flex justify-center gap-3">
-        <div class="status-badge text-yellow-500 border-yellow-500/30 flex items-center bg-zinc-900/50">
-            <i class="fas fa-id-badge mr-2"></i> OWNER ACCESS
-        </div>
-        <div class="status-badge text-green-500 border-green-500/30 flex items-center bg-zinc-900/50">
-            <div class="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div> API ACTIVE
+        <div class="flex justify-center gap-2 mt-3">
+            <span class="text-[9px] bg-green-500/10 text-green-500 px-3 py-1 rounded-full font-bold border border-green-500/20">API ACTIVE</span>
+            <span class="text-[9px] bg-yellow-500/10 text-yellow-500 px-3 py-1 rounded-full font-bold border border-yellow-500/20">OWNER ACCESS</span>
         </div>
     </div>
 
-    <div class="glass-card p-6 border-zinc-800 shadow-2xl">
-        <p class="text-center text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-4 font-bold">Cloud Mesh Permission</p>
-        <input type="text" placeholder="USERNAME / HWID ..." class="w-full p-4 rounded-xl mb-4 text-xs font-mono">
-        
-        <div class="flex justify-center gap-10 mb-6">
-            <label class="flex items-center gap-2 text-xs font-bold text-zinc-400">
-                <input type="checkbox" checked class="w-4 h-4 accent-yellow-500"> HAMSTER BOT
-            </label>
-            <label class="flex items-center gap-2 text-xs font-bold text-zinc-400">
-                <input type="checkbox" checked class="w-4 h-4 accent-yellow-500"> FAUCET NODE
-            </label>
+    <div class="glass-card p-6 border-l-4 border-l-blue-500 shadow-xl">
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-sm font-bold sn-font italic uppercase">Private Server RAN EP7</h3>
+            <span class="text-[10px] text-blue-400 font-bold">STABLE PORT 5100</span>
         </div>
-        <button class="w-full btn-gold py-4 shadow-lg shadow-yellow-500/10">Update Handshake</button>
-    </div>
-
-    <div class="grid grid-cols-3 gap-3">
-        <div class="glass-card p-4 text-center">
-            <p class="text-[9px] text-zinc-500 font-bold uppercase">CPU</p>
-            <p class="text-xl font-black neon-gold" id="stat-cpu">0%</p>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-black/40 p-4 rounded-2xl border border-zinc-800">
+                <p class="text-[9px] text-zinc-500 uppercase mb-1">Active Player</p>
+                <p class="text-sm font-bold">142 <span class="text-zinc-600 text-[10px]">PEOPLE</span></p>
+            </div>
+            <div class="bg-black/40 p-4 rounded-2xl border border-zinc-800">
+                <p class="text-[9px] text-zinc-500 uppercase mb-1">Maps Loaded</p>
+                <p class="text-sm font-bold text-blue-400">182 / 182</p>
+            </div>
         </div>
-        <div class="glass-card p-4 text-center">
-            <p class="text-[9px] text-zinc-500 font-bold uppercase">RAM</p>
-            <p class="text-xl font-black neon-gold" id="stat-ram">0%</p>
-        </div>
-        <div class="glass-card p-4 text-center">
-            <p class="text-[9px] text-zinc-500 font-bold uppercase">PORT</p>
-            <p class="text-xl font-black text-blue-500">5002</p>
-        </div>
-    </div>
-
-    <div class="glass-card p-4 h-48 overflow-hidden">
-        <canvas id="mainChart"></canvas>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-        <div class="glass-card p-3 flex justify-between px-5 items-center">
-            <span class="text-[10px] font-bold text-zinc-400">RUNWAY</span>
-            <span class="text-[10px] font-bold text-green-500">ACTIVE</span>
-        </div>
-        <div class="glass-card p-3 flex justify-between px-5 items-center">
-            <span class="text-[10px] font-bold text-zinc-400">GEMINI</span>
-            <span class="text-[10px] font-bold text-green-500">ACTIVE</span>
-        </div>
-        <div class="glass-card p-3 flex justify-between px-5 items-center">
-            <span class="text-[10px] font-bold text-zinc-400">STRIPE</span>
-            <span class="text-[10px] font-bold text-yellow-500">LIVE</span>
-        </div>
-        <div class="glass-card p-3 flex justify-between px-5 items-center">
-            <span class="text-[10px] font-bold text-zinc-400">BINANCE</span>
-            <span class="text-[10px] font-bold text-blue-400">READY</span>
-        </div>
-    </div>
-
-    <div class="text-center pt-4">
-        <h3 class="text-xl font-black sn-font uppercase italic">World Map & Monsters</h3>
-        <p class="text-[9px] text-blue-400 uppercase tracking-widest mt-1">Central City: 14 Bosses / 241 Monsters Active</p>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">Current Map</p><p class="text-sm font-bold">Central City</p></div>
-        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">Coordinates</p><p class="text-sm font-bold">142 / 084 / 21</p></div>
-        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">World Boss</p><p class="text-sm font-bold text-green-500">● LIVE</p></div>
-        <div class="glass-card p-4"><p class="text-[9px] text-zinc-500 uppercase font-bold mb-1">Uptime</p><p class="text-sm font-bold text-blue-500">99.9%</p></div>
-    </div>
-
-    <div class="glass-card p-6 space-y-4">
-        <div class="flex justify-between items-center">
-            <p class="text-xs font-bold sn-font italic uppercase">Item Showcase (14 Classes)</p>
-            <span class="text-[9px] text-yellow-500 font-bold">INVENTORY SCAN ACTIVE</span>
-        </div>
-        <div class="grid grid-cols-4 gap-2">
-            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
-            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
-            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
-            <div class="aspect-square bg-zinc-900 rounded-xl border border-zinc-800"></div>
-        </div>
-        <button class="w-full py-4 rounded-2xl border border-pink-500/20 text-pink-500 font-bold text-[10px] uppercase tracking-widest hover:bg-pink-500/5">Premium Cash Shop</button>
-    </div>
-
-    <div class="text-center pt-4">
-        <h3 class="text-3xl font-black sn-font italic tracking-tighter">YULGANG 2026</h3>
-        <h3 class="text-2xl font-black sn-font italic tracking-tighter">ONLINE</h3>
-        <p class="text-[9px] text-green-500 font-bold uppercase tracking-[0.3em] mt-1">Gateway Routed / Port 5006</p>
-    </div>
-
-    <div class="grid grid-cols-2 gap-3">
-        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Players</p><i class="fas fa-user-friends text-xl"></i></div>
-        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Online</p><i class="fas fa-check-square text-xl text-green-500"></i></div>
-        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Classes</p><i class="fas fa-shield-alt text-xl text-blue-400"></i></div>
-        <div class="glass-card p-5 text-center"><p class="text-[9px] text-zinc-500 uppercase mb-2">Items</p><i class="fas fa-box-open text-xl text-yellow-500"></i></div>
-    </div>
-
-    <div class="glass-card p-6 flex justify-between items-center bg-gradient-to-r from-zinc-900 to-zinc-950">
-        <div class="text-left">
-            <p class="text-[9px] text-zinc-500 uppercase font-bold">Server Load</p>
-            <p class="text-2xl font-black neon-gold">0%</p>
-        </div>
-        <button class="btn-gold px-10 py-4 rounded-full bg-green-500 text-black">Restart DB</button>
     </div>
 
     <div class="glass-card p-6">
-        <p class="text-[9px] font-bold text-blue-400 uppercase italic mb-3">Hamster Node (Port 5005)</p>
-        <div class="terminal-box p-4 h-32 mb-4 scroll-hide" id="logs-hamster">
-            >> [PORT 5005] Connecting Hamster Service...<br>
-            >> Heartbeat sent: --:--:--
-        </div>
-        <div class="grid grid-cols-2 gap-2">
-            <button class="bg-cyan-600/20 text-cyan-400 py-3 rounded-xl text-[10px] font-bold border border-cyan-400/30">START</button>
-            <button class="bg-zinc-800 text-zinc-500 py-3 rounded-xl text-[10px] font-bold">STOP</button>
+        <p class="text-[10px] uppercase tracking-[0.3em] text-zinc-500 mb-5 font-bold text-center">Credit Policy 4 Engine AI</p>
+        <div class="grid grid-cols-2 gap-3">
+            <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
+                <p class="text-[9px] text-purple-400 font-bold mb-1">RUNWAY GEN-3</p>
+                <p class="text-xs">$15.20 <span class="text-[8px] text-zinc-600">USED</span></p>
+            </div>
+            <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
+                <p class="text-[9px] text-blue-400 font-bold mb-1">GEMINI PRO</p>
+                <p class="text-xs">$8.45 <span class="text-[8px] text-zinc-600">USED</span></p>
+            </div>
+            <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
+                <p class="text-[9px] text-yellow-400 font-bold mb-1">REPLICATE AI</p>
+                <p class="text-xs">$12.10 <span class="text-[8px] text-zinc-600">USED</span></p>
+            </div>
+            <div class="bg-zinc-900/50 p-4 rounded-2xl border border-zinc-800">
+                <p class="text-[9px] text-pink-400 font-bold mb-1">ELEVEN LABS</p>
+                <p class="text-xs">3,200 <span class="text-[8px] text-zinc-600">CHARS</span></p>
+            </div>
         </div>
     </div>
 
-    <script>
-        /**
-         * ==========================================
-         * �️ SN ULTRA ENGINE CORE (v34)
-         * ==========================================
-         */
-        let chart;
-        function initChart() {
-            const ctx = document.getElementById('mainChart').getContext('2d');
-            chart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array(15).fill(''),
-                    datasets: [{
-                        data: Array(15).fill(0),
-                        borderColor: '#10b981',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 0,
-                        fill: true,
-                        backgroundColor: 'rgba(16, 185, 129, 0.05)'
-                    }]
-                },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    scales: { y: { display: false, min: 0, max: 100 }, x: { display: false } },
-                    plugins: { legend: { display: false } }
-                }
-            });
-        }
+    <div class="grid grid-cols-1 gap-4">
+        <div class="glass-card p-5 bg-gradient-to-br from-zinc-900 to-black">
+            <p class="text-[10px] font-bold text-orange-400 mb-3 italic">TELEGRAM HAMSTER BOT (PORT 5005)</p>
+            <div class="bg-black p-3 rounded-xl font-mono text-[9px] text-green-500 mb-3 h-16 overflow-hidden">
+                >> Handshake Protocol: OK<br>
+                >> Bot Instance: Active
+            </div>
+            <button class="w-full py-2 bg-zinc-800 rounded-lg text-[10px] font-bold">MANAGE BOT</button>
+        </div>
+        <div class="glass-card p-5 bg-gradient-to-br from-zinc-900 to-black">
+            <p class="text-[10px] font-bold text-blue-400 mb-3 italic">FAUCET CRYPTO NODE (PORT 5004)</p>
+            <div class="flex justify-between items-end">
+                <div><p class="text-xs font-bold">Status: <span class="text-green-500">READY</span></p><p class="text-[9px] text-zinc-500">Hashrate: 1.2 TH/s</p></div>
+                <button class="bg-blue-600 px-6 py-2 rounded-lg text-[10px] font-bold">INIT NODE</button>
+            </div>
+        </div>
+    </div>
 
-        async function sync() {
-            try {
-                const res = await fetch('/api/admin/realtime-status');
-                const data = await res.json();
-                if(data.ok) {
-                    document.getElementById('stat-cpu').innerText = data.cpu + '%';
-                    document.getElementById('stat-ram').innerText = data.ram + '%';
-                    chart.data.datasets[0].data.shift();
-                    chart.data.datasets[0].data.push(data.cpu);
-                    chart.update('none');
-                }
-            } catch(e) {}
+    <div class="glass-card p-5 border-dashed border-red-500/30">
+        <p class="text-[10px] font-bold text-red-500 mb-3 uppercase tracking-widest"><i class="fas fa-user-secret mr-2"></i>Security Audit Season</p>
+        <div class="space-y-2">
+            <div class="flex justify-between text-[10px] p-2 bg-zinc-900 rounded-lg"><span>SQL Injection Shield</span><span class="text-green-500 font-bold">ACTIVE</span></div>
+            <div class="flex justify-between text-[10px] p-2 bg-zinc-900 rounded-lg"><span>DDoS Rate Limit</span><span class="text-green-500 font-bold">ACTIVE</span></div>
+        </div>
+    </div>
+
+    <div class="glass-card p-8 border border-yellow-500/20 shadow-2xl shadow-yellow-500/5">
+        <div class="text-center mb-6">
+            <h3 class="text-2xl font-black sn-font italic neon-gold">YULGANG ONLINE</h3>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-widest">Membership Control Center</p>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mb-6">
+            <button class="btn-social text-white"><i class="fab fa-google mr-2 text-red-500"></i> Google</button>
+            <button class="btn-social text-white"><i class="fab fa-discord mr-2 text-blue-500"></i> Discord</button>
+        </div>
+
+        <div class="relative flex py-2 items-center mb-6">
+            <div class="flex-grow border-t border-zinc-800"></div>
+            <span class="flex-shrink mx-4 text-zinc-600 text-[10px] uppercase font-bold">Or Manual Access</span>
+            <div class="flex-grow border-t border-zinc-800"></div>
+        </div>
+
+        <div class="space-y-4">
+            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold uppercase">E-Mail Address</p><input type="email" placeholder="example@mail.com" class="input-dark"></div>
+            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold uppercase">Username</p><input type="text" placeholder="Character ID" class="input-dark"></div>
+            <div><p class="text-[10px] text-zinc-500 mb-1 ml-2 font-bold uppercase">Password</p><input type="password" placeholder="••••••••" class="input-dark"></div>
             
-            // Terminal Pulse
-            const logBox = document.getElementById('logs-hamster');
-            const now = new Date().toLocaleTimeString();
-            logBox.innerHTML += `<br>>> Heartbeat sent: ${now}`;
-            if(logBox.innerHTML.split('<br>').length > 10) logBox.innerHTML = logBox.innerHTML.split('<br>').slice(1).join('<br>');
-            logBox.scrollTop = logBox.scrollHeight;
-        }
+            <button class="w-full btn-gold py-4 shadow-lg shadow-yellow-500/20 text-sm mt-4">JOIN ADVENTURE (สมัครสมาชิก)</button>
+            
+            <div class="flex justify-between px-2 mt-4">
+                <button class="text-[10px] text-zinc-500 font-bold hover:text-white transition-all uppercase">Forgot Password?</button>
+                <button class="text-[10px] text-zinc-500 font-bold hover:text-white transition-all uppercase">Check Rules</button>
+            </div>
+        </div>
+    </div>
 
-        document.addEventListener('DOMContentLoaded', () => {
-            initChart();
-            setInterval(sync, 2000);
-        });
-    </script>
+    <div class="grid grid-cols-1 gap-4 pt-4">
+        <button class="w-full p-5 bg-gradient-to-r from-blue-600 to-blue-800 rounded-3xl flex justify-between items-center shadow-lg shadow-blue-900/20 active:scale-95 transition-all">
+            <div class="text-left"><p class="text-[10px] font-bold text-white/70 uppercase">PC Platform</p><p class="text-lg font-black italic sn-font">DOWNLOAD .EXE</p></div>
+            <i class="fas fa-desktop text-3xl opacity-30"></i>
+        </button>
+        <button class="w-full p-5 bg-gradient-to-r from-green-600 to-green-800 rounded-3xl flex justify-between items-center shadow-lg shadow-green-900/20 active:scale-95 transition-all">
+            <div class="text-left"><p class="text-[10px] font-bold text-white/70 uppercase">Mobile Platform</p><p class="text-lg font-black italic sn-font">DOWNLOAD .APK</p></div>
+            <i class="fab fa-android text-3xl opacity-30"></i>
+        </button>
+    </div>
+
+    <div class="text-center py-6">
+        <p class="text-[9px] text-zinc-600 uppercase font-bold">SN ULTRA ECOSYSTEM v35.2 | PROTECTED BY SECURITY AUDIT</p>
+    </div>
+
 </body>
 </html>
 
