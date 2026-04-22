@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>SN ULTRA | TITAN INTEGRATED CORE v36.6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: { 'yg-green': '#22c55e', 'ran-red': '#ef4444', 'sn-gold': '#f59e0b' },
+              animation: { 'ticker': 'ticker 25s linear infinite' },
+              keyframes: { ticker: { '0%': { transform: 'translateX(100%)' }, '100%': { transform: 'translateX(-100%)' } } }
+            }
+          }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@300;400;700&display=swap');
+        :root { --gold: #f59e0b; --bg: #030303; }
+        body { background: var(--bg); color: #fff; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .sn { font-family: 'Orbitron', sans-serif; }
+        .glass { background: rgba(15, 15, 15, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(255,255,255,0.05); border-radius: 32px; }
+        .neon-gold { color: var(--gold); text-shadow: 0 0 15px rgba(245, 158, 11, 0.4); }
+        .input-dark { background: #080808 !important; border: 1px solid #222 !important; color: white !important; padding: 15px; border-radius: 18px; width: 100%; font-size: 13px; outline: none; transition: 0.3s; }
+        .input-dark:focus { border-color: var(--gold) !important; box-shadow: 0 0 10px rgba(245,158,11,0.1); }
+        .btn-main { border-radius: 18px; font-weight: 900; text-transform: uppercase; transition: 0.3s; cursor: pointer; }
+        .btn-main:active { transform: scale(0.95); }
+        .ticker-wrap { overflow: hidden; white-space: nowrap; width: 100%; display: flex; }
+        .sticky-nav { position: fixed; bottom: 0; left: 0; right: 0; height: 75px; background: rgba(5,5,5,0.98); backdrop-filter: blur(20px); border-top: 1px solid #222; z-index: 9999; display: flex; justify-content: space-around; align-items: center; }
+        .nav-item { display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: 800; color: #555; text-transform: uppercase; }
+        .nav-item.active { color: var(--gold); }
+        @keyframes bounce-in { 0% { transform: translateX(100%); } 100% { transform: translateX(0); } }
+        .animate-bounce-in { animation: bounce-in 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28); }
+    </style>
+</head>
+<body class="p-4 pb-32 space-y-6">
+
+    <header class="text-center py-4" onclick="SN_CORE.ui.triggerAdmin()">
+        <h1 class="sn text-5xl font-black italic tracking-tighter uppercase">SN ULTRA</h1>
+        <div class="flex justify-center items-center gap-3 mt-3">
+            <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span></span>
+            <p class="text-xs font-black text-green-500 uppercase tracking-widest">Players Online: 184</p>
+        </div>
+    </header>
+
+    <div class="glass p-3 border-sn-gold/10 overflow-hidden relative">
+        <div class="ticker-wrap"><div class="animate-ticker flex gap-10 text-[10px] font-bold uppercase tracking-widest text-sn-gold">
+            <span>EXP x3 วันนี้ !! | BOSS SPAWN 20:00 น. | โปรโมชั่นเติมเงิน x2 อัตโนมัติ</span>
+            <span>EXP x3 วันนี้ !! | BOSS SPAWN 20:00 น. | โปรโมชั่นเติมเงิน x2 อัตโนมัติ</span>
+        </div></div>
+    </div>
+
+    <div class="glass p-3 border-blue-500/10 overflow-hidden relative">
+        <div class="ticker-wrap"><div class="animate-ticker flex gap-10 text-[9px] font-bold uppercase tracking-widest text-blue-200" style="animation-duration: 40s">
+            <span>ระบบเพื่อ การศึกษา และเชิงพาณิชย์ พัฒนา โดย ต้องดีแค่ไหน โลกถึงจะจำ รับทำระบบ เกมส์ ออนไลน์ 2ระบบ เล่นได้ทั้ง PC และ MOBILE บริการ ระบบ เติมเงิน เว็บช็อป ครบวงจร ทุกรูปแบบ</span>
+        </div></div>
+    </div>
+
+    <div class="grid grid-cols-2 gap-3">
+        <div class="glass p-5 text-center"><p class="text-[9px] text-zinc-600 font-bold mb-1 uppercase">CPU LOAD</p><h3 id="cpu-val" class="text-2xl font-black neon-gold">12%</h3></div>
+        <div class="glass p-5 text-center"><p class="text-[9px] text-zinc-600 font-bold mb-1 uppercase">RAM USAGE</p><h3 id="ram-val" class="text-2xl font-black neon-gold">45%</h3></div>
+    </div>
+
+    <div class="glass p-6">
+        <h3 class="text-[10px] font-black uppercase text-zinc-600 mb-5 tracking-[0.2em]">AI Engine Quota Meter</h3>
+        <div class="space-y-4">
+            <div><div class="flex justify-between text-[10px] mb-1 text-zinc-400"><span>Gemini Pro 1.5</span><span>65%</span></div><div class="h-1.5 bg-zinc-900 rounded-full overflow-hidden"><div class="h-full bg-sn-gold" style="width: 65%"></div></div></div>
+            <div><div class="flex justify-between text-[10px] mb-1 text-zinc-400"><span>Runway Gen-3</span><span>22%</span></div><div class="h-1.5 bg-zinc-900 rounded-full overflow-hidden"><div class="h-full bg-purple-500" style="width: 22%"></div></div></div>
+            <div><div class="flex justify-between text-[10px] mb-1 text-zinc-400"><span>ElevenLabs AI</span><span class="text-red-500 font-bold">90%</span></div><div class="h-1.5 bg-zinc-900 rounded-full overflow-hidden"><div class="h-full bg-red-600" style="width: 90%"></div></div></div>
+        </div>
+    </div>
+
+    <div class="glass p-8 border-yg-green/20 shadow-2xl">
+        <div class="text-center mb-8">
+            <h3 class="text-3xl font-black sn italic text-yg-green tracking-tighter">YULGANG ONLINE</h3>
+            <p class="text-[9px] text-zinc-500 uppercase tracking-[0.5em] mt-1 font-bold">The Real-Time Private Server</p>
+        </div>
+
+        <div class="bg-black/50 p-6 rounded-[28px] border border-white/5 mb-6">
+            <p class="text-[10px] font-black text-yg-green uppercase mb-5 tracking-widest text-center italic">Membership Access</p>
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button class="bg-zinc-900 p-3 rounded-xl text-[10px] font-bold border border-white/5"><i class="fab fa-google text-red-500 mr-1"></i> GOOGLE</button>
+                <button class="bg-zinc-900 p-3 rounded-xl text-[10px] font-bold border border-white/5"><i class="fab fa-discord text-blue-500 mr-1"></i> DISCORD</button>
+            </div>
+            <div class="space-y-3">
+                <input type="text" placeholder="Character Username" class="input-dark">
+                <input type="password" placeholder="Password" class="input-dark">
+                <button class="w-full btn-main bg-yg-green text-black py-4 text-xs">Login / Register Character</button>
+                <div class="flex justify-between px-2 text-[9px] text-zinc-500 font-bold uppercase"><span>สมัครสมาชิกใหม่</span><span>ลืมรหัสผ่าน?</span></div>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest italic text-center">World & Data Preview</p>
+            <div class="grid grid-cols-3 gap-2">
+                <button class="bg-zinc-900 p-3 rounded-xl text-[9px] font-bold border border-yg-green/20">MAP PREVIEW</button>
+                <button class="bg-zinc-900 p-3 rounded-xl text-[9px] font-bold border border-yg-green/20">MONSTERS</button>
+                <button class="bg-zinc-900 p-3 rounded-xl text-[9px] font-bold border border-yg-green/20">ITEM SHOP</button>
+            </div>
+            <div class="h-48 bg-black rounded-[24px] border border-white/5 flex items-center justify-center relative overflow-hidden">
+                <img src="/assets/images/yg-preview.jpg" class="w-full h-full object-cover opacity-30">
+                <span class="absolute text-[10px] font-black sn uppercase text-yg-green animate-pulse">Scanning World Matrix...</span>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3 mt-6">
+            <button class="bg-gradient-to-br from-zinc-800 to-black p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5 shadow-xl">
+                <i class="fas fa-desktop text-yg-green"></i> <span class="text-[10px] font-black uppercase">PC Client</span>
+            </button>
+            <button class="bg-gradient-to-br from-zinc-800 to-black p-4 rounded-2xl flex items-center justify-center gap-2 border border-white/5 shadow-xl">
+                <i class="fab fa-android text-yg-green"></i> <span class="text-[10px] font-black uppercase">Android</span>
+            </button>
+        </div>
+    </div>
+
