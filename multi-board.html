@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>SN ULTRA | PRODUCTION LIVE SYNC v38.2</title>
+<title>SN ULTRA | PRODUCTION FINAL v38.4</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -17,7 +17,7 @@ tailwind.config = {
         sn: "#d4af37", bg: "#020202", card: "#0a0a0a", line: "#1a1a1a",
         yg: "#10b981", ran: "#ef4444", ok: "#10b981", bot: "#3b82f6"
       },
-      fontFamily: { orbitron: ["Orbitron", "sans-serif"], sans: ["Inter", "sans-serif"], kanit: ["Kanit", "sans-serif"] }
+      fontFamily: { orbitron: ["Orbitron", "sans-serif"], kanit: ["Kanit", "sans-serif"] }
     }
   }
 }
@@ -30,17 +30,17 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
 .glass { background: rgba(8, 8, 8, 0.98); border: 1px solid rgba(255, 255, 255, 0.03); }
 
 /* มาตรฐานปุ่มสี่เหลี่ยมผืนผ้า v22+23 */
-.btn-final { width: 100%; height: 58px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 16px; font-weight: 700; text-transform: uppercase; font-size: 14px; transition: 0.2s; cursor: pointer; }
-.btn-final:active { transform: scale(0.97); filter: brightness(2.5); box-shadow: 0 0 50px currentColor; }
+.btn-final { width: 100%; height: 58px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 16px; font-weight: 700; text-transform: uppercase; font-size: 14px; transition: 0.2s; cursor: pointer; border: none; }
+.btn-final:active { transform: scale(0.97); filter: brightness(1.5); }
 
-/* กล่อง UI มาตรฐาน v22-Remix Center All */
+/* กล่อง UI มาตรฐานล็อคขอบ */
 .box-ui { background: #080808; border: 1px solid #161616; border-radius: 35px; padding: 30px; position: relative; overflow: hidden; margin-bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
 
-.input-final { background: #050505 !important; border: 1px solid #1a1a1a !important; color: white !important; height: 58px; border-radius: 16px; width: 100%; font-size: 15px; outline: none; text-align: center; font-family: 'Kanit', sans-serif; }
+.input-final { background: #050505 !important; border: 1px solid #1a1a1a !important; color: white !important; height: 58px; border-radius: 16px; width: 100%; font-size: 15px; outline: none; text-align: center; }
 
-/* Ticker บริการระบบ (Vertical Slide - ห้ามล้น) */
+/* Ticker บริการแบบเลื่อนขึ้น (ป้องกันการล้น) */
 .service-ticker { height: 35px; overflow: hidden; position: relative; width: 100%; max-width: 500px; }
-.service-list { animation: slideUp 12s infinite ease-in-out; }
+.service-list { animation: slideUp 15s infinite ease-in-out; }
 @keyframes slideUp {
     0%, 15% { transform: translateY(0); }
     20%, 35% { transform: translateY(-35px); }
@@ -51,21 +51,21 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
 }
 .service-item { height: 35px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #d4af37; text-transform: uppercase; letter-spacing: 1px; }
 
-/* Ticker สำหรับ 14 อาชีพ */
-.class-ticker { height: 90px; overflow: hidden; width: 100%; }
+/* 14 อาชีพเลื่อนอัตโนมัติ */
+.class-ticker { height: 95px; overflow: hidden; width: 100%; }
 .class-list-yg { animation: slideClassesYG 12s infinite ease-in-out; }
 @keyframes slideClassesYG {
     0%, 45% { transform: translateY(0); }
-    50%, 95% { transform: translateY(-90px); }
+    50%, 95% { transform: translateY(-95px); }
     100% { transform: translateY(0); }
 }
 
-/* Modal Popup สไตล์พรีเมียม */
-#modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(15px); }
-.modal-content { background: #080808; border: 1.5px solid #d4af37; border-radius: 40px; width: 100%; max-width: 450px; padding: 40px; position: relative; box-shadow: 0 0 60px rgba(212,175,55,0.15); }
-
-.item-icon { width: 55px; height: 55px; background: #000; border: 1px solid #1a1a1a; border-radius: 12px; object-fit: contain; }
+.item-icon { width: 65px; height: 65px; background: #000; border: 1px solid #1a1a1a; border-radius: 15px; object-fit: contain; }
 .scrollbar::-webkit-scrollbar { width: 0px; }
+
+/* Modal สไตล์ Billionaire */
+#modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.95); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 25px; backdrop-filter: blur(15px); }
+.modal-content { background: #080808; border: 1.5px solid #d4af37; border-radius: 40px; width: 100%; max-width: 480px; padding: 40px; position: relative; }
 </style>
 </head>
 
@@ -74,22 +74,22 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
     <header class="flex flex-col items-center mb-10 text-center space-y-6">
         <div onclick="SN_CORE.owner.trigger()">
             <h1 class="text-4xl font-black sn-font text-sn italic tracking-tighter">SN ULTRA</h1>
-            <p class="text-[9px] text-zinc-600 font-black uppercase tracking-[0.5em] mt-1">Infrastructure Final Production</p>
+            <p class="text-[9px] text-zinc-600 font-black uppercase tracking-[0.5em] mt-1 italic">Infrastructure Final Production</p>
         </div>
 
-        <div class="service-ticker glass rounded-xl w-full border border-sn/10">
-            <div class="service-list">
-                <div class="service-item text-sn">รับเปิดเซิร์ฟเวอร์เกมออนไลน์ 2 ระบบ ครบวงจร</div>
-                <div class="service-item text-sn">ให้บริการระบบเว็บช็อป และเติมเงินอัตโนมัติ</div>
-                <div class="service-item text-sn">รับออกแบบเว็บไซต์ ด้วยเทคโนโลยีล่าสุด</div>
-                <div class="service-item text-sn">รับเซ็ตระบบป้องกัน DDOS และ Firewall</div>
-                <div class="service-item text-sn">มัลติบอร์ด HTML v38.2 โดย SN DESIGN STUDIO</div>
+        <div class="service-ticker glass rounded-2xl border border-sn/10">
+            <div class="service-list text-center">
+                <div class="service-item">รับเปิดเซิร์ฟเวอร์เกมออนไลน์ 2 ระบบ ครบวงจร</div>
+                <div class="service-item">ให้บริการระบบเว็บช็อป และเติมเงินอัตโนมัติ</div>
+                <div class="service-item">รับออกแบบเว็บไซต์ และดีไซน์ระบบหลังบ้าน</div>
+                <div class="service-item">รับเซ็ตระบบป้องกัน DDOS และ FIREWALL</div>
+                <div class="service-item">มัลติบอร์ด HTML v38.4 โดย SN DESIGN STUDIO</div>
             </div>
         </div>
         
-        <div class="grid grid-cols-2 gap-3 w-full max-w-lg">
-            <div class="glass p-5 rounded-2xl border-l-4 border-sn"><p class="text-[9px] text-zinc-500 font-bold uppercase">เติมเงินวันนี้</p><h3 class="text-xl font-black text-sn">N/A</h3></div>
-            <div class="glass p-5 rounded-2xl border-l-4 border-yg"><p class="text-[9px] text-zinc-500 font-bold uppercase">ออนไลน์รวม</p><h3 class="text-xl font-black text-yg">N/A</h3></div>
+        <div class="grid grid-cols-2 gap-4 w-full max-w-lg">
+            <div class="glass p-5 rounded-3xl border-l-4 border-sn"><p class="text-[9px] text-zinc-500 font-bold uppercase">ยอดเติมเงิน</p><h3 class="text-xl font-black text-sn">N/A</h3></div>
+            <div class="glass p-5 rounded-3xl border-l-4 border-yg"><p class="text-[9px] text-zinc-500 font-bold uppercase">ออนไลน์รวม</p><h3 class="text-xl font-black text-yg">N/A</h3></div>
         </div>
     </header>
 
@@ -99,150 +99,194 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
         
         <div class="service-ticker bg-yg/5 rounded-xl mb-8 border border-yg/10">
             <div class="service-list">
-                <div class="service-item text-yg font-bold italic">กิจกรรม EXP x3 ตลอดทั้งวันวันนี้ !!</div>
-                <div class="service-item text-yg font-bold italic">บอสบุกเมือง 20:00 น. เตรียมตัวให้พร้อม</div>
-                <div class="service-item text-yg font-bold italic">โปรโมชั่นเติมเงินรับพอยท์เพิ่ม 50%</div>
+                <div class="service-item text-yg font-bold italic">กิจกรรม EXP x3 ตลอดทั้งวัน !!</div>
+                <div class="service-item text-yg font-bold italic">บอสบุกเมือง 20:00 น. เจอกันที่ลานกว้าง</div>
+                <div class="service-item text-yg font-bold italic">อัตราดรอปวันนี้ : 60%</div>
             </div>
         </div>
 
-        <div class="space-y-4 mb-10 w-full max-w-md">
+        <div class="space-y-4 mb-10 w-full max-w-sm">
             <div class="flex gap-3">
-                <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-google text-ran text-lg"></i> GOOGLE</button>
-                <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-discord text-blue-500 text-lg"></i> DISCORD</button>
+                <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-google text-ran"></i> Google</button>
+                <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-discord text-blue-500"></i> Discord</button>
             </div>
-            <input type="text" id="yg_user" placeholder="ชื่อผู้ใช้งาน (ID)" class="input-final">
-            <input type="password" id="yg_pass" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final">
-            <button onclick="SN_CORE.game.login('yg')" class="btn-final bg-yg text-black shadow-lg shadow-yg/20">Authorize Yulgang Access</button>
-            <div class="flex justify-between px-4 text-[10px] text-zinc-500 font-bold uppercase"><button>สมัครไอดีใหม่</button><button>กู้คืนพาสเวิร์ด</button></div>
+            <input type="text" placeholder="บัญชีผู้ใช้งาน (ID)" class="input-final">
+            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final">
+            <button onclick="SN_CORE.game.login('yg')" class="btn-final bg-yg text-black shadow-lg shadow-yg/20">เข้าสู่โลกโยวกัง</button>
+            <div class="flex justify-between px-6 text-[10px] text-zinc-600 font-black uppercase"><button>สมัครไอดีใหม่</button><button>กู้คืนพาสเวิร์ด</button></div>
         </div>
 
         <div class="w-full mb-10">
-            <h3 class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 italic text-center">รีวิว 14 สายอาชีพ (SEASON 3)</h3>
-            <div class="class-ticker glass rounded-2xl p-3 border border-yg/10">
-                <div class="class-list-yg space-y-3">
-                    <div class="grid grid-cols-7 gap-2 h-[65px] px-2">
-                        <img src="/assets/images/yg/c1.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C1'">
-                        <img src="/assets/images/yg/c2.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C2'">
-                        <img src="/assets/images/yg/c3.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C3'">
-                        <img src="/assets/images/yg/c4.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C4'">
-                        <img src="/assets/images/yg/c5.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C5'">
-                        <img src="/assets/images/yg/c6.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C6'">
-                        <img src="/assets/images/yg/c7.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C7'">
+            <h3 class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 italic">14 คลาสตัวละคร (Season 3)</h3>
+            <div class="class-ticker glass rounded-[30px] p-4 border border-yg/10">
+                <div class="class-list-yg space-y-4">
+                    <div class="grid grid-cols-7 gap-3 h-[80px]">
+                        <img src="/assets/images/yg/c1.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C1'">
+                        <img src="/assets/images/yg/c2.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C2'">
+                        <img src="/assets/images/yg/c3.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C3'">
+                        <img src="/assets/images/yg/c4.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C4'">
+                        <img src="/assets/images/yg/c5.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C5'">
+                        <img src="/assets/images/yg/c6.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C6'">
+                        <img src="/assets/images/yg/c7.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/80?text=C7'">
                     </div>
-                    <div class="grid grid-cols-7 gap-2 h-[65px] px-2">
-                        <img src="/assets/images/yg/c8.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C8'">
-                        <img src="/assets/images/yg/c9.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C9'">
-                        <img src="/assets/images/yg/c10.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C10'">
-                        <img src="/assets/images/yg/c11.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C11'">
-                        <img src="/assets/images/yg/c12.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C12'">
-                        <img src="/assets/images/yg/c13.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C13'">
-                        <img src="/assets/images/yg/c14.png" class="w-full h-full bg-black rounded-lg border border-white/5 shadow-xl" onerror="this.src='https://via.placeholder.com/65?text=C14'">
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="w-full mb-10">
-            <h3 class="text-[11px] font-black text-yg italic uppercase tracking-widest border-l-4 border-yg pl-4 text-left mb-6">ร้านค้าไอเทมเว็บบอร์ด</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div class="bg-black/50 p-5 rounded-2xl border border-white/5 flex items-center gap-5 group hover:border-yg/40 transition-all">
-                    <img src="/assets/images/items/yg_sword.png" class="item-icon group-hover:scale-110 transition-transform" onerror="this.src='https://via.placeholder.com/55?text=ไอเทม'">
-                    <div class="text-left flex-1 font-bold"><p class="text-[11px] uppercase text-zinc-300">กระบี่จักรพรรดิ</p><p class="text-[11px] text-sn mt-1 italic">2,500 เครดิต</p></div>
-                    <button class="w-14 h-14 bg-yg/10 text-yg rounded-2xl btn-final !w-14"><i class="fa-solid fa-cart-shopping"></i></button>
                 </div>
             </div>
         </div>
 
         <div class="grid grid-cols-2 gap-4 w-full">
-            <button onclick="SN_CORE.ui.showModal('WORLD_MAP', 'yg')" class="btn-final bg-zinc-950 border border-yg/20 text-yg"><i class="fa-solid fa-map-marked-alt"></i> แผนที่โลก</button>
-            <button onclick="SN_CORE.ui.showModal('BOSS_TABLE', 'yg')" class="btn-final bg-zinc-950 border border-yg/20 text-yg"><i class="fa-solid fa-skull"></i> ตารางบอส</button>
+            <button onclick="SN_CORE.ui.showModal('WORLD_MAP', 'yg')" class="btn-final bg-zinc-950 border border-yg/20 text-yg"><i class="fa-solid fa-map-location-dot"></i> แผนที่โลก</button>
+            <button onclick="SN_CORE.ui.showModal('BOSS_TABLE', 'yg')" class="btn-final bg-zinc-950 border border-yg/20 text-yg"><i class="fa-solid fa-skull"></i> ตารางเวลาบอส</button>
         </div>
     </div>
+    <div class="box-ui border-ran/20 shadow-2xl mt-12">
+        <div class="absolute -top-10 -right-10 opacity-5 text-ran"><i class="fa-solid fa-skull text-[220px]"></i></div>
+        <h2 class="text-4xl font-black sn-font italic text-ran uppercase tracking-tighter mb-4">RAN ONLINE EP7</h2>
+        
+        <div class="service-ticker bg-ran/5 rounded-xl mb-8 border border-ran/10">
+            <div class="service-list">
+                <div class="service-item text-ran font-bold italic">อัตราดรอป x2 ทุกแผนที่วันหยุดนี้</div>
+                <div class="service-item text-ran font-bold italic">กิลด์วอร์สถาบันเริ่ม 19:00 น. พรุ่งนี้</div>
+            </div>
+        </div>
+
+        <div class="space-y-4 mb-10 w-full max-w-sm">
+            <input type="text" placeholder="บัญชีนักรบ (User ID)" class="input-final !border-ran/10">
+            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final !border-ran/10">
+            <button onclick="SN_CORE.game.login('ran')" class="btn-final bg-ran text-white shadow-xl shadow-ran/20 italic">Authorize Battle Entry</button>
+        </div>
+
+        <div class="w-full mb-10">
+            <h3 class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 italic">5 สายอาชีพหลัก (Episode 7)</h3>
+            <div class="glass rounded-3xl p-6 border border-ran/10 grid grid-cols-5 gap-3 max-w-md mx-auto">
+                <img src="/assets/images/ran/b1.png" class="w-full aspect-square bg-black rounded-2xl border border-white/5" onerror="this.src='https://via.placeholder.com/60?text=B1'">
+                <img src="/assets/images/ran/b2.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/60?text=B2'">
+                <img src="/assets/images/ran/b3.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/60?text=B3'">
+                <img src="/assets/images/ran/b4.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/60?text=B4'">
+                <img src="/assets/images/ran/b5.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl" onerror="this.src='https://via.placeholder.com/60?text=B5'">
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 mt-10 w-full px-4">
+            <button class="btn-final bg-gradient-to-r from-zinc-800 to-black border border-white/5 !h-24">
+                <div class="text-left flex-1 pl-4"><p class="text-[9px] font-black text-zinc-500 uppercase">PC Version</p><p class="text-xl font-black italic sn-font uppercase">DOWNLOAD .EXE</p></div>
+            </button>
+            <button class="btn-final bg-zinc-950 border border-white/5 !h-24">
+                <div class="text-left flex-1 pl-4"><p class="text-[9px] font-black text-zinc-500 uppercase">Mobile Version</p><p class="text-xl font-black italic sn-font uppercase text-ran">DOWNLOAD .APK</p></div>
+            </button>
+        </div>
+    </div>
+
     <div class="box-ui border-sn/10 mt-12">
         <h2 class="text-2xl font-black sn-font italic text-sn uppercase tracking-tighter mb-8">Empire Auto Framing Hub</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
             <div class="bg-black/80 rounded-[40px] p-8 border border-white/5 space-y-6">
                 <div class="flex justify-between items-center">
-                    <h3 class="text-[12px] font-black text-yg uppercase italic tracking-widest">Hamster Ultimate Bot</h3>
-                    <span id="hamster-status" class="text-[9px] px-3 py-1 bg-yg/10 text-yg rounded-full font-bold animate-pulse">CONNECTING...</span>
+                    <div class="text-left"><h3 class="text-[12px] font-black text-yg uppercase italic tracking-widest">Hamster Bot Engine</h3><p class="text-[9px] text-zinc-500 italic">Account: <span id="h-acc" class="text-white">Naverdie</span></p></div>
+                    <span id="h-status" class="text-[9px] px-4 py-1 bg-white text-black rounded-full font-black animate-pulse">IDLE</span>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-4 text-left">
-                    <div class="bg-zinc-900 p-4 rounded-2xl border border-white/5">
-                        <p class="text-[9px] text-zinc-500 uppercase font-black mb-1 italic">Diamonds</p>
-                        <span id="h-diamonds" class="text-sm font-black text-sn italic">0.00 <i class="fa-solid fa-gem text-[10px]"></i></span>
-                    </div>
-                    <div class="bg-zinc-900 p-4 rounded-2xl border border-white/5">
-                        <p class="text-[9px] text-zinc-500 uppercase font-black mb-1 italic">Profit/Hour</p>
-                        <span id="h-profit" class="text-sm font-black text-ok italic">0.00 <i class="fa-solid fa-coins text-[10px]"></i></span>
-                    </div>
-                    <div class="bg-zinc-900 p-4 rounded-2xl col-span-2 border border-sn/20">
-                        <p class="text-[9px] text-zinc-500 uppercase font-black mb-1 italic text-center">S2 Total Potential Tokens</p>
-                        <span id="h-tokens" class="text-lg font-black text-yg italic tracking-tighter block text-center">0 <i class="fa-solid fa-rocket text-[10px]"></i></span>
-                    </div>
+                    <div class="bg-zinc-900 p-5 rounded-3xl border border-white/5"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Diamonds</p><span id="h-diamonds" class="text-lg font-black text-sn italic">0.00 <i class="fa-solid fa-gem text-[10px]"></i></span></div>
+                    <div class="bg-zinc-900 p-5 rounded-3xl border border-white/5"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Profit/Hr</p><span id="h-profit" class="text-lg font-black text-ok italic">0.00 <i class="fa-solid fa-coins text-[10px]"></i></span></div>
+                    <div class="bg-zinc-900 p-5 rounded-3xl col-span-2 border border-sn/20 text-center"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1 text-center">Potential Tokens</p><span id="h-tokens" class="text-xl font-black text-yg italic tracking-tighter">0</span></div>
                 </div>
 
-                <div id="hamster-logs" class="h-32 bg-black/50 p-5 rounded-2xl font-mono text-[9px] text-yg overflow-y-auto scrollbar text-left">
-                    >> Initializing Naverdie Node...<br>
-                    >> Handshaking Port 5005...
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="h-start-btn" onclick="SN_CORE.bot.control('start')" class="btn-final bg-white text-black !h-14 text-[11px] font-black uppercase">Start Bot</button>
+                    <button id="h-stop-btn" onclick="SN_CORE.bot.control('stop')" class="btn-final bg-zinc-900 text-zinc-600 !h-14 text-[11px] font-black uppercase border border-white/5">Stop Bot</button>
                 </div>
-                <button onclick="SN_CORE.bot.sync()" class="btn-final bg-sn text-black !h-12 text-[10px] shadow-xl shadow-sn/10 font-black">FORCE RE-SYNC DATA</button>
+                
+                <div id="hamster-logs" class="h-32 bg-black/50 p-5 rounded-2xl font-mono text-[9px] text-yg overflow-y-auto scrollbar text-left italic border border-white/5">>> System Initialized...</div>
             </div>
 
             <div class="bg-black/80 rounded-[40px] p-8 border border-white/5 space-y-6">
-                <div class="flex justify-between items-center"><h3 class="text-[12px] font-black text-bot uppercase italic tracking-widest">Faucet Crypto Farm</h3><span class="text-[9px] px-3 py-1 bg-bot/10 text-bot rounded-full font-bold">STABLE</span></div>
-                <div class="h-56 bg-zinc-950 rounded-[35px] border border-white/5 flex items-center justify-center relative overflow-hidden group">
-                    <i class="fa-brands fa-bitcoin text-8xl text-bot/10 group-hover:scale-110 transition-all duration-[2000ms]"></i>
-                    <span class="absolute text-[10px] font-black font-orbitron text-bot animate-pulse uppercase tracking-[0.5em]">Harvesting Rewards...</span>
+                <div class="flex justify-between items-center"><h3 class="text-[12px] font-black text-bot uppercase italic tracking-widest">Faucet Crypto Farm</h3><span class="text-[9px] px-3 py-1 bg-bot/10 text-bot rounded-full font-bold">ONLINE</span></div>
+                <div class="h-64 bg-zinc-950 rounded-[45px] border border-white/5 center-box flex items-center justify-center relative overflow-hidden">
+                    <i class="fa-brands fa-bitcoin text-[100px] text-bot/10"></i>
+                    <span class="absolute text-[10px] font-black text-bot animate-pulse uppercase tracking-widest">Collecting Rewards...</span>
                 </div>
-                <button class="btn-final bg-bot text-white !h-12 text-[10px] shadow-xl shadow-bot/10 font-black">SYNC FAUCET REWARDS</button>
+                <button class="btn-final bg-bot text-white !h-14 text-[11px] uppercase font-black">Sync Faucet</button>
             </div>
         </div>
     </div>
 
-    <footer class="mt-20 text-center pb-24 opacity-40 italic">
-        <p class="text-[11px] font-black uppercase tracking-[0.2em] mb-1">Powered By ต้องดีแค่ไหน โลกถึงจะจำ</p>
+    <div class="box-ui border-sn/10 mt-12">
+        <h3 class="text-xs font-black text-zinc-500 uppercase tracking-[0.3em] mb-8 italic">ระบบจัดการเครดิต AI ส่วนกลาง</h3>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 w-full">
+            <div class="text-center"><p class="text-[9px] text-zinc-600 font-bold mb-1 uppercase">GPT-4 Omni</p><span class="text-xs font-black text-sn">$12.40 Used</span></div>
+            <div class="text-center"><p class="text-[9px] text-zinc-600 font-bold mb-1 uppercase">Gemini Pro</p><span class="text-xs font-black text-sn">$8.45 Used</span></div>
+            <div class="text-center"><p class="text-[9px] text-zinc-600 font-bold mb-1 uppercase">โควตารวม</p><span class="text-xs font-black text-ok">ไม่จำกัด</span></div>
+        </div>
+    </div>
+
+    <footer class="mt-20 text-center pb-32 opacity-40 italic">
+        <p class="text-[11px] font-black uppercase tracking-[0.2em] mb-1 italic">Powered By ต้องดีแค่ไหน โลกถึงจะจำ</p>
         <p class="text-[9px] font-black uppercase tracking-[0.4em]">© SN DESIGN STUDIO 2026.</p>
     </footer>
 
+    <div id="modal-overlay" onclick="SN_CORE.ui.closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button onclick="SN_CORE.ui.closeModal()" class="absolute top-8 right-8 text-zinc-600 text-xl"><i class="fas fa-times"></i></button>
+            <h2 id="modal-title" class="text-2xl font-black font-orbitron text-sn italic uppercase mb-8 text-center tracking-tighter">TITLE</h2>
+            <div id="modal-body" class="text-sm font-bold text-zinc-400 font-mono p-5 bg-zinc-950 rounded-3xl border border-white/5 max-h-[450px] overflow-y-auto scrollbar italic"></div>
+        </div>
+    </div>
+
 <script>
 const SN_CORE = {
+    taps: 0,
     init() {
-        console.log(">> SN ULTRA v38.1 : LIVE DATA MAPPING READY");
-        this.bot.sync(); // เริ่มซิงค์ข้อมูลบอททันที
-        setInterval(() => this.bot.sync(), 10000); // ซิงค์อัตโนมัติทุก 10 วินาที
+        console.log(">> SN ULTRA v38.4 : FULL EMPIRE SYNC READY");
+        this.bot.sync();
+        setInterval(() => this.bot.sync(), 10000);
+    },
+    ui: {
+        showModal(type, game) {
+            document.getElementById('modal-overlay').style.display = 'flex';
+            document.getElementById('modal-title').innerText = `${game.toUpperCase()} ${type}`;
+            document.getElementById('modal-body').innerText = ">> กำลังดึงข้อมูลจาก SQL...";
+        },
+        closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
     },
     bot: {
         async sync() {
-            const hStatus = document.getElementById('hamster-status');
-            const logBox = document.getElementById('hamster-logs');
-            const time = new Date().toLocaleTimeString();
-            
             try {
-                // ดึงข้อมูลจาก Port 5005 ที่พาร์ทเนอร์รันอยู่จริง
-                const response = await fetch('http://' + window.location.hostname + ':5005/status');
-                const result = await response.json();
-                
-                if (result.success && result.data) {
+                const res = await fetch('http://147.93.159.30:5005/status');
+                const result = await res.json();
+                if(result.success && result.data) {
                     const d = result.data;
                     document.getElementById('h-diamonds').innerHTML = `${d.diamonds.toLocaleString()} <i class="fa-solid fa-gem text-[10px]"></i>`;
                     document.getElementById('h-profit').innerHTML = `${d.profit_per_hour.toLocaleString()} <i class="fa-solid fa-coins text-[10px]"></i>`;
-                    document.getElementById('h-tokens').innerHTML = `${parseFloat(d.s2_total).toLocaleString()} <i class="fa-solid fa-rocket text-[10px]"></i>`;
-                    
-                    hStatus.innerText = "LIVE NODE";
-                    hStatus.className = "text-[9px] px-3 py-1 bg-yg/10 text-yg rounded-full font-bold";
-                    logBox.innerHTML += `<br>>> [${time}] ข้อมูลซิงค์สำเร็จ: บัญชี ${d.account_name}`;
+                    document.getElementById('h-tokens').innerText = parseFloat(d.s2_total).toLocaleString();
                 }
-            } catch (error) {
-                hStatus.innerText = "OFFLINE";
-                hStatus.className = "text-[9px] px-3 py-1 bg-ran/10 text-ran rounded-full font-bold";
-                logBox.innerHTML += `<br>>> [${time}] เกิดข้อผิดพลาด: ไม่สามารถติดต่อ Port 5005 ได้`;
+            } catch(e) { }
+        },
+        control(action) {
+            const startBtn = document.getElementById('h-start-btn');
+            const stopBtn = document.getElementById('h-stop-btn');
+            const status = document.getElementById('h-status');
+            const logBox = document.getElementById('hamster-logs');
+            const time = new Date().toLocaleTimeString();
+
+            if(action === 'start') {
+                startBtn.className = "btn-final bg-yg text-black !h-14 text-[11px] font-black uppercase shadow-xl shadow-yg/40";
+                stopBtn.className = "btn-final bg-zinc-900 text-zinc-600 !h-14 text-[11px] font-black uppercase";
+                status.innerText = "RUNNING";
+                status.className = "text-[9px] px-4 py-1 bg-yg text-black rounded-full font-black animate-pulse";
+                logBox.innerHTML += `<br>>> [${time}] BOT STARTED: AUTO-FARM ACTIVE.`;
+            } else {
+                startBtn.className = "btn-final bg-zinc-900 text-zinc-600 !h-14 text-[11px] font-black uppercase";
+                stopBtn.className = "btn-final bg-ran text-white !h-14 text-[11px] font-black uppercase shadow-xl shadow-ran/40";
+                status.innerText = "STOPPED";
+                status.className = "text-[9px] px-4 py-1 bg-ran text-white rounded-full font-black";
+                logBox.innerHTML += `<br>>> [${time}] BOT STOPPED: SAFE SHUTDOWN.`;
             }
             logBox.scrollTop = logBox.scrollHeight;
         }
     },
-    game: { async login(g) { alert(`เริ่มต้นเชื่อมต่อฐานข้อมูล ${g.toUpperCase()}...`); } }
+    game: { async login(g) { alert(`CONNECTING TO ${g.toUpperCase()}...`); } },
+    owner: { trigger() { this.taps++; if(this.taps >= 5) { alert("PRIVATE OWNER MODE: UNLOCKED"); this.taps = 0; } } }
 };
 document.addEventListener('DOMContentLoaded', () => SN_CORE.init());
 </script>
