@@ -50,7 +50,7 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
 .class-list-yg { animation: slideClassesYG 12s infinite ease-in-out; }
 @keyframes slideClassesYG { 0%, 45% { transform: translateY(0); } 50%, 95% { transform: translateY(-95px); } 100% { transform: translateY(0); } }
 
-.input-final { background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff; }
+.input-final { background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff; padding: 0 20px; }
 .scrollbar::-webkit-scrollbar { width: 0px; }
 </style>
 </head>
@@ -103,13 +103,13 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
         </div>
 
         <div class="grid grid-cols-1 gap-3 mb-10 w-full px-4">
-            <a href="/yulgang_launcher.exe" download class="btn-final bg-gradient-to-r from-zinc-800 to-black border border-white/5 !h-24">
+            <a href="https://sn-designstudio.dev/yulgang_launcher.exe" download class="btn-final bg-gradient-to-r from-zinc-800 to-black border border-white/5 !h-24">
                 <div class="text-left flex-1 pl-4">
                     <p class="text-[9px] font-black text-zinc-500 uppercase">Universal Client</p>
-                    <p class="text-xl font-black italic sn-font uppercase">DOWNLOAD .EXE</p>
+                    <p class="text-xl font-black italic sn-font uppercase text-white">DOWNLOAD .EXE</p>
                 </div>
             </a>
-            <a href="/yulgang_sn.apk" download class="btn-final bg-zinc-950 border border-white/5 !h-24">
+            <a href="https://sn-designstudio.dev/yulgang_sn.apk" download class="btn-final bg-zinc-950 border border-white/5 !h-24">
                 <div class="text-left flex-1 pl-4">
                     <p class="text-[9px] font-black text-zinc-500 uppercase">Mobile Edition</p>
                     <p class="text-xl font-black italic sn-font uppercase text-yg">DOWNLOAD .APK</p>
@@ -212,7 +212,7 @@ const SN_CORE = {
     init() {
         console.log(">> SN ULTRA v38.5 : FINAL MASTER READY");
         this.api.fetchStats();
-        setInterval(() => this.api.fetchStats(), 30000);
+        setInterval(() => this.api.fetchStats(), 10000); // อัปเดตทุก 10 วิ
     },
     ui: {
         showModal(type, game) {
@@ -224,17 +224,17 @@ const SN_CORE = {
     api: {
         async fetchStats() {
             try {
-                const res = await fetch('http://147.93.159.30:5002/api/stats');
+                // เปลี่ยนเป็น HTTPS Domain ตามที่พาร์ทเนอร์สั่ง แก้ไข Mixed Content
+                const res = await fetch('https://api.sn-designstudio.dev/api/stats');
                 const d = await res.json();
-                document.getElementById('total-revenue').innerText = d.revenue || "N/A";
-                document.getElementById('online-count').innerText = d.online || "N/A";
-            } catch(e) { console.log("Handshake 5002 failed"); }
+                document.getElementById('total-revenue').innerText = d.revenue.toLocaleString() + " THB" || "0 THB";
+                document.getElementById('online-count').innerText = d.online.toLocaleString() + " คน" || "0 คน";
+            } catch(e) { console.log("Handshake 5002 SSL Failed"); }
         }
     },
     bot: {
         control(action) {
             const startBtn = document.getElementById('h-start-btn');
-            const stopBtn = document.getElementById('h-stop-btn');
             const status = document.getElementById('h-status');
             const logBox = document.getElementById('hamster-logs');
             const time = new Date().toLocaleTimeString();
