@@ -1,450 +1,442 @@
-PE html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA v39 FULL SYSTEM</title>
+<title>SN ULTRA v40 MASTER ADMIN BOARD</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 body{
-background:#030303;
+background:#050505;
 color:#fff;
 font-family:Arial,Helvetica,sans-serif;
+margin:0;
 }
-.card{
-background:#0b0b0b;
-border:1px solid #1c1c1c;
-border-radius:22px;
+.sidebar{
+width:260px;
+background:#090909;
+border-right:1px solid #1f1f1f;
+height:100vh;
+overflow:auto;
+position:fixed;
+left:0;
+top:0;
+}
+.main{
+margin-left:260px;
 padding:20px;
 }
-.btn{
+.menu-btn{
 width:100%;
-padding:14px;
-border-radius:14px;
+text-align:left;
+padding:14px 18px;
+border-bottom:1px solid #121212;
 font-weight:700;
-transition:.2s;
+cursor:pointer;
 }
-.btn:active{transform:scale(.97);}
+.menu-btn:hover{
+background:#111;
+}
+.card{
+background:#0c0c0c;
+border:1px solid #1d1d1d;
+border-radius:18px;
+padding:18px;
+}
+.table{
+width:100%;
+border-collapse:collapse;
+}
+.table td,.table th{
+padding:10px;
+border-bottom:1px solid #181818;
+text-align:left;
+font-size:14px;
+}
 .input{
 width:100%;
-background:#050505;
-border:1px solid #1f1f1f;
-padding:14px;
-border-radius:14px;
+padding:12px;
+background:#070707;
+border:1px solid #222;
 color:#fff;
+border-radius:12px;
+}
+.btn{
+padding:10px 16px;
+border-radius:12px;
+font-weight:700;
+cursor:pointer;
 }
 .gold{color:#d4af37;}
 .bg-gold{background:#d4af37;color:#000;}
 .green{color:#10b981;}
 .red{color:#ef4444;}
-.modal{
-position:fixed;
-inset:0;
-background:rgba(0,0,0,.88);
-display:none;
-align-items:center;
-justify-content:center;
-z-index:9999;
-padding:20px;
-}
-.modal-box{
-width:100%;
-max-width:500px;
-background:#0a0a0a;
-border:1px solid #333;
-border-radius:25px;
-padding:25px;
-max-height:90vh;
-overflow:auto;
-}
-.small{
-font-size:12px;
-color:#999;
+.blue{color:#3b82f6;}
+@media(max-width:900px){
+.sidebar{position:relative;width:100%;height:auto;}
+.main{margin-left:0;}
 }
 </style>
 </head>
 
-<body class="p-4 md:p-8 pb-24">
+<body>
 
-<!-- HEADER -->
-<div class="text-center mb-8">
-<h1 class="text-4xl font-black italic gold cursor-pointer" onclick="ownerTap()">SN ULTRA</h1>
-<p class="small">Production Multi Board v39</p>
+<!-- SIDEBAR -->
+<div class="sidebar">
+
+<div class="p-5 border-b border-zinc-800">
+<div class="text-3xl font-black italic gold">SN ULTRA</div>
+<div class="text-xs text-zinc-500">MASTER ADMIN v40</div>
 </div>
 
-<!-- DASHBOARD -->
-<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+<div class="menu-btn" onclick="showPage('dashboard')"><i class="fa fa-chart-line mr-2"></i> Dashboard</div>
+<div class="menu-btn" onclick="showPage('players')"><i class="fa fa-users mr-2"></i> Online Players</div>
+<div class="menu-btn" onclick="showPage('payments')"><i class="fa fa-wallet mr-2"></i> Payments</div>
+<div class="menu-btn" onclick="showPage('shop')"><i class="fa fa-store mr-2"></i> Item Mall</div>
+<div class="menu-btn" onclick="showPage('security')"><i class="fa fa-shield-halved mr-2"></i> Security Logs</div>
+<div class="menu-btn" onclick="showPage('gm')"><i class="fa fa-skull mr-2"></i> GM Panel</div>
+<div class="menu-btn" onclick="showPage('cms')"><i class="fa fa-bullhorn mr-2"></i> CMS</div>
+<div class="menu-btn" onclick="showPage('hamster')"><i class="fa fa-robot mr-2"></i> Hamster Bot</div>
+<div class="menu-btn" onclick="showPage('system')"><i class="fa fa-server mr-2"></i> System</div>
 
-<div class="card text-center">
-<div class="small">Revenue</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="page">
+<h1 class="text-3xl font-black mb-5">Dashboard</h1>
+
+<div class="grid md:grid-cols-4 gap-4 mb-6">
+
+<div class="card">
+<div class="text-sm text-zinc-400">Revenue</div>
 <div id="revenue" class="text-2xl font-black gold">0</div>
 </div>
 
-<div class="card text-center">
-<div class="small">Online</div>
+<div class="card">
+<div class="text-sm text-zinc-400">Online</div>
 <div id="online" class="text-2xl font-black green">0</div>
 </div>
 
-<div class="card text-center">
-<div class="small">CPU</div>
+<div class="card">
+<div class="text-sm text-zinc-400">CPU</div>
 <div id="cpu" class="text-2xl font-black">0%</div>
 </div>
 
-<div class="card text-center">
-<div class="small">RAM</div>
+<div class="card">
+<div class="text-sm text-zinc-400">RAM</div>
 <div id="ram" class="text-2xl font-black">0%</div>
 </div>
 
 </div>
 
-<!-- LOGIN -->
-<div class="card mb-8 max-w-xl mx-auto">
-<h2 class="text-xl font-bold mb-4">LOGIN</h2>
-
-<div class="space-y-3">
-<input id="login-user" class="input" placeholder="Username">
-<input id="login-pass" class="input" type="password" placeholder="Password">
-
-<button class="btn bg-gold" onclick="login()">Authorize Access</button>
-<button class="btn bg-zinc-800" onclick="openRegister()">Register</button>
+<div class="card">
+<div class="font-bold mb-3">Live Event</div>
+<div id="event-msg">SYSTEM ONLINE</div>
+</div>
 </div>
 
-<div id="login-status" class="small mt-3"></div>
+<!-- PLAYERS -->
+<div id="players" class="page hidden">
+<h1 class="text-3xl font-black mb-5">Online Players</h1>
+<div class="card">
+<table class="table">
+<thead>
+<tr>
+<th>Name</th>
+<th>Level</th>
+<th>Class</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="players-body"></tbody>
+</table>
+</div>
 </div>
 
-<!-- YULGANG -->
-<div class="card mb-8">
-<div class="flex justify-between items-center mb-4">
-<h2 class="text-2xl font-black green">YULGANG ONLINE</h2>
-<button class="btn bg-zinc-900 !w-auto px-4" onclick="loadCharacters()">Characters</button>
+<!-- PAYMENTS -->
+<div id="payments" class="page hidden">
+<h1 class="text-3xl font-black mb-5">Payments</h1>
+<div class="card">
+<table class="table">
+<thead>
+<tr>
+<th>ID</th>
+<th>User</th>
+<th>Amount</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody id="payments-body"></tbody>
+</table>
+</div>
 </div>
 
-<div class="grid md:grid-cols-3 gap-3">
+<!-- SHOP -->
+<div id="shop" class="page hidden">
+<h1 class="text-3xl font-black mb-5">Item Mall</h1>
 
-<a href="/yulgang_launcher.exe" class="btn bg-zinc-800 text-center">DOWNLOAD EXE</a>
-<a href="/yulgang_sn.apk" class="btn bg-zinc-800 text-center">DOWNLOAD APK</a>
-<button class="btn bg-zinc-800" onclick="showMap()">WORLD MAP</button>
-
+<div class="card mb-4">
+<div class="grid md:grid-cols-4 gap-3">
+<input id="item-name" class="input" placeholder="Item Name">
+<input id="item-price" class="input" placeholder="Price">
+<button class="btn bg-gold" onclick="addItem()">Add Item</button>
+</div>
 </div>
 
-<div class="mt-4">
-<button class="btn bg-zinc-900" onclick="showBoss()">WORLD BOSS</button>
+<div class="card">
+<div id="shop-list"></div>
+</div>
 </div>
 
+<!-- SECURITY -->
+<div id="security" class="page hidden">
+<h1 class="text-3xl font-black mb-5">Security Logs</h1>
+<div class="card">
+<div id="security-list"></div>
+</div>
 </div>
 
-<!-- ITEM MALL -->
-<div class="card mb-8">
-<div class="flex justify-between items-center mb-4">
-<h2 class="text-xl font-bold gold">ITEM MALL</h2>
-<button class="btn bg-zinc-900 !w-auto px-4" onclick="loadMall()">Refresh</button>
+<!-- GM -->
+<div id="gm" class="page hidden">
+<h1 class="text-3xl font-black mb-5">GM Panel</h1>
+
+<div class="grid md:grid-cols-4 gap-3">
+
+<button class="btn bg-red-600" onclick="gmBroadcast()">Broadcast</button>
+<button class="btn bg-zinc-800" onclick="gmReload()">Reload Server</button>
+<button class="btn bg-zinc-800" onclick="gmLock()">Lock Server</button>
+<button class="btn bg-zinc-800" onclick="gmSpawn()">Spawn Boss</button>
+
+</div>
 </div>
 
-<div id="mall-list" class="space-y-3"></div>
+<!-- CMS -->
+<div id="cms" class="page hidden">
+<h1 class="text-3xl font-black mb-5">CMS Announcement</h1>
+
+<div class="card">
+<textarea id="cms-text" class="input" style="height:180px;">กิจกรรมใหม่คืนนี้ 20:00 น.</textarea>
+<div class="mt-3">
+<button class="btn bg-gold" onclick="saveCMS()">Save</button>
 </div>
-
-<!-- TOPUP -->
-<div class="card mb-8">
-<h2 class="text-xl font-bold mb-4">TOPUP</h2>
-
-<div class="grid grid-cols-2 gap-3">
-<button class="btn bg-gold" onclick="topup(50)">50 THB</button>
-<button class="btn bg-gold" onclick="topup(100)">100 THB</button>
-<button class="btn bg-gold" onclick="topup(300)">300 THB</button>
-<button class="btn bg-gold" onclick="topup(500)">500 THB</button>
 </div>
-
-<div id="pay-status" class="small mt-3"></div>
 </div>
 
 <!-- HAMSTER -->
-<div class="card mb-8">
-<div class="flex justify-between items-center mb-4">
-<h2 class="text-xl font-bold">HAMSTER BOT</h2>
-<span id="bot-state" class="green font-bold">IDLE</span>
+<div id="hamster" class="page hidden">
+<h1 class="text-3xl font-black mb-5">Hamster Telegram Bot</h1>
+
+<div class="grid md:grid-cols-4 gap-4">
+
+<div class="card">
+<div class="text-sm text-zinc-400">Status</div>
+<div id="h-state" class="text-xl font-black green">OFFLINE</div>
 </div>
 
-<div class="grid grid-cols-3 gap-3 text-center">
-<div>
-<div class="small">Diamonds</div>
-<div id="diamonds">0</div>
+<div class="card">
+<div class="text-sm text-zinc-400">Diamonds</div>
+<div id="h-diamonds" class="text-xl font-black">0</div>
 </div>
 
-<div>
-<div class="small">Profit/Hr</div>
-<div id="profit">0</div>
+<div class="card">
+<div class="text-sm text-zinc-400">Profit/Hr</div>
+<div id="h-profit" class="text-xl font-black">0</div>
 </div>
 
-<div>
-<div class="small">Tokens</div>
-<div id="tokens">0</div>
+<div class="card">
+<div class="text-sm text-zinc-400">Tokens</div>
+<div id="h-tokens" class="text-xl font-black">0</div>
+</div>
+
+</div>
+
+<div class="card mt-4">
+<div class="font-bold mb-3">Controls</div>
+
+<div class="grid md:grid-cols-3 gap-3">
+<button class="btn bg-gold" onclick="hamsterCmd('start')">START BOT</button>
+<button class="btn bg-zinc-800" onclick="hamsterCmd('stop')">STOP BOT</button>
+<button class="btn bg-zinc-800" onclick="hamsterCmd('sync')">SYNC NOW</button>
+</div>
+
+<div id="hamster-log" class="mt-4 text-sm text-zinc-400">
+Waiting...
 </div>
 </div>
 </div>
 
-<!-- FOOTER -->
-<div class="text-center text-xs text-zinc-600 mt-10">
-© SN DESIGN STUDIO 2026
+<!-- SYSTEM -->
+<div id="system" class="page hidden">
+<h1 class="text-3xl font-black mb-5">System Monitor</h1>
+
+<div class="card space-y-2">
+<div>WebSocket: <span id="ws-state">Connecting...</span></div>
+<div>API: ONLINE</div>
+<div>Board Version: v40</div>
+</div>
 </div>
 
-<!-- MODAL -->
-<div id="modal" class="modal" onclick="closeModal()">
-<div class="modal-box" onclick="event.stopPropagation()">
-<div class="flex justify-between mb-4">
-<h3 id="modal-title" class="text-xl font-bold">DATA</h3>
-<button onclick="closeModal()">X</button>
-</div>
-
-<div id="modal-body"></div>
-</div>
 </div>
 
 <script>
 const API = "https://api.sn-designstudio.dev";
-let OWNER_TAP = 0;
-let TOKEN = "";
+let WS = null;
 
-function ownerTap(){
-OWNER_TAP++;
-if(OWNER_TAP >= 5){
-OWNER_TAP = 0;
-ownerPanel();
-}
+function showPage(id){
+document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
+document.getElementById(id).classList.remove("hidden");
 }
 
-function ownerPanel(){
-openModal("OWNER PANEL", `
-<div class='space-y-3'>
-<button class='btn bg-red-600' onclick='loadSecurity()'>Security Logs</button>
-<button class='btn bg-zinc-800' onclick='loadUsers()'>Users</button>
-<button class='btn bg-zinc-800' onclick='loadWorld()'>World State</button>
-</div>
-`);
-}
-
-function openModal(title, html){
-document.getElementById("modal-title").innerHTML = title;
-document.getElementById("modal-body").innerHTML = html;
-document.getElementById("modal").style.display = "flex";
-}
-
-function closeModal(){
-document.getElementById("modal").style.display = "none";
-}
-
-async function fetchStats(){
+async function loadStats(){
 try{
-let r = await fetch(API + "/api/stats");
+let r = await fetch(API+"/api/stats");
 let d = await r.json();
 
-document.getElementById("revenue").innerText = d.revenue || 0;
-document.getElementById("online").innerText = d.online || 0;
-document.getElementById("cpu").innerText = (d.cpu || 0) + "%";
-document.getElementById("ram").innerText = (d.ram || 0) + "%";
+revenue.innerText = d.revenue || 0;
+online.innerText = d.online || 0;
+cpu.innerText = (d.cpu||0)+"%";
+ram.innerText = (d.ram||0)+"%";
 }catch(e){}
 }
 
-async function login(){
-let username = document.getElementById("login-user").value;
-let password = document.getElementById("login-pass").value;
-
+async function loadPlayers(){
 try{
-let r = await fetch(API + "/api/auth/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({username,password})
-});
-
-let d = await r.json();
-
-if(d.success){
-TOKEN = d.token;
-document.getElementById("login-status").innerHTML = "Login Success";
-}else{
-document.getElementById("login-status").innerHTML = "Login Failed";
-}
-}catch(e){
-document.getElementById("login-status").innerHTML = "Connection Error";
-}
-}
-
-function openRegister(){
-openModal("REGISTER", `
-<div class='space-y-3'>
-<input id='reg-user' class='input' placeholder='Username'>
-<input id='reg-pass' class='input' type='password' placeholder='Password'>
-<input id='reg-mail' class='input' placeholder='Email'>
-<button class='btn bg-gold' onclick='registerUser()'>Create Account</button>
-</div>
-`);
-}
-
-async function registerUser(){
-let username = document.getElementById("reg-user").value;
-let password = document.getElementById("reg-pass").value;
-let email = document.getElementById("reg-mail").value;
-
-try{
-let r = await fetch(API + "/api/auth/register",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({username,password,email})
-});
-
-let d = await r.json();
-
-if(d.success){
-alert("Register Success");
-closeModal();
-}
-}catch(e){}
-}
-
-async function loadCharacters(){
-let r = await fetch(API + "/api/v1/characters");
+let r = await fetch(API+"/api/v1/characters");
 let d = await r.json();
 
 let html = "";
-(d.data || []).forEach(x=>{
+(d.data||[]).forEach(x=>{
 html += `
-<div class='card mb-2'>
-${x.char_name} Lv.${x.level} (${x.job_class})
-</div>`;
+<tr>
+<td>${x.char_name}</td>
+<td>${x.level}</td>
+<td>${x.job_class}</td>
+<td class='green'>ONLINE</td>
+</tr>
+`;
 });
-
-openModal("CHARACTERS", html || "No Data");
-}
-
-function showMap(){
-openModal("WORLD MAP", `
-<div class='space-y-2'>
-<div class='card'>เมืองหลัก</div>
-<div class='card'>ถ้ำปีศาจ</div>
-<div class='card'>ลานประลอง</div>
-</div>
-`);
-}
-
-function showBoss(){
-openModal("WORLD BOSS", `
-<div class='space-y-2'>
-<div class='card'>20:00 Flame Dragon</div>
-<div class='card'>22:00 Dark Emperor</div>
-</div>
-`);
-}
-
-async function loadMall(){
-try{
-let r = await fetch(API + "/api/shop/items");
-let d = await r.json();
-
-let html = "";
-(d.data || []).forEach(i=>{
-html += `
-<div class='card flex justify-between items-center'>
-<div>
-<div>${i.name}</div>
-<div class='small'>${i.price} THB</div>
-</div>
-<button class='btn bg-gold !w-auto px-4' onclick='buyItem(${i.id})'>BUY</button>
-</div>`;
-});
-
-document.getElementById("mall-list").innerHTML = html || "No Item";
+document.getElementById("players-body").innerHTML = html;
 }catch(e){}
 }
 
-async function buyItem(id){
-alert("Purchase Item ID : " + id);
-}
-
-function topup(amount){
-document.getElementById("pay-status").innerHTML =
-"สร้าง QR Payment " + amount + " THB";
-}
-
-async function hamster(){
+async function loadPayments(){
 try{
-let r = await fetch(API + "/hamster/status");
+let r = await fetch(API+"/api/payments");
 let d = await r.json();
 
-let x = d.data || {};
-
-document.getElementById("diamonds").innerText = x.diamonds || 0;
-document.getElementById("profit").innerText = x.profit || 0;
-document.getElementById("tokens").innerText = x.tokens || 0;
-document.getElementById("bot-state").innerText = x.state || "IDLE";
+let html="";
+(d.data||[]).forEach(x=>{
+html += `
+<tr>
+<td>${x.id}</td>
+<td>${x.user_id||'-'}</td>
+<td>${x.amount}</td>
+<td>${x.status}</td>
+</tr>
+`;
+});
+payments-body.innerHTML = html;
 }catch(e){}
 }
 
 async function loadSecurity(){
-let r = await fetch(API + "/api/anti-cheat/logs");
+try{
+let r = await fetch(API+"/api/anti-cheat/logs");
 let d = await r.json();
 
-let html = "";
-(d.data || []).forEach(x=>{
-html += `<div class='card mb-2'>${x.action} | ${x.ip}</div>`;
+let html="";
+(d.data||[]).forEach(x=>{
+html += `<div class="mb-2">${x.action} | ${x.ip}</div>`;
 });
-
-openModal("SECURITY LOGS", html || "No Data");
+security-list.innerHTML = html;
+}catch(e){}
 }
 
-async function loadUsers(){
-let r = await fetch(API + "/api/gm/users");
+async function loadHamster(){
+try{
+let r = await fetch(API+"/hamster/status");
 let d = await r.json();
 
-let html = "";
-(d.data || []).forEach(x=>{
-html += `<div class='card mb-2'>${x.username} | ${x.role}</div>`;
-});
+let x = d.data || {};
 
-openModal("USERS", html || "No Data");
+document.getElementById("h-state").innerText = x.state || "ONLINE";
+document.getElementById("h-diamonds").innerText = x.diamonds || 0;
+document.getElementById("h-profit").innerText = x.profit || 0;
+document.getElementById("h-tokens").innerText = x.tokens || 0;
+
+}catch(e){
+document.getElementById("h-state").innerText="OFFLINE";
+}
 }
 
-async function loadWorld(){
-let r = await fetch(API + "/api/world/meta");
-let d = await r.json();
+function hamsterCmd(cmd){
+document.getElementById("hamster-log").innerText =
+"Command Sent : " + cmd + " @ " + new Date().toLocaleTimeString();
+}
 
-openModal("WORLD META", `
-<div class='card'>Online : ${d.state.online}</div>
-<div class='card mt-2'>CPU : ${d.state.cpu}%</div>
-<div class='card mt-2'>RAM : ${d.state.ram}%</div>
-`);
+function gmBroadcast(){alert("Broadcast Sent");}
+function gmReload(){alert("Server Reloaded");}
+function gmLock(){alert("Server Locked");}
+function gmSpawn(){alert("Boss Spawned");}
+function saveCMS(){alert("Announcement Saved");}
+
+function addItem(){
+let name=document.getElementById("item-name").value;
+let price=document.getElementById("item-price").value;
+
+document.getElementById("shop-list").innerHTML +=
+`<div class='mb-2'>${name} - ${price} THB</div>`;
 }
 
 function connectWS(){
 try{
-let ws = new WebSocket("wss://api.sn-designstudio.dev");
+WS = new WebSocket("wss://api.sn-designstudio.dev");
 
-ws.onmessage = function(ev){
-let data = JSON.parse(ev.data);
+WS.onopen=()=>{
+document.getElementById("ws-state").innerHTML =
+"<span class='green'>CONNECTED</span>";
+};
 
-if(data.type === "STATUS_UPDATE"){
-document.getElementById("cpu").innerText = data.cpu + "%";
-document.getElementById("ram").innerText = data.ram + "%";
+WS.onmessage=(e)=>{
+let d = JSON.parse(e.data);
+
+if(d.type==="STATUS_UPDATE"){
+cpu.innerText=d.cpu+"%";
+ram.innerText=d.ram+"%";
 }
 
-if(data.type === "HAMSTER_UPDATE"){
-document.getElementById("diamonds").innerText = data.data.diamonds;
-document.getElementById("profit").innerText = data.data.profit;
-document.getElementById("tokens").innerText = data.data.tokens;
+if(d.type==="HAMSTER_UPDATE"){
+document.getElementById("h-state").innerText="ONLINE";
+document.getElementById("h-diamonds").innerText=d.data.diamonds;
+document.getElementById("h-profit").innerText=d.data.profit;
+document.getElementById("h-tokens").innerText=d.data.tokens;
 }
 };
+
+WS.onclose=()=>{
+document.getElementById("ws-state").innerHTML =
+"<span class='red'>DISCONNECTED</span>";
+};
+
 }catch(e){}
 }
 
-fetchStats();
-loadMall();
-hamster();
+loadStats();
+loadPlayers();
+loadPayments();
+loadSecurity();
+loadHamster();
 connectWS();
 
-setInterval(fetchStats,10000);
-setInterval(hamster,5000);
+setInterval(loadStats,10000);
+setInterval(loadHamster,5000);
 </script>
 
 </body>
- </html>
+</html>
