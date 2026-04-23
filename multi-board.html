@@ -2,242 +2,181 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA v41 OMEGA HYBRID</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SN ULTRA v42 REAL DATA ENGINE</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
 body{background:#050505;color:#fff;font-family:Arial}
-.card{background:#0d0d0d;border:1px solid #1f1f1f;border-radius:24px;padding:22px}
-.btn{width:100%;padding:14px;border-radius:16px;font-weight:700}
-.input{width:100%;padding:13px;border-radius:14px;background:#090909;border:1px solid #222;color:#fff}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:9999;padding:20px}
-.modalbox{background:#111;border:1px solid #333;border-radius:24px;padding:25px;max-width:550px;width:100%;max-height:90vh;overflow:auto}
-.ticker{overflow:hidden;white-space:nowrap}
-.ticker span{display:inline-block;padding-left:100%;animation:run 18s linear infinite}
-@keyframes run{0%{transform:translateX(0)}100%{transform:translateX(-100%)}}
+.card{background:#101010;border:1px solid #222;border-radius:22px;padding:22px}
+.btn{width:100%;padding:12px;border-radius:14px;font-weight:700}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;align-items:center;justify-content:center;z-index:9999;padding:15px}
+.box{background:#111;border:1px solid #333;border-radius:20px;padding:20px;max-width:650px;width:100%;max-height:90vh;overflow:auto}
 </style>
 </head>
 
 <body class="p-4 md:p-8 pb-32">
 
-<!-- HEADER -->
-<div class="text-center mb-8 select-none" onclick="ownerTap()">
-<h1 class="text-5xl font-black text-yellow-400">SN ULTRA</h1>
-<p class="text-zinc-500 text-xs tracking-[0.5em]">OMEGA HYBRID v41</p>
+<h1 class="text-center text-5xl font-black text-yellow-400 mb-8">
+SN ULTRA v42
+</h1>
+
+<div class="grid md:grid-cols-4 gap-4 mb-8">
+<div class="card text-center"><p>ONLINE</p><h2 id="online" class="text-3xl text-green-400">0</h2></div>
+<div class="card text-center"><p>CPU</p><h2 id="cpu" class="text-3xl text-blue-400">0%</h2></div>
+<div class="card text-center"><p>RAM</p><h2 id="ram" class="text-3xl text-pink-400">0%</h2></div>
+<div class="card text-center"><p>BOT</p><h2 id="bot" class="text-3xl text-cyan-400">OFFLINE</h2></div>
 </div>
 
-<!-- LIVE -->
-<div class="grid md:grid-cols-4 gap-4 mb-6">
-<div class="card text-center"><p class="text-zinc-500 text-xs">ONLINE</p><h2 id="online" class="text-3xl font-black text-green-400">0</h2></div>
-<div class="card text-center"><p class="text-zinc-500 text-xs">CPU</p><h2 id="cpu" class="text-3xl font-black text-blue-400">0%</h2></div>
-<div class="card text-center"><p class="text-zinc-500 text-xs">RAM</p><h2 id="ram" class="text-3xl font-black text-pink-400">0%</h2></div>
-<div class="card text-center"><p class="text-zinc-500 text-xs">BOT</p><h2 id="bot" class="text-3xl font-black text-cyan-400">OFFLINE</h2></div>
-</div>
-
-<!-- ANNOUNCE -->
-<div class="card mb-6 ticker text-yellow-400 font-bold">
-<span id="announce">ประกาศสำคัญ : ยินดีต้อนรับเข้าสู่ระบบ SN ULTRA | EXP x3 วันนี้ | บอส 20:00 น.</span>
-</div>
-
-<!-- MEMBER CENTER -->
 <div class="grid md:grid-cols-2 gap-6 mb-8">
 
 <div class="card">
-<h2 class="text-2xl font-black text-green-400 mb-4">YULGANG ONLINE</h2>
+<h2 class="text-2xl font-black text-green-400 mb-4">YULGANG DATA CENTER</h2>
 
-<div class="grid grid-cols-2 gap-3 mb-4">
-<button class="btn bg-white text-black"><i class="fab fa-google text-red-500"></i> Google</button>
-<button class="btn bg-indigo-500">Discord</button>
-</div>
-
-<div class="space-y-3 mb-4">
-<input class="input" placeholder="ชื่อผู้ใช้">
-<input class="input" placeholder="รหัสผ่าน" type="password">
-<button class="btn bg-green-500 text-black">เข้าเกม</button>
-</div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<button class="btn bg-zinc-800">สมัครสมาชิก</button>
-<button class="btn bg-zinc-800">ลืมรหัสผ่าน</button>
-</div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<a href="/yulgang_launcher.exe" class="btn bg-white text-black text-center">DOWNLOAD .EXE</a>
-<a href="/yulgang_sn.apk" class="btn bg-green-500 text-black text-center">DOWNLOAD .APK</a>
+<div class="grid grid-cols-2 gap-3 mb-3">
+<button onclick="loadMall()" class="btn bg-green-500 text-black">ITEM MALL</button>
+<button onclick="loadBoss()" class="btn bg-zinc-800">BOSS</button>
+<button onclick="loadRank()" class="btn bg-zinc-800">RANKING</button>
+<button onclick="loadDrop()" class="btn bg-zinc-800">DROP LIST</button>
 </div>
 
 <div class="grid grid-cols-2 gap-3">
-<button onclick="popup('ygmap')" class="btn bg-zinc-900">แผนที่</button>
-<button onclick="popup('ygboss')" class="btn bg-zinc-900">บอส</button>
-<button onclick="popup('ygmonster')" class="btn bg-zinc-900">มอนสเตอร์</button>
-<button onclick="popup('ygmall')" class="btn bg-zinc-900">ไอเท็มมอล</button>
+<a href="/yulgang_launcher.exe" class="btn bg-white text-black text-center">DOWNLOAD EXE</a>
+<a href="/yulgang_sn.apk" class="btn bg-green-500 text-black text-center">DOWNLOAD APK</a>
 </div>
 </div>
 
 <div class="card">
-<h2 class="text-2xl font-black text-red-400 mb-4">RAN ONLINE EP7</h2>
+<h2 class="text-2xl font-black text-red-400 mb-4">RAN DATA CENTER</h2>
 
-<div class="space-y-3 mb-4">
-<input class="input" placeholder="บัญชีผู้เล่น">
-<input class="input" placeholder="รหัสผ่าน" type="password">
-<button class="btn bg-red-500">เข้าเกม</button>
-</div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<button class="btn bg-zinc-800">สมัครสมาชิก</button>
-<button class="btn bg-zinc-800">ลืมรหัสผ่าน</button>
-</div>
-
-<div class="grid grid-cols-2 gap-3 mb-4">
-<a href="/ran_launcher.exe" class="btn bg-white text-black text-center">DOWNLOAD .EXE</a>
-<a href="/ran_mobile.apk" class="btn bg-red-500 text-center">DOWNLOAD .APK</a>
+<div class="grid grid-cols-2 gap-3 mb-3">
+<button onclick="loadRanShop()" class="btn bg-red-500">CASH SHOP</button>
+<button onclick="loadRanRank()" class="btn bg-zinc-800">RANKING</button>
+<button onclick="loadRanBoss()" class="btn bg-zinc-800">BOSS</button>
+<button onclick="loadRanMap()" class="btn bg-zinc-800">MAP</button>
 </div>
 
 <div class="grid grid-cols-2 gap-3">
-<button onclick="popup('ranmap')" class="btn bg-zinc-900">แผนที่</button>
-<button onclick="popup('ranboss')" class="btn bg-zinc-900">บอส</button>
-<button onclick="popup('rancash')" class="btn bg-zinc-900">Cash Shop</button>
-<button onclick="popup('rank')" class="btn bg-zinc-900">Ranking</button>
+<a href="/ran_launcher.exe" class="btn bg-white text-black text-center">DOWNLOAD EXE</a>
+<a href="/ran_mobile.apk" class="btn bg-red-500 text-center">DOWNLOAD APK</a>
 </div>
 </div>
 
 </div>
 
-<!-- CHARACTER -->
 <div class="card mb-8">
-<h2 class="text-xl font-black mb-4 text-yellow-400">คลาสตัวละคร YULGANG</h2>
-<div id="charBox" class="grid md:grid-cols-4 gap-3 text-sm text-zinc-300">
-โหลดข้อมูล...
-</div>
-</div>
-
-<!-- PAYMENT -->
-<div class="card mb-8">
-<h2 class="text-xl font-black mb-4 text-cyan-400">ระบบเติมเงิน / Wallet</h2>
-<div class="grid md:grid-cols-3 gap-4">
-<input class="input" placeholder="User ID">
-<input class="input" placeholder="จำนวนเงิน">
-<button class="btn bg-cyan-500 text-black">เติมเงินทันที</button>
-</div>
-</div>
-
-<!-- BOT -->
-<div class="card mb-8">
-<h2 class="text-xl font-black mb-4 text-cyan-400">Telegram Hamster Bot</h2>
-<div id="botlog" class="text-sm text-green-400 h-40 overflow-auto">
->> Waiting...
-</div>
-</div>
-
-<!-- HIDDEN ADMIN -->
-<div id="admin" class="card hidden">
-<h2 class="text-2xl font-black text-yellow-400 mb-4">GM MASTER PANEL</h2>
-<div class="grid md:grid-cols-4 gap-3">
-<button class="btn bg-red-500">Kick All Ghost</button>
-<button class="btn bg-yellow-500 text-black">Broadcast</button>
-<button class="btn bg-blue-500">Restart Node</button>
-<button class="btn bg-green-500 text-black">Sync Server</button>
-</div>
+<h2 class="text-xl font-black mb-4 text-yellow-400">ตัวละครออนไลน์ล่าสุด</h2>
+<div id="chars" class="grid md:grid-cols-4 gap-3 text-sm">Loading...</div>
 </div>
 
 <!-- MODAL -->
 <div id="modal" class="modal" onclick="closePop()">
-<div class="modalbox" onclick="event.stopPropagation()">
-<h2 id="mtitle" class="text-2xl font-black text-yellow-400 mb-4">DATA</h2>
-<div id="mbody" class="text-zinc-300 whitespace-pre-line"></div>
+<div class="box" onclick="event.stopPropagation()">
+<h2 id="title" class="text-2xl font-black text-yellow-400 mb-4">DATA</h2>
+<div id="body" class="space-y-3 text-zinc-300"></div>
 </div>
 </div>
 
 <script>
 const API="https://api.sn-designstudio.dev";
-let taps=0;
 
-function ownerTap(){
-taps++;
-if(taps>=5){
-document.getElementById("admin").classList.remove("hidden");
-alert("OWNER MODE");
-taps=0;
-}
-}
-
-function popup(type){
-let title="",body="";
-
-if(type=="ygmap"){title="YULGANG MAP";body="เมืองหลัก\nถ้ำปีศาจ\nหุบเขาหิมะ";}
-if(type=="ygboss"){title="YULGANG BOSS";body="20:00 จักรพรรดิปีศาจ\n22:00 เสือขาว";}
-if(type=="ygmonster"){title="MONSTER";body="โจรภูเขา\nหมีคลั่ง\nราชาหมาป่า";}
-if(type=="ygmall"){title="ITEM MALL";body="ชุดแฟชั่น\nสัตว์ขี่\nกล่องสุ่ม";}
-
-if(type=="ranmap"){title="RAN MAP";body="Sacred Gate\nPhoenix Campus";}
-if(type=="ranboss"){title="RAN BOSS";body="Principal Boss\nDark Dean";}
-if(type=="rancash"){title="CASH SHOP";body="Costume\nPet\nBoost";}
-if(type=="rank"){title="RANKING";body="TOP PVP\nTOP LEVEL";}
-
-document.getElementById("mtitle").innerText=title;
-document.getElementById("mbody").innerText=body;
+function openPop(t,b){
+document.getElementById("title").innerText=t;
+document.getElementById("body").innerHTML=b;
 document.getElementById("modal").style.display="flex";
 }
+function closePop(){document.getElementById("modal").style.display="none";}
 
-function closePop(){
-document.getElementById("modal").style.display="none";
+async function j(url){
+try{
+let r=await fetch(API+url);
+return await r.json();
+}catch(e){return null;}
 }
 
 async function loadStats(){
-try{
-let r=await fetch(API+"/api/world/meta");
-let d=await r.json();
-
-document.getElementById("online").innerText=d.state.online||0;
-document.getElementById("cpu").innerText=(d.state.cpu||0)+"%";
-document.getElementById("ram").innerText=(d.state.ram||0)+"%";
-}catch(e){}
+let d=await j("/api/world/meta");
+if(d&&d.state){
+online.innerText=d.state.online||0;
+cpu.innerText=(d.state.cpu||0)+"%";
+ram.innerText=(d.state.ram||0)+"%";
 }
-
-async function loadBot(){
-try{
-let r=await fetch(API+"/hamster/status");
-let d=await r.json();
-
-document.getElementById("bot").innerText="ONLINE";
-document.getElementById("botlog").innerHTML=
-">> Diamonds : "+d.data.diamonds+"<br>"+
-">> Profit/Hr : "+d.data.profit+"<br>"+
-">> Tokens : "+d.data.tokens+"<br>"+
-">> State : "+d.data.state;
-}catch(e){
-document.getElementById("bot").innerText="OFFLINE";
-}
+let h=await j("/hamster/status");
+bot.innerText=h?"ONLINE":"OFFLINE";
 }
 
 async function loadChars(){
-try{
-let r=await fetch(API+"/api/v1/characters");
-let d=await r.json();
-
-let html="";
-d.data.forEach(x=>{
-html+=`<div class='p-3 rounded-xl bg-black border border-zinc-800'>
-${x.char_name}<br>
-Lv.${x.level}<br>
-${x.job_class}
-</div>`;
-});
-document.getElementById("charBox").innerHTML=html;
-}catch(e){
-document.getElementById("charBox").innerText="โหลดไม่สำเร็จ";
+let d=await j("/api/v1/characters");
+if(!d||!d.data)return;
+chars.innerHTML=d.data.map(x=>`
+<div class='p-3 rounded-xl bg-black border border-zinc-800'>
+${x.char_name}<br>Lv.${x.level}<br>${x.job_class}
+</div>`).join("");
 }
+
+async function loadMall(){
+let d=await j("/api/shop/mall");
+if(!d)return openPop("ITEM MALL","ไม่พบข้อมูล");
+
+let html=d.data.map(x=>`
+<div class='p-3 bg-black rounded-xl border border-zinc-800'>
+<b>${x.name}</b><br>
+ราคา: ${x.sale_price||x.price_cash} บาท
+</div>`).join("");
+
+openPop("YULGANG ITEM MALL",html);
+}
+
+async function loadBoss(){
+let d=await j("/api/game/boss");
+if(!d)return;
+let html=d.data.map(x=>`
+<div class='p-3 bg-black rounded-xl'>
+${x.name}<br>
+Map: ${x.map}<br>
+เวลา: ${x.spawn_time}
+</div>`).join("");
+openPop("WORLD BOSS",html);
+}
+
+async function loadRank(){
+let d=await j("/api/ranking");
+if(!d)return;
+let html=d.data.map((x,i)=>`
+<div class='p-2 border-b border-zinc-800'>
+#${i+1} ${x.char_name} Lv.${x.level}
+</div>`).join("");
+openPop("TOP RANKING",html);
+}
+
+async function loadDrop(){
+let d=await j("/api/drop/list");
+if(!d)return;
+let html=d.data.map(x=>`
+<div class='p-2 border-b border-zinc-800'>
+${x.monster} ➜ ${x.item} (${x.drop_rate}%)
+</div>`).join("");
+openPop("DROP LIST",html);
+}
+
+function loadRanShop(){
+openPop("RAN CASH SHOP","ชุดแฟชั่น<br>สัตว์เลี้ยง<br>EXP BOOST");
+}
+function loadRanRank(){
+openPop("RAN RANK","TOP PVP<br>TOP LEVEL");
+}
+function loadRanBoss(){
+openPop("RAN BOSS","Dark Principal<br>Dean X");
+}
+function loadRanMap(){
+openPop("RAN MAP","Phoenix Campus<br>Sacred Gate");
 }
 
 loadStats();
-loadBot();
 loadChars();
-
 setInterval(loadStats,5000);
-setInterval(loadBot,5000);
 </script>
 
 </body>
