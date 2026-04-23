@@ -29,7 +29,7 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
 .sn-font { font-family: 'Orbitron', sans-serif; }
 .glass { background: rgba(8, 8, 8, 0.98); border: 1px solid rgba(255, 255, 255, 0.03); }
 
-.btn-final { width: 100%; height: 60px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 18px; font-weight: 700; text-transform: uppercase; font-size: 14px; transition: 0.3s; cursor: pointer; border: none; text-decoration: none; }
+.btn-final { width: 100%; height: 60px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 18px; font-weight: 700; text-transform: uppercase; font-size: 14px; transition: 0.3s; cursor: pointer; border: none; text-decoration: none; color: inherit; }
 .btn-final:active { transform: scale(0.96); filter: brightness(1.3); }
 
 .box-ui { background: #080808; border: 1px solid #161616; border-radius: 35px; padding: 30px; position: relative; overflow: hidden; margin-bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
@@ -50,6 +50,7 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
 .class-list-yg { animation: slideClassesYG 12s infinite ease-in-out; }
 @keyframes slideClassesYG { 0%, 45% { transform: translateY(0); } 50%, 95% { transform: translateY(-95px); } 100% { transform: translateY(0); } }
 
+.input-final { background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff; }
 .scrollbar::-webkit-scrollbar { width: 0px; }
 </style>
 </head>
@@ -95,10 +96,25 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
                 <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-google text-ran"></i> Google</button>
                 <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-discord text-blue-500"></i> Discord</button>
             </div>
-            <input type="text" placeholder="ชื่อผู้ใช้งาน (ID)" class="input-final" style="background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff;">
-            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final" style="background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff;">
+            <input type="text" placeholder="ชื่อผู้ใช้งาน (ID)" class="input-final">
+            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final">
             <button class="btn-final bg-yg text-black shadow-lg shadow-yg/20">Authorize Access</button>
             <div class="flex justify-between w-full px-6 text-[10px] text-zinc-600 font-black uppercase"><button>สมัครใหม่</button><button>ลืมพาสเวิร์ด</button></div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-3 mb-10 w-full px-4">
+            <a href="/yulgang_launcher.exe" download class="btn-final bg-gradient-to-r from-zinc-800 to-black border border-white/5 !h-24">
+                <div class="text-left flex-1 pl-4">
+                    <p class="text-[9px] font-black text-zinc-500 uppercase">Universal Client</p>
+                    <p class="text-xl font-black italic sn-font uppercase">DOWNLOAD .EXE</p>
+                </div>
+            </a>
+            <a href="/yulgang_sn.apk" download class="btn-final bg-zinc-950 border border-white/5 !h-24">
+                <div class="text-left flex-1 pl-4">
+                    <p class="text-[9px] font-black text-zinc-500 uppercase">Mobile Edition</p>
+                    <p class="text-xl font-black italic sn-font uppercase text-yg">DOWNLOAD .APK</p>
+                </div>
+            </a>
         </div>
 
         <div class="w-full mb-10">
@@ -136,24 +152,44 @@ body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overf
         </div>
 
         <div class="space-y-4 mb-10 w-full max-w-sm mx-auto">
-            <input type="text" placeholder="บัญชีนักรบ (User ID)" class="input-final" style="background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff;">
-            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final" style="background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff;">
+            <input type="text" placeholder="บัญชีนักรบ (User ID)" class="input-final">
+            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final">
             <button class="btn-final bg-ran text-white shadow-xl shadow-ran/20 italic">Authorize Battle Entry</button>
         </div>
 
-        <div class="grid grid-cols-1 gap-3 mt-10 w-full px-4">
-            <a href="/yulgang_launcher.exe" download class="btn-final bg-gradient-to-r from-zinc-800 to-black border border-white/5 !h-24">
-                <div class="text-left flex-1 pl-4">
-                    <p class="text-[9px] font-black text-zinc-500 uppercase">Universal Client</p>
-                    <p class="text-xl font-black italic sn-font uppercase">DOWNLOAD .EXE</p>
+        <div class="grid grid-cols-2 gap-4 w-full">
+            <button onclick="SN_CORE.ui.showModal('MAP', 'ran')" class="btn-final bg-zinc-950 border border-ran/20 text-ran"><i class="fa-solid fa-map-marked-alt"></i> แผนที่แรน</button>
+            <button onclick="SN_CORE.ui.showModal('BOSS', 'ran')" class="btn-final bg-zinc-950 border border-ran/20 text-ran"><i class="fa-solid fa-skull-crossbones"></i> บอสแรน</button>
+        </div>
+    </div>
+
+    <div class="box-ui border-sn/10 mt-12">
+        <h2 class="text-2xl font-black sn-font italic text-sn uppercase tracking-tighter mb-8 italic">Empire Auto Framing Hub</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
+            <div class="bg-black/80 rounded-[40px] p-8 border border-white/5 space-y-6">
+                <div class="flex justify-between items-center">
+                    <div class="text-left"><h3 class="text-[12px] font-black text-yg uppercase italic tracking-widest underline">Hamster Bot Engine</h3><p class="text-[9px] text-zinc-500 italic">Account: <span id="h-acc" class="text-white font-bold">Naverdie</span></p></div>
+                    <span id="h-status" class="text-[9px] px-4 py-1 bg-white text-black rounded-full font-black animate-pulse">IDLE</span>
                 </div>
-            </a>
-            <a href="/yulgang_sn.apk" download class="btn-final bg-zinc-950 border border-white/5 !h-24">
-                <div class="text-left flex-1 pl-4">
-                    <p class="text-[9px] font-black text-zinc-500 uppercase">Mobile Edition</p>
-                    <p class="text-xl font-black italic sn-font uppercase text-ran">DOWNLOAD .APK</p>
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="bg-zinc-900 p-5 rounded-3xl border border-white/5"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Diamonds</p><span id="h-diamonds" class="text-lg font-black text-sn italic">0.00 <i class="fa-solid fa-gem text-[10px]"></i></span></div>
+                    <div class="bg-zinc-900 p-5 rounded-3xl border border-white/5"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Profit/Hr</p><span id="h-profit" class="text-lg font-black text-ok italic">0.00 <i class="fa-solid fa-coins text-[10px]"></i></span></div>
+                    <div class="bg-zinc-900 p-5 rounded-3xl col-span-2 border border-sn/20 text-center"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Potential Tokens</p><span id="h-tokens" class="text-xl font-black text-yg italic tracking-tighter">0</span></div>
                 </div>
-            </a>
+                <div class="grid grid-cols-2 gap-3">
+                    <button id="h-start-btn" onclick="SN_CORE.bot.control('start')" class="btn-final bg-white text-black !h-14 text-[11px] font-black uppercase shadow-xl">Start Bot</button>
+                    <button id="h-stop-btn" onclick="SN_CORE.bot.control('stop')" class="btn-final bg-zinc-900 text-zinc-600 !h-14 text-[11px] font-black uppercase border border-white/5">Stop Bot</button>
+                </div>
+                <div id="hamster-logs" class="h-32 bg-black/50 p-5 rounded-2xl font-mono text-[9px] text-yg overflow-y-auto scrollbar text-left italic border border-white/5">>> [SYSTEM] Waiting for handshake...</div>
+            </div>
+            <div class="bg-black/80 rounded-[40px] p-8 border border-white/5 space-y-6">
+                <div class="flex justify-between items-center"><h3 class="text-[12px] font-black text-bot uppercase italic tracking-widest">Faucet Crypto Farm</h3><span class="text-[9px] px-3 py-1 bg-bot/10 text-bot rounded-full font-bold">ONLINE</span></div>
+                <div class="h-64 bg-zinc-950 rounded-[45px] border border-white/5 center-box flex items-center justify-center relative overflow-hidden group">
+                    <i class="fa-brands fa-bitcoin text-[100px] text-bot/10 group-hover:scale-110 transition-all duration-[2000ms]"></i>
+                    <span class="absolute text-[10px] font-black text-bot animate-pulse uppercase tracking-widest">Harvesting Rewards...</span>
+                </div>
+                <button class="btn-final bg-bot text-white !h-14 text-[11px] font-black shadow-xl shadow-bot/10">Sync Faucet</button>
+            </div>
         </div>
     </div>
 
@@ -188,12 +224,30 @@ const SN_CORE = {
     api: {
         async fetchStats() {
             try {
-                // ดึงข้อมูลจาก API หลักพอร์ต 5002
                 const res = await fetch('http://147.93.159.30:5002/api/stats');
                 const d = await res.json();
                 document.getElementById('total-revenue').innerText = d.revenue || "N/A";
                 document.getElementById('online-count').innerText = d.online || "N/A";
             } catch(e) { console.log("Handshake 5002 failed"); }
+        }
+    },
+    bot: {
+        control(action) {
+            const startBtn = document.getElementById('h-start-btn');
+            const stopBtn = document.getElementById('h-stop-btn');
+            const status = document.getElementById('h-status');
+            const logBox = document.getElementById('hamster-logs');
+            const time = new Date().toLocaleTimeString();
+            if(action === 'start') {
+                startBtn.className = "btn-final bg-yg text-black !h-14 text-[11px] font-black uppercase shadow-xl shadow-yg/40";
+                status.innerText = "RUNNING";
+                logBox.innerHTML += `<br>>> [${time}] BOT STARTED: AUTO-FARM ACTIVE.`;
+            } else {
+                startBtn.className = "btn-final bg-white text-black !h-14 text-[11px] font-black uppercase shadow-xl";
+                status.innerText = "STOPPED";
+                logBox.innerHTML += `<br>>> [${time}] BOT STOPPED: SAFE SHUTDOWN.`;
+            }
+            logBox.scrollTop = logBox.scrollHeight;
         }
     },
     owner: { trigger() { this.taps++; if(this.taps >= 5) { alert("PRIVATE OWNER MODE: ACCESSED"); this.taps = 0; } } }
