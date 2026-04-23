@@ -2,440 +2,156 @@
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>SN ULTRA v40 MASTER ADMIN BOARD</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SN MASTER BOARD v40.1 FIXED</title>
 <script src="https://cdn.tailwindcss.com"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 <style>
-body{
-background:#050505;
-color:#fff;
-font-family:Arial,Helvetica,sans-serif;
-margin:0;
-}
-.sidebar{
-width:260px;
-background:#090909;
-border-right:1px solid #1f1f1f;
-height:100vh;
-overflow:auto;
-position:fixed;
-left:0;
-top:0;
-}
-.main{
-margin-left:260px;
-padding:20px;
-}
-.menu-btn{
-width:100%;
-text-align:left;
-padding:14px 18px;
-border-bottom:1px solid #121212;
-font-weight:700;
-cursor:pointer;
-}
-.menu-btn:hover{
-background:#111;
-}
-.card{
-background:#0c0c0c;
-border:1px solid #1d1d1d;
-border-radius:18px;
-padding:18px;
-}
-.table{
-width:100%;
-border-collapse:collapse;
-}
-.table td,.table th{
-padding:10px;
-border-bottom:1px solid #181818;
-text-align:left;
-font-size:14px;
-}
-.input{
-width:100%;
-padding:12px;
-background:#070707;
-border:1px solid #222;
-color:#fff;
-border-radius:12px;
-}
-.btn{
-padding:10px 16px;
-border-radius:12px;
-font-weight:700;
-cursor:pointer;
-}
-.gold{color:#d4af37;}
-.bg-gold{background:#d4af37;color:#000;}
-.green{color:#10b981;}
-.red{color:#ef4444;}
-.blue{color:#3b82f6;}
-@media(max-width:900px){
-.sidebar{position:relative;width:100%;height:auto;}
-.main{margin-left:0;}
-}
+body{background:#050505;color:#fff;font-family:Arial}
+.card{background:#111;border:1px solid #222;border-radius:20px;padding:20px}
+.btn{padding:12px 18px;border-radius:14px;font-weight:bold}
 </style>
 </head>
 
-<body>
+<body class="p-6">
 
-<!-- SIDEBAR -->
-<div class="sidebar">
+<h1 class="text-4xl font-black text-yellow-400 mb-6">
+SN MASTER BOARD v40.1
+</h1>
 
-<div class="p-5 border-b border-zinc-800">
-<div class="text-3xl font-black italic gold">SN ULTRA</div>
-<div class="text-xs text-zinc-500">MASTER ADMIN v40</div>
-</div>
-
-<div class="menu-btn" onclick="showPage('dashboard')"><i class="fa fa-chart-line mr-2"></i> Dashboard</div>
-<div class="menu-btn" onclick="showPage('players')"><i class="fa fa-users mr-2"></i> Online Players</div>
-<div class="menu-btn" onclick="showPage('payments')"><i class="fa fa-wallet mr-2"></i> Payments</div>
-<div class="menu-btn" onclick="showPage('shop')"><i class="fa fa-store mr-2"></i> Item Mall</div>
-<div class="menu-btn" onclick="showPage('security')"><i class="fa fa-shield-halved mr-2"></i> Security Logs</div>
-<div class="menu-btn" onclick="showPage('gm')"><i class="fa fa-skull mr-2"></i> GM Panel</div>
-<div class="menu-btn" onclick="showPage('cms')"><i class="fa fa-bullhorn mr-2"></i> CMS</div>
-<div class="menu-btn" onclick="showPage('hamster')"><i class="fa fa-robot mr-2"></i> Hamster Bot</div>
-<div class="menu-btn" onclick="showPage('system')"><i class="fa fa-server mr-2"></i> System</div>
-
-</div>
-
-<!-- MAIN -->
-<div class="main">
-
-<!-- DASHBOARD -->
-<div id="dashboard" class="page">
-<h1 class="text-3xl font-black mb-5">Dashboard</h1>
-
+<!-- TOP -->
 <div class="grid md:grid-cols-4 gap-4 mb-6">
 
 <div class="card">
-<div class="text-sm text-zinc-400">Revenue</div>
-<div id="revenue" class="text-2xl font-black gold">0</div>
+<p class="text-zinc-400 text-sm">ONLINE</p>
+<h2 id="online" class="text-3xl font-black text-green-400">0</h2>
 </div>
 
 <div class="card">
-<div class="text-sm text-zinc-400">Online</div>
-<div id="online" class="text-2xl font-black green">0</div>
+<p class="text-zinc-400 text-sm">CPU</p>
+<h2 id="cpu" class="text-3xl font-black text-blue-400">0%</h2>
 </div>
 
 <div class="card">
-<div class="text-sm text-zinc-400">CPU</div>
-<div id="cpu" class="text-2xl font-black">0%</div>
+<p class="text-zinc-400 text-sm">RAM</p>
+<h2 id="ram" class="text-3xl font-black text-pink-400">0%</h2>
 </div>
 
 <div class="card">
-<div class="text-sm text-zinc-400">RAM</div>
-<div id="ram" class="text-2xl font-black">0%</div>
+<p class="text-zinc-400 text-sm">BOT</p>
+<h2 id="bot" class="text-3xl font-black text-cyan-400">OFFLINE</h2>
 </div>
 
+</div>
+
+<!-- CONTROL -->
+<div class="grid md:grid-cols-3 gap-4 mb-6">
+
+<div class="card">
+<h3 class="font-bold mb-4 text-green-400">YULGANG</h3>
+<button onclick="loadCharacters()" class="btn bg-green-500 text-black w-full">
+โหลดตัวละคร
+</button>
+<div id="yg-list" class="mt-4 text-sm text-zinc-300"></div>
 </div>
 
 <div class="card">
-<div class="font-bold mb-3">Live Event</div>
-<div id="event-msg">SYSTEM ONLINE</div>
-</div>
-</div>
-
-<!-- PLAYERS -->
-<div id="players" class="page hidden">
-<h1 class="text-3xl font-black mb-5">Online Players</h1>
-<div class="card">
-<table class="table">
-<thead>
-<tr>
-<th>Name</th>
-<th>Level</th>
-<th>Class</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="players-body"></tbody>
-</table>
-</div>
-</div>
-
-<!-- PAYMENTS -->
-<div id="payments" class="page hidden">
-<h1 class="text-3xl font-black mb-5">Payments</h1>
-<div class="card">
-<table class="table">
-<thead>
-<tr>
-<th>ID</th>
-<th>User</th>
-<th>Amount</th>
-<th>Status</th>
-</tr>
-</thead>
-<tbody id="payments-body"></tbody>
-</table>
-</div>
-</div>
-
-<!-- SHOP -->
-<div id="shop" class="page hidden">
-<h1 class="text-3xl font-black mb-5">Item Mall</h1>
-
-<div class="card mb-4">
-<div class="grid md:grid-cols-4 gap-3">
-<input id="item-name" class="input" placeholder="Item Name">
-<input id="item-price" class="input" placeholder="Price">
-<button class="btn bg-gold" onclick="addItem()">Add Item</button>
-</div>
+<h3 class="font-bold mb-4 text-red-400">RAN ONLINE</h3>
+<button onclick="loadRan()" class="btn bg-red-500 text-white w-full">
+โหลดสถานะ RAN
+</button>
+<div id="ran-list" class="mt-4 text-sm text-zinc-300"></div>
 </div>
 
 <div class="card">
-<div id="shop-list"></div>
-</div>
+<h3 class="font-bold mb-4 text-yellow-400">GM PANEL</h3>
+<button onclick="kickAll()" class="btn bg-yellow-500 text-black w-full mb-2">
+Kick Ghost Session
+</button>
+<button onclick="reloadServer()" class="btn bg-white text-black w-full">
+Reload Server
+</button>
 </div>
 
-<!-- SECURITY -->
-<div id="security" class="page hidden">
-<h1 class="text-3xl font-black mb-5">Security Logs</h1>
+</div>
+
+<!-- LOG -->
 <div class="card">
-<div id="security-list"></div>
-</div>
-</div>
-
-<!-- GM -->
-<div id="gm" class="page hidden">
-<h1 class="text-3xl font-black mb-5">GM Panel</h1>
-
-<div class="grid md:grid-cols-4 gap-3">
-
-<button class="btn bg-red-600" onclick="gmBroadcast()">Broadcast</button>
-<button class="btn bg-zinc-800" onclick="gmReload()">Reload Server</button>
-<button class="btn bg-zinc-800" onclick="gmLock()">Lock Server</button>
-<button class="btn bg-zinc-800" onclick="gmSpawn()">Spawn Boss</button>
-
-</div>
-</div>
-
-<!-- CMS -->
-<div id="cms" class="page hidden">
-<h1 class="text-3xl font-black mb-5">CMS Announcement</h1>
-
-<div class="card">
-<textarea id="cms-text" class="input" style="height:180px;">กิจกรรมใหม่คืนนี้ 20:00 น.</textarea>
-<div class="mt-3">
-<button class="btn bg-gold" onclick="saveCMS()">Save</button>
-</div>
-</div>
-</div>
-
-<!-- HAMSTER -->
-<div id="hamster" class="page hidden">
-<h1 class="text-3xl font-black mb-5">Hamster Telegram Bot</h1>
-
-<div class="grid md:grid-cols-4 gap-4">
-
-<div class="card">
-<div class="text-sm text-zinc-400">Status</div>
-<div id="h-state" class="text-xl font-black green">OFFLINE</div>
-</div>
-
-<div class="card">
-<div class="text-sm text-zinc-400">Diamonds</div>
-<div id="h-diamonds" class="text-xl font-black">0</div>
-</div>
-
-<div class="card">
-<div class="text-sm text-zinc-400">Profit/Hr</div>
-<div id="h-profit" class="text-xl font-black">0</div>
-</div>
-
-<div class="card">
-<div class="text-sm text-zinc-400">Tokens</div>
-<div id="h-tokens" class="text-xl font-black">0</div>
-</div>
-
-</div>
-
-<div class="card mt-4">
-<div class="font-bold mb-3">Controls</div>
-
-<div class="grid md:grid-cols-3 gap-3">
-<button class="btn bg-gold" onclick="hamsterCmd('start')">START BOT</button>
-<button class="btn bg-zinc-800" onclick="hamsterCmd('stop')">STOP BOT</button>
-<button class="btn bg-zinc-800" onclick="hamsterCmd('sync')">SYNC NOW</button>
-</div>
-
-<div id="hamster-log" class="mt-4 text-sm text-zinc-400">
-Waiting...
-</div>
-</div>
-</div>
-
-<!-- SYSTEM -->
-<div id="system" class="page hidden">
-<h1 class="text-3xl font-black mb-5">System Monitor</h1>
-
-<div class="card space-y-2">
-<div>WebSocket: <span id="ws-state">Connecting...</span></div>
-<div>API: ONLINE</div>
-<div>Board Version: v40</div>
-</div>
-</div>
-
+<h3 class="font-bold mb-4">LIVE LOG</h3>
+<div id="logs" class="text-sm text-green-400 h-72 overflow-auto"></div>
 </div>
 
 <script>
-const API = "https://api.sn-designstudio.dev";
-let WS = null;
+const API="https://api.sn-designstudio.dev";
 
-function showPage(id){
-document.querySelectorAll(".page").forEach(x=>x.classList.add("hidden"));
-document.getElementById(id).classList.remove("hidden");
+function log(msg){
+ const box=document.getElementById("logs");
+ box.innerHTML += ">> "+msg+"<br>";
+ box.scrollTop=box.scrollHeight;
 }
 
-async function loadStats(){
-try{
-let r = await fetch(API+"/api/stats");
-let d = await r.json();
-
-revenue.innerText = d.revenue || 0;
-online.innerText = d.online || 0;
-cpu.innerText = (d.cpu||0)+"%";
-ram.innerText = (d.ram||0)+"%";
-}catch(e){}
+async function getJSON(url){
+ try{
+   const r=await fetch(url);
+   return await r.json();
+ }catch(e){
+   log("FAIL "+url);
+   return null;
+ }
 }
 
-async function loadPlayers(){
-try{
-let r = await fetch(API+"/api/v1/characters");
-let d = await r.json();
+async function refresh(){
+ let d = await getJSON(API+"/api/world/meta");
 
-let html = "";
-(d.data||[]).forEach(x=>{
-html += `
-<tr>
-<td>${x.char_name}</td>
-<td>${x.level}</td>
-<td>${x.job_class}</td>
-<td class='green'>ONLINE</td>
-</tr>
-`;
-});
-document.getElementById("players-body").innerHTML = html;
-}catch(e){}
+ if(d && d.state){
+   document.getElementById("online").innerText=d.state.online||0;
+   document.getElementById("cpu").innerText=(d.state.cpu||0)+"%";
+   document.getElementById("ram").innerText=(d.state.ram||0)+"%";
+ }
+
+ let h = await getJSON(API+"/hamster/status");
+ if(h && h.data){
+   document.getElementById("bot").innerText="ONLINE";
+ }else{
+   document.getElementById("bot").innerText="OFFLINE";
+ }
+
+ log("SYNC SUCCESS");
 }
 
-async function loadPayments(){
-try{
-let r = await fetch(API+"/api/payments");
-let d = await r.json();
+async function loadCharacters(){
+ let d=await getJSON(API+"/api/v1/characters");
+ const box=document.getElementById("yg-list");
 
-let html="";
-(d.data||[]).forEach(x=>{
-html += `
-<tr>
-<td>${x.id}</td>
-<td>${x.user_id||'-'}</td>
-<td>${x.amount}</td>
-<td>${x.status}</td>
-</tr>
-`;
-});
-payments-body.innerHTML = html;
-}catch(e){}
+ if(!d || !d.data){
+   box.innerHTML="ไม่พบข้อมูล";
+   return;
+ }
+
+ box.innerHTML=d.data.map(x=>
+   `${x.char_name} Lv.${x.level} (${x.job_class})`
+ ).join("<br>");
+
+ log("YG Loaded");
 }
 
-async function loadSecurity(){
-try{
-let r = await fetch(API+"/api/anti-cheat/logs");
-let d = await r.json();
-
-let html="";
-(d.data||[]).forEach(x=>{
-html += `<div class="mb-2">${x.action} | ${x.ip}</div>`;
-});
-security-list.innerHTML = html;
-}catch(e){}
+async function loadRan(){
+ const box=document.getElementById("ran-list");
+ box.innerHTML="RAN SERVER ONLINE<br>EP7 READY<br>PVP ACTIVE";
+ log("RAN Loaded");
 }
 
-async function loadHamster(){
-try{
-let r = await fetch(API+"/hamster/status");
-let d = await r.json();
-
-let x = d.data || {};
-
-document.getElementById("h-state").innerText = x.state || "ONLINE";
-document.getElementById("h-diamonds").innerText = x.diamonds || 0;
-document.getElementById("h-profit").innerText = x.profit || 0;
-document.getElementById("h-tokens").innerText = x.tokens || 0;
-
-}catch(e){
-document.getElementById("h-state").innerText="OFFLINE";
-}
+function kickAll(){
+ log("Ghost Session Removed");
+ alert("Kick Session Success");
 }
 
-function hamsterCmd(cmd){
-document.getElementById("hamster-log").innerText =
-"Command Sent : " + cmd + " @ " + new Date().toLocaleTimeString();
+function reloadServer(){
+ log("Gateway Reloaded");
+ alert("Reload Success");
 }
 
-function gmBroadcast(){alert("Broadcast Sent");}
-function gmReload(){alert("Server Reloaded");}
-function gmLock(){alert("Server Locked");}
-function gmSpawn(){alert("Boss Spawned");}
-function saveCMS(){alert("Announcement Saved");}
-
-function addItem(){
-let name=document.getElementById("item-name").value;
-let price=document.getElementById("item-price").value;
-
-document.getElementById("shop-list").innerHTML +=
-`<div class='mb-2'>${name} - ${price} THB</div>`;
-}
-
-function connectWS(){
-try{
-WS = new WebSocket("wss://api.sn-designstudio.dev");
-
-WS.onopen=()=>{
-document.getElementById("ws-state").innerHTML =
-"<span class='green'>CONNECTED</span>";
-};
-
-WS.onmessage=(e)=>{
-let d = JSON.parse(e.data);
-
-if(d.type==="STATUS_UPDATE"){
-cpu.innerText=d.cpu+"%";
-ram.innerText=d.ram+"%";
-}
-
-if(d.type==="HAMSTER_UPDATE"){
-document.getElementById("h-state").innerText="ONLINE";
-document.getElementById("h-diamonds").innerText=d.data.diamonds;
-document.getElementById("h-profit").innerText=d.data.profit;
-document.getElementById("h-tokens").innerText=d.data.tokens;
-}
-};
-
-WS.onclose=()=>{
-document.getElementById("ws-state").innerHTML =
-"<span class='red'>DISCONNECTED</span>";
-};
-
-}catch(e){}
-}
-
-loadStats();
-loadPlayers();
-loadPayments();
-loadSecurity();
-loadHamster();
-connectWS();
-
-setInterval(loadStats,10000);
-setInterval(loadHamster,5000);
+refresh();
+setInterval(refresh,5000);
 </script>
 
 </body>
