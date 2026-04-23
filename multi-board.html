@@ -1,259 +1,450 @@
-<!DOCTYPE html>
+PE html>
 <html lang="th">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>SN ULTRA | PRODUCTION MASTER v38.5</title>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>SN ULTRA v39 FULL SYSTEM</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-<script>
-tailwind.config = {
-  theme: {
-    extend: {
-      colors: {
-        sn: "#d4af37", bg: "#020202", card: "#0a0a0a", line: "#1a1a1a",
-        yg: "#10b981", ran: "#ef4444", ok: "#10b981", bot: "#3b82f6"
-      },
-      fontFamily: { orbitron: ["Orbitron", "sans-serif"], kanit: ["Kanit", "sans-serif"] }
-    }
-  }
-}
-</script>
-
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&family=Kanit:wght@200;400;700&display=swap');
-body { background: #020202; color: #fff; font-family: 'Kanit', sans-serif; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
-.sn-font { font-family: 'Orbitron', sans-serif; }
-.glass { background: rgba(8, 8, 8, 0.98); border: 1px solid rgba(255, 255, 255, 0.03); }
-
-.btn-final { width: 100%; height: 60px; display: flex; align-items: center; justify-content: center; gap: 12px; border-radius: 18px; font-weight: 700; text-transform: uppercase; font-size: 14px; transition: 0.3s; cursor: pointer; border: none; text-decoration: none; color: inherit; }
-.btn-final:active { transform: scale(0.96); filter: brightness(1.3); }
-
-.box-ui { background: #080808; border: 1px solid #161616; border-radius: 35px; padding: 30px; position: relative; overflow: hidden; margin-bottom: 25px; width: 100%; display: flex; flex-direction: column; align-items: center; text-align: center; }
-
-.service-ticker { height: 35px; overflow: hidden; position: relative; width: 100%; max-width: 500px; }
-.service-list { animation: slideUp 15s infinite ease-in-out; }
-@keyframes slideUp {
-    0%, 15% { transform: translateY(0); }
-    20%, 35% { transform: translateY(-35px); }
-    40%, 55% { transform: translateY(-70px); }
-    60%, 75% { transform: translateY(-105px); }
-    80%, 95% { transform: translateY(-140px); }
-    100% { transform: translateY(0); }
+body{
+background:#030303;
+color:#fff;
+font-family:Arial,Helvetica,sans-serif;
 }
-.service-item { height: 35px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: #d4af37; text-transform: uppercase; letter-spacing: 1px; }
-
-.class-ticker { height: 95px; overflow: hidden; width: 100%; }
-.class-list-yg { animation: slideClassesYG 12s infinite ease-in-out; }
-@keyframes slideClassesYG { 0%, 45% { transform: translateY(0); } 50%, 95% { transform: translateY(-95px); } 100% { transform: translateY(0); } }
-
-.input-final { background:#050505!important; border:1px solid #1a1a1a!important; width:100%; border-radius:18px; text-align:center; height:50px; color:#fff; padding: 0 20px; }
-.scrollbar::-webkit-scrollbar { width: 0px; }
+.card{
+background:#0b0b0b;
+border:1px solid #1c1c1c;
+border-radius:22px;
+padding:20px;
+}
+.btn{
+width:100%;
+padding:14px;
+border-radius:14px;
+font-weight:700;
+transition:.2s;
+}
+.btn:active{transform:scale(.97);}
+.input{
+width:100%;
+background:#050505;
+border:1px solid #1f1f1f;
+padding:14px;
+border-radius:14px;
+color:#fff;
+}
+.gold{color:#d4af37;}
+.bg-gold{background:#d4af37;color:#000;}
+.green{color:#10b981;}
+.red{color:#ef4444;}
+.modal{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.88);
+display:none;
+align-items:center;
+justify-content:center;
+z-index:9999;
+padding:20px;
+}
+.modal-box{
+width:100%;
+max-width:500px;
+background:#0a0a0a;
+border:1px solid #333;
+border-radius:25px;
+padding:25px;
+max-height:90vh;
+overflow:auto;
+}
+.small{
+font-size:12px;
+color:#999;
+}
 </style>
 </head>
 
-<body class="p-4 md:p-10 pb-40 scrollbar">
+<body class="p-4 md:p-8 pb-24">
 
-    <header class="flex flex-col items-center mb-10 text-center space-y-6">
-        <div onclick="SN_CORE.owner.trigger()">
-            <h1 class="text-4xl font-black sn-font text-sn italic tracking-tighter">SN ULTRA</h1>
-            <p class="text-[9px] text-zinc-600 font-black uppercase tracking-[0.5em] mt-1">Infrastructure Production master</p>
-        </div>
+<!-- HEADER -->
+<div class="text-center mb-8">
+<h1 class="text-4xl font-black italic gold cursor-pointer" onclick="ownerTap()">SN ULTRA</h1>
+<p class="small">Production Multi Board v39</p>
+</div>
 
-        <div class="service-ticker glass rounded-2xl border border-sn/10">
-            <div class="service-list text-center">
-                <div class="service-item">รับเปิดเซิร์ฟเวอร์เกมออนไลน์ครบวงจร 2 ระบบ</div>
-                <div class="service-item">ให้บริการระบบเว็บช็อป และเติมเงินอัตโนมัติ</div>
-                <div class="service-item">รับออกแบบเว็บไซต์ และดูแลระบบหลังบ้าน</div>
-                <div class="service-item">รับเซ็ตระบบป้องกัน DDOS และ FIREWALL</div>
-                <div class="service-item">ระบบควบคุมมัลติบอร์ด HTML ล่าสุด v38.5</div>
-            </div>
-        </div>
-        
-        <div class="grid grid-cols-2 gap-4 w-full max-w-lg">
-            <div class="glass p-5 rounded-3xl border-l-4 border-sn"><p class="text-[9px] text-zinc-500 font-bold uppercase text-center">ยอดเติมเงิน</p><h3 class="text-xl font-black text-sn" id="total-revenue">N/A</h3></div>
-            <div class="glass p-5 rounded-3xl border-l-4 border-yg"><p class="text-[9px] text-zinc-500 font-bold uppercase text-center">ออนไลน์รวม</p><h3 class="text-xl font-black text-yg" id="online-count">N/A</h3></div>
-        </div>
-    </header>
+<!-- DASHBOARD -->
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
 
-    <div class="box-ui border-yg/20 shadow-2xl">
-        <div class="absolute -top-10 -right-10 opacity-5 text-yg"><i class="fa-solid fa-khanda text-[220px]"></i></div>
-        <h2 class="text-4xl font-black sn-font italic text-yg uppercase tracking-tighter mb-4">YULGANG ONLINE</h2>
-        
-        <div class="service-ticker bg-yg/5 rounded-xl mb-8 border border-yg/10">
-            <div class="service-list">
-                <div class="service-item text-yg font-bold italic">กิจกรรม EXP x3 ตลอดทั้งวัน !!</div>
-                <div class="service-item text-yg font-bold italic">บอสบุกเมือง 20:00 น. เตรียมตัวให้พร้อม</div>
-                <div class="service-item text-yg font-bold italic">อัตราดรอปไอเทมวันนี้ : 60%</div>
-            </div>
-        </div>
+<div class="card text-center">
+<div class="small">Revenue</div>
+<div id="revenue" class="text-2xl font-black gold">0</div>
+</div>
 
-        <div class="space-y-4 mb-10 w-full max-w-sm">
-            <div class="flex gap-3">
-                <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-google text-ran"></i> Google</button>
-                <button class="btn-final bg-zinc-900 border border-line text-white"><i class="fab fa-discord text-blue-500"></i> Discord</button>
-            </div>
-            <input type="text" placeholder="ชื่อผู้ใช้งาน (ID)" class="input-final">
-            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final">
-            <button class="btn-final bg-yg text-black shadow-lg shadow-yg/20">Authorize Access</button>
-            <div class="flex justify-between w-full px-6 text-[10px] text-zinc-600 font-black uppercase"><button>สมัครใหม่</button><button>ลืมพาสเวิร์ด</button></div>
-        </div>
+<div class="card text-center">
+<div class="small">Online</div>
+<div id="online" class="text-2xl font-black green">0</div>
+</div>
 
-        <div class="grid grid-cols-1 gap-3 mb-10 w-full px-4">
-            <a href="https://sn-designstudio.dev/yulgang_launcher.exe" download class="btn-final bg-gradient-to-r from-zinc-800 to-black border border-white/5 !h-24">
-                <div class="text-left flex-1 pl-4">
-                    <p class="text-[9px] font-black text-zinc-500 uppercase">Universal Client</p>
-                    <p class="text-xl font-black italic sn-font uppercase text-white">DOWNLOAD .EXE</p>
-                </div>
-            </a>
-            <a href="https://sn-designstudio.dev/yulgang_sn.apk" download class="btn-final bg-zinc-950 border border-white/5 !h-24">
-                <div class="text-left flex-1 pl-4">
-                    <p class="text-[9px] font-black text-zinc-500 uppercase">Mobile Edition</p>
-                    <p class="text-xl font-black italic sn-font uppercase text-yg">DOWNLOAD .APK</p>
-                </div>
-            </a>
-        </div>
+<div class="card text-center">
+<div class="small">CPU</div>
+<div id="cpu" class="text-2xl font-black">0%</div>
+</div>
 
-        <div class="w-full mb-10">
-            <h3 class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4 italic">14 คลาสตัวละคร (Season 3)</h3>
-            <div class="class-ticker glass rounded-[30px] p-4 border border-yg/10">
-                <div class="class-list-yg space-y-4">
-                    <div class="grid grid-cols-7 gap-3 h-[80px]">
-                        <img src="/assets/images/yg/c1.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C1'">
-                        <img src="/assets/images/yg/c2.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C2'">
-                        <img src="/assets/images/yg/c3.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C3'">
-                        <img src="/assets/images/yg/c4.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C4'">
-                        <img src="/assets/images/yg/c5.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C5'">
-                        <img src="/assets/images/yg/c6.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C6'">
-                        <img src="/assets/images/yg/c7.png" class="w-full aspect-square bg-black border border-white/5 rounded-2xl shadow-xl" onerror="this.src='https://via.placeholder.com/80?text=C7'">
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="card text-center">
+<div class="small">RAM</div>
+<div id="ram" class="text-2xl font-black">0%</div>
+</div>
 
-        <div class="grid grid-cols-2 gap-4 w-full">
-            <button onclick="SN_CORE.ui.showModal('MAP', 'yg')" class="btn-final bg-zinc-950 border border-yg/20 text-yg"><i class="fa-solid fa-map-location-dot"></i> แผนที่โลก</button>
-            <button onclick="SN_CORE.ui.showModal('BOSS', 'yg')" class="btn-final bg-zinc-950 border border-yg/20 text-yg"><i class="fa-solid fa-skull"></i> ตารางบอส</button>
-        </div>
-    </div>
+</div>
 
-    <div class="box-ui border-ran/20 shadow-2xl mt-12">
-        <div class="absolute -top-10 -right-10 opacity-5 text-ran"><i class="fa-solid fa-skull text-[220px]"></i></div>
-        <h2 class="text-4xl font-black sn-font italic text-ran uppercase tracking-tighter mb-4">RAN ONLINE EP7</h2>
-        
-        <div class="service-ticker bg-ran/5 rounded-xl mb-8 border border-ran/10">
-            <div class="service-list">
-                <div class="service-item text-ran font-bold italic">อัตราดรอป x2 ทุกแผนที่วันหยุดนี้</div>
-                <div class="service-item text-ran font-bold italic">กิลด์วอร์สถาบันเริ่ม 19:00 น. พรุ่งนี้</div>
-            </div>
-        </div>
+<!-- LOGIN -->
+<div class="card mb-8 max-w-xl mx-auto">
+<h2 class="text-xl font-bold mb-4">LOGIN</h2>
 
-        <div class="space-y-4 mb-10 w-full max-w-sm mx-auto">
-            <input type="text" placeholder="บัญชีนักรบ (User ID)" class="input-final">
-            <input type="password" placeholder="รหัสผ่านเข้าใช้งาน" class="input-final">
-            <button class="btn-final bg-ran text-white shadow-xl shadow-ran/20 italic">Authorize Battle Entry</button>
-        </div>
+<div class="space-y-3">
+<input id="login-user" class="input" placeholder="Username">
+<input id="login-pass" class="input" type="password" placeholder="Password">
 
-        <div class="grid grid-cols-2 gap-4 w-full">
-            <button onclick="SN_CORE.ui.showModal('MAP', 'ran')" class="btn-final bg-zinc-950 border border-ran/20 text-ran"><i class="fa-solid fa-map-marked-alt"></i> แผนที่แรน</button>
-            <button onclick="SN_CORE.ui.showModal('BOSS', 'ran')" class="btn-final bg-zinc-950 border border-ran/20 text-ran"><i class="fa-solid fa-skull-crossbones"></i> บอสแรน</button>
-        </div>
-    </div>
+<button class="btn bg-gold" onclick="login()">Authorize Access</button>
+<button class="btn bg-zinc-800" onclick="openRegister()">Register</button>
+</div>
 
-    <div class="box-ui border-sn/10 mt-12">
-        <h2 class="text-2xl font-black sn-font italic text-sn uppercase tracking-tighter mb-8 italic">Empire Auto Framing Hub</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
-            <div class="bg-black/80 rounded-[40px] p-8 border border-white/5 space-y-6">
-                <div class="flex justify-between items-center">
-                    <div class="text-left"><h3 class="text-[12px] font-black text-yg uppercase italic tracking-widest underline">Hamster Bot Engine</h3><p class="text-[9px] text-zinc-500 italic">Account: <span id="h-acc" class="text-white font-bold">Naverdie</span></p></div>
-                    <span id="h-status" class="text-[9px] px-4 py-1 bg-white text-black rounded-full font-black animate-pulse">IDLE</span>
-                </div>
-                <div class="grid grid-cols-2 gap-4 text-left">
-                    <div class="bg-zinc-900 p-5 rounded-3xl border border-white/5"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Diamonds</p><span id="h-diamonds" class="text-lg font-black text-sn italic">0.00 <i class="fa-solid fa-gem text-[10px]"></i></span></div>
-                    <div class="bg-zinc-900 p-5 rounded-3xl border border-white/5"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Profit/Hr</p><span id="h-profit" class="text-lg font-black text-ok italic">0.00 <i class="fa-solid fa-coins text-[10px]"></i></span></div>
-                    <div class="bg-zinc-900 p-5 rounded-3xl col-span-2 border border-sn/20 text-center"><p class="text-[9px] text-zinc-500 uppercase font-black mb-1">Potential Tokens</p><span id="h-tokens" class="text-xl font-black text-yg italic tracking-tighter">0</span></div>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <button id="h-start-btn" onclick="SN_CORE.bot.control('start')" class="btn-final bg-white text-black !h-14 text-[11px] font-black uppercase shadow-xl">Start Bot</button>
-                    <button id="h-stop-btn" onclick="SN_CORE.bot.control('stop')" class="btn-final bg-zinc-900 text-zinc-600 !h-14 text-[11px] font-black uppercase border border-white/5">Stop Bot</button>
-                </div>
-                <div id="hamster-logs" class="h-32 bg-black/50 p-5 rounded-2xl font-mono text-[9px] text-yg overflow-y-auto scrollbar text-left italic border border-white/5">>> [SYSTEM] Waiting for handshake...</div>
-            </div>
-            <div class="bg-black/80 rounded-[40px] p-8 border border-white/5 space-y-6">
-                <div class="flex justify-between items-center"><h3 class="text-[12px] font-black text-bot uppercase italic tracking-widest">Faucet Crypto Farm</h3><span class="text-[9px] px-3 py-1 bg-bot/10 text-bot rounded-full font-bold">ONLINE</span></div>
-                <div class="h-64 bg-zinc-950 rounded-[45px] border border-white/5 center-box flex items-center justify-center relative overflow-hidden group">
-                    <i class="fa-brands fa-bitcoin text-[100px] text-bot/10 group-hover:scale-110 transition-all duration-[2000ms]"></i>
-                    <span class="absolute text-[10px] font-black text-bot animate-pulse uppercase tracking-widest">Harvesting Rewards...</span>
-                </div>
-                <button class="btn-final bg-bot text-white !h-14 text-[11px] font-black shadow-xl shadow-bot/10">Sync Faucet</button>
-            </div>
-        </div>
-    </div>
+<div id="login-status" class="small mt-3"></div>
+</div>
 
-    <footer class="mt-20 text-center pb-32 opacity-40 italic">
-        <p class="text-[11px] font-black uppercase tracking-[0.2em] mb-1 italic">Powered By ต้องดีแค่ไหน โลกถึงจะจำ</p>
-        <p class="text-[9px] font-black uppercase tracking-[0.4em]">© SN DESIGN STUDIO 2026.</p>
-    </footer>
+<!-- YULGANG -->
+<div class="card mb-8">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-2xl font-black green">YULGANG ONLINE</h2>
+<button class="btn bg-zinc-900 !w-auto px-4" onclick="loadCharacters()">Characters</button>
+</div>
 
-    <div id="modal-overlay" onclick="SN_CORE.ui.closeModal()" style="position:fixed; inset:0; background:rgba(0,0,0,0.95); z-index:10000; display:none; align-items:center; justify-content:center; padding:25px; backdrop-filter:blur(15px);">
-        <div class="modal-content" onclick="event.stopPropagation()" style="background:#080808; border:1.5px solid #d4af37; border-radius:40px; width:100%; max-width:480px; padding:40px; position:relative;">
-            <button onclick="SN_CORE.ui.closeModal()" class="absolute top-8 right-8 text-zinc-600 text-xl"><i class="fas fa-times"></i></button>
-            <h2 id="modal-title" class="text-2xl font-black font-orbitron text-sn italic uppercase mb-8 text-center tracking-tighter">TITLE</h2>
-            <div id="modal-body" class="text-sm font-bold text-zinc-400 font-mono p-5 bg-zinc-950 rounded-3xl border border-white/5 max-h-[450px] overflow-y-auto scrollbar italic">>> กำลังโหลดข้อมูล...</div>
-        </div>
-    </div>
+<div class="grid md:grid-cols-3 gap-3">
+
+<a href="/yulgang_launcher.exe" class="btn bg-zinc-800 text-center">DOWNLOAD EXE</a>
+<a href="/yulgang_sn.apk" class="btn bg-zinc-800 text-center">DOWNLOAD APK</a>
+<button class="btn bg-zinc-800" onclick="showMap()">WORLD MAP</button>
+
+</div>
+
+<div class="mt-4">
+<button class="btn bg-zinc-900" onclick="showBoss()">WORLD BOSS</button>
+</div>
+
+</div>
+
+<!-- ITEM MALL -->
+<div class="card mb-8">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xl font-bold gold">ITEM MALL</h2>
+<button class="btn bg-zinc-900 !w-auto px-4" onclick="loadMall()">Refresh</button>
+</div>
+
+<div id="mall-list" class="space-y-3"></div>
+</div>
+
+<!-- TOPUP -->
+<div class="card mb-8">
+<h2 class="text-xl font-bold mb-4">TOPUP</h2>
+
+<div class="grid grid-cols-2 gap-3">
+<button class="btn bg-gold" onclick="topup(50)">50 THB</button>
+<button class="btn bg-gold" onclick="topup(100)">100 THB</button>
+<button class="btn bg-gold" onclick="topup(300)">300 THB</button>
+<button class="btn bg-gold" onclick="topup(500)">500 THB</button>
+</div>
+
+<div id="pay-status" class="small mt-3"></div>
+</div>
+
+<!-- HAMSTER -->
+<div class="card mb-8">
+<div class="flex justify-between items-center mb-4">
+<h2 class="text-xl font-bold">HAMSTER BOT</h2>
+<span id="bot-state" class="green font-bold">IDLE</span>
+</div>
+
+<div class="grid grid-cols-3 gap-3 text-center">
+<div>
+<div class="small">Diamonds</div>
+<div id="diamonds">0</div>
+</div>
+
+<div>
+<div class="small">Profit/Hr</div>
+<div id="profit">0</div>
+</div>
+
+<div>
+<div class="small">Tokens</div>
+<div id="tokens">0</div>
+</div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div class="text-center text-xs text-zinc-600 mt-10">
+© SN DESIGN STUDIO 2026
+</div>
+
+<!-- MODAL -->
+<div id="modal" class="modal" onclick="closeModal()">
+<div class="modal-box" onclick="event.stopPropagation()">
+<div class="flex justify-between mb-4">
+<h3 id="modal-title" class="text-xl font-bold">DATA</h3>
+<button onclick="closeModal()">X</button>
+</div>
+
+<div id="modal-body"></div>
+</div>
+</div>
 
 <script>
-const SN_CORE = {
-    taps: 0,
-    init() {
-        console.log(">> SN ULTRA v38.5 : FINAL MASTER READY");
-        this.api.fetchStats();
-        setInterval(() => this.api.fetchStats(), 10000); // อัปเดตทุก 10 วิ
-    },
-    ui: {
-        showModal(type, game) {
-            document.getElementById('modal-overlay').style.display = 'flex';
-            document.getElementById('modal-title').innerText = `${game.toUpperCase()} ${type}`;
-        },
-        closeModal() { document.getElementById('modal-overlay').style.display = 'none'; }
-    },
-    api: {
-        async fetchStats() {
-            try {
-                // เปลี่ยนเป็น HTTPS Domain ตามที่พาร์ทเนอร์สั่ง แก้ไข Mixed Content
-                const res = await fetch('https://api.sn-designstudio.dev/api/stats');
-                const d = await res.json();
-                document.getElementById('total-revenue').innerText = d.revenue.toLocaleString() + " THB" || "0 THB";
-                document.getElementById('online-count').innerText = d.online.toLocaleString() + " คน" || "0 คน";
-            } catch(e) { console.log("Handshake 5002 SSL Failed"); }
-        }
-    },
-    bot: {
-        control(action) {
-            const startBtn = document.getElementById('h-start-btn');
-            const status = document.getElementById('h-status');
-            const logBox = document.getElementById('hamster-logs');
-            const time = new Date().toLocaleTimeString();
-            if(action === 'start') {
-                startBtn.className = "btn-final bg-yg text-black !h-14 text-[11px] font-black uppercase shadow-xl shadow-yg/40";
-                status.innerText = "RUNNING";
-                logBox.innerHTML += `<br>>> [${time}] BOT STARTED: AUTO-FARM ACTIVE.`;
-            } else {
-                startBtn.className = "btn-final bg-white text-black !h-14 text-[11px] font-black uppercase shadow-xl";
-                status.innerText = "STOPPED";
-                logBox.innerHTML += `<br>>> [${time}] BOT STOPPED: SAFE SHUTDOWN.`;
-            }
-            logBox.scrollTop = logBox.scrollHeight;
-        }
-    },
-    owner: { trigger() { this.taps++; if(this.taps >= 5) { alert("PRIVATE OWNER MODE: ACCESSED"); this.taps = 0; } } }
-};
-document.addEventListener('DOMContentLoaded', () => SN_CORE.init());
-</script>
-</body>
-</html>
+const API = "https://api.sn-designstudio.dev";
+let OWNER_TAP = 0;
+let TOKEN = "";
 
+function ownerTap(){
+OWNER_TAP++;
+if(OWNER_TAP >= 5){
+OWNER_TAP = 0;
+ownerPanel();
+}
+}
+
+function ownerPanel(){
+openModal("OWNER PANEL", `
+<div class='space-y-3'>
+<button class='btn bg-red-600' onclick='loadSecurity()'>Security Logs</button>
+<button class='btn bg-zinc-800' onclick='loadUsers()'>Users</button>
+<button class='btn bg-zinc-800' onclick='loadWorld()'>World State</button>
+</div>
+`);
+}
+
+function openModal(title, html){
+document.getElementById("modal-title").innerHTML = title;
+document.getElementById("modal-body").innerHTML = html;
+document.getElementById("modal").style.display = "flex";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display = "none";
+}
+
+async function fetchStats(){
+try{
+let r = await fetch(API + "/api/stats");
+let d = await r.json();
+
+document.getElementById("revenue").innerText = d.revenue || 0;
+document.getElementById("online").innerText = d.online || 0;
+document.getElementById("cpu").innerText = (d.cpu || 0) + "%";
+document.getElementById("ram").innerText = (d.ram || 0) + "%";
+}catch(e){}
+}
+
+async function login(){
+let username = document.getElementById("login-user").value;
+let password = document.getElementById("login-pass").value;
+
+try{
+let r = await fetch(API + "/api/auth/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username,password})
+});
+
+let d = await r.json();
+
+if(d.success){
+TOKEN = d.token;
+document.getElementById("login-status").innerHTML = "Login Success";
+}else{
+document.getElementById("login-status").innerHTML = "Login Failed";
+}
+}catch(e){
+document.getElementById("login-status").innerHTML = "Connection Error";
+}
+}
+
+function openRegister(){
+openModal("REGISTER", `
+<div class='space-y-3'>
+<input id='reg-user' class='input' placeholder='Username'>
+<input id='reg-pass' class='input' type='password' placeholder='Password'>
+<input id='reg-mail' class='input' placeholder='Email'>
+<button class='btn bg-gold' onclick='registerUser()'>Create Account</button>
+</div>
+`);
+}
+
+async function registerUser(){
+let username = document.getElementById("reg-user").value;
+let password = document.getElementById("reg-pass").value;
+let email = document.getElementById("reg-mail").value;
+
+try{
+let r = await fetch(API + "/api/auth/register",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({username,password,email})
+});
+
+let d = await r.json();
+
+if(d.success){
+alert("Register Success");
+closeModal();
+}
+}catch(e){}
+}
+
+async function loadCharacters(){
+let r = await fetch(API + "/api/v1/characters");
+let d = await r.json();
+
+let html = "";
+(d.data || []).forEach(x=>{
+html += `
+<div class='card mb-2'>
+${x.char_name} Lv.${x.level} (${x.job_class})
+</div>`;
+});
+
+openModal("CHARACTERS", html || "No Data");
+}
+
+function showMap(){
+openModal("WORLD MAP", `
+<div class='space-y-2'>
+<div class='card'>เมืองหลัก</div>
+<div class='card'>ถ้ำปีศาจ</div>
+<div class='card'>ลานประลอง</div>
+</div>
+`);
+}
+
+function showBoss(){
+openModal("WORLD BOSS", `
+<div class='space-y-2'>
+<div class='card'>20:00 Flame Dragon</div>
+<div class='card'>22:00 Dark Emperor</div>
+</div>
+`);
+}
+
+async function loadMall(){
+try{
+let r = await fetch(API + "/api/shop/items");
+let d = await r.json();
+
+let html = "";
+(d.data || []).forEach(i=>{
+html += `
+<div class='card flex justify-between items-center'>
+<div>
+<div>${i.name}</div>
+<div class='small'>${i.price} THB</div>
+</div>
+<button class='btn bg-gold !w-auto px-4' onclick='buyItem(${i.id})'>BUY</button>
+</div>`;
+});
+
+document.getElementById("mall-list").innerHTML = html || "No Item";
+}catch(e){}
+}
+
+async function buyItem(id){
+alert("Purchase Item ID : " + id);
+}
+
+function topup(amount){
+document.getElementById("pay-status").innerHTML =
+"สร้าง QR Payment " + amount + " THB";
+}
+
+async function hamster(){
+try{
+let r = await fetch(API + "/hamster/status");
+let d = await r.json();
+
+let x = d.data || {};
+
+document.getElementById("diamonds").innerText = x.diamonds || 0;
+document.getElementById("profit").innerText = x.profit || 0;
+document.getElementById("tokens").innerText = x.tokens || 0;
+document.getElementById("bot-state").innerText = x.state || "IDLE";
+}catch(e){}
+}
+
+async function loadSecurity(){
+let r = await fetch(API + "/api/anti-cheat/logs");
+let d = await r.json();
+
+let html = "";
+(d.data || []).forEach(x=>{
+html += `<div class='card mb-2'>${x.action} | ${x.ip}</div>`;
+});
+
+openModal("SECURITY LOGS", html || "No Data");
+}
+
+async function loadUsers(){
+let r = await fetch(API + "/api/gm/users");
+let d = await r.json();
+
+let html = "";
+(d.data || []).forEach(x=>{
+html += `<div class='card mb-2'>${x.username} | ${x.role}</div>`;
+});
+
+openModal("USERS", html || "No Data");
+}
+
+async function loadWorld(){
+let r = await fetch(API + "/api/world/meta");
+let d = await r.json();
+
+openModal("WORLD META", `
+<div class='card'>Online : ${d.state.online}</div>
+<div class='card mt-2'>CPU : ${d.state.cpu}%</div>
+<div class='card mt-2'>RAM : ${d.state.ram}%</div>
+`);
+}
+
+function connectWS(){
+try{
+let ws = new WebSocket("wss://api.sn-designstudio.dev");
+
+ws.onmessage = function(ev){
+let data = JSON.parse(ev.data);
+
+if(data.type === "STATUS_UPDATE"){
+document.getElementById("cpu").innerText = data.cpu + "%";
+document.getElementById("ram").innerText = data.ram + "%";
+}
+
+if(data.type === "HAMSTER_UPDATE"){
+document.getElementById("diamonds").innerText = data.data.diamonds;
+document.getElementById("profit").innerText = data.data.profit;
+document.getElementById("tokens").innerText = data.data.tokens;
+}
+};
+}catch(e){}
+}
+
+fetchStats();
+loadMall();
+hamster();
+connectWS();
+
+setInterval(fetchStats,10000);
+setInterval(hamster,5000);
+</script>
+
+</body>
+ </html>
