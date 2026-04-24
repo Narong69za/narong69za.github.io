@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SN ADMIN CONTROL</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+body{background:#000;color:#fff;font-family:Arial}
+.card{background:#080808;border:1px solid #222;border-radius:18px;padding:20px}
+</style>
+</head>
+<body class="p-6">
+
+<h1 class="text-4xl font-black mb-6 text-green-400">SN ADMIN CONTROL</h1>
+
+<div class="grid md:grid-cols-4 gap-4 mb-6">
+  <div class="card"><p>Revenue Today</p><h2 id="rev">0</h2></div>
+  <div class="card"><p>Users Online</p><h2 id="online">0</h2></div>
+  <div class="card"><p>Jobs Running</p><h2 id="jobs">0</h2></div>
+  <div class="card"><p>Failed Jobs</p><h2 id="fail">0</h2></div>
+</div>
+
+<div class="grid md:grid-cols-2 gap-6">
+
+<div class="card">
+<h2 class="text-xl font-bold mb-4">User Credit Control</h2>
+<input id="uid" class="w-full p-2 bg-black border border-zinc-700 rounded mb-3" placeholder="User ID">
+<input id="amt" class="w-full p-2 bg-black border border-zinc-700 rounded mb-3" placeholder="Amount">
+<button onclick="addCredit()" class="bg-green-500 px-4 py-2 rounded text-black font-bold">ADD CREDIT</button>
+</div>
+
+<div class="card">
+<h2 class="text-xl font-bold mb-4">Engine Control</h2>
+<select id="engine" class="w-full p-2 bg-black border border-zinc-700 rounded mb-3">
+<option value="image">IMAGE</option>
+<option value="video">VIDEO</option>
+<option value="upscale">UPSCALE</option>
+</select>
+<button onclick="toggleEngine()" class="bg-red-500 px-4 py-2 rounded font-bold">TOGGLE</button>
+</div>
+
+</div>
+
+<script>
+const API="/api/admin";
+
+async function loadStats(){
+ const r=await fetch(API+"/stats");
+ const d=await r.json();
+ document.getElementById("rev").innerText=d.revenue;
+ document.getElementById("online").innerText=d.online;
+ document.getElementById("jobs").innerText=d.jobs;
+ document.getElementById("fail").innerText=d.fail;
+}
+
+async function addCredit(){
+ const uid=document.getElementById("uid").value;
+ const amt=document.getElementById("amt").value;
+ await fetch(API+"/credit",{
+ method:"POST",
+ headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({uid,amt})
+ });
+ alert("DONE");
+}
+
+async function toggleEngine(){
+ const engine=document.getElementById("engine").value;
+ await fetch(API+"/engine",{
+ method:"POST",
+ headers:{'Content-Type':'application/json'},
+ body:JSON.stringify({engine})
+ });
+ alert("UPDATED");
+}
+
+loadStats();
+setInterval(loadStats,5000);
+</script>
+</body>
+</html>

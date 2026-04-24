@@ -3,179 +3,532 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>SN ULTRA - AI PRODUCTION WORKSTATION</title>
+<title>SN ULTRA v2.0 TRUE FINAL | AI PRODUCTION WORKSTATION</title>
+
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-:root{ --bg:#000; --card:#050505; --neon:#00ff41; --border:rgba(0,255,65,.10); --premium-silver:linear-gradient(145deg,#fff 0%,#777 100%); }
-body{ font-family:'Inter',sans-serif; background:#000; color:#fff; margin:0; overflow-x:hidden; letter-spacing:-0.02em; }
+:root{
+--bg:#000;
+--card:#050505;
+--neon:#00ff41;
+--border:rgba(0,255,65,.10);
+--silver:linear-gradient(145deg,#fff 0%,#777 100%);
+}
+
+body{
+font-family:'Inter',sans-serif;
+background:#000;
+color:#fff;
+margin:0;
+overflow-x:hidden;
+letter-spacing:-0.02em;
+}
+
 .mono{font-family:'JetBrains Mono',monospace;}
-.silver-text{ background:var(--premium-silver); -webkit-background-clip:text; -webkit-text-fill-color:transparent; font-weight:900; }
-.top-nav{ border-bottom:1px solid var(--border); background:rgba(0,0,0,.8); backdrop-filter:blur(20px); position:sticky; top:0; z-index:100; }
-.engine-card{ background:var(--card); border:1px solid #111; border-radius:24px; transition:all .35s ease; overflow:hidden; }
-.engine-card:hover{ border-color:var(--neon); box-shadow:0 0 30px rgba(0,255,65,.12); transform:translateY(-4px); }
-.preview-area{ width:100%; height:180px; background:#000; border-radius:16px; border:1px dashed #222; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; }
-.preview-area img, .preview-area video{ width:100%; height:100%; object-fit:cover; }
-textarea,select{ background:#080808 !important; border:1px solid #1a1a1a !important; color:#fff !important; font-size:12px !important; border-radius:12px !important; }
-textarea:focus,select:focus{ outline:none; border-color:var(--neon)!important; box-shadow:0 0 10px rgba(0,255,65,.1); }
-.btn-generate{ background:var(--neon); color:#000; font-weight:900; border-radius:14px; transition:.2s; text-transform:uppercase; box-shadow:0 10px 20px rgba(0,255,65,.15); }
-.btn-generate:hover{ transform:scale(1.02); opacity:0.9; }
-.btn-generate:disabled{ background:#111; color:#333; cursor:not-allowed; }
-.import-label{ background:rgba(255,255,255,.03); border:1px solid #1a1a1a; padding:6px 12px; border-radius:10px; font-size:10px; cursor:pointer; }
-.status-badge{ font-size:8px; padding:2px 8px; border-radius:100px; background:#111; color:var(--neon); border:1px solid var(--border); }
+
+.silver-text{
+background:var(--silver);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+font-weight:900;
+}
+
+.top-nav{
+border-bottom:1px solid var(--border);
+background:rgba(0,0,0,.8);
+backdrop-filter:blur(20px);
+position:sticky;
+top:0;
+z-index:100;
+}
+
+.card{
+background:var(--card);
+border:1px solid #111;
+border-radius:24px;
+transition:.35s;
+overflow:hidden;
+}
+
+.card:hover{
+border-color:var(--neon);
+box-shadow:0 0 30px rgba(0,255,65,.10);
+transform:translateY(-4px);
+}
+
+.preview{
+width:100%;
+height:180px;
+background:#000;
+border-radius:16px;
+border:1px dashed #222;
+display:flex;
+align-items:center;
+justify-content:center;
+overflow:hidden;
+}
+
+.preview img,.preview video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
+textarea,select{
+background:#080808!important;
+border:1px solid #1a1a1a!important;
+color:#fff!important;
+font-size:12px!important;
+border-radius:12px!important;
+}
+
+textarea:focus,select:focus{
+outline:none;
+border-color:var(--neon)!important;
+box-shadow:0 0 10px rgba(0,255,65,.12);
+}
+
+.btn{
+background:var(--neon);
+color:#000;
+font-weight:900;
+border-radius:14px;
+transition:.2s;
+text-transform:uppercase;
+box-shadow:0 10px 20px rgba(0,255,65,.15);
+}
+
+.btn:hover{transform:scale(1.02)}
+.btn:disabled{background:#111;color:#444}
+
+.mini-btn{
+padding:10px 16px;
+border-radius:999px;
+font-size:11px;
+font-weight:900;
+}
+
+.badge{
+font-size:8px;
+padding:2px 8px;
+border-radius:100px;
+background:#111;
+color:var(--neon);
+border:1px solid var(--border);
+}
+
+.import-label{
+background:#111;
+border:1px solid #222;
+padding:8px 12px;
+border-radius:10px;
+font-size:10px;
+cursor:pointer;
+font-weight:700;
+text-align:center;
+}
+
+.statbox{
+background:#050505;
+border:1px solid #111;
+border-radius:18px;
+padding:16px;
+}
+
+.loader{
+animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+0%{opacity:.4}
+50%{opacity:1}
+100%{opacity:.4}
+}
 </style>
 </head>
+
 <body class="pb-20">
+
+<!-- HEADER -->
 <header class="top-nav px-4 md:px-6 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-    <div class="flex flex-col md:flex-row items-center gap-2 md:gap-6 text-center md:text-left">
-        <h2 class="text-xl md:text-2xl italic silver-text tracking-tighter uppercase">SN ULTRA PRODUCTION</h2>
-        <nav class="hidden lg:flex gap-6 text-[10px] font-bold text-gray-500 tracking-widest">
-            <a href="multi-board.html" class="hover:text-white">DASHBOARD</a>
-            <a href="#" class="hover:text-white">GALLERY</a>
-            <a href="#" class="hover:text-white">API DOCS</a>
-        </nav>
-    </div>
-    <div class="flex items-center gap-4">
-        <div class="text-right">
-            <p class="text-[9px] font-black text-gray-600 uppercase">SYSTEM: <span class="text-[#00ff41]">SECURE</span></p>
-            <p class="text-lg md:text-xl font-black mono text-[#00ff41]" id="top-credits">0 <span class="text-[10px] text-gray-500">CR</span></p>
-        </div>
-        <a href="payment.html" class="h-10 px-5 flex items-center justify-center bg-white text-black font-black text-[10px] rounded-full uppercase">Deposit</a>
-    </div>
+
+<div class="text-center md:text-left">
+<h1 class="text-2xl md:text-3xl italic silver-text uppercase">SN ULTRA PRODUCTION</h1>
+<p class="text-[10px] text-gray-500 uppercase tracking-widest">
+Enterprise AI Workstation • Connected API
+</p>
+</div>
+
+<div class="flex items-center gap-3">
+
+<div class="text-right">
+<p class="text-[9px] text-gray-500 uppercase">เครดิตรวม</p>
+<p id="top-credits" class="text-xl mono font-black text-[#00ff41]">0 CR</p>
+</div>
+
+<a href="payment.html"
+class="mini-btn bg-white text-black">
+DEPOSIT
+</a>
+
+<a href="multi-board.html"
+class="mini-btn bg-[#00ff41] text-black">
+DASHBOARD
+</a>
+
+</div>
 </header>
 
-<main class="max-w-[1400px] mx-auto p-4 md:p-6">
-    <div class="flex flex-col mb-8 text-center md:text-left">
-        <h1 class="text-3xl md:text-5xl font-black silver-text mb-2">ENGINE WORKSTATION</h1>
-        <p class="text-gray-500 text-[10px] md:text-xs tracking-wide uppercase">Connected to 14 High-End AI Models • Enterprise Multi-Wallet System</p>
-    </div>
-    <div class="grid gap-6 md:gap-8 md:grid-cols-2 lg:grid-cols-2" id="engine-grid"></div>
-</main>
+<!-- STATUS -->
+<section class="max-w-[1400px] mx-auto p-4 md:p-6">
+
+<div class="grid md:grid-cols-4 gap-4 mb-8">
+
+<div class="statbox">
+<p class="text-[10px] text-gray-500 uppercase">System</p>
+<h3 id="sysStatus" class="text-xl font-black text-green-400">ONLINE</h3>
+</div>
+
+<div class="statbox">
+<p class="text-[10px] text-gray-500 uppercase">Queue Jobs</p>
+<h3 id="queueJobs" class="text-xl font-black text-cyan-400">0</h3>
+</div>
+
+<div class="statbox">
+<p class="text-[10px] text-gray-500 uppercase">API Ping</p>
+<h3 id="apiPing" class="text-xl font-black text-yellow-400">0ms</h3>
+</div>
+
+<div class="statbox">
+<p class="text-[10px] text-gray-500 uppercase">Wallet Sync</p>
+<h3 id="walletSync" class="text-xl font-black text-purple-400">READY</h3>
+</div>
+
+</div>
+
+<div class="mb-8">
+<h2 class="text-3xl md:text-5xl font-black silver-text mb-2">
+ENGINE WORKSTATION
+</h2>
+<p class="text-gray-500 text-xs uppercase tracking-widest">
+14 AI ENGINES • VIDEO • IMAGE • UPSCALE • MOTION
+</p>
+</div>
+
+<div id="engine-grid" class="grid gap-6 md:grid-cols-2"></div>
+
+</section>
 
 <script>
-const API_BASE = "https://api.sn-designstudio.dev";
-const ENGINE_BASE_COSTS = { image:50, upscale:80, video:200, deep_motion:300 };
+const API_BASE="https://api.sn-designstudio.dev";
 
-const engines = [
-    {id:"01",mode:"TEXT TO VIDEO",type:"video",need:"PROMPT ONLY"},
-    {id:"02",mode:"IMAGE TO VIDEO",type:"video",need:"IMAGE SOURCE"},
-    {id:"03",mode:"VIDEO TO VIDEO",type:"deep_motion",need:"VIDEO SOURCE"},
-    {id:"04",mode:"TEXT TO IMAGE",type:"image",need:"PROMPT ONLY"},
-    {id:"05",mode:"FACE SWAP",type:"image",need:"TARGET IMAGE"},
-    {id:"06",mode:"UPSCALE 4K",type:"upscale",need:"LOW-RES IMAGE"},
-    {id:"07",mode:"MOTION BRUSH",type:"deep_motion",need:"IMAGE SOURCE"},
-    {id:"08",mode:"AUDIO TO VIDEO",type:"video",need:"AUDIO SOURCE"},
-    {id:"09",mode:"VIRTUAL TRY-ON",type:"image",need:"PERSON IMAGE"},
-    {id:"10",mode:"3D GENERATION",type:"deep_motion",need:"IMAGE/TEXT"},
-    {id:"11",mode:"STYLE TRANSFER",type:"video",need:"VIDEO SOURCE"},
-    {id:"12",mode:"LIP SYNC AI",type:"video",need:"VIDEO SOURCE"},
-    {id:"13",mode:"REMOVE BG VIDEO",type:"upscale",need:"VIDEO SOURCE"},
-    {id:"14",mode:"FRAME INTERPOLATION",type:"deep_motion",need:"VIDEO SOURCE"}
+const ENGINE_BASE_COSTS={
+image:50,
+upscale:80,
+video:200,
+deep_motion:300
+};
+
+const engines=[
+{id:"01",mode:"TEXT TO VIDEO",type:"video",need:"PROMPT ONLY"},
+{id:"02",mode:"IMAGE TO VIDEO",type:"video",need:"IMAGE SOURCE"},
+{id:"03",mode:"VIDEO TO VIDEO",type:"deep_motion",need:"VIDEO SOURCE"},
+{id:"04",mode:"TEXT TO IMAGE",type:"image",need:"PROMPT ONLY"},
+{id:"05",mode:"FACE SWAP",type:"image",need:"TARGET IMAGE"},
+{id:"06",mode:"UPSCALE 4K",type:"upscale",need:"LOW-RES IMAGE"},
+{id:"07",mode:"MOTION BRUSH",type:"deep_motion",need:"IMAGE SOURCE"},
+{id:"08",mode:"AUDIO TO VIDEO",type:"video",need:"AUDIO SOURCE"},
+{id:"09",mode:"VIRTUAL TRY-ON",type:"image",need:"PERSON IMAGE"},
+{id:"10",mode:"3D GENERATION",type:"deep_motion",need:"IMAGE/TEXT"},
+{id:"11",mode:"STYLE TRANSFER",type:"video",need:"VIDEO SOURCE"},
+{id:"12",mode:"LIP SYNC AI",type:"video",need:"VIDEO SOURCE"},
+{id:"13",mode:"REMOVE BG VIDEO",type:"upscale",need:"VIDEO SOURCE"},
+{id:"14",mode:"FRAME INTERPOLATION",type:"deep_motion",need:"VIDEO SOURCE"}
 ];
-/* ===========================
-   PROFILE SYNC: Multi-Wallet (ตรงตาม Python Remix)
-   =========================== */
+
+/* =========================
+PROFILE + WALLET SYNC
+========================= */
 async function syncProfile(){
-    const email = localStorage.getItem("user_email") || "narongsack.69@gmail.com";
-    try{
-        const res = await fetch(`${API_BASE}/?email=${encodeURIComponent(email)}`);
-        const data = await res.json();
-        if(data.success){
-            // ดึงยอดรวมจากทุกกระเป๋าที่ Python คำนวณมาให้แล้ว
-            const total = Number(data.credits || 0);
-            document.getElementById("top-credits").innerHTML = 
-                `${total.toLocaleString()} <span class="text-[10px] text-gray-500">CR</span>`;
-            
-            localStorage.setItem("user_profile", JSON.stringify(data));
-            localStorage.setItem("user_credits", total);
-        }
-    }catch(e){ console.log("Sync Fail"); }
+
+const email=localStorage.getItem("user_email") || "guest@sn.com";
+
+try{
+const t1=Date.now();
+
+const res=await fetch(API_BASE+"/api/profile?email="+encodeURIComponent(email));
+const data=await res.json();
+
+const ping=Date.now()-t1;
+
+document.getElementById("apiPing").innerText=ping+"ms";
+
+if(data.success){
+
+const total=Number(data.credits || 0);
+
+document.getElementById("top-credits").innerHTML=
+total.toLocaleString()+" CR";
+
+document.getElementById("walletSync").innerText="SYNCED";
+
+localStorage.setItem("user_credits",total);
+localStorage.setItem("user_profile",JSON.stringify(data));
+
+}else{
+fallbackCredits();
 }
 
+}catch(e){
+fallbackCredits();
+}
+}
+
+function fallbackCredits(){
+const c=localStorage.getItem("user_credits") || 0;
+document.getElementById("top-credits").innerHTML=
+Number(c).toLocaleString()+" CR";
+document.getElementById("walletSync").innerText="LOCAL";
+}
+
+/* =========================
+SYSTEM STATUS
+========================= */
+async function loadStatus(){
+try{
+const r=await fetch(API_BASE+"/api/stats");
+const d=await r.json();
+
+document.getElementById("queueJobs").innerText=d.jobs || 0;
+document.getElementById("sysStatus").innerText="ONLINE";
+
+}catch(e){
+document.getElementById("sysStatus").innerText="LIMITED";
+}
+}
+
+/* =========================
+RENDER UI
+========================= */
 function render(){
-    document.getElementById("engine-grid").innerHTML = engines.map(e => `
-    <div class="engine-card p-5 md:p-6 flex flex-col gap-6">
-        <div class="flex justify-between items-start">
-            <div><span class="status-badge mb-2 inline-block">ENGINE ${e.id}</span>
-            <h3 class="text-lg md:text-xl font-black italic silver-text uppercase tracking-tighter">${e.mode}</h3></div>
-            <div class="text-right"><p class="text-[9px] text-gray-600 font-bold uppercase">Base Cost</p>
-            <p class="text-base md:text-lg font-black mono text-[#00ff41]">${ENGINE_BASE_COSTS[e.type]}</p></div>
-        </div>
-        <div class="flex flex-col md:flex-row gap-6">
-            <div class="md:w-1/2 flex flex-col gap-3">
-                <div id="preview-area-${e.id}" class="preview-area">
-                    <p class="text-[9px] text-gray-700 font-bold uppercase">Waiting for ${e.need}</p>
-                </div>
-                <input type="file" id="file-${e.id}" class="hidden" onchange="handlePreview('${e.id}')">
-                <label for="file-${e.id}" class="import-label text-center font-bold uppercase tracking-widest">Import Asset</label>
-            </div>
-            <div class="md:w-1/2 flex flex-col">
-                <p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Instruction / Prompt</p>
-                <textarea id="prompt-${e.id}" class="flex-1 p-3 rounded-xl mb-4 min-h-[80px]"></textarea>
-                <div class="grid grid-cols-2 gap-3 mb-6">
-                    <div><p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Resolution</p>
-                    <select id="res-${e.id}" onchange="updateCost('${e.id}','${e.type}')"><option value="1">720P</option><option value="2">1080P</option><option value="4">4K</option></select></div>
-                    <div><p class="text-[9px] text-gray-600 font-bold mb-1 uppercase">Duration</p>
-                    <select id="dur-${e.id}" onchange="updateCost('${e.id}','${e.type}')"><option value="1">5 Sec</option><option value="2">10 Sec</option><option value="3">15 Sec</option></select></div>
-                </div>
-                <div class="flex items-center justify-between border-t border-white/5 pt-4">
-                    <div><p class="text-[9px] text-gray-600 font-bold uppercase">Est. Total</p>
-                    <p class="text-xl md:text-2xl font-black mono text-[#00ff41]" id="cost-display-${e.id}">${ENGINE_BASE_COSTS[e.type]}</p></div>
-                    <button id="btn-${e.id}" class="btn-generate h-12 md:h-14 w-28 md:w-36 text-[10px] md:text-xs" onclick="dispatchJob('${e.id}')">Generate</button>
-                </div>
-            </div>
-        </div>
-    </div>`).join("");
+
+document.getElementById("engine-grid").innerHTML=engines.map(e=>`
+
+<div class="card p-5 md:p-6">
+
+<div class="flex justify-between items-start mb-5">
+
+<div>
+<span class="badge">ENGINE ${e.id}</span>
+<h3 class="text-xl font-black italic silver-text mt-2">
+${e.mode}
+</h3>
+</div>
+
+<div class="text-right">
+<p class="text-[9px] text-gray-500 uppercase">Base Cost</p>
+<p class="text-xl mono font-black text-[#00ff41]">
+${ENGINE_BASE_COSTS[e.type]}
+</p>
+</div>
+
+</div>
+
+<div class="grid md:grid-cols-2 gap-5">
+
+<div>
+<div id="preview-${e.id}" class="preview">
+<p class="text-[10px] text-gray-600 uppercase">
+Waiting for ${e.need}
+</p>
+</div>
+
+<input type="file" id="file-${e.id}" class="hidden"
+onchange="handlePreview('${e.id}')">
+
+<label for="file-${e.id}" class="import-label mt-3 block">
+IMPORT ASSET
+</label>
+</div>
+
+<div>
+
+<p class="text-[10px] text-gray-500 uppercase mb-2">
+Prompt / Instruction
+</p>
+
+<textarea id="prompt-${e.id}"
+class="w-full p-3 min-h-[90px] mb-4"></textarea>
+
+<div class="grid grid-cols-2 gap-3 mb-4">
+
+<div>
+<p class="text-[10px] text-gray-500 uppercase mb-1">Resolution</p>
+<select id="res-${e.id}"
+class="w-full p-2"
+onchange="updateCost('${e.id}','${e.type}')">
+<option value="1">720P</option>
+<option value="2">1080P</option>
+<option value="4">4K</option>
+</select>
+</div>
+
+<div>
+<p class="text-[10px] text-gray-500 uppercase mb-1">Duration</p>
+<select id="dur-${e.id}"
+class="w-full p-2"
+onchange="updateCost('${e.id}','${e.type}')">
+<option value="1">5 SEC</option>
+<option value="2">10 SEC</option>
+<option value="3">15 SEC</option>
+</select>
+</div>
+
+</div>
+
+<div class="flex justify-between items-center pt-3 border-t border-white/5">
+
+<div>
+<p class="text-[10px] text-gray-500 uppercase">Total</p>
+<p id="cost-${e.id}"
+class="text-2xl mono font-black text-[#00ff41]">
+${ENGINE_BASE_COSTS[e.type]}
+</p>
+</div>
+
+<button id="btn-${e.id}"
+class="btn h-12 w-32 text-xs"
+onclick="dispatchJob('${e.id}')">
+GENERATE
+</button>
+
+</div>
+
+</div>
+</div>
+
+</div>
+
+`).join("");
 }
+
+/* =========================
+PREVIEW
+========================= */
 function handlePreview(id){
-    const file = document.getElementById(`file-${id}`).files[0];
-    const area = document.getElementById(`preview-area-${id}`);
-    if(!file) return;
-    const url = URL.createObjectURL(file);
-    if(file.type.startsWith("image/")){ area.innerHTML = `<img src="${url}">`; }
-    else if(file.type.startsWith("video/")){ area.innerHTML = `<video src="${url}" autoplay muted loop></video>`; }
+
+const file=document.getElementById("file-"+id).files[0];
+const area=document.getElementById("preview-"+id);
+
+if(!file) return;
+
+const url=URL.createObjectURL(file);
+
+if(file.type.startsWith("image/")){
+area.innerHTML='<img src="'+url+'">';
+}else if(file.type.startsWith("video/")){
+area.innerHTML='<video src="'+url+'" autoplay muted loop></video>';
+}else{
+area.innerHTML='<p class="text-xs">FILE READY</p>';
+}
 }
 
+/* =========================
+COST
+========================= */
 function updateCost(id,type){
-    const res = parseFloat(document.getElementById(`res-${id}`).value);
-    const dur = parseFloat(document.getElementById(`dur-${id}`).value);
-    const total = Math.floor(ENGINE_BASE_COSTS[type] * res * dur);
-    document.getElementById(`cost-display-${id}`).innerText = total.toLocaleString();
+
+const res=parseFloat(document.getElementById("res-"+id).value);
+const dur=parseFloat(document.getElementById("dur-"+id).value);
+
+const total=Math.floor(
+ENGINE_BASE_COSTS[type]*res*dur
+);
+
+document.getElementById("cost-"+id).innerText=
+total.toLocaleString();
 }
 
+/* =========================
+DISPATCH API
+========================= */
 async function dispatchJob(id){
-    const btn = document.getElementById(`btn-${id}`);
-    const engine = engines.find(x => x.id === id);
-    const email = localStorage.getItem("user_email") || "narongsack.69@gmail.com";
-    
-    btn.disabled = true; btn.innerText = "DISPATCHING...";
 
-    const formData = new FormData();
-    formData.append("email", email);
-    formData.append("engine_id", id);
-    formData.append("prompt", document.getElementById(`prompt-${id}`).value);
-    formData.append("resolution", document.getElementById(`res-${id}`).value);
-    formData.append("duration", document.getElementById(`dur-${id}`).value);
-    const file = document.getElementById(`file-${id}`).files[0];
-    if(file) formData.append("asset", file);
+const btn=document.getElementById("btn-"+id);
+const engine=engines.find(x=>x.id===id);
 
-    try{
-        const res = await fetch(`${API_BASE}/api/generate/${engine.type}`, { method:"POST", body:formData });
-        const data = await res.json();
-        if(data.success){
-            btn.innerText = "QUEUED"; 
-            await syncProfile();
-            setTimeout(() => { btn.disabled = false; btn.innerText = "Generate"; }, 3000);
-        } else {
-            alert(data.code === "INSUFFICIENT_CREDITS" ? "เครดิตไม่พอ" : (data.code || "Error"));
-            btn.disabled = false; btn.innerText = "Generate";
-        }
-    }catch(e){ alert("Network Error"); btn.disabled = false; btn.innerText = "Generate"; }
+const email=localStorage.getItem("user_email") || "guest@sn.com";
+
+btn.disabled=true;
+btn.innerText="QUEUE...";
+
+const fd=new FormData();
+
+fd.append("email",email);
+fd.append("engine_id",id);
+fd.append("prompt",document.getElementById("prompt-"+id).value);
+fd.append("resolution",document.getElementById("res-"+id).value);
+fd.append("duration",document.getElementById("dur-"+id).value);
+
+const file=document.getElementById("file-"+id).files[0];
+if(file) fd.append("asset",file);
+
+try{
+
+const r=await fetch(
+API_BASE+"/api/generate/"+engine.type,
+{
+method:"POST",
+body:fd
+}
+);
+
+const d=await r.json();
+
+if(d.success){
+
+btn.innerText="QUEUED";
+await syncProfile();
+await loadStatus();
+
+setTimeout(()=>{
+btn.disabled=false;
+btn.innerText="GENERATE";
+},2500);
+
+}else{
+
+alert(d.message || d.code || "ERROR");
+btn.disabled=false;
+btn.innerText="GENERATE";
 }
 
-document.addEventListener("DOMContentLoaded", async () => { render(); await syncProfile(); });
+}catch(e){
+
+alert("NETWORK ERROR");
+btn.disabled=false;
+btn.innerText="GENERATE";
+
+}
+}
+
+/* =========================
+BOOT
+========================= */
+document.addEventListener("DOMContentLoaded",async()=>{
+
+render();
+
+await syncProfile();
+await loadStatus();
+
+setInterval(syncProfile,15000);
+setInterval(loadStatus,10000);
+
+});
 </script>
+
 </body>
 </html>
-
