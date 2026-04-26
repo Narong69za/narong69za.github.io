@@ -1,0 +1,23 @@
+[UsedByNativeCode]
+[NativeHeader("Runtime/Graphics/LightmapData.h")]
+public sealed class LightmapData // TypeDefIndex: 4775
+{
+	// Fields
+	internal Texture2D m_Light; // 0x10
+	internal Texture2D m_Dir; // 0x18
+	internal Texture2D m_ShadowMask; // 0x20
+
+	// Properties
+	[Obsolete("Use lightmapColor property (UnityUpgradable) -> lightmapColor", False)]
+	public Texture2D lightmapLight { get; set; }
+	public Texture2D lightmapColor { get; set; }
+	public Texture2D lightmapDir { get; set; }
+	public Texture2D shadowMask { get; set; }
+
+	// Methods
+
+	// RVA: 0xF4F260 Offset: 0xF4E660 VA: 0x180F4F260
+	public Texture2D get_lightmapLight() { }
+
+	// RVA: 0x4E32A0 Offset: 0x4E26A0 VA: 0x1804E32A0
+	public void set_lightmapLight(Texture2D value) { }

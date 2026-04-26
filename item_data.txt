@@ -1,0 +1,50 @@
+
+// Namespace: 
+private enum XmlWellFormedWriter.AttributeValueCache.ItemType // TypeDefIndex: 3127
+{
+	// Fields
+	public int value__; // 0x0
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType EntityRef = 0;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType CharEntity = 1;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType SurrogateCharEntity = 2;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType Whitespace = 3;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType String = 4;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType StringChars = 5;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType Raw = 6;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType RawChars = 7;
+	public const XmlWellFormedWriter.AttributeValueCache.ItemType ValueString = 8;
+}
+
+// Namespace: 
+private class XmlWellFormedWriter.AttributeValueCache.Item // TypeDefIndex: 3128
+{
+	// Fields
+	internal XmlWellFormedWriter.AttributeValueCache.ItemType type; // 0x10
+	internal object data; // 0x18
+--
+
+	// RVA: 0x16EB990 Offset: 0x16EAD90 VA: 0x1816EB990
+	public static ConstructorInfo ResolveEnumerableCollectionConstructor(Type collectionType, Type collectionItemType) { }
+
+	// RVA: 0x16EBAB0 Offset: 0x16EAEB0 VA: 0x1816EBAB0
+	public static ConstructorInfo ResolveEnumerableCollectionConstructor(Type collectionType, Type collectionItemType, Type constructorArgumentType) { }
+
+	[Extension]
+	// RVA: -1 Offset: -1
+	public static bool AddDistinct<T>(IList<T> list, T value) { }
+	/* GenericInstMethod :
+	|
+	|-RVA: 0x5C6DD0 Offset: 0x5C61D0 VA: 0x1805C6DD0
+	|-CollectionUtils.AddDistinct<object>
+	|
+	|-RVA: 0x5C6CE0 Offset: 0x5C60E0 VA: 0x1805C6CE0
+	|-CollectionUtils.AddDistinct<__Il2CppFullySharedGenericType>
+	*/
+
+	[Extension]
+	// RVA: -1 Offset: -1
+	public static bool AddDistinct<T>(IList<T> list, T value, IEqualityComparer<T> comparer) { }
+	/* GenericInstMethod :
+	|
+	|-RVA: 0x5C6E90 Offset: 0x5C6290 VA: 0x1805C6E90
+	|-CollectionUtils.AddDistinct<object>
